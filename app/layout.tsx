@@ -1,0 +1,22 @@
+import type { Metadata } from 'next';
+import '@/styles/index.css';
+
+export const metadata: Metadata = {
+  title: 'HOMIQIO - Intégration site Airbnb',
+  description: 'Trouvez votre logement idéal avec HOMIQIO',
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="fr">
+      <body>
+        {children}
+      </body>
+    </html>
+  );
+}
+
