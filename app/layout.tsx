@@ -4,6 +4,9 @@ import '@/styles/index.css';
 export const metadata: Metadata = {
   title: 'HOMIQIO - Intégration site Airbnb',
   description: 'Trouvez votre logement idéal avec HOMIQIO',
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({

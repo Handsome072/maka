@@ -51,25 +51,13 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
               {/* Logo - Always visible */}
               <button
                 onClick={() => onNavigate("logements")}
-                className="flex items-center gap-1 flex-shrink-0 hover:opacity-80 transition-opacity duration-200 relative z-10"
+                className="flex items-center gap-1 flex-shrink-0 relative z-10 border-0"
               >
-                <svg
-                  className="w-8 h-8"
-                  viewBox="0 0 32 32"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z"
-                    fill="#10B981"
-                  />
-                </svg>
-                <span
-                  className="text-[#10B981] text-xl ml-1 hidden sm:block"
-                  style={{ fontWeight: 600 }}
-                >
-                  HOMIQIO
-                </span>
+                <img
+                  src="/logo.png"
+                  alt="HOMIQIO Logo"
+                  className="w-[150px] h-auto border-0"
+                />
               </button>
 
               {/* Center Section - Both components always mounted, visibility controlled by CSS */}
