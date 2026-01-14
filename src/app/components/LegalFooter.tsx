@@ -1,5 +1,7 @@
+import Link from 'next/link';
+
 interface LegalFooterProps {
-  onNavigate: (page: string) => void;
+  onNavigate?: (page: string) => void;
 }
 
 export function LegalFooter({ onNavigate }: LegalFooterProps) {
@@ -158,21 +160,21 @@ export function LegalFooter({ onNavigate }: LegalFooterProps) {
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 text-sm" style={{ color: '#222222' }}>
               <span>© 2026 HOMIQIO, Inc.</span>
               <span>·</span>
-              <button onClick={() => onNavigate('privacy')} className="hover:underline">
+              <Link href="/privacy" className="hover:underline">
                 Confidentialité
-              </button>
+              </Link>
               <span>·</span>
-              <button onClick={() => onNavigate('terms')} className="hover:underline">
+              <Link href="/terms" className="hover:underline">
                 Conditions générales
-              </button>
+              </Link>
               <span>·</span>
-              <button onClick={() => onNavigate('how-it-works')} className="hover:underline">
+              <Link href="/how-it-works" className="hover:underline">
                 Fonctionnement du site
-              </button>
+              </Link>
               <span>·</span>
-              <button onClick={() => onNavigate('company-info')} className="hover:underline">
+              <Link href="/company-info" className="hover:underline">
                 Infos sur l'entreprise
-              </button>
+              </Link>
             </div>
 
             {/* Right - Language */}

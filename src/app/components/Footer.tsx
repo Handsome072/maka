@@ -1,79 +1,59 @@
-import { Globe } from "lucide-react";
-import logo from "@/assets/71ec6463a41bb19e85fad23a7af09392bb3b16a7.png";
+'use client';
+
+import { Globe } from 'lucide-react';
+import Link from 'next/link';
 
 interface FooterProps {
   onNavigate?: (page: string) => void;
 }
 
+/**
+ * Footer principal - Version Next.js
+ * UI 100% identique à src/app/components/Footer.tsx
+ */
 export function Footer({ onNavigate }: FooterProps) {
   return (
-    <footer className="bg-gray-50 border-t border-gray-200">
+    <footer className="bg-[#F7F7F7] border-t border-gray-200">
       <div className="px-4 sm:px-6 lg:px-20 py-12">
         {/* Footer Links Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-16 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16 mb-12">
           {/* Assistance */}
           <div>
             <h3
-              className="text-sm mb-4"
+              className="text-sm mb-4 text-[#222222]"
               style={{ fontWeight: 600 }}
             >
               Assistance
             </h3>
             <ul className="space-y-3">
               <li>
-                <a
-                  href="#"
-                  className="text-sm text-gray-700 hover:underline"
-                >
+                <a href="#" className="text-sm text-[#222222] hover:underline">
                   Centre d'aide
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-sm text-gray-700 hover:underline"
-                >
-                  Assistance sécurité
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-sm text-gray-700 hover:underline"
-                >
+                <a href="#" className="text-sm text-[#222222] hover:underline">
                   AirCover
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-sm text-gray-700 hover:underline"
-                >
+                <a href="#" className="text-sm text-[#222222] hover:underline">
                   Lutte contre la discrimination
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-sm text-gray-700 hover:underline"
-                >
+                <a href="#" className="text-sm text-[#222222] hover:underline">
                   Assistance handicap
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-sm text-gray-700 hover:underline"
-                >
+                <a href="#" className="text-sm text-[#222222] hover:underline">
                   Options d'annulation
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-sm text-gray-700 hover:underline"
-                >
-                  J'ai un problème de voisinage
+                <a href="#" className="text-sm text-[#222222] hover:underline">
+                  Signaler un problème de voisinage
                 </a>
               </li>
             </ul>
@@ -82,216 +62,109 @@ export function Footer({ onNavigate }: FooterProps) {
           {/* Accueil de voyageurs */}
           <div>
             <h3
-              className="text-sm mb-4"
+              className="text-sm mb-4 text-[#222222]"
               style={{ fontWeight: 600 }}
             >
               Accueil de voyageurs
             </h3>
             <ul className="space-y-3">
               <li>
-                <a
-                  href="#"
-                  className="text-sm text-gray-700 hover:underline"
-                >
+                <a href="#" className="text-sm text-[#222222] hover:underline">
                   Mettez votre logement sur HOMIQIO
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-sm text-gray-700 hover:underline"
-                >
-                  Proposez votre expérience sur HOMIQIO
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-sm text-gray-700 hover:underline"
-                >
-                  Proposez votre service sur HOMIQIO
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-sm text-gray-700 hover:underline"
-                >
+                <a href="#" className="text-sm text-[#222222] hover:underline">
                   AirCover pour les hôtes
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-sm text-gray-700 hover:underline"
-                >
+                <a href="#" className="text-sm text-[#222222] hover:underline">
                   Ressources pour les hôtes
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-sm text-gray-700 hover:underline"
-                >
+                <a href="#" className="text-sm text-[#222222] hover:underline">
                   Forum de la communauté
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-sm text-gray-700 hover:underline"
-                >
-                  Hébergement responsable
+                <a href="#" className="text-sm text-[#222222] hover:underline">
+                  Accueil responsable
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-sm text-gray-700 hover:underline"
-                >
-                  Participez à un cours gratuit pour les
-                  nouveaux hôtes
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-sm text-gray-700 hover:underline"
-                >
+                <a href="#" className="text-sm text-[#222222] hover:underline">
                   Trouver un co-hôte
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-sm text-gray-700 hover:underline"
-                >
-                  Parrainer un hôte
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Airbnb */}
+          {/* HOMIQIO */}
           <div>
             <h3
-              className="text-sm mb-4"
+              className="text-sm mb-4 text-[#222222]"
               style={{ fontWeight: 600 }}
             >
               HOMIQIO
             </h3>
             <ul className="space-y-3">
               <li>
-                <a
-                  href="#"
-                  className="text-sm text-gray-700 hover:underline"
-                >
-                  Édition été 2025
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-sm text-gray-700 hover:underline"
-                >
+                <a href="#" className="text-sm text-[#222222] hover:underline">
                   Newsroom
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-sm text-gray-700 hover:underline"
-                >
+                <a href="#" className="text-sm text-[#222222] hover:underline">
+                  Nouvelles fonctionnalités
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-sm text-[#222222] hover:underline">
                   Carrières
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-sm text-gray-700 hover:underline"
-                >
+                <a href="#" className="text-sm text-[#222222] hover:underline">
                   Investisseurs
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-sm text-gray-700 hover:underline"
-                >
+                <a href="#" className="text-sm text-[#222222] hover:underline">
                   Cartes cadeaux
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-sm text-gray-700 hover:underline"
-                >
-                  Séjours d'urgence HOMIQIO.org
                 </a>
               </li>
             </ul>
           </div>
-          {/* Logo */}
-          <div className="mb-10 flex flex-col items-start gap-3">
-            <img
-              src={logo}
-              alt="HOMIQIO Logo"
-              className="h-12 w-12"
-            />
-
-            <div className="text-sm text-gray-500 leading-relaxed">
-              <p>© Foreev Engineering</p>
-              <p>Engineering Division of Foreev Group</p>
-            </div>
-          </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-gray-200">
+        <div className="pt-6 border-t border-gray-300">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Left - Copyright & Links */}
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 text-sm text-gray-700">
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 text-sm text-[#222222]">
               <span>© 2026 HOMIQIO, Inc.</span>
-              <span className="hidden md:inline text-gray-400">
-                ·
-              </span>
-              <button
-                onClick={() => onNavigate?.('privacy')}
-                className="hover:underline"
-              >
+              <span className="hidden md:inline">·</span>
+              <Link href="/privacy" className="hover:underline">
                 Confidentialité
-              </button>
-              <span className="hidden md:inline text-gray-400">
-                ·
-              </span>
-              <button
-                onClick={() => onNavigate?.('terms')}
-                className="hover:underline"
-              >
+              </Link>
+              <span className="hidden md:inline">·</span>
+              <Link href="/terms" className="hover:underline">
                 Conditions générales
-              </button>
-              <span className="hidden md:inline text-gray-400">
-                ·
-              </span>
-              <button
-                onClick={() => onNavigate?.('how-it-works')}
-                className="hover:underline"
-              >
+              </Link>
+              <span className="hidden md:inline">·</span>
+              <Link href="/how-it-works" className="hover:underline">
                 Fonctionnement du site
-              </button>
-              <span className="hidden md:inline text-gray-400">
-                ·
-              </span>
-              <button
-                onClick={() => onNavigate?.('company-info')}
-                className="hover:underline"
-              >
+              </Link>
+              <span className="hidden md:inline">·</span>
+              <Link href="/company-info" className="hover:underline">
                 Infos sur l'entreprise
-              </button>
+              </Link>
             </div>
 
             {/* Right - Language, Currency & Social */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 text-[#222222]">
               {/* Language */}
               <button
                 className="flex items-center gap-2 text-sm hover:underline"
@@ -306,8 +179,8 @@ export function Footer({ onNavigate }: FooterProps) {
                 className="flex items-center gap-1 text-sm hover:underline"
                 style={{ fontWeight: 600 }}
               >
-                <span className="text-base">$</span>
-                <span>USD</span>
+                <span>€</span>
+                <span>EUR</span>
               </button>
 
               {/* Social Icons */}
@@ -318,7 +191,7 @@ export function Footer({ onNavigate }: FooterProps) {
                   aria-label="Facebook"
                 >
                   <svg
-                    className="w-5 h-5"
+                    className="w-[18px] h-[18px]"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                   >
@@ -331,7 +204,7 @@ export function Footer({ onNavigate }: FooterProps) {
                   aria-label="Twitter"
                 >
                   <svg
-                    className="w-5 h-5"
+                    className="w-[18px] h-[18px]"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                   >
@@ -344,7 +217,7 @@ export function Footer({ onNavigate }: FooterProps) {
                   aria-label="Instagram"
                 >
                   <svg
-                    className="w-5 h-5"
+                    className="w-[18px] h-[18px]"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                   >
