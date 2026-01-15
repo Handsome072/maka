@@ -71,7 +71,7 @@ export function Privacy({ onNavigate }: PrivacyProps) {
                   className="w-full pl-4 pr-12 py-2.5 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
                   onClick={() => setShowSearchDropdown(true)}
                 />
-                <button className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 bg-[#10B981] rounded-full flex items-center justify-center">
+                <button className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 bg-[#000000] rounded-full flex items-center justify-center">
                   <Search className="w-4 h-4 text-white" />
                 </button>
                 
@@ -337,9 +337,9 @@ export function Privacy({ onNavigate }: PrivacyProps) {
                   <h3 className="text-base mb-3" style={{ fontWeight: 600, color: '#222222' }}>
                     Obtenez de l'aide pour vos réservations, votre compte et plus encore.
                   </h3>
-                  <button 
-                    className="w-full px-6 py-3 text-white rounded-lg text-base hover:opacity-90 transition-opacity" 
-                    style={{ fontWeight: 600, backgroundColor: '#10B981' }}
+                  <button
+                    className="w-full px-6 py-3 text-white rounded-lg text-base hover:opacity-90 transition-opacity"
+                    style={{ fontWeight: 600, backgroundColor: '#000000' }}
                   >
                     Me connecter ou m'inscrire
                   </button>

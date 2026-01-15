@@ -56,7 +56,7 @@ export function TermsOfService({ onNavigate }: TermsOfServiceProps) {
                   placeholder="Rechercher des guides pratiq..."
                   className="w-full pl-4 pr-12 py-2.5 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#10B981]"
                 />
-                <button className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 bg-[#10B981] rounded-full flex items-center justify-center">
+                <button className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 bg-[#000000] rounded-full flex items-center justify-center">
                   <Search className="w-4 h-4 text-white" />
                 </button>
               </div>

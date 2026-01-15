@@ -549,7 +549,7 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
                   </div>
 
                   {/* Reserve button */}
-                  <button 
+                  <button
                     onClick={() => onBook?.({
                       title: "Superbe studio de 15m² au calme tout confort",
                       image: images[0],
@@ -562,9 +562,9 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
                       pricePerNight: 87.56
                     })}
                     className="w-full py-3 rounded-full text-white text-base mb-4 transition-colors hover:opacity-90"
-                    style={{ 
-                      fontWeight: 600, 
-                      background: 'linear-gradient(to right, #059669 0%, #10B981 50%, #047857 100%)'
+                    style={{
+                      fontWeight: 600,
+                      backgroundColor: '#000000'
                     }}
                   >
                     Réserver

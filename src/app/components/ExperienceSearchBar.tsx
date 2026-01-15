@@ -366,7 +366,7 @@ export function CompactExperienceSearchBar() {
             <button className="text-sm text-gray-500 hover:underline">
               Ajouter des voyageurs
             </button>
-            <div className="ml-auto bg-[#10B981] hover:bg-[#047857] text-white p-2 rounded-full transition-colors">
+            <div className="ml-auto bg-[#000000] hover:bg-[#222222] text-white p-2 rounded-full transition-colors">
               <Search className="w-4 h-4" />
             </div>
           </div>
