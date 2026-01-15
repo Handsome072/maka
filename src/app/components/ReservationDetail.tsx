@@ -22,21 +22,21 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
               <X className="w-5 h-5" />
             </button>
 
-            <h2 className="text-3xl mb-6" style={{ fontWeight: 500, color: '#4A5B8C', fontStyle: 'italic' }}>
+            <h2 className="text-3xl mb-6" style={{ fontWeight: 500, color: '#222222', fontStyle: 'italic' }}>
               Annuler votre réservation
             </h2>
 
             <div className="mb-6">
-              <h3 className="text-xs mb-4" style={{ fontWeight: 700, color: '#E8664D', letterSpacing: '0.5px' }}>
+              <h3 className="text-xs mb-4" style={{ fontWeight: 700, color: '#222222', letterSpacing: '0.5px' }}>
                 DÉTAILS DE REMBOURSEMENT
               </h3>
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between py-3 border-b border-gray-200">
-                  <span className="text-base" style={{ fontWeight: 600, color: '#4A5B8C' }}>
+                  <span className="text-base" style={{ fontWeight: 600, color: '#222222' }}>
                     Frais de réservation
                   </span>
-                  <span className="text-base" style={{ fontWeight: 600, color: '#4A5B8C' }}>
+                  <span className="text-base" style={{ fontWeight: 600, color: '#222222' }}>
                     580€
                   </span>
                 </div>
@@ -62,16 +62,16 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
               Vous recevrez un email de confirmation d'annulation de votre réservation.
             </p>
 
-            <button 
+            <button
               onClick={() => {
                 setIsCancelled(true);
                 setShowCancelPopup(false);
               }}
-              className="w-full px-6 py-3 border-2 rounded-lg text-base hover:bg-red-50 transition-colors bg-white"
-              style={{ 
+              className="w-full px-6 py-3 border-2 rounded-lg text-base hover:bg-gray-100 transition-colors bg-white"
+              style={{
                 fontWeight: 600,
-                color: '#E8664D',
-                borderColor: '#E8664D'
+                color: '#222222',
+                borderColor: '#222222'
               }}
             >
               ANNULER LA RÉSERVATION
@@ -159,7 +159,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
             {/* Show all photos button */}
             <button
               className="absolute bottom-4 right-4 bg-white px-5 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-shadow flex items-center gap-2"
-              style={{ fontWeight: 600, fontSize: '13px', color: '#4A5B8C', letterSpacing: '0.5px' }}
+              style={{ fontWeight: 600, fontSize: '13px', color: '#222222', letterSpacing: '0.5px' }}
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
                 <rect x="2" y="2" width="5" height="5" />
@@ -180,7 +180,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
               <div className="lg:col-span-2 space-y-10">
                 {/* Réservation confirmée / annulée */}
                 <div className="border-b border-gray-200 pb-10">
-                  <h2 className="text-3xl mb-4" style={{ fontWeight: 500, color: '#4A5B8C', fontStyle: 'italic' }}>
+                  <h2 className="text-3xl mb-4" style={{ fontWeight: 500, color: '#222222', fontStyle: 'italic' }}>
                     {isCancelled ? 'Réservation annulée' : 'Réservation confirmée'}
                   </h2>
 
@@ -194,7 +194,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                   ) : (
                     <>
                       <div className="mb-6">
-                        <p className="text-sm mb-3" style={{ color: '#E8664D' }}>
+                        <p className="text-sm mb-3" style={{ color: '#222222' }}>
                           <span style={{ fontWeight: 600 }}>Un email de confirmation de votre réservation vous a été envoyé.</span>
                         </p>
                         <p className="text-sm text-gray-600">
@@ -208,11 +208,11 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                             <svg className="w-4 h-4 text-red-400" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-xs" style={{ fontWeight: 600, color: '#E8664D', letterSpacing: '0.5px' }}>
+                            <span className="text-xs" style={{ fontWeight: 600, color: '#222222', letterSpacing: '0.5px' }}>
                               DATE D'ARRIVÉE
                             </span>
                           </div>
-                          <p className="text-2xl mb-1" style={{ fontWeight: 500, color: '#4A5B8C', fontStyle: 'italic' }}>
+                          <p className="text-2xl mb-1" style={{ fontWeight: 500, color: '#222222', fontStyle: 'italic' }}>
                             Lun. 15 Sept. 2024
                           </p>
                           <p className="text-sm text-gray-500">15:00 - 21:00</p>
@@ -223,18 +223,18 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                             <svg className="w-4 h-4 text-red-400" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-xs" style={{ fontWeight: 600, color: '#E8664D', letterSpacing: '0.5px' }}>
+                            <span className="text-xs" style={{ fontWeight: 600, color: '#222222', letterSpacing: '0.5px' }}>
                               DATE DE DÉPART
                             </span>
                           </div>
-                          <p className="text-2xl mb-1" style={{ fontWeight: 500, color: '#4A5B8C', fontStyle: 'italic' }}>
+                          <p className="text-2xl mb-1" style={{ fontWeight: 500, color: '#222222', fontStyle: 'italic' }}>
                             Ven. 19 Sept. 2024
                           </p>
                           <p className="text-sm text-gray-500">11:00</p>
                         </div>
                       </div>
 
-                      <button className="flex items-center gap-2 text-sm" style={{ color: '#E8664D', fontWeight: 600 }}>
+                      <button className="flex items-center gap-2 text-sm" style={{ color: '#222222', fontWeight: 600 }}>
                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
                         </svg>
@@ -246,7 +246,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
 
                 {/* Services supplémentaires réservés */}
                 <div className="border-b border-gray-200 pb-10">
-                  <h2 className="text-3xl mb-6" style={{ fontWeight: 500, color: '#4A5B8C', fontStyle: 'italic' }}>
+                  <h2 className="text-3xl mb-6" style={{ fontWeight: 500, color: '#222222', fontStyle: 'italic' }}>
                     Services supplémentaires réservés
                   </h2>
 
@@ -258,7 +258,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                         </svg>
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-lg mb-2" style={{ fontWeight: 600, color: '#4A5B8C' }}>
+                        <h3 className="text-lg mb-2" style={{ fontWeight: 600, color: '#222222' }}>
                           Ménage ponctuel
                         </h3>
                         <p className="text-sm text-gray-600 leading-relaxed">
@@ -275,7 +275,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                         </svg>
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-lg mb-2" style={{ fontWeight: 600, color: '#4A5B8C' }}>
+                        <h3 className="text-lg mb-2" style={{ fontWeight: 600, color: '#222222' }}>
                           Parking [Type de parking]
                         </h3>
                         <p className="text-sm text-gray-600 leading-relaxed">
@@ -286,7 +286,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                     </div>
                   </div>
 
-                  <button className="flex items-center gap-2 text-sm" style={{ color: '#E8664D', fontWeight: 600 }}>
+                  <button className="flex items-center gap-2 text-sm" style={{ color: '#222222', fontWeight: 600 }}>
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
@@ -296,14 +296,14 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
 
                 {/* Détails du prix */}
                 <div className="border-b border-gray-200 pb-10">
-                  <h2 className="text-3xl mb-6" style={{ fontWeight: 500, color: '#4A5B8C', fontStyle: 'italic' }}>
+                  <h2 className="text-3xl mb-6" style={{ fontWeight: 500, color: '#222222', fontStyle: 'italic' }}>
                     Détails du prix
                   </h2>
 
                   {/* Frais de réservation */}
                   <div className="mb-6">
                     <button className="flex items-center justify-between w-full mb-4">
-                      <span className="text-xs" style={{ fontWeight: 700, color: '#E8664D', letterSpacing: '0.5px' }}>
+                      <span className="text-xs" style={{ fontWeight: 700, color: '#222222', letterSpacing: '0.5px' }}>
                         FRAIS DE RÉSERVATION
                       </span>
                       <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -328,8 +328,8 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
 
                     <div className="border-t border-gray-200 pt-4">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-lg" style={{ fontWeight: 600, color: '#E8664D' }}>Total</span>
-                        <span className="text-lg" style={{ fontWeight: 600, color: '#E8664D' }}>580€</span>
+                        <span className="text-lg" style={{ fontWeight: 600, color: '#222222' }}>Total</span>
+                        <span className="text-lg" style={{ fontWeight: 600, color: '#222222' }}>580€</span>
                       </div>
                       <div className="flex items-center justify-between text-sm text-gray-500">
                         <span>Dont TVA</span>
@@ -341,7 +341,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                   {/* Frais récurrents */}
                   <div>
                     <button className="flex items-center justify-between w-full mb-4">
-                      <span className="text-xs" style={{ fontWeight: 700, color: '#E8664D', letterSpacing: '0.5px' }}>
+                      <span className="text-xs" style={{ fontWeight: 700, color: '#222222', letterSpacing: '0.5px' }}>
                         FRAIS RÉCURRENTS
                       </span>
                       <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
