@@ -559,15 +559,19 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
 
           {/* Map Container */}
           <div className="relative w-full h-96 rounded-xl overflow-hidden mb-6 bg-gray-100">
-            {/* Simulated Google Map */}
-            <img 
-              src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&h=600&fit=crop" 
-              alt="Map"
-              className="w-full h-full object-cover opacity-70"
-            />
-            
+            {/* Google Maps iframe */}
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2997801.4673498073!2d44.2517899!3d-18.9140019!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x21d1a4e3ea0a37c7%3A0x915885f3c0cfd75!2sMadagascar!5e0!3m2!1sfr!2sfr!4v1234567890123!5m2!1sfr!2sfr"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
+
             {/* Search Bar Overlay */}
-            <div className="absolute top-4 left-4 right-4">
+            <div className="absolute top-4 left-4 right-4 z-10">
               <div className="bg-white rounded-lg shadow-lg flex items-center px-4 py-3">
                 <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="#222222">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -582,13 +586,6 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
                   style={{ color: '#222222' }}
                 />
               </div>
-            </div>
-
-            {/* Pin Marker */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-full">
-              <svg className="w-12 h-12" viewBox="0 0 24 24" fill="#10B981">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-              </svg>
             </div>
           </div>
         </div>
@@ -770,21 +767,15 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
 
           {/* Map */}
           <div className="relative w-full h-64 rounded-xl overflow-hidden bg-gray-100">
-            <img 
-              src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=600&h=400&fit=crop" 
-              alt="Map"
-              className="w-full h-full object-cover opacity-70"
-            />
-            {/* Pin Marker */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-full">
-              <svg className="w-10 h-10" viewBox="0 0 24 24" fill="#E91E63">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-              </svg>
-            </div>
-            {/* Google attribution */}
-            <div className="absolute bottom-2 right-2 text-xs bg-white px-2 py-1 rounded" style={{ color: '#717171' }}>
-              Google
-            </div>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15076.986269756775!2d47.5079055!3d-18.9100122!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x21f07e5e4c6c1b5f%3A0x6c3f9d5b8b4b8b4b!2sAntananarivo%2C%20Madagascar!5e0!3m2!1sfr!2sfr!4v1234567890123!5m2!1sfr!2sfr"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
           </div>
         </div>
 
@@ -845,12 +836,16 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
 
           {/* Map Container */}
           <div className="relative w-full h-[500px] rounded-xl overflow-hidden bg-gray-100 shadow-lg">
-            {/* Simulated Google Map */}
-            <img 
-              src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=1200&h=800&fit=crop" 
-              alt="Map"
-              className="w-full h-full object-cover opacity-80"
-            />
+            {/* Google Maps iframe */}
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3774.8896376584!2d47.5183249!3d-18.9141944!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x21f07e5e4c6c1b5f%3A0x6c3f9d5b8b4b8b4b!2sRue%20Ranaivo%20Paul%2C%20Antananarivo%2C%20Madagascar!5e0!3m2!1sfr!2sfr!4v1234567890123!5m2!1sfr!2sfr"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
 
             {/* Address Card Overlay */}
             <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10">
@@ -864,46 +859,6 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
                   Rue Ranaivo Paul, Antananarivo, Madagascar
                 </span>
               </div>
-            </div>
-            
-            {/* Pin Marker */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-full">
-              <svg className="w-14 h-14" viewBox="0 0 24 24" fill="#E91E63">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-              </svg>
-            </div>
-
-            {/* Map Controls */}
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-2">
-              <button className="w-10 h-10 bg-white rounded-lg shadow-md flex items-center justify-center hover:bg-gray-50">
-                <span className="text-xl" style={{ color: '#222222' }}>+</span>
-              </button>
-              <button className="w-10 h-10 bg-white rounded-lg shadow-md flex items-center justify-center hover:bg-gray-50">
-                <span className="text-xl" style={{ color: '#222222' }}>−</span>
-              </button>
-            </div>
-
-            {/* Recenter Button */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
-              <button className="bg-black text-white px-6 py-3 rounded-lg text-sm hover:opacity-90 transition-opacity shadow-lg" style={{ fontWeight: 600 }}>
-                Déplacer la carte pour repositionner le repère
-              </button>
-            </div>
-
-            {/* Google Map Attribution */}
-            <div className="absolute bottom-2 left-2 text-xs bg-white px-2 py-1 rounded flex gap-2" style={{ color: '#717171' }}>
-              <span>Raccourci clavier</span>
-              <span>Conditions d'utilisation ©2025</span>
-            </div>
-
-            {/* Location Finder Icon */}
-            <div className="absolute bottom-20 right-4">
-              <button className="w-10 h-10 bg-white rounded-lg shadow-md flex items-center justify-center hover:bg-gray-50">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#222222" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              </button>
             </div>
           </div>
         </div>
