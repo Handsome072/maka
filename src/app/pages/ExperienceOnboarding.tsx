@@ -2517,35 +2517,34 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
               </h1>
 
               {/* Map Container */}
-              <div className="relative w-full h-96 bg-gray-200 rounded-2xl overflow-hidden mb-8">
-                {/* Simulated Map */}
-                <div className="absolute inset-0 bg-gradient-to-br from-green-100 via-blue-100 to-gray-100">
-                  {/* Map Details */}
-                  <div className="absolute top-4 left-4 bg-white px-3 py-1 rounded text-xs" style={{ color: '#717171' }}>
-                    Raccourcis clavier
-                  </div>
-                  <div className="absolute bottom-4 left-4 text-xs" style={{ color: '#717171' }}>
-                    Données cartographiques ©2025 · 50 m
-                  </div>
-                  <div className="absolute bottom-4 right-4 text-xs" style={{ color: '#717171' }}>
-                    Conditions d'utilisation
-                  </div>
-                  
-                  {/* Center Marker */}
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                    <div className="relative">
-                      <svg className="w-12 h-12" viewBox="0 0 48 48" fill="none">
-                        <circle cx="24" cy="24" r="18" fill="white" opacity="0.3"/>
-                        <circle cx="24" cy="24" r="12" fill="white" opacity="0.5"/>
-                        <path d="M24 8C17.373 8 12 13.373 12 20C12 28 24 40 24 40C24 40 36 28 36 20C36 13.373 30.627 8 24 8Z" fill="#222222"/>
-                        <circle cx="24" cy="20" r="4" fill="white"/>
+              <div className="relative w-full h-[500px] rounded-2xl overflow-hidden mb-8 shadow-lg">
+                {/* Google Maps iframe */}
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3774.8896376584!2d47.5183249!3d-18.9141944!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x21f07e5e4c6c1b5f%3A0x6c3f9d5b8b4b8b4b!2sRue%20Ranaivo%20Paul%2C%20Antananarivo%2C%20Madagascar!5e0!3m2!1sfr!2sfr!4v1234567890123!5m2!1sfr!2sfr"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                ></iframe>
+
+                {/* Address Card Overlay */}
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10">
+                  <div className="bg-white rounded-lg shadow-xl px-4 py-3 flex items-center gap-3 min-w-[350px]">
+                    <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center flex-shrink-0">
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="white">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
                       </svg>
                     </div>
+                    <span className="text-sm" style={{ color: '#222222' }}>
+                      {location || 'Antananarivo, Madagascar'}
+                    </span>
                   </div>
                 </div>
 
                 {/* Repositioning Button */}
-                <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
+                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
                   <button
                     className="px-6 py-3 rounded-full text-white text-sm shadow-lg hover:opacity-90 transition-opacity"
                     style={{ fontWeight: 600, backgroundColor: '#717171' }}
