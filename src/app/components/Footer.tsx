@@ -186,7 +186,9 @@ export function Footer({ onNavigate }: FooterProps) {
               {/* Social Icons */}
               <div className="flex items-center gap-4">
                 <a
-                  href="#"
+                  href="https://web.facebook.com/Homiqio/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="hover:opacity-70 transition-opacity"
                   aria-label="Facebook"
                 >
@@ -199,9 +201,11 @@ export function Footer({ onNavigate }: FooterProps) {
                   </svg>
                 </a>
                 <a
-                  href="#"
+                  href="https://x.com/WithHomiqio"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="hover:opacity-70 transition-opacity"
-                  aria-label="Twitter"
+                  aria-label="X (Twitter)"
                 >
                   <svg
                     className="w-[18px] h-[18px]"
@@ -212,7 +216,9 @@ export function Footer({ onNavigate }: FooterProps) {
                   </svg>
                 </a>
                 <a
-                  href="#"
+                  href="https://www.instagram.com/homiqio/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="hover:opacity-70 transition-opacity"
                   aria-label="Instagram"
                 >
