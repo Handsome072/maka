@@ -560,17 +560,17 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
                 <ul className="space-y-3">
                   <li>
                     <a href="#" className="text-[14px] hover:underline" style={{ color: '#222222' }}>
-                      Mettez votre logement sur Airbnb
+                      Mettez votre logement sur HOMIQIO
                     </a>
                   </li>
                   <li>
                     <a href="#" className="text-[14px] hover:underline" style={{ color: '#222222' }}>
-                      Proposez votre expérience sur Airbnb
+                      Proposez votre expérience sur HOMIQIO
                     </a>
                   </li>
                   <li>
                     <a href="#" className="text-[14px] hover:underline" style={{ color: '#222222' }}>
-                      Proposez votre service sur Airbnb
+                      Proposez votre service sur HOMIQIO
                     </a>
                   </li>
                   <li>
@@ -611,10 +611,10 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
                 </ul>
               </div>
 
-              {/* Airbnb */}
+              {/* HOMIQIO */}
               <div>
                 <h3 className="text-[14px] mb-4" style={{ fontWeight: 600, color: '#222222' }}>
-                  Airbnb
+                  HOMIQIO
                 </h3>
                 <ul className="space-y-3">
                   <li>
@@ -644,7 +644,7 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
                   </li>
                   <li>
                     <a href="#" className="text-[14px] hover:underline" style={{ color: '#222222' }}>
-                      Séjours d'urgence Airbnb.org
+                      Séjours d'urgence HOMIQIO.org
                     </a>
                   </li>
                 </ul>

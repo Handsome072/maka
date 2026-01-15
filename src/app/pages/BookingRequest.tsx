@@ -64,12 +64,11 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
       <header className="border-b border-gray-200 sticky top-0 bg-white z-50">
         <div className="max-w-[1480px] mx-auto px-6 md:px-10 lg:px-20 py-5">
           <div className="flex items-center justify-center">
-            <div className="flex items-center gap-1">
-              <svg className="w-8 h-8 text-[#10B981]" viewBox="0 0 32 32" fill="currentColor">
-                <path d="M16 1c2 0 3.46.96 4.75 3.27L23.7 9.8l5.82-.84c2.17-.32 3.77.18 4.43 2.28.65 2.1-.13 3.77-1.87 5.18l-4.45 3.63L29.2 25c1.1 1.92 1.1 3.78-.4 5.08-1.48 1.3-3.25 1.18-5.04-.17l-4.76-3.43-4.76 3.43c-1.8 1.35-3.56 1.47-5.04.17-1.5-1.3-1.5-3.16-.4-5.08l1.56-4.95L5.92 16.4c-1.74-1.4-2.52-3.08-1.87-5.18.66-2.1 2.26-2.6 4.43-2.28l5.82.84 2.95-5.53C18.54 1.96 20 1 22 1h-6z"/>
-              </svg>
-              <span className="text-[#10B981] text-xl ml-1" style={{ fontWeight: 600 }}>HOMIQIO</span>
-            </div>
+            <img
+              src="/logo.png"
+              alt="HOMIQIO Logo"
+              className="w-[150px] h-auto"
+            />
           </div>
         </div>
       </header>

@@ -150,11 +150,11 @@ export function TermsOfService({ onNavigate }: TermsOfServiceProps) {
               </h2>
 
               <p className="text-base mb-6 leading-relaxed" style={{ color: '#222222' }}>
-                Veuillez noter qu'Airbnb ne s'engage ni ne s'oblige à utiliser un dispositif alternatif de résolution des litiges au sens de la directive 2013/11 UE afin de résoudre des litiges avec les consommateurs.
+                Veuillez noter que HOMIQIO ne s'engage ni ne s'oblige à utiliser un dispositif alternatif de résolution des litiges au sens de la directive 2013/11 UE afin de résoudre des litiges avec les consommateurs.
               </p>
 
               <p className="text-base mb-6 leading-relaxed" style={{ color: '#222222' }}>
-                <strong>L'article 25 des présentes Conditions contient un contrat d'arbitrage et de renonciation de recours collectif qui s'appliquent à toute demande d'indemnisation engagée contre Airbnb aux États-Unis. Veuillez les lire attentivement.</strong>
+                <strong>L'article 25 des présentes Conditions contient un contrat d'arbitrage et de renonciation de recours collectif qui s'appliquent à toute demande d'indemnisation engagée contre HOMIQIO aux États-Unis. Veuillez les lire attentivement.</strong>
               </p>
 
               <p className="text-base mb-12 leading-relaxed" style={{ color: '#222222' }}>
@@ -168,7 +168,7 @@ export function TermsOfService({ onNavigate }: TermsOfServiceProps) {
                     Partie contractante relative aux services de paiement destinés aux utilisateurs dont le lieu de résidence se trouve au Royaume-Uni, en Suisse ou en Russie :
                   </h3>
                   <div className="text-base leading-relaxed space-y-1" style={{ color: '#222222' }}>
-                    <p>Airbnb Payments UK Ltd.</p>
+                    <p>HOMIQIO Payments UK Ltd.</p>
                     <p>280 Bishopsgate</p>
                     <p>Londres</p>
                     <p>EC2M 4AG</p>
@@ -179,7 +179,7 @@ export function TermsOfService({ onNavigate }: TermsOfServiceProps) {
                 <div className="text-base leading-relaxed space-y-1" style={{ color: '#222222' }}>
                   <p><strong>Numéro de l'entreprise :</strong> 09392688</p>
                   <p><strong>Conseil d'administration :</strong> Quent Rickerby, Bart Rubin, David Coleman</p>
-                  <p>Airbnb Payments UK Ltd. est autorisé et régulé par l'Autorité de bonne conduite financière (Financial Conduct Authority) en tant qu'établissement de monnaie électronique sous la référence 900596.</p>
+                  <p>HOMIQIO Payments UK Ltd. est autorisé et régulé par l'Autorité de bonne conduite financière (Financial Conduct Authority) en tant qu'établissement de monnaie électronique sous la référence 900596.</p>
                 </div>
 
                 <div>
@@ -187,7 +187,7 @@ export function TermsOfService({ onNavigate }: TermsOfServiceProps) {
                     Partie contractante relative aux services de paiement destinés aux utilisateurs dont le lieu de résidence se trouve dans l'Espace économique européen :
                   </h3>
                   <div className="text-base leading-relaxed space-y-1" style={{ color: '#222222' }}>
-                    <p>Airbnb Payments Luxembourg S.A.</p>
+                    <p>HOMIQIO Payments Luxembourg S.A.</p>
                     <p>4, rue Henri Schnadt</p>
                     <p>L-2530 Luxembourg</p>
                     <p>Luxembourg</p>
@@ -197,7 +197,7 @@ export function TermsOfService({ onNavigate }: TermsOfServiceProps) {
                 <div className="text-base leading-relaxed space-y-1" style={{ color: '#222222' }}>
                   <p><strong>Numéro de l'entreprise :</strong> B230618</p>
                   <p><strong>Conseil d'administration :</strong> Thomas Belousek, Marc Hemmerling, Bart Rubin, Amit Singh</p>
-                  <p>Airbnb Payments Luxembourg S.A. est autorisée et régulée par la Commission de Surveillance du Secteur Financier (« CSSF ») sous le numéro de référence Z21.</p>
+                  <p>HOMIQIO Payments Luxembourg S.A. est autorisée et régulée par la Commission de Surveillance du Secteur Financier (« CSSF ») sous le numéro de référence Z21.</p>
                 </div>
 
                 <div>
@@ -206,8 +206,8 @@ export function TermsOfService({ onNavigate }: TermsOfServiceProps) {
                   </h3>
                   <p className="text-base leading-relaxed mb-6" style={{ color: '#222222' }}>
                     Interlocuteur unique pour les autorités des États membres, la Commission européenne et le conseil d'administration conformément à l'article 11 du règlement :{' '}
-                    <a href="mailto:dsa-authorities@airbnb.com" className="underline">
-                      dsa-authorities@airbnb.com
+                    <a href="mailto:dsa-authorities@homiqio.com" className="underline">
+                      dsa-authorities@homiqio.com
                     </a>
                     . Veuillez vous assurer que les communications sont faites en anglais ou accompagnées d'une traduction en anglais.
                   </p>
@@ -264,7 +264,7 @@ export function TermsOfService({ onNavigate }: TermsOfServiceProps) {
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M8 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#717171" />
             </svg>
-            <span>© 2026 Airbnb, Inc. All rights reserved.</span>
+            <span>© 2026 HOMIQIO, Inc. All rights reserved.</span>
           </div>
         </div>
       </footer>
