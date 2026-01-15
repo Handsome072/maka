@@ -2,24 +2,26 @@ import { Heart } from 'lucide-react';
 import { useState } from 'react';
 
 interface PropertyCardProps {
+  id?: string;
   image: string;
   title: string;
   location: string;
   date: string;
   price: string;
   rating: number;
-  badge?: 'favorite' | 'new';
+  badge?: 'Coup de coeur' | 'Originals' | 'Populaire' | 'Nouveau';
   guests?: string;
   beds?: string;
-  onClick?: () => void;
+  onClick?: (id?: string) => void;
 }
 
-export function PropertyCard({ 
-  image, 
-  title, 
-  location, 
-  date, 
-  price, 
+export function PropertyCard({
+  id,
+  image,
+  title,
+  location,
+  date,
+  price,
   rating,
   badge,
   guests,
@@ -33,27 +35,38 @@ export function PropertyCard({
     setIsFavorite(!isFavorite);
   };
 
+  const handleClick = () => {
+    if (onClick) {
+      onClick(id);
+    }
+  };
+
   return (
-    <div className="group cursor-pointer flex-shrink-0 w-full" onClick={onClick}>
+    <div className="group cursor-pointer flex-shrink-0 w-full" onClick={handleClick}>
       <div className="relative aspect-square rounded-xl overflow-hidden mb-3">
-        <img 
-          src={image} 
+        <img
+          src={image}
           alt={title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
-        <button 
+        <button
           onClick={handleFavoriteClick}
-          className="absolute top-3 right-3 p-2 hover:scale-110 transition-transform z-10"
+          className="absolute top-3 right-3 hover:scale-110 transition-transform z-10"
         >
-          <Heart 
-            className={`w-6 h-6 ${isFavorite ? 'fill-[#10B981] text-[#10B981]' : 'fill-black/50 text-white'} stroke-2`}
+          <Heart
+            className={`w-6 h-6 ${isFavorite ? 'fill-[#1E3A5F] text-[#1E3A5F]' : 'fill-black/50 text-white'} stroke-2`}
           />
         </button>
         {badge && (
-          <div className="absolute top-3 left-3 bg-white px-3 py-1 rounded-full shadow-sm">
-            <span className="text-xs" style={{ fontWeight: 600 }}>
-              {badge === 'favorite' ? 'Coup de cœur voyageurs' : 'NOUVEAU'}
-            </span>
+          <div className={`absolute top-3 left-3 px-3 py-1 rounded-full shadow-sm flex items-center gap-1.5 ${
+            badge === 'Originals' ? 'bg-white' : 'bg-white'
+          }`}>
+            {badge === 'Originals' && (
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 2L9.5 6.5L14 8L9.5 9.5L8 14L6.5 9.5L2 8L6.5 6.5L8 2Z" fill="#00A99D"/>
+              </svg>
+            )}
+            <span className="text-xs" style={{ fontWeight: 600 }}>{badge}</span>
           </div>
         )}
       </div>

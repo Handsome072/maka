@@ -1,5 +1,6 @@
 import { Search, Globe, Menu, User } from "lucide-react";
 import { useState, forwardRef, useRef, useImperativeHandle } from "react";
+import Link from "next/link";
 import { CompactSearchBar } from "./SearchBar";
 import { SearchOverlay } from "./SearchOverlay";
 import { LanguageModal } from "./LanguageModal";
@@ -8,6 +9,7 @@ import { BecomeHostModal } from "./BecomeHostModal";
 import { AuthModal } from "./AuthModal";
 import { HeaderRightMenu } from "./HeaderRightMenu";
 import { useAuth } from "../context/AuthContext";
+import { ROUTES } from "../config/routes";
 
 interface HeaderProps {
   currentPage: "logements" | "experiences" | "services";
@@ -49,8 +51,8 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
           <div className="px-4 sm:px-6 lg:px-20 py-4">
             <div className="flex items-center justify-between relative">
               {/* Logo - Always visible */}
-              <button
-                onClick={() => onNavigate("logements")}
+              <Link
+                href={ROUTES.HOME}
                 className="flex items-center gap-1 flex-shrink-0 relative z-10 border-0"
               >
                 <img
@@ -58,7 +60,7 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
                   alt="HOMIQIO Logo"
                   className="w-[150px] h-auto border-0"
                 />
-              </button>
+              </Link>
 
               {/* Center Section - Both components always mounted, visibility controlled by CSS */}
               <div className="flex-1 relative">

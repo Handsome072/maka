@@ -1,5 +1,7 @@
 import { Globe, Menu, User } from 'lucide-react';
+import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
+import { ROUTES, NAV_ITEMS } from '../config/routes';
 
 interface HeaderContentProps {
   currentPage: 'logements' | 'experiences' | 'services';
@@ -26,8 +28,8 @@ export function HeaderContent({
     <div className="flex-1">
       {/* Navigation centrale */}
       <nav className="hidden lg:flex items-center gap-8 justify-center">
-        <button
-          onClick={() => onNavigate('logements')}
+        <Link
+          href={ROUTES.HOME}
           className={`flex items-center gap-2 py-4 ${
             currentPage === 'logements'
               ? 'border-b-4 border-black'
@@ -57,9 +59,9 @@ export function HeaderContent({
             />
           </svg>
           <span className="text-sm">Logements</span>
-        </button>
-        <button
-          onClick={() => onNavigate('experiences')}
+        </Link>
+        <Link
+          href={ROUTES.EXPERIENCES}
           className={`flex items-center gap-2 py-4 relative ${
             currentPage === 'experiences'
               ? 'border-b-4 border-black'
@@ -101,9 +103,9 @@ export function HeaderContent({
             </span>
           </div>
           <span className="text-sm">Expériences</span>
-        </button>
-        <button
-          onClick={() => onNavigate('services')}
+        </Link>
+        <Link
+          href={ROUTES.SERVICES}
           className={`flex items-center gap-2 py-4 relative ${
             currentPage === 'services'
               ? 'border-b-4 border-black'
@@ -146,7 +148,7 @@ export function HeaderContent({
             </span>
           </div>
           <span className="text-sm">Services</span>
-        </button>
+        </Link>
       </nav>
     </div>
   );

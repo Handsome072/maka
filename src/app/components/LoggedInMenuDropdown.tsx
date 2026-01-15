@@ -1,6 +1,8 @@
 import { Heart, Globe, MessageSquare, User, HelpCircle } from 'lucide-react';
 import { useEffect, useRef } from 'react';
+import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
+import { ROUTES } from '../config/routes';
 
 // Host illustration - works for both Vite (public/) and Next.js (public/)
 const hostIllustration = '/host-illustration.png';
@@ -94,28 +96,24 @@ export function LoggedInMenuDropdown({ isOpen, onClose, onBecomeHostClick, onLan
       </button>
 
       {/* Messages */}
-      <button
+      <Link
+        href={ROUTES.MESSAGES}
         className="w-full px-8 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3 text-left"
-        onClick={() => {
-          onMessagesClick?.();
-          onClose();
-        }}
+        onClick={onClose}
       >
         <MessageSquare className="w-5 h-5 text-gray-700" />
         <span className="text-sm" style={{ fontWeight: 600 }}>Messages</span>
-      </button>
+      </Link>
 
       {/* Espace client */}
-      <button
+      <Link
+        href={ROUTES.CLIENT_SPACE}
         className="w-full px-8 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3 text-left"
-        onClick={() => {
-          onClientSpaceClick?.();
-          onClose();
-        }}
+        onClick={onClose}
       >
         <User className="w-5 h-5 text-gray-700" />
         <span className="text-sm" style={{ fontWeight: 600 }}>Espace client</span>
-      </button>
+      </Link>
 
       {/* Divider */}
       <div className="w-[240px] h-px bg-gray-200 my-2 mx-auto"></div>
@@ -138,12 +136,10 @@ export function LoggedInMenuDropdown({ isOpen, onClose, onBecomeHostClick, onLan
 
       {/* Devenir hôte / Gérer mes annonces */}
       {isHost ? (
-        <button
-          className="w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left"
-          onClick={() => {
-            onAnnoncesClick?.();
-            onClose();
-          }}
+        <Link
+          href={ROUTES.ANNONCES}
+          className="w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left block"
+          onClick={onClose}
         >
           <div className="flex items-start justify-between gap-3 px-4">
             <div className="flex-1">
@@ -160,7 +156,7 @@ export function LoggedInMenuDropdown({ isOpen, onClose, onBecomeHostClick, onLan
               className="w-12 h-12 object-contain flex-shrink-0"
             />
           </div>
-        </button>
+        </Link>
       ) : (
         <button
           className="w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left"

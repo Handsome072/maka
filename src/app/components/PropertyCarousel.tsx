@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRef, useState, useEffect } from 'react';
+import { motion, useInView } from 'motion/react';
 
 interface PropertyCarouselProps {
   title: string;
@@ -10,8 +11,12 @@ interface PropertyCarouselProps {
 
 export function PropertyCarousel({ title, subtitle, children, showMoreLink = true }: PropertyCarouselProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+
+  // Intersection Observer for scroll-based animations
+  const isInView = useInView(sectionRef, { once: true, margin: "-100px 0px" });
 
   const checkScroll = () => {
     const container = scrollContainerRef.current;
@@ -42,8 +47,8 @@ export function PropertyCarousel({ title, subtitle, children, showMoreLink = tru
     if (!container) return;
 
     const scrollAmount = container.clientWidth * 0.8;
-    const targetScroll = direction === 'left' 
-      ? container.scrollLeft - scrollAmount 
+    const targetScroll = direction === 'left'
+      ? container.scrollLeft - scrollAmount
       : container.scrollLeft + scrollAmount;
 
     container.scrollTo({
@@ -53,8 +58,14 @@ export function PropertyCarousel({ title, subtitle, children, showMoreLink = tru
   };
 
   return (
-    <section className="relative py-8">
-      <div className="px-4 sm:px-6 lg:px-20">
+    <motion.section
+      ref={sectionRef}
+      className="relative py-8"
+      initial={{ opacity: 0, y: 30 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+    >
+      <div className="px-4 sm:px-6 lg:px-12">
         <div className="flex items-center justify-between mb-6">
           <div>
             <div className="flex items-center gap-2">
@@ -102,7 +113,7 @@ export function PropertyCarousel({ title, subtitle, children, showMoreLink = tru
           </div>
         </div>
 
-        <div 
+        <div
           ref={scrollContainerRef}
           className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
@@ -110,6 +121,6 @@ export function PropertyCarousel({ title, subtitle, children, showMoreLink = tru
           {children}
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }

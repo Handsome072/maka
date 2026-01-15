@@ -2,8 +2,9 @@ import { Heart } from 'lucide-react';
 import { useState } from 'react';
 
 interface ExperienceCardProps {
+  id?: string;
   image: string;
-  badge?: 'Populaire' | 'Originals';
+  badge?: 'Coup de coeur' | 'Originals' | 'Populaire' | 'Nouveau';
   title: string;
   host: string;
   price: string;
@@ -11,15 +12,16 @@ interface ExperienceCardProps {
   time?: string;
   availablePlaces?: number;
   availableDate?: string;
-  onClick?: () => void;
+  onClick?: (id?: string) => void;
 }
 
-export function ExperienceCard({ 
-  image, 
+export function ExperienceCard({
+  id,
+  image,
   badge,
-  title, 
-  host, 
-  price, 
+  title,
+  host,
+  price,
   rating,
   time,
   availablePlaces,
@@ -33,22 +35,28 @@ export function ExperienceCard({
     setIsFavorite(!isFavorite);
   };
 
+  const handleClick = () => {
+    if (onClick) {
+      onClick(id);
+    }
+  };
+
   return (
-    <div className="group cursor-pointer flex-shrink-0 w-full" onClick={onClick}>
+    <div className="group cursor-pointer flex-shrink-0 w-full" onClick={handleClick}>
       <div className="relative aspect-square rounded-xl overflow-hidden mb-3">
-        <img 
-          src={image} 
+        <img
+          src={image}
           alt={title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
-        
+
         {/* Bouton favori */}
-        <button 
+        <button
           onClick={handleFavoriteClick}
-          className="absolute top-3 right-3 p-2 hover:scale-110 transition-transform z-10"
+          className="absolute top-3 right-3 hover:scale-110 transition-transform z-10"
         >
-          <Heart 
-            className={`w-6 h-6 ${isFavorite ? 'fill-[#10B981] text-[#10B981]' : 'fill-black/50 text-white'} stroke-2`}
+          <Heart
+            className={`w-6 h-6 ${isFavorite ? 'fill-[#1E3A5F] text-[#1E3A5F]' : 'fill-black/50 text-white'} stroke-2`}
           />
         </button>
 
@@ -59,7 +67,7 @@ export function ExperienceCard({
           }`}>
             {badge === 'Originals' && (
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M8 2L9.5 6.5L14 8L9.5 9.5L8 14L6.5 9.5L2 8L6.5 6.5L8 2Z" fill="#10B981"/>
+                <path d="M8 2L9.5 6.5L14 8L9.5 9.5L8 14L6.5 9.5L2 8L6.5 6.5L8 2Z" fill="#00A99D"/>
               </svg>
             )}
             <span className="text-xs" style={{ fontWeight: 600 }}>{badge}</span>
@@ -68,7 +76,7 @@ export function ExperienceCard({
 
         {/* Badge de places disponibles */}
         {availablePlaces && availableDate && (
-          <div className="absolute top-3 left-3 bg-[#10B981] text-white px-3 py-1 rounded-md shadow-sm">
+          <div className="absolute top-3 left-3 bg-[#1E3A5F] text-white px-3 py-1 rounded-md shadow-sm">
             <span className="text-xs" style={{ fontWeight: 600 }}>
               {availablePlaces} {availablePlaces === 1 ? 'place disponible' : 'places disponibles'}
             </span>
