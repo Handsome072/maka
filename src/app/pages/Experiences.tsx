@@ -16,7 +16,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
-  // Airbnb Originals - Organisées par des hôtes d'exception
+  // HOMIQIO Originals - Organisées par des hôtes d'exception
   const originalsExperiences = [
     {
       image: "https://images.unsplash.com/photo-1761839256547-0a1cd11b6dfb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhdGhsZXRlJTIwdHJhaW5pbmclMjBzcG9ydHN8ZW58MXx8fHwxNzY3ODYxOTA4fDA&ixlib=rb-4.1.0&q=80&w=1080",
@@ -390,9 +390,9 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       {!isScrolled && <ExperienceSearchBar onSearch={onSearch} />}
 
       <main className="pb-12">
-        {/* Airbnb Originals */}
+        {/* HOMIQIO Originals */}
         <PropertyCarousel
-          title="Airbnb Originals"
+          title="HOMIQIO Originals"
           subtitle="Organisées par des hôtes d'exception"
           showMoreLink={true}
         >

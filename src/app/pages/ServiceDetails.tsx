@@ -543,7 +543,7 @@ export function ServiceDetails({ onBack }: ServiceDetailsProps) {
               <div className="bg-gray-50 rounded-2xl px-8 py-6 mb-8">
                 <h3 className="text-[17px] mb-4 text-center" style={{ fontWeight: 600 }}>Envoyer un message à Carlo</h3>
                 <p className="text-sm text-gray-600 text-center leading-relaxed">
-                  Afin de protéger votre paiement, utilisez toujours Airbnb pour envoyer de l'argent et communiquer avec les hôtes.
+                  Afin de protéger votre paiement, utilisez toujours HOMIQIO pour envoyer de l'argent et communiquer avec les hôtes.
                 </p>
               </div>
             </div>

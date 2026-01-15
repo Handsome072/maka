@@ -1,7 +1,7 @@
 
-  # Intégration site Airbnb
+  # HOMIQIO
 
-  This is a code bundle for Intégration site Airbnb. The original project is available at https://www.figma.com/design/axCqGnTgbB6Z3sAnCtjbIs/Int%C3%A9gration-site-Airbnb.
+  This is the HOMIQIO application - a platform for property rentals, experiences, and services.
 
   ## Running the code
 

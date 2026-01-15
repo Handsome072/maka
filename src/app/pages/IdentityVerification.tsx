@@ -43,14 +43,13 @@ export function IdentityVerification({ onNavigate, listingTitle = 'Maison hôte 
         {/* Header */}
         <header className="sticky top-0 bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between z-20">
           <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg width="102" height="32" viewBox="0 0 102 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#10B981"/>
-              <text x="36" y="22" style={{ fontSize: '18px', fontWeight: 700, fill: '#10B981', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                HOMIQIO
-              </text>
-            </svg>
+            <img
+              src="/logo.png"
+              alt="HOMIQIO Logo"
+              className="w-[120px] h-auto"
+            />
           </button>
-          <button 
+          <button
             onClick={() => onNavigate('annonces')}
             className="text-sm hover:underline transition-all"
             style={{ fontWeight: 600, color: '#222222' }}
@@ -170,14 +169,13 @@ export function IdentityVerification({ onNavigate, listingTitle = 'Maison hôte 
         {/* Header */}
         <header className="sticky top-0 bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between z-20">
           <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg width="102" height="32" viewBox="0 0 102 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#10B981"/>
-              <text x="36" y="22" style={{ fontSize: '18px', fontWeight: 700, fill: '#10B981', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                HOMIQIO
-              </text>
-            </svg>
+            <img
+              src="/logo.png"
+              alt="HOMIQIO Logo"
+              className="w-[120px] h-auto"
+            />
           </button>
-          <button 
+          <button
             onClick={() => onNavigate('annonces')}
             className="text-sm hover:underline transition-all"
             style={{ fontWeight: 600, color: '#222222' }}
@@ -253,14 +251,13 @@ export function IdentityVerification({ onNavigate, listingTitle = 'Maison hôte 
         {/* Header */}
         <header className="sticky top-0 bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between z-20">
           <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg width="102" height="32" viewBox="0 0 102 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#10B981"/>
-              <text x="36" y="22" style={{ fontSize: '18px', fontWeight: 700, fill: '#10B981', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                HOMIQIO
-              </text>
-            </svg>
+            <img
+              src="/logo.png"
+              alt="HOMIQIO Logo"
+              className="w-[120px] h-auto"
+            />
           </button>
-          <button 
+          <button
             onClick={() => onNavigate('annonces')}
             className="text-sm hover:underline transition-all"
             style={{ fontWeight: 600, color: '#222222' }}
@@ -309,7 +306,7 @@ export function IdentityVerification({ onNavigate, listingTitle = 'Maison hôte 
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <h3 className="text-base" style={{ fontWeight: 600, color: '#222222' }}>
-                    Prendre une photo avec l'application mobile Airbnb
+                    Prendre une photo avec l'application mobile HOMIQIO
                   </h3>
                 </div>
                 <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ml-4 ${
@@ -357,14 +354,13 @@ export function IdentityVerification({ onNavigate, listingTitle = 'Maison hôte 
       {/* Header */}
       <header className="sticky top-0 bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between z-20">
         <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-          <svg width="102" height="32" viewBox="0 0 102 32" fill="none">
-            <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#10B981"/>
-            <text x="36" y="22" style={{ fontSize: '18px', fontWeight: 700, fill: '#10B981', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-              HOMIQIO
-            </text>
-          </svg>
+          <img
+            src="/logo.png"
+            alt="HOMIQIO Logo"
+            className="w-[120px] h-auto"
+          />
         </button>
-        <button 
+        <button
           onClick={() => onNavigate('annonces')}
           className="text-sm hover:underline transition-all"
           style={{ fontWeight: 600, color: '#222222' }}

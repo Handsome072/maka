@@ -380,7 +380,7 @@ export function ExperienceDetails({ onBack }: ExperienceDetailsProps) {
                     
                     {/* Security Note */}
                     <p className="text-xs text-gray-600 max-w-[280px] text-center lg:text-left leading-relaxed">
-                      Afin de protéger votre paiement, utilisez toujours Airbnb pour envoyer de l'argent et communiquer avec les hôtes.
+                      Afin de protéger votre paiement, utilisez toujours HOMIQIO pour envoyer de l'argent et communiquer avec les hôtes.
                     </p>
                   </div>
                   {/* Right Column - Bio */}
@@ -577,7 +577,7 @@ export function ExperienceDetails({ onBack }: ExperienceDetailsProps) {
           </div>
         </div>
 
-        {/* Airbnb Originals Section */}
+        {/* HOMIQIO Originals Section */}
         <div className="bg-[#F7F7F7] py-16 -mt-10">
           <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-20">
             <div className="max-w-3xl mx-auto text-center">

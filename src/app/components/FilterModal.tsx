@@ -245,7 +245,7 @@ export function FilterModal({ isOpen, onClose }: FilterModalProps) {
                   Coup de cœur voyageurs
                 </h4>
                 <p className="text-sm" style={{ color: '#717171' }}>
-                  Les logements les plus appréciés sur Airbnb
+                  Les logements les plus appréciés sur HOMIQIO
                 </p>
               </button>
 
