@@ -1,5 +1,6 @@
-import { Heart, Share, Star, ChevronRight, X } from 'lucide-react';
+import { X, Share, Heart } from 'lucide-react';
 import { useState } from 'react';
+import { ImageCarouselModal } from './ImageCarouselModal';
 
 interface ReservationDetailProps {
   onClose: () => void;
@@ -8,35 +9,56 @@ interface ReservationDetailProps {
 export function ReservationDetail({ onClose }: ReservationDetailProps) {
   const [showCancelPopup, setShowCancelPopup] = useState(false);
   const [isCancelled, setIsCancelled] = useState(false);
+  const [showCarousel, setShowCarousel] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [carouselStartIndex, setCarouselStartIndex] = useState(0);
+
+  const images = [
+    'https://images.unsplash.com/photo-1737305457496-dc7503cdde1e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBzdHVkaW8lMjBhcGFydG1lbnQlMjBpbnRlcmlvcnxlbnwxfHx8fDE3Njc3NjY1NTN8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    'https://images.unsplash.com/photo-1612419299101-6c294dc2901d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb3p5JTIwYXBhcnRtZW50JTIwbGl2aW5nJTIwcm9vbXxlbnwxfHx8fDE3Njc2ODYxNDN8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    'https://images.unsplash.com/photo-1737467016100-68cd7759d93c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcGFydG1lbnQlMjBiZWRyb29tJTIwY29tZm9ydGFibGV8ZW58MXx8fHwxNzY3NzY2NTU0fDA&ixlib=rb-4.1.0&q=80&w=1080',
+    'https://images.unsplash.com/photo-1597497522150-2f50bffea452?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBraXRjaGVuJTIwYXBhcnRtZW50fGVufDF8fHx8MTc2NzczMDQyNXww&ixlib=rb-4.1.0&q=80&w=1080',
+    'https://images.unsplash.com/photo-1757439402224-56c48352f719?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiYXRocm9vbSUyMGFwYXJ0bWVudCUyMG1vZGVybnxlbnwxfHx8fDE3Njc3NjY1NTV8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    'https://images.unsplash.com/photo-1662454419736-de132ff75638?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBiZWRyb29tJTIwYXBhcnRtZW50fGVufDF8fHx8MTc2NzgwNjkyOHww&ixlib=rb-4.1.0&q=80&w=1080',
+    'https://images.unsplash.com/photo-1650338031185-1e97add7a389?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxvdXRkb29yJTIwcGF0aW8lMjBnYXJkZW58ZW58MXx8fHwxNzY3ODI1MjIzfDA&ixlib=rb-4.1.0&q=80&w=1080',
+    'https://images.unsplash.com/photo-1696774276390-6ce82111140f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb3p5JTIwbGl2aW5nJTIwc3BhY2V8ZW58MXx8fHwxNzY3ODI4Nzc1fDA&ixlib=rb-4.1.0&q=80&w=1080',
+    'https://images.unsplash.com/photo-1682888818696-906287d759f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBzaG93ZXIlMjBiYXRocm9vbXxlbnwxfHx8fDE3Njc4NzQ5NjF8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    'https://images.unsplash.com/photo-1758448511533-e1502259fff6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcGFydG1lbnQlMjBlbnRyYW5jZSUyMGhhbGx3YXl8ZW58MXx8fHwxNzY3ODc0OTYyfDA&ixlib=rb-4.1.0&q=80&w=1080',
+  ];
+
+  const openCarousel = (index: number) => {
+    setCarouselStartIndex(index);
+    setShowCarousel(true);
+  };
 
   return (
     <>
       {/* Cancel Reservation Popup */}
       {showCancelPopup && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-gray-900 bg-opacity-30 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50">
           <div className="bg-white rounded-2xl p-8 max-w-xl w-full mx-4 relative">
             <button
               onClick={() => setShowCancelPopup(false)}
-              className="absolute top-6 right-6 w-8 h-8 rounded-full border-2 border-red-400 text-red-400 flex items-center justify-center hover:bg-red-50 transition-colors"
+              className="absolute top-6 right-6 w-8 h-8 rounded-full border-2 border-gray-800 text-gray-800 flex items-center justify-center hover:bg-gray-100 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <h2 className="text-3xl mb-6" style={{ fontWeight: 500, color: '#4A5B8C', fontStyle: 'italic' }}>
+            <h2 className="text-3xl mb-6" style={{ fontWeight: 600, color: '#222222' }}>
               Annuler votre réservation
             </h2>
 
             <div className="mb-6">
-              <h3 className="text-xs mb-4" style={{ fontWeight: 700, color: '#E8664D', letterSpacing: '0.5px' }}>
+              <h3 className="text-xs mb-4" style={{ fontWeight: 700, color: '#222222', letterSpacing: '0.5px' }}>
                 DÉTAILS DE REMBOURSEMENT
               </h3>
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between py-3 border-b border-gray-200">
-                  <span className="text-base" style={{ fontWeight: 600, color: '#4A5B8C' }}>
+                  <span className="text-base" style={{ fontWeight: 600, color: '#222222' }}>
                     Frais de réservation
                   </span>
-                  <span className="text-base" style={{ fontWeight: 600, color: '#4A5B8C' }}>
+                  <span className="text-base" style={{ fontWeight: 600, color: '#222222' }}>
                     580€
                   </span>
                 </div>
@@ -62,16 +84,16 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
               Vous recevrez un email de confirmation d'annulation de votre réservation.
             </p>
 
-            <button 
+            <button
               onClick={() => {
                 setIsCancelled(true);
                 setShowCancelPopup(false);
               }}
-              className="w-full px-6 py-3 border-2 rounded-lg text-base hover:bg-red-50 transition-colors bg-white"
-              style={{ 
+              className="w-full px-6 py-3 border-2 rounded-lg text-base hover:bg-gray-100 transition-colors bg-white"
+              style={{
                 fontWeight: 600,
-                color: '#E8664D',
-                borderColor: '#E8664D'
+                color: '#222222',
+                borderColor: '#222222'
               }}
             >
               ANNULER LA RÉSERVATION
@@ -79,6 +101,17 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
           </div>
         </div>
       )}
+
+      {/* Image Carousel Modal */}
+      <ImageCarouselModal
+        images={images}
+        isOpen={showCarousel}
+        initialIndex={carouselStartIndex}
+        onClose={() => setShowCarousel(false)}
+        showFavorite={true}
+        isFavorite={isFavorite}
+        onFavoriteToggle={() => setIsFavorite(!isFavorite)}
+      />
 
       {/* Main Content */}
       <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
@@ -91,7 +124,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
             <X className="w-5 h-5" />
             <span className="text-sm" style={{ fontWeight: 600 }}>Retour</span>
           </button>
-          
+
           <div className="flex items-center gap-4">
             <button className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors">
               <Share className="w-4 h-4" />
@@ -113,61 +146,41 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
 
         {/* Gallery Grid */}
         <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-20 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-2 rounded-xl overflow-hidden h-[300px] md:h-[400px] relative">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-2 rounded-2xl overflow-hidden h-[300px] md:h-[400px] relative">
             {/* Large image */}
-            <div className="md:col-span-2 md:row-span-2 relative group overflow-hidden rounded-l-xl">
+            <div className="md:col-span-2 md:row-span-2 relative group overflow-hidden">
               <img
-                src="https://images.unsplash.com/photo-1737305457496-dc7503cdde1e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBzdHVkaW8lMjBhcGFydG1lbnQlMjBpbnRlcmlvcnxlbnwxfHx8fDE3Njc3NjY1NTN8MA&ixlib=rb-4.1.0&q=80&w=1080"
+                src={images[0]}
                 alt="Property main"
                 className="w-full h-full object-cover cursor-pointer transition-all"
+                onClick={() => openCarousel(0)}
               />
+              <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none"></div>
             </div>
 
             {/* Small images */}
-            <div className="hidden md:block relative group overflow-hidden">
-              <img
-                src="https://images.unsplash.com/photo-1612419299101-6c294dc2901d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb3p5JTIwYXBhcnRtZW50JTIwbGl2aW5nJTIwcm9vbXxlbnwxfHx8fDE3Njc2ODYxNDN8MA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="Property 2"
-                className="w-full h-full object-cover cursor-pointer transition-all"
-              />
-            </div>
-            
-            <div className="hidden md:block relative group overflow-hidden rounded-tr-xl">
-              <img
-                src="https://images.unsplash.com/photo-1737467016100-68cd7759d93c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcGFydG1lbnQlMjBiZWRyb29tJTIwY29tZm9ydGFibGV8ZW58MXx8fHwxNzY3NzY2NTU0fDA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="Property 3"
-                className="w-full h-full object-cover cursor-pointer transition-all"
-              />
-            </div>
-            
-            <div className="hidden md:block relative group overflow-hidden">
-              <img
-                src="https://images.unsplash.com/photo-1597497522150-2f50bffea452?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBraXRjaGVuJTIwYXBhcnRtZW50fGVufDF8fHx8MTc2NzczMDQyNXww&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="Property 4"
-                className="w-full h-full object-cover cursor-pointer transition-all"
-              />
-            </div>
-            
-            <div className="hidden md:block relative group overflow-hidden rounded-br-xl">
-              <img
-                src="https://images.unsplash.com/photo-1757439402224-56c48352f719?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiYXRocm9vbSUyMGFwYXJ0bWVudCUyMG1vZGVybnxlbnwxfHx8fDE3Njc3NjY1NTV8MA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="Property 5"
-                className="w-full h-full object-cover cursor-pointer transition-all"
-              />
-            </div>
+            {images.slice(1, 5).map((img, index) => (
+              <div key={index} className="hidden md:block relative group overflow-hidden">
+                <img
+                  src={img}
+                  alt={`Property ${index + 2}`}
+                  className="w-full h-full object-cover cursor-pointer transition-all"
+                  onClick={() => openCarousel(index + 1)}
+                />
+                <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none"></div>
+              </div>
+            ))}
 
             {/* Show all photos button */}
             <button
-              className="absolute bottom-4 right-4 bg-white px-5 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-shadow flex items-center gap-2"
-              style={{ fontWeight: 600, fontSize: '13px', color: '#4A5B8C', letterSpacing: '0.5px' }}
+              onClick={() => openCarousel(0)}
+              className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg border border-gray-900 hover:bg-gray-50 transition-colors flex items-center gap-2"
+              style={{ fontWeight: 600, fontSize: '14px' }}
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="2" y="2" width="5" height="5" />
-                <rect x="9" y="2" width="5" height="5" />
-                <rect x="2" y="9" width="5" height="5" />
-                <rect x="9" y="9" width="5" height="5" />
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M3 3h4v4H3V3zm6 0h4v4H9V3zM3 9h4v4H3V9zm6 0h4v4H9V9z" />
               </svg>
-              AFFICHER TOUTES LES PHOTOS
+              Afficher toutes les photos
             </button>
           </div>
         </div>
@@ -180,7 +193,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
               <div className="lg:col-span-2 space-y-10">
                 {/* Réservation confirmée / annulée */}
                 <div className="border-b border-gray-200 pb-10">
-                  <h2 className="text-3xl mb-4" style={{ fontWeight: 500, color: '#4A5B8C', fontStyle: 'italic' }}>
+                  <h2 className="text-3xl mb-4" style={{ fontWeight: 600, color: '#222222' }}>
                     {isCancelled ? 'Réservation annulée' : 'Réservation confirmée'}
                   </h2>
 
@@ -194,7 +207,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                   ) : (
                     <>
                       <div className="mb-6">
-                        <p className="text-sm mb-3" style={{ color: '#E8664D' }}>
+                        <p className="text-sm mb-3" style={{ color: '#222222' }}>
                           <span style={{ fontWeight: 600 }}>Un email de confirmation de votre réservation vous a été envoyé.</span>
                         </p>
                         <p className="text-sm text-gray-600">
@@ -208,11 +221,11 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                             <svg className="w-4 h-4 text-red-400" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-xs" style={{ fontWeight: 600, color: '#E8664D', letterSpacing: '0.5px' }}>
+                            <span className="text-xs" style={{ fontWeight: 600, color: '#222222', letterSpacing: '0.5px' }}>
                               DATE D'ARRIVÉE
                             </span>
                           </div>
-                          <p className="text-2xl mb-1" style={{ fontWeight: 500, color: '#4A5B8C', fontStyle: 'italic' }}>
+                          <p className="text-2xl mb-1" style={{ fontWeight: 600, color: '#222222' }}>
                             Lun. 15 Sept. 2024
                           </p>
                           <p className="text-sm text-gray-500">15:00 - 21:00</p>
@@ -223,18 +236,18 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                             <svg className="w-4 h-4 text-red-400" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-xs" style={{ fontWeight: 600, color: '#E8664D', letterSpacing: '0.5px' }}>
+                            <span className="text-xs" style={{ fontWeight: 600, color: '#222222', letterSpacing: '0.5px' }}>
                               DATE DE DÉPART
                             </span>
                           </div>
-                          <p className="text-2xl mb-1" style={{ fontWeight: 500, color: '#4A5B8C', fontStyle: 'italic' }}>
+                          <p className="text-2xl mb-1" style={{ fontWeight: 600, color: '#222222' }}>
                             Ven. 19 Sept. 2024
                           </p>
                           <p className="text-sm text-gray-500">11:00</p>
                         </div>
                       </div>
 
-                      <button className="flex items-center gap-2 text-sm" style={{ color: '#E8664D', fontWeight: 600 }}>
+                      <button className="flex items-center gap-2 text-sm" style={{ color: '#222222', fontWeight: 600 }}>
                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
                         </svg>
@@ -246,7 +259,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
 
                 {/* Services supplémentaires réservés */}
                 <div className="border-b border-gray-200 pb-10">
-                  <h2 className="text-3xl mb-6" style={{ fontWeight: 500, color: '#4A5B8C', fontStyle: 'italic' }}>
+                  <h2 className="text-3xl mb-6" style={{ fontWeight: 600, color: '#222222' }}>
                     Services supplémentaires réservés
                   </h2>
 
@@ -258,7 +271,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                         </svg>
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-lg mb-2" style={{ fontWeight: 600, color: '#4A5B8C' }}>
+                        <h3 className="text-lg mb-2" style={{ fontWeight: 600, color: '#222222' }}>
                           Ménage ponctuel
                         </h3>
                         <p className="text-sm text-gray-600 leading-relaxed">
@@ -275,7 +288,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                         </svg>
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-lg mb-2" style={{ fontWeight: 600, color: '#4A5B8C' }}>
+                        <h3 className="text-lg mb-2" style={{ fontWeight: 600, color: '#222222' }}>
                           Parking [Type de parking]
                         </h3>
                         <p className="text-sm text-gray-600 leading-relaxed">
@@ -286,7 +299,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                     </div>
                   </div>
 
-                  <button className="flex items-center gap-2 text-sm" style={{ color: '#E8664D', fontWeight: 600 }}>
+                  <button className="flex items-center gap-2 text-sm" style={{ color: '#222222', fontWeight: 600 }}>
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
@@ -296,14 +309,14 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
 
                 {/* Détails du prix */}
                 <div className="border-b border-gray-200 pb-10">
-                  <h2 className="text-3xl mb-6" style={{ fontWeight: 500, color: '#4A5B8C', fontStyle: 'italic' }}>
+                  <h2 className="text-3xl mb-6" style={{ fontWeight: 600, color: '#222222' }}>
                     Détails du prix
                   </h2>
 
                   {/* Frais de réservation */}
                   <div className="mb-6">
                     <button className="flex items-center justify-between w-full mb-4">
-                      <span className="text-xs" style={{ fontWeight: 700, color: '#E8664D', letterSpacing: '0.5px' }}>
+                      <span className="text-xs" style={{ fontWeight: 700, color: '#222222', letterSpacing: '0.5px' }}>
                         FRAIS DE RÉSERVATION
                       </span>
                       <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -328,8 +341,8 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
 
                     <div className="border-t border-gray-200 pt-4">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-lg" style={{ fontWeight: 600, color: '#E8664D' }}>Total</span>
-                        <span className="text-lg" style={{ fontWeight: 600, color: '#E8664D' }}>580€</span>
+                        <span className="text-lg" style={{ fontWeight: 600, color: '#222222' }}>Total</span>
+                        <span className="text-lg" style={{ fontWeight: 600, color: '#222222' }}>580€</span>
                       </div>
                       <div className="flex items-center justify-between text-sm text-gray-500">
                         <span>Dont TVA</span>
@@ -341,7 +354,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                   {/* Frais récurrents */}
                   <div>
                     <button className="flex items-center justify-between w-full mb-4">
-                      <span className="text-xs" style={{ fontWeight: 700, color: '#E8664D', letterSpacing: '0.5px' }}>
+                      <span className="text-xs" style={{ fontWeight: 700, color: '#222222', letterSpacing: '0.5px' }}>
                         FRAIS RÉCURRENTS
                       </span>
                       <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -370,8 +383,8 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
 
                     <div className="border-t border-gray-200 pt-4">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-lg" style={{ fontWeight: 600, color: '#E8664D' }}>Total</span>
-                        <span className="text-lg" style={{ fontWeight: 600, color: '#E8664D' }}>740€ par mois</span>
+                        <span className="text-lg" style={{ fontWeight: 600, color: '#222222' }}>Total</span>
+                        <span className="text-lg" style={{ fontWeight: 600, color: '#222222' }}>740€ par mois</span>
                       </div>
                       <div className="flex items-center justify-between text-sm text-gray-500">
                         <span>Dont TVA</span>
@@ -387,7 +400,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                 <div className="space-y-6">
                   {/* Appartement T2 Card */}
                   <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-                    <h2 className="text-2xl mb-5" style={{ fontWeight: 500, color: '#4A5B8C', fontStyle: 'italic' }}>
+                    <h2 className="text-2xl mb-5" style={{ fontWeight: 600, color: '#222222' }}>
                       Appartement T2
                     </h2>
 
@@ -436,9 +449,9 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                       </div>
                     </div>
 
-                    <button 
+                    <button
                       className="flex items-center gap-2 text-sm"
-                      style={{ color: '#E8664D', fontWeight: 600 }}
+                      style={{ color: '#222222', fontWeight: 600 }}
                     >
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -450,7 +463,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
 
                   {/* Conditions d'annulation Card */}
                   <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sticky top-24">
-                    <h2 className="text-2xl mb-6" style={{ fontWeight: 500, color: '#4A5B8C', fontStyle: 'italic' }}>
+                    <h2 className="text-2xl mb-6" style={{ fontWeight: 600, color: '#222222' }}>
                       Conditions d'annulation
                     </h2>
 
@@ -469,13 +482,13 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                       </li>
                     </ul>
 
-                    <button 
+                    <button
                       onClick={() => setShowCancelPopup(true)}
-                      className="w-full px-6 py-3 border-2 rounded-lg text-sm hover:bg-red-50 transition-colors bg-white flex items-center justify-center gap-2"
-                      style={{ 
+                      className="w-full px-6 py-3 border-2 rounded-lg text-sm hover:bg-gray-100 transition-colors bg-white flex items-center justify-center gap-2"
+                      style={{
                         fontWeight: 600,
-                        color: '#E8664D',
-                        borderColor: '#E8664D'
+                        color: '#222222',
+                        borderColor: '#222222'
                       }}
                     >
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

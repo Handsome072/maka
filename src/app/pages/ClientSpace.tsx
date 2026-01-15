@@ -2,9 +2,26 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Heart, Share, Star, ChevronRight } from 'lucide-react';
 import { ReservationDetail } from '../components/ReservationDetail';
+import { HeaderRightMenu } from '../components/HeaderRightMenu';
+import { LanguageModal } from '../components/LanguageModal';
+import { BecomeHostModal } from '../components/BecomeHostModal';
+import { AuthModal } from '../components/AuthModal';
+import Link from 'next/link';
+
+// Property images from logements section for reservations
+const PROPERTY_IMAGES = [
+  'https://images.unsplash.com/photo-1663756915301-2ba688e078cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+  'https://images.unsplash.com/photo-1595848463742-764e6b5c11d2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+  'https://images.unsplash.com/photo-1646662521253-5b9253b1a207?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+  'https://images.unsplash.com/photo-1680601531588-1944422d1bd2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+  'https://images.unsplash.com/photo-1536494126589-29fadf0d7e3c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+  'https://images.unsplash.com/photo-1719849448528-bf30db61d3a5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+  'https://images.unsplash.com/photo-1693478075635-bf2742c3ea09?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+  'https://images.unsplash.com/photo-1549387025-c6b3d88e0ccb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+];
 
 interface ClientSpaceProps {
-  onNavigate?: (page: 'logements') => void;
+  onNavigate?: (page: 'logements' | 'messages' | 'annonces' | 'host-onboarding') => void;
 }
 
 export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
@@ -27,6 +44,12 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
   const [updatingPassword, setUpdatingPassword] = useState(false);
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
 
+  // Header menu state
+  const [showMenuDropdown, setShowMenuDropdown] = useState(false);
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
+  const [showBecomeHostModal, setShowBecomeHostModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
   // Si on affiche le détail de la réservation
   if (showReservationDetail) {
     return <ReservationDetail onClose={() => setShowReservationDetail(false)} />;
@@ -37,14 +60,16 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
     return (
       <div className="min-h-screen bg-white">
         {/* Header */}
-        <header className="border-b border-gray-200 px-6 lg:px-20 py-5 flex items-center justify-between">
-          <button 
+        <header className="border-b border-gray-200 px-6 lg:px-20 py-4 flex items-center justify-between">
+          <button
             onClick={() => setVerificationStep('none')}
-            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            className="flex items-center gap-1 flex-shrink-0 border-0 hover:opacity-80 transition-opacity"
           >
-            <svg width="102" height="32" viewBox="0 0 102 32" fill="#10B981">
-              <path d="M13.7 11.9a6.6 6.6 0 0 0-5.1-2.4C4.7 9.5 1.7 12.5 1.7 16.3c0 3.8 3 6.8 6.9 6.8 2 0 3.8-.7 5.1-2.4v2h3V10h-3v1.9zm-4.4 8.7c-2.5 0-4.4-2-4.4-4.3 0-2.3 2-4.3 4.4-4.3s4.4 2 4.4 4.3c0 2.4-2 4.3-4.4 4.3zM20.7 10h3v13h-3V10zm1.5-4.5c1 0 1.9.8 1.9 1.9s-.8 1.9-1.9 1.9-1.9-.8-1.9-1.9.8-1.9 1.9-1.9zM28.7 10h3v1.5c.9-1 2.3-1.8 3.9-1.8v3.2c-.2 0-.4-.1-.7-.1-1.3 0-2.5.6-3.2 1.4V23h-3V10zM44.2 9.5c2.1 0 3.9.8 5.1 2.4V3.5h3V23h-3v-2c-1.3 1.6-3.1 2.4-5.1 2.4-3.8 0-6.9-3-6.9-6.8 0-3.9 3.1-7.1 6.9-7.1zm.6 11.1c2.5 0 4.4-2 4.4-4.3 0-2.3-2-4.3-4.4-4.3s-4.4 2-4.4 4.3c0 2.4 1.9 4.3 4.4 4.3zM61.5 9.5c2 0 3.8.7 5.1 2.4V10h3v13h-3v-2c-1.3 1.6-3.1 2.4-5.1 2.4-3.8 0-6.9-3-6.9-6.8 0-3.9 3.1-7.1 6.9-7.1zm.6 11.1c2.5 0 4.4-2 4.4-4.3 0-2.3-2-4.3-4.4-4.3s-4.4 2-4.4 4.3c0 2.4 1.9 4.3 4.4 4.3zM80.3 9.5c2 0 3.8.7 5.1 2.4V10h3v13h-3v-2c-1.3 1.6-3.1 2.4-5.1 2.4-3.8 0-6.9-3-6.9-6.8 0-3.9 3.1-7.1 6.9-7.1zm.6 11.1c2.5 0 4.4-2 4.4-4.3 0-2.3-2-4.3-4.4-4.3s-4.4 2-4.4 4.3c0 2.4 1.9 4.3 4.4 4.3z"/>
-            </svg>
+            <img
+              src="/logo.png"
+              alt="HOMIQIO Logo"
+              className="w-[150px] h-auto border-0"
+            />
           </button>
         </header>
 
@@ -578,39 +603,32 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
   }
 
   return (
+    <>
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="border-b border-gray-200 px-6 lg:px-20 py-5 flex items-center justify-between">
-        <button 
-          onClick={() => onNavigate?.('logements')}
-          className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+      <header className="border-b border-gray-200 px-6 lg:px-20 py-4 flex items-center justify-between">
+        <Link
+          href="/"
+          className="flex items-center gap-1 flex-shrink-0 border-0 hover:opacity-80 transition-opacity"
         >
-          <svg width="102" height="32" viewBox="0 0 102 32" fill="none">
-            <path d="M16 0C7.163 0 0 7.163 0 16C0 24.837 7.163 32 16 32C24.837 32 32 24.837 32 16C32 7.163 24.837 0 16 0ZM16 29C8.832 29 3 23.168 3 16C3 8.832 8.832 3 16 3C23.168 3 29 8.832 29 16C29 23.168 23.168 29 16 29Z" fill="#059669"/>
-            <path d="M16 8C11.582 8 8 11.582 8 16C8 20.418 11.582 24 16 24C20.418 24 24 20.418 24 16C24 11.582 20.418 8 16 8ZM16 21C13.239 21 11 18.761 11 16C11 13.239 13.239 11 16 11C18.761 11 21 13.239 21 16C21 18.761 18.761 21 16 21Z" fill="#059669"/>
-          </svg>
-        </button>
-        
-        <div className="flex items-center gap-4">
-          <button 
-            className="px-4 py-2 hover:bg-gray-100 rounded-full transition-colors text-sm"
-            style={{ fontWeight: 600 }}
-          >
-            Devenir hôte
-          </button>
-          
-          <button className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-white">
-            {user?.name.charAt(0).toUpperCase() || 'A'}
-          </button>
-          
-          <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <line x1="3" y1="12" x2="21" y2="12" strokeWidth="2" strokeLinecap="round"/>
-              <line x1="3" y1="6" x2="21" y2="6" strokeWidth="2" strokeLinecap="round"/>
-              <line x1="3" y1="18" x2="21" y2="18" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-          </button>
-        </div>
+          <img
+            src="/logo.png"
+            alt="HOMIQIO Logo"
+            className="w-[150px] h-auto border-0"
+          />
+        </Link>
+
+        <HeaderRightMenu
+          showMenuDropdown={showMenuDropdown}
+          setShowMenuDropdown={setShowMenuDropdown}
+          setShowLanguageModal={setShowLanguageModal}
+          setShowBecomeHostModal={setShowBecomeHostModal}
+          setShowAuthModal={setShowAuthModal}
+          onClientSpaceClick={() => {}}
+          onMessagesClick={() => onNavigate?.('messages')}
+          isHost={false}
+          onAnnoncesClick={() => onNavigate?.('annonces')}
+        />
       </header>
 
       <div className="flex">
@@ -724,39 +742,29 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
           {activeSection === 'reservations' && (
             <>
               <div className="flex items-center justify-between mb-8">
-                <h2 className="text-[32px]" style={{ fontWeight: 600, color: '#4A5B8C' }}>
+                <h2 className="text-[32px]" style={{ fontWeight: 600, color: '#222222' }}>
                   Mes réservations
                 </h2>
-                <button 
-                  className="px-5 py-2.5 border-2 rounded-lg text-sm hover:bg-gray-50 transition-colors bg-white"
-                  style={{ 
-                    fontWeight: 600,
-                    color: '#E8664D',
-                    borderColor: '#E8664D'
-                  }}
-                >
-                  SE DÉCONNECTER
-                </button>
               </div>
 
               {/* RÉSERVATION(S) FUTURE(S) */}
               <div className="mb-8">
-                <h3 className="text-sm mb-4" style={{ fontWeight: 700, color: '#E8664D', letterSpacing: '0.5px' }}>
+                <h3 className="text-sm mb-4" style={{ fontWeight: 700, color: '#4A5B8C', letterSpacing: '0.5px' }}>
                   RÉSERVATION(S) FUTURE(S)
                 </h3>
-                
-                <div 
+
+                <div
                   className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 flex gap-6 cursor-pointer hover:shadow-md transition-shadow"
                   onClick={() => setShowReservationDetail(true)}
                 >
-                  <img 
-                    src="https://images.unsplash.com/photo-1663756915301-2ba688e078cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBhcGFydG1lbnQlMjBsaXZpbmclMjByb29tfGVufDF8fHx8MTc2ODA1NDQ3OXww&ixlib=rb-4.1.0&q=80&w=1080"
+                  <img
+                    src={PROPERTY_IMAGES[4]}
                     alt="Appartement"
                     className="w-56 h-40 object-cover rounded-xl flex-shrink-0"
                   />
-                  
+
                   <div className="flex-1">
-                    <h4 className="text-2xl mb-2" style={{ fontWeight: 500, color: '#E8664D', fontStyle: 'italic' }}>
+                    <h4 className="text-2xl mb-2" style={{ fontWeight: 500, color: '#4A5B8C', fontStyle: 'italic' }}>
                       Appartement T2
                     </h4>
                     <p className="text-sm text-gray-500 mb-4">
@@ -810,9 +818,9 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                   </div>
                   
                   <div className="flex flex-col items-end gap-3">
-                    <div 
+                    <div
                       className="rounded-lg px-6 py-4 flex flex-col items-center min-w-[180px]"
-                      style={{ backgroundColor: '#E8664D' }}
+                      style={{ backgroundColor: '#222222' }}
                     >
                       <div className="flex items-center gap-2 mb-1">
                         <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -822,13 +830,13 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                       </div>
                       <span className="text-3xl text-white" style={{ fontWeight: 700 }}>700 €</span>
                     </div>
-                    
-                    <button 
+
+                    <button
                       className="px-6 py-2.5 border-2 rounded-lg text-sm hover:bg-gray-50 transition-colors bg-white w-full"
-                      style={{ 
+                      style={{
                         fontWeight: 600,
-                        color: '#E8664D',
-                        borderColor: '#E8664D'
+                        color: '#222222',
+                        borderColor: '#222222'
                       }}
                     >
                       ANNULER
@@ -842,12 +850,12 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                 <h3 className="text-sm mb-4" style={{ fontWeight: 700, color: '#9CA3AF', letterSpacing: '0.5px' }}>
                   DERNIÈRES RÉSERVATIONS
                 </h3>
-                
+
                 <div className="space-y-4">
-                  {[1, 2, 3].map((item) => (
-                    <div key={item} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 flex gap-6">
-                      <img 
-                        src="https://images.unsplash.com/photo-1663756915301-2ba688e078cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBhcGFydG1lbnQlMjBsaXZpbmclMjByb29tfGVufDF8fHx8MTc2ODA1NDQ3OXww&ixlib=rb-4.1.0&q=80&w=1080"
+                  {[0, 1, 2].map((index) => (
+                    <div key={index} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 flex gap-6">
+                      <img
+                        src={PROPERTY_IMAGES[index % PROPERTY_IMAGES.length]}
                         alt="Appartement"
                         className="w-56 h-40 object-cover rounded-xl flex-shrink-0"
                       />
@@ -930,10 +938,10 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                 <h3 className="text-sm mb-4" style={{ fontWeight: 700, color: '#9CA3AF', letterSpacing: '0.5px' }}>
                   RÉSERVATIONS ANNULÉES
                 </h3>
-                
+
                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 flex gap-6">
-                  <img 
-                    src="https://images.unsplash.com/photo-1663756915301-2ba688e078cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBhcGFydG1lbnQlMjBsaXZpbmclMjByb29tfGVufDF8fHx8MTc2ODA1NDQ3OXww&ixlib=rb-4.1.0&q=80&w=1080"
+                  <img
+                    src={PROPERTY_IMAGES[3]}
                     alt="Appartement"
                     className="w-56 h-40 object-cover rounded-xl flex-shrink-0"
                   />
@@ -2375,10 +2383,10 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
               </label>
             </div>
 
-            <button 
-              className="w-full px-6 py-3 rounded-lg text-base cursor-not-allowed" 
-              style={{ 
-                fontWeight: 600, 
+            <button
+              className="w-full px-6 py-3 rounded-lg text-base cursor-not-allowed"
+              style={{
+                fontWeight: 600,
                 backgroundColor: '#EBEBEB',
                 color: '#B0B0B0'
               }}
@@ -2390,5 +2398,36 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
         </div>
       )}
     </div>
+
+    {/* Language Modal */}
+    {showLanguageModal && (
+      <LanguageModal
+        isOpen={showLanguageModal}
+        onClose={() => setShowLanguageModal(false)}
+      />
+    )}
+
+    {/* Become Host Modal */}
+    {showBecomeHostModal && (
+      <BecomeHostModal
+        isOpen={showBecomeHostModal}
+        onClose={() => setShowBecomeHostModal(false)}
+        onSelectOption={(option) => {
+          if (option === 'logement') {
+            onNavigate?.('host-onboarding');
+          }
+          setShowBecomeHostModal(false);
+        }}
+      />
+    )}
+
+    {/* Auth Modal */}
+    {showAuthModal && (
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+      />
+    )}
+    </>
   );
 }

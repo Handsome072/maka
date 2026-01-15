@@ -2,13 +2,15 @@ import { Heart, Share, Star, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useState } from 'react';
 import { Header } from '../components/Header';
 import { ExperienceCard } from '../components/ExperienceCard';
+import { ImageCarouselModal } from '../components/ImageCarouselModal';
 
 interface ExperienceDetailsProps {
   onBack: () => void;
 }
 
 export function ExperienceDetails({ onBack }: ExperienceDetailsProps) {
-  const [showAllPhotos, setShowAllPhotos] = useState(false);
+  const [showCarousel, setShowCarousel] = useState(false);
+  const [carouselStartIndex, setCarouselStartIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
 
   const images = [
@@ -56,53 +58,23 @@ export function ExperienceDetails({ onBack }: ExperienceDetailsProps) {
     }
   ];
 
+  const openCarousel = (index: number) => {
+    setCarouselStartIndex(index);
+    setShowCarousel(true);
+  };
+
   return (
     <>
-      {/* Photo Gallery Modal */}
-      {showAllPhotos && (
-        <div className="fixed inset-0 z-[100] bg-white overflow-y-auto">
-          {/* Header with close button */}
-          <div className="sticky top-0 bg-white z-10 px-6 py-4 border-b border-gray-200">
-            <div className="max-w-7xl mx-auto flex items-center justify-between">
-              <h2 className="text-lg" style={{ fontWeight: 600 }}>
-                Récupérez comme un athlète olympique avec Neville Wright
-              </h2>
-              <button
-                onClick={() => setShowAllPhotos(false)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-
-          {/* Photo Grid */}
-          <div className="max-w-7xl mx-auto px-6 py-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-              {allGalleryImages.map((img, index) => (
-                <div 
-                  key={index}
-                  className={`overflow-hidden rounded-lg ${
-                    index === 0 ? 'md:col-span-2 md:row-span-2' : 
-                    index === 3 ? 'lg:row-span-2' :
-                    index === 6 ? 'md:col-span-2' : ''
-                  }`}
-                >
-                  <img
-                    src={img}
-                    alt={`Photo ${index + 1}`}
-                    className="w-full h-full object-cover hover:opacity-90 transition-opacity cursor-pointer"
-                    style={{ 
-                      minHeight: index === 0 ? '400px' : index === 3 ? '300px' : '200px',
-                      maxHeight: index === 0 ? '600px' : index === 3 ? '500px' : '300px'
-                    }}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Image Carousel Modal */}
+      <ImageCarouselModal
+        images={allGalleryImages}
+        isOpen={showCarousel}
+        initialIndex={carouselStartIndex}
+        onClose={() => setShowCarousel(false)}
+        showFavorite={true}
+        isFavorite={isFavorite}
+        onFavoriteToggle={() => setIsFavorite(!isFavorite)}
+      />
 
       {/* Header */}
       <div className="bg-white">
@@ -113,16 +85,16 @@ export function ExperienceDetails({ onBack }: ExperienceDetailsProps) {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left: Photo Grid (2x2) */}
             <div className="grid grid-cols-2 gap-2 h-[600px] col-span-2">
-              <div className="cursor-pointer rounded-tl-3xl overflow-hidden" onClick={() => setShowAllPhotos(true)}>
+              <div className="cursor-pointer rounded-tl-3xl overflow-hidden" onClick={() => openCarousel(0)}>
                 <img src={images[0]} alt="Experience 1" className="w-full h-full object-cover" />
               </div>
-              <div className="cursor-pointer rounded-tr-3xl overflow-hidden" onClick={() => setShowAllPhotos(true)}>
+              <div className="cursor-pointer rounded-tr-3xl overflow-hidden" onClick={() => openCarousel(1)}>
                 <img src={images[1]} alt="Experience 2" className="w-full h-full object-cover" />
               </div>
-              <div className="cursor-pointer rounded-bl-3xl overflow-hidden" onClick={() => setShowAllPhotos(true)}>
+              <div className="cursor-pointer rounded-bl-3xl overflow-hidden" onClick={() => openCarousel(2)}>
                 <img src={images[2]} alt="Experience 3" className="w-full h-full object-cover" />
               </div>
-              <div className="cursor-pointer rounded-br-3xl overflow-hidden relative group" onClick={() => setShowAllPhotos(true)}>
+              <div className="cursor-pointer rounded-br-3xl overflow-hidden relative group" onClick={() => openCarousel(3)}>
                 <img src={images[3]} alt="Experience 4" className="w-full h-full object-cover" />
                 {/* Show all photos overlay button */}
                 <button className="absolute bottom-3 right-3 bg-white px-3 py-1.5 rounded-lg shadow-sm flex items-center gap-1.5 text-xs opacity-0 group-hover:opacity-100 transition-opacity" style={{ fontWeight: 600 }}>
