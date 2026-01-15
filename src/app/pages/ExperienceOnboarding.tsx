@@ -313,8 +313,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
     if (!showPresentationModal) return null;
 
     return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-2xl max-w-md w-full p-8 relative">
+      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => setShowPresentationModal(false)}>
+        <div className="bg-white rounded-2xl max-w-md w-full p-8 relative" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => setShowPresentationModal(false)}
             className="absolute top-6 right-6 p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -355,8 +355,12 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
             </button>
             <button
               onClick={() => setShowPresentationModal(false)}
-              className="px-6 py-2 rounded-lg text-sm"
-              style={{ fontWeight: 600, color: '#717171', backgroundColor: '#F5F5F5' }}
+              className="px-6 py-2 rounded-lg text-sm transition-colors"
+              style={{ 
+                fontWeight: 600, 
+                backgroundColor: presentation.trim() ? '#000000' : '#F5F5F5',
+                color: presentation.trim() ? '#FFFFFF' : '#717171'
+              }}
             >
               Enregistrer
             </button>
@@ -370,8 +374,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
     if (!showTipsModal) return null;
 
     return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-2xl max-w-lg w-full p-8 relative">
+      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => setShowTipsModal(false)}>
+        <div className="bg-white rounded-2xl max-w-lg w-full p-8 relative" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => setShowTipsModal(false)}
             className="absolute top-6 right-6 p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -455,8 +459,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
     if (!showExpertiseModal) return null;
 
     return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-2xl max-w-md w-full p-8 relative">
+      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => setShowExpertiseModal(false)}>
+        <div className="bg-white rounded-2xl max-w-md w-full p-8 relative" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => setShowExpertiseModal(false)}
             className="absolute top-6 right-6 p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -497,8 +501,12 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
             </button>
             <button
               onClick={() => setShowExpertiseModal(false)}
-              className="px-6 py-2 rounded-lg text-sm"
-              style={{ fontWeight: 600, color: '#717171', backgroundColor: '#F5F5F5' }}
+              className="px-6 py-2 rounded-lg text-sm transition-colors"
+              style={{ 
+                fontWeight: 600, 
+                backgroundColor: expertise.trim() ? '#000000' : '#F5F5F5',
+                color: expertise.trim() ? '#FFFFFF' : '#717171'
+              }}
             >
               Enregistrer
             </button>
@@ -512,8 +520,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
     if (!showDistinctionModal) return null;
 
     return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-2xl max-w-md w-full p-8 relative">
+      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => setShowDistinctionModal(false)}>
+        <div className="bg-white rounded-2xl max-w-md w-full p-8 relative" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => setShowDistinctionModal(false)}
             className="absolute top-6 right-6 p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -554,8 +562,12 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
             </button>
             <button
               onClick={() => setShowDistinctionModal(false)}
-              className="px-6 py-2 rounded-lg text-sm"
-              style={{ fontWeight: 600, color: '#717171', backgroundColor: '#F5F5F5' }}
+              className="px-6 py-2 rounded-lg text-sm transition-colors"
+              style={{ 
+                fontWeight: 600, 
+                backgroundColor: distinction.trim() ? '#000000' : '#F5F5F5',
+                color: distinction.trim() ? '#FFFFFF' : '#717171'
+              }}
             >
               Enregistrer
             </button>
@@ -577,8 +589,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
     };
 
     return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-2xl max-w-md w-full p-8 relative">
+      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => { setShowAddLinkModal(false); setTempLinkInput(''); }}>
+        <div className="bg-white rounded-2xl max-w-md w-full p-8 relative" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => {
               setShowAddLinkModal(false);
@@ -607,8 +619,12 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
           <div className="flex justify-end items-center gap-3">
             <button
               onClick={handleSaveLink}
-              className="px-6 py-2 rounded-lg text-sm hover:bg-gray-200 transition-colors"
-              style={{ fontWeight: 600, color: '#222222', backgroundColor: '#F5F5F5' }}
+              className="px-6 py-2 rounded-lg text-sm transition-colors"
+              style={{ 
+                fontWeight: 600, 
+                backgroundColor: tempLinkInput.trim() ? '#000000' : '#F5F5F5',
+                color: tempLinkInput.trim() ? '#FFFFFF' : '#717171'
+              }}
             >
               Enregistrer
             </button>
@@ -623,8 +639,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
     if (!showPhotoTipsModal) return null;
 
     return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-2xl max-w-xl w-full p-8 relative max-h-[90vh] overflow-y-auto">
+      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => setShowPhotoTipsModal(false)}>
+        <div className="bg-white rounded-2xl max-w-xl w-full p-8 relative max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => setShowPhotoTipsModal(false)}
             className="absolute top-6 right-6 p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -744,8 +760,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
     if (!showAddPhotoModal) return null;
 
     return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-2xl max-w-lg w-full p-8 relative max-h-[90vh] flex flex-col">
+      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={handleCancelPhotoModal}>
+        <div className="bg-white rounded-2xl max-w-lg w-full p-8 relative max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={handleCancelPhotoModal}
             className="absolute top-6 left-6 p-2 hover:bg-gray-100 rounded-full transition-colors z-10"
@@ -911,8 +927,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
     ];
 
     return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => setShowTitleTipsModal(false)}>
+        <div className="bg-white rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
           {/* Header */}
           <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
             <h2 className="text-lg" style={{ fontWeight: 600, color: '#222222' }}>
@@ -3201,8 +3217,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
 
         {/* Activity Modal */}
         {showActivityModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">
+          <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => setShowActivityModal(false)}>
+            <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative" onClick={(e) => e.stopPropagation()}>
               {/* Step 1: Title Input */}
               {activityModalStep === 'title' && (
                 <div className="p-8">
