@@ -1,102 +1,140 @@
-'use client';
-
-import { ChevronRight } from 'lucide-react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
+import { ChevronRight } from 'lucide-react';
 import { LegalFooter } from '@/app/components/LegalFooter';
 
-export default function PrivacyPage() {
-  const handleNavigate = (page: string) => {
-    // Navigation is handled by Next.js Link components
-  };
+export const metadata: Metadata = {
+  title: 'Politique de Confidentialité | Homiqio',
+  description: 'Politique de confidentialité et politique cookies de la plateforme HOMIQIO',
+};
 
+export default function PrivacyPage() {
   return (
     <>
-      {/* Breadcrumb */}
-      <div className="px-6 lg:px-20 py-4 border-b border-gray-200">
-        <div className="flex items-center gap-2 text-sm">
-          <Link href="/" className="hover:underline" style={{ color: '#222222' }}>
-            Accueil
-          </Link>
-          <ChevronRight className="w-4 h-4 text-gray-400" />
-          <span style={{ color: '#222222' }}>Politique de confidentialité</span>
+      {/* Main content */}
+      <div className="px-6 lg:px-20 py-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Breadcrumb */}
+          <nav className="flex items-center gap-2 text-sm mb-8" style={{ color: '#222222' }}>
+            <Link href="/" className="hover:underline">Accueil</Link>
+            <ChevronRight className="w-4 h-4" style={{ color: '#717171' }} />
+            <span className="hover:underline">All topics</span>
+            <ChevronRight className="w-4 h-4" style={{ color: '#717171' }} />
+            <span className="hover:underline">Conditions et dispositions juridiques</span>
+            <ChevronRight className="w-4 h-4" style={{ color: '#717171' }} />
+            <span style={{ color: '#717171' }}>Politique de confidentialité</span>
+          </nav>
+
+          <div className="flex gap-12">
+            {/* Main content area */}
+            <div className="flex-1 max-w-3xl">
+              <p className="text-xs mb-3" style={{ color: '#717171' }}>
+                Conditions et dispositions juridiques
+              </p>
+
+              <h1 className="text-[32px] mb-6" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
+                Politique de Confidentialité
+              </h1>
+
+              {/* Section 1 - Identité du responsable */}
+              <section className="mb-8">
+                <h2 className="text-lg mb-4" style={{ fontWeight: 600, color: '#222222' }}>
+                  1. IDENTITÉ DU RESPONSABLE DU TRAITEMENT
+                </h2>
+                <p className="text-base mb-4" style={{ color: '#222222', lineHeight: '1.6' }}>
+                  Les données personnelles collectées via la plateforme HOMIQIO sont traitées par :
+                </p>
+                <div className="text-base mb-4" style={{ color: '#222222', lineHeight: '1.6' }}>
+                  <p style={{ fontWeight: 600 }}>WANDERLATE SASU</p>
+                  <p>Société par actions simplifiée unipersonnelle au capital de 250 000 €</p>
+                  <p>Siège social : Bureau 3, 2 place Jean V, 44000 Nantes, France</p>
+                  <p>RCS Nantes : 991 607 656</p>
+                  <p>TVA intracommunautaire : FR14991607656</p>
+                </div>
+                <p className="text-base" style={{ color: '#222222', lineHeight: '1.6' }}>
+                  HOMIQIO est une marque commerciale exploitée par WANDERLATE SASU.
+                </p>
+              </section>
+
+              {/* Section 2 - Données collectées */}
+              <section className="mb-8">
+                <h2 className="text-lg mb-4" style={{ fontWeight: 600, color: '#222222' }}>
+                  2. DONNÉES PERSONNELLES COLLECTÉES
+                </h2>
+                <p className="text-base mb-4" style={{ color: '#222222', lineHeight: '1.6' }}>
+                  Dans le cadre de l'utilisation de la plateforme, les données suivantes peuvent être collectées :
+                </p>
+
+                <h3 className="text-base mb-2" style={{ fontWeight: 600, color: '#222222' }}>2.1 Données d'identification</h3>
+                <ul className="mb-4 pl-6" style={{ color: '#222222', lineHeight: '1.6' }}>
+                  <li style={{ listStyleType: 'disc' }}>Nom, prénom</li>
+                  <li style={{ listStyleType: 'disc' }}>Date de naissance (si nécessaire)</li>
+                  <li style={{ listStyleType: 'disc' }}>Nationalité (le cas échéant)</li>
+                </ul>
+
+                <h3 className="text-base mb-2" style={{ fontWeight: 600, color: '#222222' }}>2.2 Données de contact</h3>
+                <ul className="mb-4 pl-6" style={{ color: '#222222', lineHeight: '1.6' }}>
+                  <li style={{ listStyleType: 'disc' }}>Adresse email</li>
+                  <li style={{ listStyleType: 'disc' }}>Numéro de téléphone</li>
+                  <li style={{ listStyleType: 'disc' }}>Adresse postale</li>
+                </ul>
+              </section>
+
+              {/* Section 3 - Droits des utilisateurs */}
+              <section className="mb-8">
+                <h2 className="text-lg mb-4" style={{ fontWeight: 600, color: '#222222' }}>
+                  3. DROITS DES UTILISATEURS
+                </h2>
+                <p className="text-base mb-4" style={{ color: '#222222', lineHeight: '1.6' }}>
+                  Conformément au RGPD, chaque utilisateur dispose des droits suivants :
+                </p>
+                <ul className="mb-4 pl-6" style={{ color: '#222222', lineHeight: '1.6' }}>
+                  <li style={{ listStyleType: 'disc' }}>Droit d'accès</li>
+                  <li style={{ listStyleType: 'disc' }}>Droit de rectification</li>
+                  <li style={{ listStyleType: 'disc' }}>Droit d'effacement</li>
+                  <li style={{ listStyleType: 'disc' }}>Droit à la limitation du traitement</li>
+                  <li style={{ listStyleType: 'disc' }}>Droit d'opposition</li>
+                  <li style={{ listStyleType: 'disc' }}>Droit à la portabilité</li>
+                </ul>
+                <p className="text-base" style={{ color: '#222222', lineHeight: '1.6' }}>
+                  Les demandes peuvent être adressées à :{' '}
+                  <a href="mailto:contact@homiqio.com" className="underline hover:text-gray-600">contact@homiqio.com</a>
+                </p>
+              </section>
+
+              {/* Section 4 - Contact */}
+              <section className="mb-8">
+                <h2 className="text-lg mb-4" style={{ fontWeight: 600, color: '#222222' }}>
+                  4. CONTACT
+                </h2>
+                <p className="text-base" style={{ color: '#222222', lineHeight: '1.6' }}>
+                  Pour toute question relative à la présente politique, l'utilisateur peut contacter :{' '}
+                  <a href="mailto:contact@homiqio.com" className="underline hover:text-gray-600">contact@homiqio.com</a>
+                </p>
+              </section>
+            </div>
+
+            {/* Sidebar */}
+            <div className="hidden lg:block w-80 flex-shrink-0">
+              <div className="sticky top-24">
+                <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                  <h3 className="text-base mb-3" style={{ fontWeight: 600, color: '#222222' }}>
+                    Obtenez de l'aide pour vos réservations, votre compte et plus encore.
+                  </h3>
+                  <button
+                    className="w-full px-6 py-3 text-white rounded-lg text-base hover:opacity-90 transition-opacity"
+                    style={{ fontWeight: 600, backgroundColor: '#10B981' }}
+                  >
+                    Me connecter ou m'inscrire
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <main className="px-6 lg:px-20 py-12">
-        <div className="max-w-4xl">
-          <h1 className="text-3xl mb-8" style={{ fontWeight: 600, color: '#222222' }}>
-            Politique de confidentialité
-          </h1>
-
-          <div className="prose prose-gray max-w-none">
-            <p className="text-base leading-relaxed mb-6" style={{ color: '#222222' }}>
-              Chez HOMIQIO, nous nous engageons à protéger votre vie privée et vos données personnelles. 
-              Cette politique de confidentialité explique comment nous collectons, utilisons et protégeons 
-              vos informations lorsque vous utilisez notre plateforme.
-            </p>
-
-            <h2 className="text-xl mt-8 mb-4" style={{ fontWeight: 600, color: '#222222' }}>
-              1. Collecte des données
-            </h2>
-            <p className="text-base leading-relaxed mb-4" style={{ color: '#222222' }}>
-              Nous collectons les informations que vous nous fournissez directement, notamment :
-            </p>
-            <ul className="list-disc pl-6 mb-6 space-y-2">
-              <li style={{ color: '#222222' }}>Informations de compte (nom, email, téléphone)</li>
-              <li style={{ color: '#222222' }}>Informations de paiement</li>
-              <li style={{ color: '#222222' }}>Communications avec les hôtes et voyageurs</li>
-              <li style={{ color: '#222222' }}>Avis et évaluations</li>
-            </ul>
-
-            <h2 className="text-xl mt-8 mb-4" style={{ fontWeight: 600, color: '#222222' }}>
-              2. Utilisation des données
-            </h2>
-            <p className="text-base leading-relaxed mb-4" style={{ color: '#222222' }}>
-              Nous utilisons vos données pour :
-            </p>
-            <ul className="list-disc pl-6 mb-6 space-y-2">
-              <li style={{ color: '#222222' }}>Fournir et améliorer nos services</li>
-              <li style={{ color: '#222222' }}>Traiter les réservations et paiements</li>
-              <li style={{ color: '#222222' }}>Communiquer avec vous</li>
-              <li style={{ color: '#222222' }}>Assurer la sécurité de la plateforme</li>
-            </ul>
-
-            <h2 className="text-xl mt-8 mb-4" style={{ fontWeight: 600, color: '#222222' }}>
-              3. Protection des données
-            </h2>
-            <p className="text-base leading-relaxed mb-6" style={{ color: '#222222' }}>
-              Nous mettons en œuvre des mesures de sécurité techniques et organisationnelles 
-              appropriées pour protéger vos données personnelles contre tout accès non autorisé, 
-              modification, divulgation ou destruction.
-            </p>
-
-            <h2 className="text-xl mt-8 mb-4" style={{ fontWeight: 600, color: '#222222' }}>
-              4. Vos droits
-            </h2>
-            <p className="text-base leading-relaxed mb-4" style={{ color: '#222222' }}>
-              Conformément au RGPD, vous disposez des droits suivants :
-            </p>
-            <ul className="list-disc pl-6 mb-6 space-y-2">
-              <li style={{ color: '#222222' }}>Droit d'accès à vos données</li>
-              <li style={{ color: '#222222' }}>Droit de rectification</li>
-              <li style={{ color: '#222222' }}>Droit à l'effacement</li>
-              <li style={{ color: '#222222' }}>Droit à la portabilité</li>
-              <li style={{ color: '#222222' }}>Droit d'opposition</li>
-            </ul>
-
-            <h2 className="text-xl mt-8 mb-4" style={{ fontWeight: 600, color: '#222222' }}>
-              5. Contact
-            </h2>
-            <p className="text-base leading-relaxed mb-6" style={{ color: '#222222' }}>
-              Pour toute question concernant cette politique de confidentialité ou pour exercer 
-              vos droits, vous pouvez nous contacter à : privacy@homiqio.com
-            </p>
-          </div>
-        </div>
-      </main>
-
-      <LegalFooter onNavigate={handleNavigate} />
+      <LegalFooter activePage="privacy" />
     </>
   );
 }

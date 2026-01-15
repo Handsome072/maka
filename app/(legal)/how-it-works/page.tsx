@@ -1,108 +1,139 @@
-'use client';
-
-import { ChevronRight } from 'lucide-react';
-import Link from 'next/link';
+import type { Metadata } from 'next';
 import { LegalFooter } from '@/app/components/LegalFooter';
 
-export default function HowItWorksPage() {
-  const handleNavigate = (page: string) => {
-    // Navigation is handled by Next.js Link components
-  };
+export const metadata: Metadata = {
+  title: 'Fonctionnement du site | Homiqio',
+  description: 'Comprendre le fonctionnement de la plateforme HOMIQIO et le classement des annonces',
+};
 
+export default function HowItWorksPage() {
   return (
     <>
-      {/* Breadcrumb */}
-      <div className="px-6 lg:px-20 py-4 border-b border-gray-200">
-        <div className="flex items-center gap-2 text-sm">
-          <Link href="/" className="hover:underline" style={{ color: '#222222' }}>
-            Accueil
-          </Link>
-          <ChevronRight className="w-4 h-4 text-gray-400" />
-          <span style={{ color: '#222222' }}>Fonctionnement du site</span>
+      {/* Main content */}
+      <div className="px-6 lg:px-20 py-12">
+        <div className="max-w-[640px] mx-auto">
+          <h1 className="text-[28px] mb-10" style={{ fontWeight: 400, color: '#484848', lineHeight: '1.3' }}>
+            Fonctionnement du site et classement des annonces
+          </h1>
+
+          {/* Content sections */}
+          <div className="space-y-10">
+            {/* Section 1 */}
+            <section>
+              <h2 className="text-base mb-4" style={{ fontWeight: 700, color: '#484848' }}>
+                QU'EST-CE QU'HOMIQIO ?
+              </h2>
+              <div className="space-y-4 text-base" style={{ color: '#484848', lineHeight: '1.6' }}>
+                <p>
+                  La Plateforme HOMIQIO est une place de marché en ligne qui permet aux utilisateurs enregistrés (les <strong>« Membres »</strong>) et à certains tiers qui proposent des services (les Membres et tiers qui proposent des services sont des <strong>« Hôtes »</strong> et les services qu'ils proposent sont des <strong>« Services d'Hôte »</strong>) de publier ces Services d'Hôte sur la Plateforme HOMIQIO (les <strong>« Annonces »</strong>) et de communiquer et traiter directement avec des Membres qui souhaitent réserver ces Services d'Hôte (les Membres qui utilisent des Services d'Hôte sont des <strong>« Voyageurs »</strong>). Les Services d'Hôte peuvent comprendre la location de logements pour des vacances ou autre usage (les <strong>« Hébergements »</strong>), des activités sur une ou plusieurs journées dans différentes catégories (les <strong>« Expériences »</strong>), un accès à des événements et lieux uniques (les <strong>« Événements »</strong>), ainsi que d'autres services variés, en lien ou non avec les voyages.
+                </p>
+                <p>Vous devez créer un compte pour pouvoir publier une Annonce.</p>
+              </div>
+            </section>
+
+            {/* Section 2 */}
+            <section>
+              <h2 className="text-base mb-4" style={{ fontWeight: 700, color: '#484848' }}>
+                QUI PEUT DEVENIR HÔTE SUR HOMIQIO (LOGEMENTS) ?
+              </h2>
+              <div className="space-y-4 text-base" style={{ color: '#484848', lineHeight: '1.6' }}>
+                <p>
+                  Pratiquement tout le monde peut devenir hôte, que vous soyez un professionnel ou un non-professionnel. Votre inscription et la mise en ligne de votre logement sont gratuites.
+                </p>
+                <p>Pour proposer des séjours agréables et adaptés aux voyageurs, nous demandons à tous les hôtes de respecter 4 critères de base :</p>
+                <ul className="space-y-3 pl-6">
+                  <li style={{ listStyleType: 'disc' }}>
+                    <strong>Faire preuve de réactivité</strong> : maintenez un taux de réponse élevé en répondant aux demandes dans les 24 heures.
+                  </li>
+                  <li style={{ listStyleType: 'disc' }}>
+                    <strong>Accepter les demandes de réservation</strong> : montrez aux voyageurs qu'ils sont les bienvenus.
+                  </li>
+                  <li style={{ listStyleType: 'disc' }}>
+                    <strong>Éviter les annulations</strong> : les annulations ne sont pas anodines.
+                  </li>
+                  <li style={{ listStyleType: 'disc' }}>
+                    <strong>Maintenir une bonne évaluation globale</strong> : les voyageurs aiment un niveau de qualité constant.
+                  </li>
+                </ul>
+              </div>
+            </section>
+
+            {/* Section 3 */}
+            <section>
+              <h2 className="text-base mb-4" style={{ fontWeight: 700, color: '#484848' }}>
+                QUI PEUT PUBLIER UNE EXPÉRIENCE SUR HOMIQIO ?
+              </h2>
+              <div className="space-y-4 text-base" style={{ color: '#484848', lineHeight: '1.6' }}>
+                <p>
+                  Les expériences HOMIQIO sont des activités créées et animées par des passionnés. Chaque expérience est examinée pour s'assurer qu'elle respecte trois critères de qualité :
+                </p>
+                <ul className="space-y-3 pl-6">
+                  <li style={{ listStyleType: 'disc' }}><strong>Expertise</strong> : les hôtes sont bien informés et passionnés.</li>
+                  <li style={{ listStyleType: 'disc' }}><strong>Accès privilégié</strong> : découvrir des lieux uniques.</li>
+                  <li style={{ listStyleType: 'disc' }}><strong>Relation</strong> : établir des relations humaines enrichissantes.</li>
+                </ul>
+              </div>
+            </section>
+
+            {/* Section 4 */}
+            <section>
+              <h2 className="text-base mb-4" style={{ fontWeight: 700, color: '#484848' }}>
+                FRAIS DE SERVICE
+              </h2>
+              <div className="space-y-4 text-base" style={{ color: '#484848', lineHeight: '1.6' }}>
+                <p>Votre inscription et la mise en ligne de votre logement sont gratuites.</p>
+                <p>
+                  Pour vous aider à utiliser au mieux la plateforme HOMIQIO, y compris des services tels que l'assistance client 24h/24 et le traitement des cartes de crédit, nous facturons des frais de service lorsqu'une réservation est confirmée.
+                </p>
+              </div>
+            </section>
+
+            {/* Section 5 */}
+            <section>
+              <h2 className="text-base mb-4" style={{ fontWeight: 700, color: '#484848' }}>
+                MODE DE PAIEMENT
+              </h2>
+              <div className="space-y-4 text-base" style={{ color: '#484848', lineHeight: '1.6' }}>
+                <p>
+                  Tous les services de paiement liés à votre utilisation de la Plateforme HOMIQIO vous sont fournis par une ou plusieurs entités HOMIQIO Payments, comme le prévoient les Conditions de Service relatives aux paiements.
+                </p>
+                <p>
+                  Nous acceptons différents modes de paiement en fonction du pays dans lequel se trouve votre compte.
+                </p>
+              </div>
+            </section>
+
+            {/* Section 6 */}
+            <section>
+              <h2 className="text-base mb-4" style={{ fontWeight: 700, color: '#484848' }}>
+                GARANTIE HÔTE ET ASSURANCE HÔTE
+              </h2>
+              <div className="space-y-4 text-base" style={{ color: '#484848', lineHeight: '1.6' }}>
+                <p>
+                  Notre Garantie Hôte est conçue pour protéger les hôtes contre les dommages causés sur leurs propres biens. Notre Assurance Hôte protège contre des réclamations de tiers.
+                </p>
+              </div>
+            </section>
+
+            {/* Section 7 */}
+            <section>
+              <h2 className="text-base mb-4" style={{ fontWeight: 700, color: '#484848' }}>
+                CENTRE DE RÉSOLUTION ET ASSISTANCE
+              </h2>
+              <div className="space-y-4 text-base" style={{ color: '#484848', lineHeight: '1.6' }}>
+                <p>
+                  Le Centre de résolution vous permet de demander ou d'envoyer de l'argent dans le cadre de votre voyage HOMIQIO.
+                </p>
+                <p>
+                  En tant que voyageur, vous disposez de 60 jours après la date de votre départ du logement pour soumettre une demande dans le Centre de résolution.
+                </p>
+              </div>
+            </section>
+          </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <main className="px-6 lg:px-20 py-12">
-        <div className="max-w-4xl">
-          <h1 className="text-3xl mb-8" style={{ fontWeight: 600, color: '#222222' }}>
-            Comment fonctionne HOMIQIO
-          </h1>
-
-          <div className="prose prose-gray max-w-none">
-            <p className="text-base leading-relaxed mb-6" style={{ color: '#222222' }}>
-              HOMIQIO est une plateforme qui met en relation des voyageurs avec des hôtes 
-              proposant des hébergements uniques. Voici comment ça marche.
-            </p>
-
-            <h2 className="text-xl mt-8 mb-4" style={{ fontWeight: 600, color: '#222222' }}>
-              Pour les voyageurs
-            </h2>
-            
-            <h3 className="text-lg mt-6 mb-3" style={{ fontWeight: 600, color: '#222222' }}>
-              1. Recherchez
-            </h3>
-            <p className="text-base leading-relaxed mb-4" style={{ color: '#222222' }}>
-              Utilisez notre moteur de recherche pour trouver le logement idéal. Filtrez par 
-              destination, dates, nombre de voyageurs et équipements souhaités.
-            </p>
-
-            <h3 className="text-lg mt-6 mb-3" style={{ fontWeight: 600, color: '#222222' }}>
-              2. Réservez
-            </h3>
-            <p className="text-base leading-relaxed mb-4" style={{ color: '#222222' }}>
-              Une fois le logement trouvé, envoyez une demande de réservation. L'hôte dispose 
-              de 24 heures pour accepter ou refuser votre demande.
-            </p>
-
-            <h3 className="text-lg mt-6 mb-3" style={{ fontWeight: 600, color: '#222222' }}>
-              3. Profitez
-            </h3>
-            <p className="text-base leading-relaxed mb-6" style={{ color: '#222222' }}>
-              Après confirmation, vous recevrez toutes les informations nécessaires pour votre 
-              séjour. Communiquez directement avec votre hôte via notre messagerie.
-            </p>
-
-            <h2 className="text-xl mt-8 mb-4" style={{ fontWeight: 600, color: '#222222' }}>
-              Pour les hôtes
-            </h2>
-
-            <h3 className="text-lg mt-6 mb-3" style={{ fontWeight: 600, color: '#222222' }}>
-              1. Créez votre annonce
-            </h3>
-            <p className="text-base leading-relaxed mb-4" style={{ color: '#222222' }}>
-              Décrivez votre logement, ajoutez des photos de qualité et définissez vos tarifs 
-              et disponibilités.
-            </p>
-
-            <h3 className="text-lg mt-6 mb-3" style={{ fontWeight: 600, color: '#222222' }}>
-              2. Accueillez des voyageurs
-            </h3>
-            <p className="text-base leading-relaxed mb-4" style={{ color: '#222222' }}>
-              Recevez des demandes de réservation et choisissez les voyageurs que vous souhaitez 
-              accueillir. Notre système de vérification vous aide à faire les bons choix.
-            </p>
-
-            <h3 className="text-lg mt-6 mb-3" style={{ fontWeight: 600, color: '#222222' }}>
-              3. Gagnez de l'argent
-            </h3>
-            <p className="text-base leading-relaxed mb-6" style={{ color: '#222222' }}>
-              Recevez vos paiements de manière sécurisée, généralement 24 heures après l'arrivée 
-              du voyageur.
-            </p>
-
-            <h2 className="text-xl mt-8 mb-4" style={{ fontWeight: 600, color: '#222222' }}>
-              Notre garantie
-            </h2>
-            <p className="text-base leading-relaxed mb-6" style={{ color: '#222222' }}>
-              HOMIQIO offre une protection complète pour les hôtes et les voyageurs. Notre 
-              programme AirCover inclut une assurance dommages et une assistance 24/7.
-            </p>
-          </div>
-        </div>
-      </main>
-
-      <LegalFooter onNavigate={handleNavigate} />
+      <LegalFooter activePage="how-it-works" />
     </>
   );
 }

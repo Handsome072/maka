@@ -1,103 +1,135 @@
-'use client';
-
-import { ChevronRight } from 'lucide-react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
+import { ChevronRight } from 'lucide-react';
 import { LegalFooter } from '@/app/components/LegalFooter';
 
-export default function TermsPage() {
-  const handleNavigate = (page: string) => {
-    // Navigation is handled by Next.js Link components
-  };
+export const metadata: Metadata = {
+  title: 'Conditions Générales | Homiqio',
+  description: 'Conditions Générales d\'Utilisation et de Réservation de la plateforme HOMIQIO',
+};
 
+export default function TermsPage() {
   return (
     <>
-      {/* Breadcrumb */}
-      <div className="px-6 lg:px-20 py-4 border-b border-gray-200">
-        <div className="flex items-center gap-2 text-sm">
-          <Link href="/" className="hover:underline" style={{ color: '#222222' }}>
-            Accueil
-          </Link>
-          <ChevronRight className="w-4 h-4 text-gray-400" />
-          <span style={{ color: '#222222' }}>Conditions générales</span>
+      {/* Main content */}
+      <div className="px-6 lg:px-20 py-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Breadcrumb */}
+          <nav className="flex items-center gap-2 text-sm mb-8" style={{ color: '#222222' }}>
+            <Link href="/" className="hover:underline">Accueil</Link>
+            <ChevronRight className="w-4 h-4" style={{ color: '#717171' }} />
+            <span className="hover:underline">All Topics</span>
+            <ChevronRight className="w-4 h-4" style={{ color: '#717171' }} />
+            <span className="hover:underline">Conditions et dispositions juridiques</span>
+            <ChevronRight className="w-4 h-4" style={{ color: '#717171' }} />
+            <span style={{ color: '#717171' }}>Conditions de Service</span>
+          </nav>
+
+          <div className="flex gap-12">
+            {/* Main content area */}
+            <div className="flex-1 max-w-3xl">
+              <p className="text-xs mb-3" style={{ fontWeight: 600, color: '#717171', textTransform: 'uppercase' }}>
+                Conditions et dispositions juridiques
+              </p>
+
+              <h1 className="text-[32px] mb-8" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
+                Conditions Générales d'Utilisation
+              </h1>
+
+              {/* CGU - Article 1 */}
+              <section className="mb-8">
+                <h2 className="text-lg mb-4" style={{ fontWeight: 600, color: '#222222' }}>
+                  ARTICLE 1 – IDENTITÉ DE L'EXPLOITANT
+                </h2>
+                <p className="text-base mb-4" style={{ color: '#222222', lineHeight: '1.6' }}>
+                  La plateforme HOMIQIO est exploitée par :
+                </p>
+                <div className="text-base mb-4" style={{ color: '#222222', lineHeight: '1.6' }}>
+                  <p style={{ fontWeight: 600 }}>WANDERLATE SASU</p>
+                  <p>Société par actions simplifiée unipersonnelle au capital de 250 000 €</p>
+                  <p>Siège social : Bureau 3, 2 place Jean V, 44000 Nantes, France</p>
+                  <p>RCS Nantes : 991 607 656</p>
+                  <p>TVA intracommunautaire : FR14991607656</p>
+                </div>
+                <p className="text-base" style={{ color: '#222222', lineHeight: '1.6' }}>
+                  HOMIQIO est une marque commerciale exploitée par WANDERLATE SASU.
+                </p>
+              </section>
+
+              {/* CGU - Article 2 */}
+              <section className="mb-8">
+                <h2 className="text-lg mb-4" style={{ fontWeight: 600, color: '#222222' }}>
+                  ARTICLE 2 – OBJET DES CGU
+                </h2>
+                <p className="text-base mb-4" style={{ color: '#222222', lineHeight: '1.6' }}>
+                  Les présentes Conditions Générales d'Utilisation ont pour objet de définir les modalités et conditions d'accès, de navigation et d'utilisation de la plateforme HOMIQIO.
+                </p>
+                <p className="text-base" style={{ color: '#222222', lineHeight: '1.6' }}>
+                  Toute utilisation de la plateforme implique l'acceptation pleine, entière et sans réserve des présentes CGU par l'utilisateur.
+                </p>
+              </section>
+
+              {/* CGU - Article 3 */}
+              <section className="mb-8">
+                <h2 className="text-lg mb-4" style={{ fontWeight: 600, color: '#222222' }}>
+                  ARTICLE 3 – DÉFINITIONS
+                </h2>
+                <ul className="pl-6" style={{ color: '#222222', lineHeight: '1.6' }}>
+                  <li style={{ listStyleType: 'disc' }}><strong>Plateforme :</strong> le site internet, l'application mobile et les services numériques HOMIQIO</li>
+                  <li style={{ listStyleType: 'disc' }}><strong>Utilisateur :</strong> toute personne accédant à la plateforme</li>
+                  <li style={{ listStyleType: 'disc' }}><strong>Client :</strong> utilisateur effectuant une réservation</li>
+                  <li style={{ listStyleType: 'disc' }}><strong>Hébergeur :</strong> professionnel ou particulier proposant un hébergement via la plateforme</li>
+                </ul>
+              </section>
+
+              {/* CGU - Article 4 */}
+              <section className="mb-8">
+                <h2 className="text-lg mb-4" style={{ fontWeight: 600, color: '#222222' }}>
+                  ARTICLE 4 – ACCÈS À LA PLATEFORME
+                </h2>
+                <p className="text-base mb-4" style={{ color: '#222222', lineHeight: '1.6' }}>
+                  L'accès à la plateforme est gratuit.
+                </p>
+                <p className="text-base" style={{ color: '#222222', lineHeight: '1.6' }}>
+                  Certaines fonctionnalités, notamment la réservation d'hébergements, nécessitent la création d'un compte utilisateur.
+                </p>
+              </section>
+
+              {/* CGU - Article 16 */}
+              <section className="mb-8">
+                <h2 className="text-lg mb-4" style={{ fontWeight: 600, color: '#222222' }}>
+                  ARTICLE 16 – DROIT APPLICABLE ET JURIDICTION COMPÉTENTE
+                </h2>
+                <p className="text-base mb-4" style={{ color: '#222222', lineHeight: '1.6' }}>
+                  Les présentes CGU sont soumises au droit français.
+                </p>
+                <p className="text-base" style={{ color: '#222222', lineHeight: '1.6' }}>
+                  Tout litige relatif à leur interprétation ou exécution relève de la compétence exclusive des tribunaux compétents du ressort de Nantes.
+                </p>
+              </section>
+            </div>
+
+            {/* Sidebar */}
+            <div className="hidden lg:block w-80 flex-shrink-0">
+              <div className="sticky top-24">
+                <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                  <h3 className="text-base mb-3" style={{ fontWeight: 600, color: '#222222' }}>
+                    Obtenez de l'aide pour vos réservations, votre compte et plus encore.
+                  </h3>
+                  <button
+                    className="w-full px-6 py-3 text-white rounded-lg text-base hover:opacity-90 transition-opacity"
+                    style={{ fontWeight: 600, backgroundColor: '#10B981' }}
+                  >
+                    Me connecter ou m'inscrire
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <main className="px-6 lg:px-20 py-12">
-        <div className="max-w-4xl">
-          <h1 className="text-3xl mb-8" style={{ fontWeight: 600, color: '#222222' }}>
-            Conditions générales d'utilisation
-          </h1>
-
-          <div className="prose prose-gray max-w-none">
-            <p className="text-base leading-relaxed mb-6" style={{ color: '#222222' }}>
-              Bienvenue sur HOMIQIO. En utilisant notre plateforme, vous acceptez les présentes 
-              conditions générales d'utilisation. Veuillez les lire attentivement.
-            </p>
-
-            <h2 className="text-xl mt-8 mb-4" style={{ fontWeight: 600, color: '#222222' }}>
-              1. Objet
-            </h2>
-            <p className="text-base leading-relaxed mb-6" style={{ color: '#222222' }}>
-              HOMIQIO est une plateforme de mise en relation entre des hôtes proposant des 
-              hébergements et des voyageurs recherchant un logement temporaire. Les présentes 
-              conditions régissent l'utilisation de la plateforme.
-            </p>
-
-            <h2 className="text-xl mt-8 mb-4" style={{ fontWeight: 600, color: '#222222' }}>
-              2. Inscription
-            </h2>
-            <p className="text-base leading-relaxed mb-6" style={{ color: '#222222' }}>
-              Pour utiliser certaines fonctionnalités de la plateforme, vous devez créer un compte. 
-              Vous vous engagez à fournir des informations exactes et à maintenir la confidentialité 
-              de vos identifiants de connexion.
-            </p>
-
-            <h2 className="text-xl mt-8 mb-4" style={{ fontWeight: 600, color: '#222222' }}>
-              3. Réservations
-            </h2>
-            <p className="text-base leading-relaxed mb-6" style={{ color: '#222222' }}>
-              Les réservations sont soumises à l'acceptation de l'hôte. Une fois confirmée, 
-              la réservation constitue un contrat entre le voyageur et l'hôte. HOMIQIO agit 
-              uniquement en tant qu'intermédiaire.
-            </p>
-
-            <h2 className="text-xl mt-8 mb-4" style={{ fontWeight: 600, color: '#222222' }}>
-              4. Paiements
-            </h2>
-            <p className="text-base leading-relaxed mb-6" style={{ color: '#222222' }}>
-              Les paiements sont traités de manière sécurisée via notre plateforme. Les frais 
-              de service sont prélevés sur chaque transaction conformément à notre grille tarifaire.
-            </p>
-
-            <h2 className="text-xl mt-8 mb-4" style={{ fontWeight: 600, color: '#222222' }}>
-              5. Annulations
-            </h2>
-            <p className="text-base leading-relaxed mb-6" style={{ color: '#222222' }}>
-              Les conditions d'annulation varient selon les politiques définies par chaque hôte. 
-              Consultez les conditions spécifiques avant de réserver.
-            </p>
-
-            <h2 className="text-xl mt-8 mb-4" style={{ fontWeight: 600, color: '#222222' }}>
-              6. Responsabilités
-            </h2>
-            <p className="text-base leading-relaxed mb-6" style={{ color: '#222222' }}>
-              HOMIQIO n'est pas responsable des litiges entre hôtes et voyageurs. Nous nous 
-              efforçons cependant de faciliter la résolution des conflits via notre service client.
-            </p>
-
-            <h2 className="text-xl mt-8 mb-4" style={{ fontWeight: 600, color: '#222222' }}>
-              7. Modification des conditions
-            </h2>
-            <p className="text-base leading-relaxed mb-6" style={{ color: '#222222' }}>
-              Nous nous réservons le droit de modifier ces conditions à tout moment. Les 
-              modifications entrent en vigueur dès leur publication sur la plateforme.
-            </p>
-          </div>
-        </div>
-      </main>
-
-      <LegalFooter onNavigate={handleNavigate} />
+      <LegalFooter activePage="terms" />
     </>
   );
 }
