@@ -1,14 +1,17 @@
 import { HelpCircle } from 'lucide-react';
 import { useEffect, useRef } from 'react';
-import hostIllustration from '@/assets/38ec71431adff7f609dab055e5554ab5c0ee6be7.png';
+
+// Host illustration - works for both Vite (public/) and Next.js (public/)
+const hostIllustration = '/host-illustration.png';
 
 interface MenuDropdownProps {
   isOpen: boolean;
   onClose: () => void;
   onAuthClick?: () => void;
+  onBecomeHostClick?: () => void;
 }
 
-export function MenuDropdown({ isOpen, onClose, onAuthClick }: MenuDropdownProps) {
+export function MenuDropdown({ isOpen, onClose, onAuthClick, onBecomeHostClick }: MenuDropdownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -52,7 +55,10 @@ export function MenuDropdown({ isOpen, onClose, onAuthClick }: MenuDropdownProps
       <div className="w-[240px] h-px bg-gray-200 my-2 mx-auto"></div>
 
       {/* Devenir hôte avec illustration */}
-      <button className="w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left">
+      <button
+        className="w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left"
+        onClick={onBecomeHostClick}
+      >
         <div className="flex items-start justify-between gap-3  px-4">
           <div className="flex-1">
             <div className="text-sm mb-1" style={{ fontWeight: 600 }}>
@@ -62,40 +68,27 @@ export function MenuDropdown({ isOpen, onClose, onAuthClick }: MenuDropdownProps
               Devenir hôte et gagner des revenus supplémentaires, c'est facile.
             </div>
           </div>
-          <img 
-            src={hostIllustration} 
-            alt="Illustration hôte" 
+          <img
+            src={hostIllustration}
+            alt="Illustration hôte"
             className="w-12 h-12 object-contain flex-shrink-0"
           />
         </div>
       </button>
-         {/* Divider */}
-      <div className="w-[240px] h-px bg-gray-200 my-2 mx-auto"></div>
-      {/* Parrainer un hôte */}
-      <button className="w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left">
-        <span className="text-sm px-4">Parrainer un hôte</span>
-      </button>
 
-      {/* Trouver un co-hôte */}
-      <button className="w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left">
-        <span className="text-sm px-4">Trouver un co-hôte</span>
-      </button>
-
-      {/* Cartes cadeaux */}
-      <button className="w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left">
-        <span className="text-sm px-4">Cartes cadeaux</span>
-      </button>
-
-          {/* Divider */}
+      {/* Divider */}
       <div className="w-[240px] h-px bg-gray-200 my-2 mx-auto"></div>
 
       {/* Se connecter ou s'inscrire */}
-      <button 
-        className="w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left"
-        onClick={onAuthClick}
-      >
-        <span className="text-sm px-4">Se connecter ou s'inscrire</span>
-      </button>
+      <div className="px-4 py-3">
+        <button
+          className="w-full py-3 rounded-lg transition-colors text-center text-white hover:opacity-90"
+          style={{ backgroundColor: 'black' }}
+          onClick={onAuthClick}
+        >
+          <span className="text-sm font-medium">Se connecter ou s'inscrire</span>
+        </button>
+      </div>
     </div>
   );
 }

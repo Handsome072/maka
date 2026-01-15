@@ -2,16 +2,13 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Search, Globe, Menu, User } from 'lucide-react';
-import { MenuDropdown } from './MenuDropdown';
-import { LoggedInMenuDropdown } from './LoggedInMenuDropdown';
+import { Search } from 'lucide-react';
+import { HeaderRightMenu } from './HeaderRightMenu';
 import { LanguageModal } from './LanguageModal';
 import { BecomeHostModal } from './BecomeHostModal';
 import { AuthModal } from './AuthModal';
-import { useAuth } from '../context/AuthContext';
 
 export function LegalHeader() {
-  const { user } = useAuth();
   const [showMenuDropdown, setShowMenuDropdown] = useState(false);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [showBecomeHostModal, setShowBecomeHostModal] = useState(false);
@@ -55,75 +52,14 @@ export function LegalHeader() {
               </div>
             </div>
 
-            {/* Right Menu */}
-            <div className="flex items-center gap-2.5 flex-shrink-0">
-              <button
-                className="hidden md:block px-4 py-3 hover:bg-gray-100 rounded-full transition-all duration-200 text-sm"
-                style={{ fontWeight: 600 }}
-                onClick={() => setShowBecomeHostModal(true)}
-              >
-                Devenir hôte
-              </button>
-
-              {!user && (
-                <button
-                  className="p-3 bg-gray-100 rounded-full cursor-pointer hover:bg-gray-200 transition-all duration-200"
-                  onClick={() => setShowLanguageModal(true)}
-                >
-                  <Globe className="w-4 h-4" />
-                </button>
-              )}
-
-              <div className="relative">
-                <button
-                  className="flex items-center gap-2 border border-gray-300 rounded-full p-1.5 pr-3 hover:shadow-md transition-all duration-200 cursor-pointer bg-white"
-                  onClick={() => setShowMenuDropdown(!showMenuDropdown)}
-                >
-                  <Menu className="w-4 h-4 ml-1" />
-                  {user ? (
-                    <div
-                      className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white text-sm"
-                      style={{ fontWeight: 600 }}
-                    >
-                      {user.name.charAt(0).toUpperCase()}
-                    </div>
-                  ) : (
-                    <div className="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center">
-                      <User className="w-5 h-5 text-white" />
-                    </div>
-                  )}
-                </button>
-
-                {/* Menu Dropdown */}
-                {user ? (
-                  <LoggedInMenuDropdown
-                    isOpen={showMenuDropdown}
-                    onClose={() => setShowMenuDropdown(false)}
-                    onBecomeHostClick={() => {
-                      setShowMenuDropdown(false);
-                      setShowBecomeHostModal(true);
-                    }}
-                    onLanguageClick={() => {
-                      setShowMenuDropdown(false);
-                      setShowLanguageModal(true);
-                    }}
-                  />
-                ) : (
-                  <MenuDropdown
-                    isOpen={showMenuDropdown}
-                    onClose={() => setShowMenuDropdown(false)}
-                    onAuthClick={() => {
-                      setShowMenuDropdown(false);
-                      setShowAuthModal(true);
-                    }}
-                    onBecomeHostClick={() => {
-                      setShowMenuDropdown(false);
-                      setShowBecomeHostModal(true);
-                    }}
-                  />
-                )}
-              </div>
-            </div>
+            {/* Right Menu - Using shared HeaderRightMenu component */}
+            <HeaderRightMenu
+              showMenuDropdown={showMenuDropdown}
+              setShowMenuDropdown={setShowMenuDropdown}
+              setShowLanguageModal={setShowLanguageModal}
+              setShowBecomeHostModal={setShowBecomeHostModal}
+              setShowAuthModal={setShowAuthModal}
+            />
           </div>
         </div>
       </header>
