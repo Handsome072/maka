@@ -1,5 +1,6 @@
-import { Heart, Share, ChevronLeft, X } from 'lucide-react';
-import { useState, useEffect, useRef } from 'react';
+import { X, Share, Heart } from 'lucide-react';
+import { useState } from 'react';
+import { ImageCarouselModal } from './ImageCarouselModal';
 
 interface ReservationDetailProps {
   onClose: () => void;
@@ -8,10 +9,9 @@ interface ReservationDetailProps {
 export function ReservationDetail({ onClose }: ReservationDetailProps) {
   const [showCancelPopup, setShowCancelPopup] = useState(false);
   const [isCancelled, setIsCancelled] = useState(false);
-  const [showAllPhotos, setShowAllPhotos] = useState(false);
+  const [showCarousel, setShowCarousel] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [carouselStartIndex, setCarouselStartIndex] = useState(0);
 
   const images = [
     'https://images.unsplash.com/photo-1737305457496-dc7503cdde1e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBzdHVkaW8lMjBhcGFydG1lbnQlMjBpbnRlcmlvcnxlbnwxfHx8fDE3Njc3NjY1NTN8MA&ixlib=rb-4.1.0&q=80&w=1080',
@@ -26,28 +26,16 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
     'https://images.unsplash.com/photo-1758448511533-e1502259fff6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcGFydG1lbnQlMjBlbnRyYW5jZSUyMGhhbGx3YXl8ZW58MXx8fHwxNzY3ODc0OTYyfDA&ixlib=rb-4.1.0&q=80&w=1080',
   ];
 
-  const openGallery = (index: number) => {
-    setCurrentImageIndex(index);
-    setShowAllPhotos(true);
+  const openCarousel = (index: number) => {
+    setCarouselStartIndex(index);
+    setShowCarousel(true);
   };
-
-  // Scroll to selected image when gallery opens
-  useEffect(() => {
-    if (showAllPhotos && imageRefs.current[currentImageIndex]) {
-      setTimeout(() => {
-        imageRefs.current[currentImageIndex]?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center',
-        });
-      }, 100);
-    }
-  }, [showAllPhotos, currentImageIndex]);
 
   return (
     <>
       {/* Cancel Reservation Popup */}
       {showCancelPopup && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-gray-900 bg-opacity-30 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50">
           <div className="bg-white rounded-2xl p-8 max-w-xl w-full mx-4 relative">
             <button
               onClick={() => setShowCancelPopup(false)}
@@ -56,7 +44,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
               <X className="w-5 h-5" />
             </button>
 
-            <h2 className="text-3xl mb-6" style={{ fontWeight: 500, color: '#222222', fontStyle: 'italic' }}>
+            <h2 className="text-3xl mb-6" style={{ fontWeight: 600, color: '#222222' }}>
               Annuler votre réservation
             </h2>
 
@@ -114,104 +102,16 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
         </div>
       )}
 
-      {/* Photo Gallery Modal */}
-      {showAllPhotos && (
-        <div className="fixed inset-0 z-[100] bg-white">
-          {/* Header */}
-          <div className="sticky top-0 bg-white z-10 px-6 py-4 flex items-center justify-between border-b border-gray-200">
-            <button
-              onClick={() => setShowAllPhotos(false)}
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <div className="flex items-center gap-4">
-              {/* Partager Button */}
-              <button className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors">
-                <Share className="w-4 h-4" />
-                <span className="text-sm underline" style={{ fontWeight: 600 }}>Partager</span>
-              </button>
-              {/* Enregistrer Button */}
-              <button
-                onClick={() => setIsFavorite(!isFavorite)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
-              >
-                <Heart className={`w-4 h-4 ${isFavorite ? 'fill-[#10B981] text-[#10B981]' : ''}`} />
-                <span className="text-sm underline" style={{ fontWeight: 600 }}>Enregistrer</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Gallery Grid */}
-          <div className="h-[calc(100vh-73px)] overflow-y-auto bg-white">
-            <div className="max-w-[630px] mx-auto px-6 py-8">
-              <div className="space-y-2">
-                {/* Image 1 - Full width */}
-                <div ref={(el) => { imageRefs.current[0] = el; }} className="relative group overflow-hidden cursor-pointer">
-                  <img src={images[0]} alt="Photo 1" className="w-full h-auto" />
-                  <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
-                </div>
-
-                {/* Images 2 & 3 - Side by side */}
-                <div className="grid grid-cols-2 gap-2 h-[280px]">
-                  <div ref={(el) => { imageRefs.current[1] = el; }} className="relative group overflow-hidden cursor-pointer">
-                    <img src={images[1]} alt="Photo 2" className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
-                  </div>
-                  <div ref={(el) => { imageRefs.current[2] = el; }} className="relative group overflow-hidden cursor-pointer">
-                    <img src={images[2]} alt="Photo 3" className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
-                  </div>
-                </div>
-
-                {/* Image 4 - Full width */}
-                <div ref={(el) => { imageRefs.current[3] = el; }} className="relative group overflow-hidden cursor-pointer">
-                  <img src={images[3]} alt="Photo 4" className="w-full h-auto" />
-                  <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
-                </div>
-
-                {/* Images 5 & 6 - Side by side */}
-                <div className="grid grid-cols-2 gap-2 h-[280px]">
-                  <div ref={(el) => { imageRefs.current[4] = el; }} className="relative group overflow-hidden cursor-pointer">
-                    <img src={images[4]} alt="Photo 5" className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
-                  </div>
-                  <div ref={(el) => { imageRefs.current[5] = el; }} className="relative group overflow-hidden cursor-pointer">
-                    <img src={images[5]} alt="Photo 6" className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
-                  </div>
-                </div>
-
-                {/* Image 7 - Full width */}
-                <div ref={(el) => { imageRefs.current[6] = el; }} className="relative group overflow-hidden cursor-pointer">
-                  <img src={images[6]} alt="Photo 7" className="w-full h-auto" />
-                  <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
-                </div>
-
-                {/* Images 8 & 9 - Side by side */}
-                <div className="grid grid-cols-2 gap-2 h-[280px]">
-                  <div ref={(el) => { imageRefs.current[7] = el; }} className="relative group overflow-hidden cursor-pointer">
-                    <img src={images[7]} alt="Photo 8" className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
-                  </div>
-                  <div ref={(el) => { imageRefs.current[8] = el; }} className="relative group overflow-hidden cursor-pointer">
-                    <img src={images[8]} alt="Photo 9" className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
-                  </div>
-                </div>
-
-                {/* Image 10 - Full width */}
-                {images.length > 9 && (
-                  <div ref={(el) => { imageRefs.current[9] = el; }} className="relative group overflow-hidden cursor-pointer">
-                    <img src={images[9]} alt="Photo 10" className="w-full h-auto" />
-                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Image Carousel Modal */}
+      <ImageCarouselModal
+        images={images}
+        isOpen={showCarousel}
+        initialIndex={carouselStartIndex}
+        onClose={() => setShowCarousel(false)}
+        showFavorite={true}
+        isFavorite={isFavorite}
+        onFavoriteToggle={() => setIsFavorite(!isFavorite)}
+      />
 
       {/* Main Content */}
       <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
@@ -253,7 +153,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                 src={images[0]}
                 alt="Property main"
                 className="w-full h-full object-cover cursor-pointer transition-all"
-                onClick={() => openGallery(0)}
+                onClick={() => openCarousel(0)}
               />
               <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none"></div>
             </div>
@@ -265,7 +165,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                   src={img}
                   alt={`Property ${index + 2}`}
                   className="w-full h-full object-cover cursor-pointer transition-all"
-                  onClick={() => openGallery(index + 1)}
+                  onClick={() => openCarousel(index + 1)}
                 />
                 <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none"></div>
               </div>
@@ -273,7 +173,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
 
             {/* Show all photos button */}
             <button
-              onClick={() => openGallery(0)}
+              onClick={() => openCarousel(0)}
               className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg border border-gray-900 hover:bg-gray-50 transition-colors flex items-center gap-2"
               style={{ fontWeight: 600, fontSize: '14px' }}
             >
@@ -293,7 +193,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
               <div className="lg:col-span-2 space-y-10">
                 {/* Réservation confirmée / annulée */}
                 <div className="border-b border-gray-200 pb-10">
-                  <h2 className="text-3xl mb-4" style={{ fontWeight: 500, color: '#222222', fontStyle: 'italic' }}>
+                  <h2 className="text-3xl mb-4" style={{ fontWeight: 600, color: '#222222' }}>
                     {isCancelled ? 'Réservation annulée' : 'Réservation confirmée'}
                   </h2>
 
@@ -325,7 +225,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                               DATE D'ARRIVÉE
                             </span>
                           </div>
-                          <p className="text-2xl mb-1" style={{ fontWeight: 500, color: '#222222', fontStyle: 'italic' }}>
+                          <p className="text-2xl mb-1" style={{ fontWeight: 600, color: '#222222' }}>
                             Lun. 15 Sept. 2024
                           </p>
                           <p className="text-sm text-gray-500">15:00 - 21:00</p>
@@ -340,7 +240,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                               DATE DE DÉPART
                             </span>
                           </div>
-                          <p className="text-2xl mb-1" style={{ fontWeight: 500, color: '#222222', fontStyle: 'italic' }}>
+                          <p className="text-2xl mb-1" style={{ fontWeight: 600, color: '#222222' }}>
                             Ven. 19 Sept. 2024
                           </p>
                           <p className="text-sm text-gray-500">11:00</p>
@@ -359,7 +259,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
 
                 {/* Services supplémentaires réservés */}
                 <div className="border-b border-gray-200 pb-10">
-                  <h2 className="text-3xl mb-6" style={{ fontWeight: 500, color: '#222222', fontStyle: 'italic' }}>
+                  <h2 className="text-3xl mb-6" style={{ fontWeight: 600, color: '#222222' }}>
                     Services supplémentaires réservés
                   </h2>
 
@@ -409,7 +309,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
 
                 {/* Détails du prix */}
                 <div className="border-b border-gray-200 pb-10">
-                  <h2 className="text-3xl mb-6" style={{ fontWeight: 500, color: '#222222', fontStyle: 'italic' }}>
+                  <h2 className="text-3xl mb-6" style={{ fontWeight: 600, color: '#222222' }}>
                     Détails du prix
                   </h2>
 
@@ -500,7 +400,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                 <div className="space-y-6">
                   {/* Appartement T2 Card */}
                   <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-                    <h2 className="text-2xl mb-5" style={{ fontWeight: 500, color: '#222222', fontStyle: 'italic' }}>
+                    <h2 className="text-2xl mb-5" style={{ fontWeight: 600, color: '#222222' }}>
                       Appartement T2
                     </h2>
 
@@ -563,7 +463,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
 
                   {/* Conditions d'annulation Card */}
                   <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sticky top-24">
-                    <h2 className="text-2xl mb-6" style={{ fontWeight: 500, color: '#222222', fontStyle: 'italic' }}>
+                    <h2 className="text-2xl mb-6" style={{ fontWeight: 600, color: '#222222' }}>
                       Conditions d'annulation
                     </h2>
 

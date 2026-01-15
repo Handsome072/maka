@@ -745,16 +745,6 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                 <h2 className="text-[32px]" style={{ fontWeight: 600, color: '#222222' }}>
                   Mes réservations
                 </h2>
-                <button
-                  className="px-5 py-2.5 border-2 rounded-lg text-sm hover:bg-gray-50 transition-colors bg-white"
-                  style={{
-                    fontWeight: 600,
-                    color: '#222222',
-                    borderColor: '#222222'
-                  }}
-                >
-                  SE DÉCONNECTER
-                </button>
               </div>
 
               {/* RÉSERVATION(S) FUTURE(S) */}
