@@ -261,9 +261,12 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                 </p>
                 <div className="space-y-3">
                   <div>
-                    <select className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-gray-900 bg-white">
+                    <select 
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-gray-900 bg-white"
+                      defaultValue="Brésil"
+                    >
                       <option>Pays/région</option>
-                      <option selected>Brésil</option>
+                      <option>Brésil</option>
                       <option>France</option>
                       <option>Belgique</option>
                       <option>Suisse</option>
@@ -1538,8 +1541,9 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                         <div>
                           <select 
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            defaultValue=""
                           >
-                            <option value="" disabled selected>Langue préférée</option>
+                            <option value="" disabled>Langue préférée</option>
                             <option value="fr">Français</option>
                             <option value="en">Anglais</option>
                             <option value="es">Espagnol</option>
@@ -1553,8 +1557,9 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                         <div className="grid grid-cols-[180px_1fr] gap-4">
                           <select 
                             className="px-4 py-3 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            defaultValue=""
                           >
-                            <option value="" disabled selected>Indicatif téléphonique...</option>
+                            <option value="" disabled>Indicatif téléphonique...</option>
                             <option value="+33">+33 (France)</option>
                             <option value="+1">+1 (USA)</option>
                             <option value="+261">+261 (Madagascar)</option>
