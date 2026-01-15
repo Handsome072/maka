@@ -1,6 +1,6 @@
-import { useState, useRef } from 'react';
-import { Heart, Star, ChevronLeft, ChevronRight, MapPin, Search } from 'lucide-react';
-import { FilterModal } from '../components/FilterModal';
+import { useState } from 'react';
+import { Heart, Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import { FiltersModal } from '../components/FiltersModal';
 
 interface SearchResultsProps {
   onBack: () => void;
@@ -21,7 +21,7 @@ interface SearchResultsProps {
 interface Property {
   id: number;
   images: string[];
-  badge?: 'Superhost' | 'Coup de coeur voyage';
+  badge?: 'Coup de coeur' | 'Originals' | 'Populaire' | 'Nouveau';
   title: string;
   rating: number;
   reviews: number;
@@ -30,8 +30,6 @@ interface Property {
   beds: string;
   price: number;
   originalPrice?: number;
-  lat: number;
-  lng: number;
 }
 
 const properties: Property[] = [
@@ -49,8 +47,6 @@ const properties: Property[] = [
     bedrooms: '1 chambre',
     beds: '2 lits',
     price: 744,
-    lat: 13.7563,
-    lng: 100.5018,
   },
   {
     id: 2,
@@ -58,7 +54,7 @@ const properties: Property[] = [
       'https://images.unsplash.com/photo-1594904578869-c011783103c7?w=800',
       'https://images.unsplash.com/photo-1633505765486-e404bbbec654?w=800',
     ],
-    badge: 'Superhost',
+    badge: 'Populaire',
     title: 'Appartement · Khet...',
     rating: 4.92,
     reviews: 36,
@@ -66,8 +62,6 @@ const properties: Property[] = [
     bedrooms: '1 chambre',
     beds: '2 lits',
     price: 744,
-    lat: 13.7465,
-    lng: 100.5331,
   },
   {
     id: 3,
@@ -75,7 +69,7 @@ const properties: Property[] = [
       'https://images.unsplash.com/photo-1638454668466-e8dbd5462f20?w=800',
       'https://images.unsplash.com/photo-1654506012740-09321c969dc2?w=800',
     ],
-    badge: 'Coup de coeur voyage',
+    badge: 'Coup de coeur',
     title: 'Appartement en rés...',
     rating: 4.91,
     reviews: 32,
@@ -83,8 +77,6 @@ const properties: Property[] = [
     bedrooms: '1 chambre',
     beds: '1 lit queen size',
     price: 868,
-    lat: 13.7278,
-    lng: 100.5241,
   },
   {
     id: 4,
@@ -92,7 +84,7 @@ const properties: Property[] = [
       'https://images.unsplash.com/photo-1633505765486-e404bbbec654?w=800',
       'https://images.unsplash.com/photo-1578266848416-c291bc0b2940?w=800',
     ],
-    badge: 'Coup de coeur voyage',
+    badge: 'Coup de coeur',
     title: 'Appartement · Huai...',
     rating: 5.0,
     reviews: 8,
@@ -101,8 +93,6 @@ const properties: Property[] = [
     beds: '1 lit',
     price: 860,
     originalPrice: 1106,
-    lat: 13.7563,
-    lng: 100.5742,
   },
   {
     id: 5,
@@ -118,8 +108,6 @@ const properties: Property[] = [
     beds: '1 lit',
     price: 720,
     originalPrice: 984,
-    lat: 13.7665,
-    lng: 100.5385,
   },
   {
     id: 6,
@@ -127,7 +115,7 @@ const properties: Property[] = [
       'https://images.unsplash.com/photo-1638454668466-e8dbd5462f20?w=800',
       'https://images.unsplash.com/photo-1654506012740-09321c969dc2?w=800',
     ],
-    badge: 'Superhost',
+    badge: 'Originals',
     title: 'Appartement · Khet...',
     rating: 5.0,
     reviews: 5,
@@ -136,8 +124,6 @@ const properties: Property[] = [
     beds: '1 lit',
     price: 1016,
     originalPrice: 1378,
-    lat: 13.7265,
-    lng: 100.5432,
   },
   {
     id: 7,
@@ -152,8 +138,6 @@ const properties: Property[] = [
     bedrooms: '1 chambre',
     beds: '1 lit',
     price: 651,
-    lat: 13.7208,
-    lng: 100.5612,
   },
   {
     id: 8,
@@ -168,8 +152,6 @@ const properties: Property[] = [
     bedrooms: '1 chambre',
     beds: '1 lit queen size',
     price: 895,
-    lat: 13.7563,
-    lng: 100.5310,
   },
   {
     id: 9,
@@ -177,7 +159,7 @@ const properties: Property[] = [
       'https://images.unsplash.com/photo-1633505765486-e404bbbec654?w=800',
       'https://images.unsplash.com/photo-1638454668466-e8dbd5462f20?w=800',
     ],
-    badge: 'Coup de coeur voyage',
+    badge: 'Nouveau',
     title: 'Appartement · Khlon...',
     rating: 4.67,
     reviews: 3,
@@ -186,8 +168,6 @@ const properties: Property[] = [
     beds: '1 lit queen size',
     price: 1438,
     originalPrice: 1746,
-    lat: 13.7436,
-    lng: 100.5421,
   },
 ];
 
@@ -327,9 +307,7 @@ function PropertyCard({ property }: { property: Property }) {
 }
 
 export function SearchResults({ onBack, onNavigate, searchParams }: SearchResultsProps) {
-  const [hoveredProperty, setHoveredProperty] = useState<number | null>(null);
   const [showFilterModal, setShowFilterModal] = useState(false);
-  const mapRef = useRef<HTMLDivElement>(null);
 
   const formatDateRange = () => {
     if (!searchParams.checkInDate) return 'Dates flexibles';
@@ -471,13 +449,9 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
             {searchParams.destination || 'Bangkok'} : Plus de 1000 logements
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10">
             {properties.map((property) => (
-              <div
-                key={property.id}
-                onMouseEnter={() => setHoveredProperty(property.id)}
-                onMouseLeave={() => setHoveredProperty(null)}
-              >
+              <div key={property.id}>
                 <PropertyCard property={property} />
               </div>
             ))}
@@ -735,64 +709,10 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
             </div>
           </footer>
         </div>
-
-        {/* Map */}
-        <div className="hidden xl:block w-1/2 sticky top-[140px] h-[calc(100vh-140px)]">
-          <div ref={mapRef} className="w-full h-full bg-gray-100 relative">
-            {/* Map placeholder with markers */}
-            <img
-              src="https://images.unsplash.com/photo-1590393820812-8a2ed3ece96f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaXR5JTIwbWFwJTIwYWVyaWFsJTIwdmlld3xlbnwxfHx8fDE3Njc4NTcyNzd8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-              alt="Map"
-              className="w-full h-full object-cover"
-            />
-            
-            {/* Price markers */}
-            {properties.map((property) => (
-              <div
-                key={property.id}
-                className={`absolute cursor-pointer transition-all ${
-                  hoveredProperty === property.id ? 'z-20 scale-110' : 'z-10'
-                }`}
-                style={{
-                  left: `${((property.lng - 100.48) / 0.15) * 100}%`,
-                  top: `${((13.78 - property.lat) / 0.08) * 100}%`,
-                  transform: 'translate(-50%, -50%)',
-                }}
-              >
-                <div
-                  className={`px-3 py-1.5 rounded-full text-[14px] transition-all ${
-                    hoveredProperty === property.id
-                      ? 'bg-gray-900 text-white scale-110'
-                      : 'bg-white text-gray-900 border border-gray-300 hover:scale-105'
-                  }`}
-                  style={{ fontWeight: 600, boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
-                >
-                  {property.price} €
-                </div>
-              </div>
-            ))}
-
-            {/* Map controls */}
-            <div className="absolute bottom-6 right-6 flex flex-col gap-2">
-              <button className="w-10 h-10 bg-white rounded-lg shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors">
-                <span className="text-2xl text-gray-700">+</span>
-              </button>
-              <button className="w-10 h-10 bg-white rounded-lg shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors">
-                <span className="text-2xl text-gray-700">−</span>
-              </button>
-            </div>
-
-            {/* Show list button */}
-            <button className="absolute bottom-6 left-1/2 -translate-x-1/2 px-5 py-3 bg-gray-900 text-white rounded-full text-[14px] hover:bg-gray-800 transition-colors shadow-lg flex items-center gap-2" style={{ fontWeight: 600 }}>
-              <MapPin className="w-4 h-4" />
-              Afficher la liste
-            </button>
-          </div>
-        </div>
       </div>
 
-      {/* Filter Modal */}
-      <FilterModal
+      {/* Filters Modal */}
+      <FiltersModal
         isOpen={showFilterModal}
         onClose={() => setShowFilterModal(false)}
       />

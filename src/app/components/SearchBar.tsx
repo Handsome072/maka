@@ -13,7 +13,6 @@ import { useState, useRef, useEffect } from "react";
 import { DatePicker } from "./DatePicker";
 import { ExperienceDatePicker } from "./ExperienceDatePicker";
 import { GuestsPicker } from "./GuestsPicker";
-import backgroundImage from '@/assets/ea9a43f19f699f5eeca472b649d75293c416f15e.png';
 
 const allDestinations = [
   {
@@ -277,15 +276,7 @@ export function SearchBar({ onSearch }: { onSearch?: (params: any) => void }) {
       : "";
 
   return (
-    <div 
-      className="px-4 sm:px-6 lg:px-20 py-6 relative"
-      style={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}
-    >
+    <div className="px-4 sm:px-6 lg:px-20 py-6 relative bg-white">
       <div
         className="max-w-5xl mx-auto relative"
         ref={dropdownRef}
@@ -494,12 +485,7 @@ export function SearchBar({ onSearch }: { onSearch?: (params: any) => void }) {
                 className="absolute right-2 top-1/2 -translate-y-1/2 text-white rounded-full transition-all flex items-center gap-2"
                 onClick={handleSearchClick}
                 style={{
-                  backgroundColor:
-                    showDestinations ||
-                    showDatePicker ||
-                    showGuestsPicker
-                      ? "#00BCD4"
-                      : "#00BCD4",
+                  backgroundColor: "#5EC6D8",
                   padding:
                     showDestinations ||
                     showDatePicker ||
@@ -698,8 +684,8 @@ export function CompactSearchBar({ currentPage, onOpen }: { currentPage: 'logeme
         
         {/* Bouton de recherche */}
         <div className="ml-auto flex-shrink-0">
-          <div 
-            className="bg-[#00BCD4] text-white p-2.5 rounded-full"
+          <div
+            className="bg-[#5EC6D8] text-white p-2.5 rounded-full"
             aria-label="Rechercher"
           >
             <Search className="w-3.5 h-3.5" />
