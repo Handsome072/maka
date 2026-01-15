@@ -408,7 +408,7 @@ export function ExperienceDetails({ onBack }: ExperienceDetailsProps) {
                         Annulation gratuite
                       </p>
                     </div>
-                    <button className="px-6 py-3 rounded-full text-white text-base hover:shadow-lg transition-all whitespace-nowrap" style={{ backgroundColor: '#059669', fontWeight: 600 }}>
+                    <button className="px-6 py-3 rounded-full text-white text-base hover:shadow-lg transition-all whitespace-nowrap" style={{ backgroundColor: '#000000', fontWeight: 600 }}>
                       Voir les dates
                     </button>
                   </div>

@@ -192,7 +192,7 @@ export function EmailSignupView({
         disabled={!isPasswordValid}
         className="w-full rounded-xl text-white text-base py-4 hover:opacity-90 transition-opacity mb-6 disabled:opacity-50 disabled:cursor-not-allowed"
         style={{
-          backgroundColor: "#059669",
+          backgroundColor: "#000000",
           fontWeight: 600,
         }}
       >

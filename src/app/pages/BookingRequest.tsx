@@ -428,7 +428,7 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
                   )}
 
                   {paymentMethod === 'card' && (
-                    <button className="w-full bg-[#059669] text-white rounded-lg py-4 flex items-center justify-center gap-2 hover:bg-[#047857] transition-colors text-base" style={{ fontWeight: 600 }}>
+                    <button className="w-full bg-[#000000] text-white rounded-lg py-4 flex items-center justify-center gap-2 hover:bg-[#222222] transition-colors text-base" style={{ fontWeight: 600 }}>
                       Confirmer et payer
                     </button>
                   )}

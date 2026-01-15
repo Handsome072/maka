@@ -205,7 +205,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   onClick={handlePhoneLogin}
                   className="w-full rounded-lg text-white text-base py-3.5 hover:opacity-90 transition-opacity mb-4"
                   style={{
-                    backgroundColor: "#059669",
+                    backgroundColor: "#000000",
                     fontWeight: 600,
                   }}
                 >
