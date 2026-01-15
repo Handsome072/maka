@@ -1,5 +1,5 @@
-import { Heart, Share, Star, ChevronRight, X } from 'lucide-react';
-import { useState } from 'react';
+import { Heart, Share, ChevronLeft, X } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 
 interface ReservationDetailProps {
   onClose: () => void;
@@ -8,6 +8,40 @@ interface ReservationDetailProps {
 export function ReservationDetail({ onClose }: ReservationDetailProps) {
   const [showCancelPopup, setShowCancelPopup] = useState(false);
   const [isCancelled, setIsCancelled] = useState(false);
+  const [showAllPhotos, setShowAllPhotos] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const images = [
+    'https://images.unsplash.com/photo-1737305457496-dc7503cdde1e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBzdHVkaW8lMjBhcGFydG1lbnQlMjBpbnRlcmlvcnxlbnwxfHx8fDE3Njc3NjY1NTN8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    'https://images.unsplash.com/photo-1612419299101-6c294dc2901d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb3p5JTIwYXBhcnRtZW50JTIwbGl2aW5nJTIwcm9vbXxlbnwxfHx8fDE3Njc2ODYxNDN8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    'https://images.unsplash.com/photo-1737467016100-68cd7759d93c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcGFydG1lbnQlMjBiZWRyb29tJTIwY29tZm9ydGFibGV8ZW58MXx8fHwxNzY3NzY2NTU0fDA&ixlib=rb-4.1.0&q=80&w=1080',
+    'https://images.unsplash.com/photo-1597497522150-2f50bffea452?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBraXRjaGVuJTIwYXBhcnRtZW50fGVufDF8fHx8MTc2NzczMDQyNXww&ixlib=rb-4.1.0&q=80&w=1080',
+    'https://images.unsplash.com/photo-1757439402224-56c48352f719?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiYXRocm9vbSUyMGFwYXJ0bWVudCUyMG1vZGVybnxlbnwxfHx8fDE3Njc3NjY1NTV8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    'https://images.unsplash.com/photo-1662454419736-de132ff75638?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBiZWRyb29tJTIwYXBhcnRtZW50fGVufDF8fHx8MTc2NzgwNjkyOHww&ixlib=rb-4.1.0&q=80&w=1080',
+    'https://images.unsplash.com/photo-1650338031185-1e97add7a389?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxvdXRkb29yJTIwcGF0aW8lMjBnYXJkZW58ZW58MXx8fHwxNzY3ODI1MjIzfDA&ixlib=rb-4.1.0&q=80&w=1080',
+    'https://images.unsplash.com/photo-1696774276390-6ce82111140f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb3p5JTIwbGl2aW5nJTIwc3BhY2V8ZW58MXx8fHwxNzY3ODI4Nzc1fDA&ixlib=rb-4.1.0&q=80&w=1080',
+    'https://images.unsplash.com/photo-1682888818696-906287d759f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBzaG93ZXIlMjBiYXRocm9vbXxlbnwxfHx8fDE3Njc4NzQ5NjF8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    'https://images.unsplash.com/photo-1758448511533-e1502259fff6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcGFydG1lbnQlMjBlbnRyYW5jZSUyMGhhbGx3YXl8ZW58MXx8fHwxNzY3ODc0OTYyfDA&ixlib=rb-4.1.0&q=80&w=1080',
+  ];
+
+  const openGallery = (index: number) => {
+    setCurrentImageIndex(index);
+    setShowAllPhotos(true);
+  };
+
+  // Scroll to selected image when gallery opens
+  useEffect(() => {
+    if (showAllPhotos && imageRefs.current[currentImageIndex]) {
+      setTimeout(() => {
+        imageRefs.current[currentImageIndex]?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      }, 100);
+    }
+  }, [showAllPhotos, currentImageIndex]);
 
   return (
     <>
@@ -17,7 +51,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
           <div className="bg-white rounded-2xl p-8 max-w-xl w-full mx-4 relative">
             <button
               onClick={() => setShowCancelPopup(false)}
-              className="absolute top-6 right-6 w-8 h-8 rounded-full border-2 border-red-400 text-red-400 flex items-center justify-center hover:bg-red-50 transition-colors"
+              className="absolute top-6 right-6 w-8 h-8 rounded-full border-2 border-gray-800 text-gray-800 flex items-center justify-center hover:bg-gray-100 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -80,6 +114,105 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
         </div>
       )}
 
+      {/* Photo Gallery Modal */}
+      {showAllPhotos && (
+        <div className="fixed inset-0 z-[100] bg-white">
+          {/* Header */}
+          <div className="sticky top-0 bg-white z-10 px-6 py-4 flex items-center justify-between border-b border-gray-200">
+            <button
+              onClick={() => setShowAllPhotos(false)}
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-4">
+              {/* Partager Button */}
+              <button className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors">
+                <Share className="w-4 h-4" />
+                <span className="text-sm underline" style={{ fontWeight: 600 }}>Partager</span>
+              </button>
+              {/* Enregistrer Button */}
+              <button
+                onClick={() => setIsFavorite(!isFavorite)}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                <Heart className={`w-4 h-4 ${isFavorite ? 'fill-[#10B981] text-[#10B981]' : ''}`} />
+                <span className="text-sm underline" style={{ fontWeight: 600 }}>Enregistrer</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Gallery Grid */}
+          <div className="h-[calc(100vh-73px)] overflow-y-auto bg-white">
+            <div className="max-w-[630px] mx-auto px-6 py-8">
+              <div className="space-y-2">
+                {/* Image 1 - Full width */}
+                <div ref={(el) => { imageRefs.current[0] = el; }} className="relative group overflow-hidden cursor-pointer">
+                  <img src={images[0]} alt="Photo 1" className="w-full h-auto" />
+                  <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                </div>
+
+                {/* Images 2 & 3 - Side by side */}
+                <div className="grid grid-cols-2 gap-2 h-[280px]">
+                  <div ref={(el) => { imageRefs.current[1] = el; }} className="relative group overflow-hidden cursor-pointer">
+                    <img src={images[1]} alt="Photo 2" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                  </div>
+                  <div ref={(el) => { imageRefs.current[2] = el; }} className="relative group overflow-hidden cursor-pointer">
+                    <img src={images[2]} alt="Photo 3" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                  </div>
+                </div>
+
+                {/* Image 4 - Full width */}
+                <div ref={(el) => { imageRefs.current[3] = el; }} className="relative group overflow-hidden cursor-pointer">
+                  <img src={images[3]} alt="Photo 4" className="w-full h-auto" />
+                  <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                </div>
+
+                {/* Images 5 & 6 - Side by side */}
+                <div className="grid grid-cols-2 gap-2 h-[280px]">
+                  <div ref={(el) => { imageRefs.current[4] = el; }} className="relative group overflow-hidden cursor-pointer">
+                    <img src={images[4]} alt="Photo 5" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                  </div>
+                  <div ref={(el) => { imageRefs.current[5] = el; }} className="relative group overflow-hidden cursor-pointer">
+                    <img src={images[5]} alt="Photo 6" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                  </div>
+                </div>
+
+                {/* Image 7 - Full width */}
+                <div ref={(el) => { imageRefs.current[6] = el; }} className="relative group overflow-hidden cursor-pointer">
+                  <img src={images[6]} alt="Photo 7" className="w-full h-auto" />
+                  <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                </div>
+
+                {/* Images 8 & 9 - Side by side */}
+                <div className="grid grid-cols-2 gap-2 h-[280px]">
+                  <div ref={(el) => { imageRefs.current[7] = el; }} className="relative group overflow-hidden cursor-pointer">
+                    <img src={images[7]} alt="Photo 8" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                  </div>
+                  <div ref={(el) => { imageRefs.current[8] = el; }} className="relative group overflow-hidden cursor-pointer">
+                    <img src={images[8]} alt="Photo 9" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                  </div>
+                </div>
+
+                {/* Image 10 - Full width */}
+                {images.length > 9 && (
+                  <div ref={(el) => { imageRefs.current[9] = el; }} className="relative group overflow-hidden cursor-pointer">
+                    <img src={images[9]} alt="Photo 10" className="w-full h-auto" />
+                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main Content */}
       <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
         {/* Header with Close Button */}
@@ -91,7 +224,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
             <X className="w-5 h-5" />
             <span className="text-sm" style={{ fontWeight: 600 }}>Retour</span>
           </button>
-          
+
           <div className="flex items-center gap-4">
             <button className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors">
               <Share className="w-4 h-4" />
@@ -113,61 +246,41 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
 
         {/* Gallery Grid */}
         <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-20 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-2 rounded-xl overflow-hidden h-[300px] md:h-[400px] relative">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-2 rounded-2xl overflow-hidden h-[300px] md:h-[400px] relative">
             {/* Large image */}
-            <div className="md:col-span-2 md:row-span-2 relative group overflow-hidden rounded-l-xl">
+            <div className="md:col-span-2 md:row-span-2 relative group overflow-hidden">
               <img
-                src="https://images.unsplash.com/photo-1737305457496-dc7503cdde1e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBzdHVkaW8lMjBhcGFydG1lbnQlMjBpbnRlcmlvcnxlbnwxfHx8fDE3Njc3NjY1NTN8MA&ixlib=rb-4.1.0&q=80&w=1080"
+                src={images[0]}
                 alt="Property main"
                 className="w-full h-full object-cover cursor-pointer transition-all"
+                onClick={() => openGallery(0)}
               />
+              <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none"></div>
             </div>
 
             {/* Small images */}
-            <div className="hidden md:block relative group overflow-hidden">
-              <img
-                src="https://images.unsplash.com/photo-1612419299101-6c294dc2901d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb3p5JTIwYXBhcnRtZW50JTIwbGl2aW5nJTIwcm9vbXxlbnwxfHx8fDE3Njc2ODYxNDN8MA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="Property 2"
-                className="w-full h-full object-cover cursor-pointer transition-all"
-              />
-            </div>
-            
-            <div className="hidden md:block relative group overflow-hidden rounded-tr-xl">
-              <img
-                src="https://images.unsplash.com/photo-1737467016100-68cd7759d93c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcGFydG1lbnQlMjBiZWRyb29tJTIwY29tZm9ydGFibGV8ZW58MXx8fHwxNzY3NzY2NTU0fDA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="Property 3"
-                className="w-full h-full object-cover cursor-pointer transition-all"
-              />
-            </div>
-            
-            <div className="hidden md:block relative group overflow-hidden">
-              <img
-                src="https://images.unsplash.com/photo-1597497522150-2f50bffea452?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBraXRjaGVuJTIwYXBhcnRtZW50fGVufDF8fHx8MTc2NzczMDQyNXww&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="Property 4"
-                className="w-full h-full object-cover cursor-pointer transition-all"
-              />
-            </div>
-            
-            <div className="hidden md:block relative group overflow-hidden rounded-br-xl">
-              <img
-                src="https://images.unsplash.com/photo-1757439402224-56c48352f719?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiYXRocm9vbSUyMGFwYXJ0bWVudCUyMG1vZGVybnxlbnwxfHx8fDE3Njc3NjY1NTV8MA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="Property 5"
-                className="w-full h-full object-cover cursor-pointer transition-all"
-              />
-            </div>
+            {images.slice(1, 5).map((img, index) => (
+              <div key={index} className="hidden md:block relative group overflow-hidden">
+                <img
+                  src={img}
+                  alt={`Property ${index + 2}`}
+                  className="w-full h-full object-cover cursor-pointer transition-all"
+                  onClick={() => openGallery(index + 1)}
+                />
+                <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none"></div>
+              </div>
+            ))}
 
             {/* Show all photos button */}
             <button
-              className="absolute bottom-4 right-4 bg-white px-5 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-shadow flex items-center gap-2"
-              style={{ fontWeight: 600, fontSize: '13px', color: '#222222', letterSpacing: '0.5px' }}
+              onClick={() => openGallery(0)}
+              className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg border border-gray-900 hover:bg-gray-50 transition-colors flex items-center gap-2"
+              style={{ fontWeight: 600, fontSize: '14px' }}
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="2" y="2" width="5" height="5" />
-                <rect x="9" y="2" width="5" height="5" />
-                <rect x="2" y="9" width="5" height="5" />
-                <rect x="9" y="9" width="5" height="5" />
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M3 3h4v4H3V3zm6 0h4v4H9V3zM3 9h4v4H3V9zm6 0h4v4H9V9z" />
               </svg>
-              AFFICHER TOUTES LES PHOTOS
+              Afficher toutes les photos
             </button>
           </div>
         </div>
@@ -370,8 +483,8 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
 
                     <div className="border-t border-gray-200 pt-4">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-lg" style={{ fontWeight: 600, color: '#E8664D' }}>Total</span>
-                        <span className="text-lg" style={{ fontWeight: 600, color: '#E8664D' }}>740€ par mois</span>
+                        <span className="text-lg" style={{ fontWeight: 600, color: '#222222' }}>Total</span>
+                        <span className="text-lg" style={{ fontWeight: 600, color: '#222222' }}>740€ par mois</span>
                       </div>
                       <div className="flex items-center justify-between text-sm text-gray-500">
                         <span>Dont TVA</span>
@@ -387,7 +500,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                 <div className="space-y-6">
                   {/* Appartement T2 Card */}
                   <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-                    <h2 className="text-2xl mb-5" style={{ fontWeight: 500, color: '#4A5B8C', fontStyle: 'italic' }}>
+                    <h2 className="text-2xl mb-5" style={{ fontWeight: 500, color: '#222222', fontStyle: 'italic' }}>
                       Appartement T2
                     </h2>
 
@@ -436,9 +549,9 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                       </div>
                     </div>
 
-                    <button 
+                    <button
                       className="flex items-center gap-2 text-sm"
-                      style={{ color: '#E8664D', fontWeight: 600 }}
+                      style={{ color: '#222222', fontWeight: 600 }}
                     >
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -450,7 +563,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
 
                   {/* Conditions d'annulation Card */}
                   <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sticky top-24">
-                    <h2 className="text-2xl mb-6" style={{ fontWeight: 500, color: '#4A5B8C', fontStyle: 'italic' }}>
+                    <h2 className="text-2xl mb-6" style={{ fontWeight: 500, color: '#222222', fontStyle: 'italic' }}>
                       Conditions d'annulation
                     </h2>
 
@@ -469,13 +582,13 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                       </li>
                     </ul>
 
-                    <button 
+                    <button
                       onClick={() => setShowCancelPopup(true)}
-                      className="w-full px-6 py-3 border-2 rounded-lg text-sm hover:bg-red-50 transition-colors bg-white flex items-center justify-center gap-2"
-                      style={{ 
+                      className="w-full px-6 py-3 border-2 rounded-lg text-sm hover:bg-gray-100 transition-colors bg-white flex items-center justify-center gap-2"
+                      style={{
                         fontWeight: 600,
-                        color: '#E8664D',
-                        borderColor: '#E8664D'
+                        color: '#222222',
+                        borderColor: '#222222'
                       }}
                     >
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
