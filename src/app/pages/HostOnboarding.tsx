@@ -210,8 +210,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         <div className="absolute bottom-0 right-0 px-8 py-8">
           <button
             onClick={() => setCurrentStep('step1')}
-            className="px-8 py-3 text-white rounded-lg text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#E91E63' }}
+            className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Commencer
           </button>
@@ -285,8 +285,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           </button>
           <button
             onClick={() => setCurrentStep('property-type')}
-            className="px-8 py-3 text-white rounded-lg text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -379,10 +379,10 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           <button
             disabled={!selectedType}
             onClick={() => selectedType && setCurrentStep('space-type')}
-            className={`px-8 py-3 text-white rounded-lg text-base transition-opacity ${
-              selectedType ? 'hover:opacity-90' : 'opacity-40 cursor-not-allowed'
+            className={`px-8 py-3 text-white rounded-lg text-base transition-colors bg-[#000000] ${
+              selectedType ? 'hover:bg-[#222222]' : 'opacity-40 cursor-not-allowed'
             }`}
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -511,10 +511,10 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           <button
             disabled={!selectedSpaceType}
             onClick={() => selectedSpaceType && setCurrentStep('location')}
-            className={`px-8 py-3 text-white rounded-lg text-base transition-opacity ${
-              selectedSpaceType ? 'hover:opacity-90' : 'opacity-40 cursor-not-allowed'
+            className={`px-8 py-3 text-white rounded-lg text-base transition-colors bg-[#000000] ${
+              selectedSpaceType ? 'hover:bg-[#222222]' : 'opacity-40 cursor-not-allowed'
             }`}
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -602,10 +602,10 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           <button
             disabled={!address}
             onClick={() => address && setCurrentStep('confirm-address')}
-            className={`px-8 py-3 text-white rounded-lg text-base transition-opacity ${
-              address ? 'hover:opacity-90' : 'opacity-40 cursor-not-allowed'
+            className={`px-8 py-3 text-white rounded-lg text-base transition-colors bg-[#000000] ${
+              address ? 'hover:bg-[#222222]' : 'opacity-40 cursor-not-allowed'
             }`}
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -790,8 +790,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           </button>
           <button
             onClick={() => setCurrentStep('pin-location')}
-            className="px-8 py-3 text-white rounded-lg text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -874,8 +874,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           </button>
           <button
             onClick={() => setCurrentStep('guest-info')}
-            className="px-8 py-3 text-white rounded-lg text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -1017,8 +1017,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           </button>
           <button
             onClick={() => setCurrentStep('step2-intro')}
-            className="px-8 py-3 text-white rounded-lg text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -1092,8 +1092,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           </button>
           <button
             onClick={() => setCurrentStep('amenities')}
-            className="px-8 py-3 text-white rounded-lg text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -1215,8 +1215,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           </button>
           <button
             onClick={() => setCurrentStep('photos')}
-            className="px-8 py-3 text-white rounded-lg text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -1297,10 +1297,10 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           <button
             disabled={uploadedPhotos.length < 5}
             onClick={() => uploadedPhotos.length >= 5 && setCurrentStep('photo-review')}
-            className={`px-8 py-3 text-white rounded-lg text-base transition-opacity ${
-              uploadedPhotos.length >= 5 ? 'hover:opacity-90' : 'opacity-40 cursor-not-allowed'
+            className={`px-8 py-3 rounded-lg text-base transition-colors ${
+              uploadedPhotos.length >= 5 ? 'bg-[#000000] hover:bg-[#222222] text-white' : 'bg-[#E5E5E5] text-[#B0B0B0] cursor-not-allowed'
             }`}
-            style={{ fontWeight: 600, backgroundColor: uploadedPhotos.length >= 5 ? '#222222' : '#E5E5E5', color: uploadedPhotos.length >= 5 ? '#FFFFFF' : '#B0B0B0' }}
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -1554,8 +1554,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           </button>
           <button
             onClick={() => setCurrentStep('title')}
-            className="px-8 py-3 text-white rounded-lg text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -1640,10 +1640,10 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           <button
             disabled={listingTitle.trim().length === 0}
             onClick={() => listingTitle.trim().length > 0 && setCurrentStep('highlights')}
-            className={`px-8 py-3 text-white rounded-lg text-base transition-opacity ${
-              listingTitle.trim().length > 0 ? 'hover:opacity-90' : 'opacity-40 cursor-not-allowed'
+            className={`px-8 py-3 rounded-lg text-base transition-colors ${
+              listingTitle.trim().length > 0 ? 'bg-[#000000] hover:bg-[#222222] text-white' : 'bg-[#E5E5E5] text-[#B0B0B0] cursor-not-allowed'
             }`}
-            style={{ fontWeight: 600, backgroundColor: listingTitle.trim().length > 0 ? '#222222' : '#E5E5E5', color: listingTitle.trim().length > 0 ? '#FFFFFF' : '#B0B0B0' }}
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -1730,8 +1730,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           </button>
           <button
             onClick={() => setCurrentStep('description')}
-            className="px-8 py-3 text-white rounded-lg text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -1816,10 +1816,10 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           <button
             disabled={listingDescription.trim().length === 0}
             onClick={() => listingDescription.trim().length > 0 && setCurrentStep('step3-intro')}
-            className={`px-8 py-3 text-white rounded-lg text-base transition-opacity ${
-              listingDescription.trim().length > 0 ? 'hover:opacity-90' : 'opacity-40 cursor-not-allowed'
+            className={`px-8 py-3 rounded-lg text-base transition-colors ${
+              listingDescription.trim().length > 0 ? 'bg-[#000000] hover:bg-[#222222] text-white' : 'bg-[#E5E5E5] text-[#B0B0B0] cursor-not-allowed'
             }`}
-            style={{ fontWeight: 600, backgroundColor: listingDescription.trim().length > 0 ? '#222222' : '#E5E5E5', color: listingDescription.trim().length > 0 ? '#FFFFFF' : '#B0B0B0' }}
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -1891,8 +1891,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           </button>
           <button
             onClick={() => setCurrentStep('reservation-settings')}
-            className="px-8 py-3 text-white rounded-lg text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -2003,8 +2003,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           </button>
           <button
             onClick={() => setCurrentStep('pricing')}
-            className="px-8 py-3 text-white rounded-lg text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -2108,8 +2108,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           </button>
           <button
             onClick={() => setCurrentStep('weekend-pricing')}
-            className="px-8 py-3 text-white rounded-lg text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -2242,8 +2242,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           </button>
           <button
             onClick={() => setCurrentStep('discounts')}
-            className="px-8 py-3 text-white rounded-lg text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -2351,8 +2351,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           </button>
           <button
             onClick={() => setCurrentStep('security')}
-            className="px-8 py-3 text-white rounded-lg text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -2463,8 +2463,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           </button>
           <button
             onClick={() => setCurrentStep('final-details')}
-            className="px-8 py-3 text-white rounded-lg text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -2652,14 +2652,10 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
                 });
               }
             }}
-            className={`px-8 py-3 rounded-lg text-base transition-opacity ${
-              isFormValid ? 'hover:opacity-90' : 'opacity-40 cursor-not-allowed'
+            className={`px-8 py-3 rounded-lg text-base transition-colors ${
+              isFormValid ? 'bg-[#000000] hover:bg-[#222222] text-white' : 'bg-[#E5E5E5] text-[#B0B0B0] cursor-not-allowed'
             }`}
-            style={{ 
-              fontWeight: 600, 
-              backgroundColor: isFormValid ? '#222222' : '#E5E5E5', 
-              color: isFormValid ? '#FFFFFF' : '#B0B0B0' 
-            }}
+            style={{ fontWeight: 600 }}
           >
             Créer une annonce
           </button>
