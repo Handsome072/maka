@@ -243,58 +243,15 @@ export function ExperienceDetails({ onBack }: ExperienceDetailsProps) {
 
                 {/* Map */}
                 <div className="relative w-full h-[420px] rounded-3xl overflow-hidden bg-gray-100">
-                  <img 
-                    src="https://images.unsplash.com/photo-1730317196374-5209e38e4e40?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtaWxhbiUyMGl0YWx5JTIwbWFwfGVufDF8fHx8MTc2Nzg4Mjc0MHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-                    alt="Map location"
-                    className="w-full h-full object-cover"
-                  />
-                  
-                  {/* Map Pin with Label */}
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-full">
-                    <div className="relative flex flex-col items-center">
-                      {/* Pin Circle */}
-                      <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center shadow-lg">
-                        <div className="w-4 h-4 bg-white rounded-full"></div>
-                      </div>
-                      {/* Label Below Pin */}
-                      <div className="mt-2 bg-white px-3 py-1.5 rounded-lg shadow-md" style={{ fontWeight: 600 }}>
-                        <span className="text-sm whitespace-nowrap text-gray-900">Lieu de rendez-vous</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Search/Zoom Button - Top Left */}
-                  <div className="absolute top-4 left-4">
-                    <button className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors">
-                      <svg className="w-5 h-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                      </svg>
-                    </button>
-                  </div>
-
-                  {/* Fullscreen and Zoom Controls - Top Right */}
-                  <div className="absolute top-4 right-4 flex flex-col gap-2">
-                    {/* Fullscreen Button */}
-                    <button className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors">
-                      <svg className="w-5 h-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l5-5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-                      </svg>
-                    </button>
-                    
-                    {/* Zoom In Button */}
-                    <button className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors border-b border-gray-200">
-                      <svg className="w-5 h-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v12m6-6H6" />
-                      </svg>
-                    </button>
-                    
-                    {/* Zoom Out Button */}
-                    <button className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors">
-                      <svg className="w-5 h-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M18 12H6" />
-                      </svg>
-                    </button>
-                  </div>
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d178420.37564876517!2d9.0406854!3d45.4642035!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4786c1493f1275e7%3A0x3cffcd13c6740e8d!2sMilan%2C%20Italie!5e0!3m2!1sfr!2sfr!4v1234567890123!5m2!1sfr!2sfr"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0, borderRadius: '1.5rem' }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  ></iframe>
                 </div>
               </div>
 
