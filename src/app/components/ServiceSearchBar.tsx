@@ -5,11 +5,16 @@ import { ServiceDatePicker } from './ServiceDatePicker';
 import { ServiceTypePicker } from './ServiceTypePicker';
 import backgroundImage from '@/assets/ea9a43f19f699f5eeca472b649d75293c416f15e.png';
 
-export function ServiceSearchBar() {
+interface ServiceSearchBarProps {
+  onSearch?: (params: any) => void;
+}
+
+export function ServiceSearchBar({ onSearch }: ServiceSearchBarProps) {
   const [activeDropdown, setActiveDropdown] = useState<'destination' | 'dates' | 'service' | null>(null);
   const [destination, setDestination] = useState('');
   const [date, setDate] = useState('');
   const [serviceType, setServiceType] = useState('');
+  const [checkInDate, setCheckInDate] = useState<Date | null>(null);
   const searchBarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -37,6 +42,24 @@ export function ServiceSearchBar() {
 
   const handleClearServiceType = () => {
     setServiceType('');
+  };
+
+  const handleSearch = () => {
+    if (onSearch) {
+      onSearch({
+        destination,
+        checkInDate,
+        checkOutDate: null,
+        guestsCount: {
+          adults: 0,
+          children: 0,
+          babies: 0,
+          pets: 0,
+        },
+        serviceType,
+      });
+    }
+    setActiveDropdown(null);
   };
 
   return (
@@ -171,12 +194,13 @@ export function ServiceSearchBar() {
                 )}
               </div>
 
-              <button 
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-white rounded-full transition-all flex items-center gap-2" 
-                style={{ 
-                  backgroundColor: activeDropdown ? '#00BCD4': '#00BCD4',
+              <button
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-white rounded-full transition-all flex items-center gap-2"
+                style={{
+                  backgroundColor: '#5EC6D8',
                   padding: activeDropdown ? '14px 24px' : '14px'
                 }}
+                onClick={handleSearch}
               >
                 <Search className="w-4 h-4" />
                 {activeDropdown && (

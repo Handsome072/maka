@@ -18,10 +18,26 @@ export default function ExperiencesPage() {
     router.push(id ? `/experience/${id}` : '/experience/1');
   };
 
+  // Handle search
+  const handleSearch = (params: any) => {
+    const searchQuery = new URLSearchParams({
+      destination: params.destination || '',
+      checkIn: params.checkInDate?.toISOString() || '',
+      checkOut: params.checkOutDate?.toISOString() || '',
+      adults: params.guestsCount?.adults?.toString() || '0',
+      children: params.guestsCount?.children?.toString() || '0',
+      babies: params.guestsCount?.babies?.toString() || '0',
+      pets: params.guestsCount?.pets?.toString() || '0',
+    });
+    handleNavigateScroll();
+    router.push(`/search?${searchQuery.toString()}`);
+  };
+
   return (
     <Experiences
       isScrolled={isScrolled}
       onExperienceClick={handleExperienceClick}
+      onSearch={handleSearch}
     />
   );
 }

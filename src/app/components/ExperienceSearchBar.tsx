@@ -5,7 +5,11 @@ import { ExperienceDatePicker } from "./ExperienceDatePicker";
 import { ExperienceGuestsPicker } from "./ExperienceGuestsPicker";
 import backgroundImage from '@/assets/ea9a43f19f699f5eeca472b649d75293c416f15e.png';
 
-export function ExperienceSearchBar() {
+interface ExperienceSearchBarProps {
+  onSearch?: (params: any) => void;
+}
+
+export function ExperienceSearchBar({ onSearch }: ExperienceSearchBarProps) {
   const [showDestinations, setShowDestinations] =
     useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -19,6 +23,8 @@ export function ExperienceSearchBar() {
   const [selectedDestination, setSelectedDestination] =
     useState("");
   const [selectedDate, setSelectedDate] = useState("");
+  const [checkInDate, setCheckInDate] = useState<Date | null>(null);
+  const [checkOutDate, setCheckOutDate] = useState<Date | null>(null);
 
   const searchBarRef = useRef<HTMLDivElement>(null);
 
@@ -53,6 +59,23 @@ export function ExperienceSearchBar() {
 
   const handleClearGuests = () => {
     setGuestsCount({ adults: 0, children: 0, babies: 0 });
+  };
+
+  const handleSearch = () => {
+    if (onSearch) {
+      onSearch({
+        destination: selectedDestination,
+        checkInDate,
+        checkOutDate,
+        guestsCount: {
+          ...guestsCount,
+          pets: 0,
+        },
+      });
+    }
+    setShowDestinations(false);
+    setShowDatePicker(false);
+    setShowGuestsPicker(false);
   };
 
   return (
@@ -263,7 +286,7 @@ export function ExperienceSearchBar() {
               <button
                 className="absolute right-2 top-1/2 -translate-y-1/2 text-white rounded-full transition-all flex items-center gap-2"
                 style={{
-                  backgroundColor: "#00BCD4",
+                  backgroundColor: "#5EC6D8",
                   padding:
                     showDestinations ||
                     showDatePicker ||
@@ -271,6 +294,7 @@ export function ExperienceSearchBar() {
                       ? "14px 24px"
                       : "14px",
                 }}
+                onClick={handleSearch}
               >
                 <Search className="w-4 h-4" />
                 {(showDestinations ||

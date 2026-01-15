@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import '@/styles/index.css';
 
 export const metadata: Metadata = {
-  title: 'HOMIQIO - Intégration site Airbnb',
+  title: 'HOMIQIO',
   description: 'Trouvez votre logement idéal avec HOMIQIO',
   icons: {
     icon: '/favicon.ico',

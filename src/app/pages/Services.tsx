@@ -6,9 +6,10 @@ import { ServiceSearchBar } from '../components/ServiceSearchBar';
 interface ServicesProps {
   isScrolled: boolean;
   onServiceClick?: (id?: string) => void;
+  onSearch?: (params: any) => void;
 }
 
-export function Services({ isScrolled, onServiceClick }: ServicesProps) {
+export function Services({ isScrolled, onServiceClick, onSearch }: ServicesProps) {
   // Données pour la section Chefs privés (nouvelle section horizontale)
   const chefsPrivesSection = [
     {
@@ -192,7 +193,7 @@ export function Services({ isScrolled, onServiceClick }: ServicesProps) {
   return (
     <div className="min-h-screen bg-white">
       {/* Search bar - visible seulement quand on n'a pas scrollé */}
-      {!isScrolled && <ServiceSearchBar />}
+      {!isScrolled && <ServiceSearchBar onSearch={onSearch} />}
 
       <main className="pb-12">
         {/* Section Chefs privés avec défilement horizontal */}

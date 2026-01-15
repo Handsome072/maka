@@ -347,7 +347,7 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
       {/* Header with search bar - combined for seamless positioning */}
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
         {/* Main header row */}
-        <div className="px-4 sm:px-6 lg:px-20 py-4">
+        <div className="px-4 sm:px-6 lg:px-20 py-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
             {/* Logo */}
             <button
@@ -374,7 +374,7 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
           </div>
         </div>
 
-        {/* Compact search bar row - no gap */}
+        {/* Compact search bar row */}
         <div className="bg-white py-3 px-4 sm:px-6 lg:px-20">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">

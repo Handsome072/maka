@@ -8,9 +8,10 @@ import { useInView } from 'motion/react';
 interface ExperiencesProps {
   isScrolled: boolean;
   onExperienceClick?: (id?: string) => void;
+  onSearch?: (params: any) => void;
 }
 
-export function Experiences({ isScrolled, onExperienceClick }: ExperiencesProps) {
+export function Experiences({ isScrolled, onExperienceClick, onSearch }: ExperiencesProps) {
   // Ref for section title animation
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
@@ -386,7 +387,7 @@ export function Experiences({ isScrolled, onExperienceClick }: ExperiencesProps)
   return (
     <div className="min-h-screen bg-white">
       {/* Search bar - visible seulement quand on n'a pas scrollé */}
-      {!isScrolled && <ExperienceSearchBar />}
+      {!isScrolled && <ExperienceSearchBar onSearch={onSearch} />}
 
       <main className="pb-12">
         {/* Airbnb Originals */}
