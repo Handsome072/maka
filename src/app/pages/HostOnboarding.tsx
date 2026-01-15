@@ -1308,7 +1308,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
 
         {/* Photo Upload Modal */}
         {showPhotoUploadModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => {
+          <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50" onClick={() => {
             setShowPhotoUploadModal(false);
             setTempPhotos([]);
           }}>
