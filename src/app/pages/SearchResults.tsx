@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { Heart, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { FiltersModal } from '../components/FiltersModal';
+import { HeaderRightMenu } from '../components/HeaderRightMenu';
+import { LanguageModal } from '../components/LanguageModal';
+import { BecomeHostModal } from '../components/BecomeHostModal';
+import { AuthModal } from '../components/AuthModal';
 
 interface SearchResultsProps {
   onBack: () => void;
@@ -308,6 +312,10 @@ function PropertyCard({ property }: { property: Property }) {
 
 export function SearchResults({ onBack, onNavigate, searchParams }: SearchResultsProps) {
   const [showFilterModal, setShowFilterModal] = useState(false);
+  const [showMenuDropdown, setShowMenuDropdown] = useState(false);
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
+  const [showBecomeHostModal, setShowBecomeHostModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const formatDateRange = () => {
     if (!searchParams.checkInDate) return 'Dates flexibles';
@@ -336,110 +344,88 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Simple Header */}
+      {/* Header with search bar - combined for seamless positioning */}
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
+        {/* Main header row */}
         <div className="px-4 sm:px-6 lg:px-20 py-4">
           <div className="flex items-center justify-between">
             {/* Logo */}
             <button
               onClick={onBack}
-              className="flex items-center gap-1 flex-shrink-0 hover:opacity-80 transition-opacity duration-200"
+              className="flex items-center gap-1 flex-shrink-0 hover:opacity-80 transition-opacity duration-200 border-0"
             >
-              <svg
-                className="w-8 h-8"
-                viewBox="0 0 32 32"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z"
-                  fill="#10B981"
-                />
-              </svg>
-              <span
-                className="text-[#10B981] text-xl ml-1 hidden sm:block"
-                style={{ fontWeight: 600 }}
-              >
-                HOMIQIO
-              </span>
+              <img
+                src="/logo.png"
+                alt="HOMIQIO Logo"
+                className="w-[150px] h-auto border-0"
+              />
             </button>
 
-            {/* Right side placeholder */}
-            <div className="flex items-center gap-4">
-              <button className="text-sm px-4 py-2 hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600 }}>
-                Devenir hôte
-              </button>
-              <button className="w-10 h-10 rounded-full hover:bg-gray-50 flex items-center justify-center transition-colors">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <circle cx="8" cy="8" r="7" stroke="#222222" strokeWidth="1.5"/>
-                  <path d="M3 8H13M8 3C6.5 4.5 6 6 6 8C6 10 6.5 11.5 8 13M8 3C9.5 4.5 10 6 10 8C10 10 9.5 11.5 8 13" stroke="#222222" strokeWidth="1.5"/>
-                </svg>
-              </button>
-              <button className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-full hover:shadow-md transition-shadow">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M2 4H14M2 8H14M2 12H14" stroke="#222222" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="11" fill="#717171"/>
-                  <path d="M12 2C14.21 2 16 3.79 16 6C16 8.21 14.21 10 12 10C9.79 10 8 8.21 8 6C8 3.79 9.79 2 12 2ZM12 22C7.03 22 3 19.42 3 16.25C3 13.08 7.03 10.5 12 10.5C16.97 10.5 21 13.08 21 16.25C21 19.42 16.97 22 12 22Z" fill="#FFF"/>
-                </svg>
+            {/* Right Menu */}
+            <HeaderRightMenu
+              showMenuDropdown={showMenuDropdown}
+              setShowMenuDropdown={setShowMenuDropdown}
+              setShowLanguageModal={setShowLanguageModal}
+              setShowBecomeHostModal={setShowBecomeHostModal}
+              setShowAuthModal={setShowAuthModal}
+              onClientSpaceClick={() => onNavigate('logements')}
+              onMessagesClick={() => onNavigate('logements')}
+            />
+          </div>
+        </div>
+
+        {/* Compact search bar row - no gap */}
+        <div className="bg-white py-3 px-4 sm:px-6 lg:px-20">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              {/* Compact search info */}
+              <button className="flex items-center border border-gray-200 rounded-full shadow-sm hover:shadow-md transition-shadow bg-white pl-6 pr-2 py-2">
+                <div className="flex items-center gap-3">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M13.5 6.5V14.5H10V11C10 10.4477 9.55228 10 9 10H7C6.44772 10 6 10.4477 6 11V14.5H2.5V6.5" stroke="#222222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M0.5 8L8 1.5L15.5 8" stroke="#222222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+
+                <div className="text-sm px-4" style={{ fontWeight: 600, color: '#222222' }}>
+                  {searchParams.destination || 'N\'importe où'}
+                </div>
+
+                <div className="w-px h-6 bg-gray-300"></div>
+
+                <div className="text-sm px-4" style={{ fontWeight: 600, color: '#222222' }}>
+                  {formatDateRange()}
+                </div>
+
+                <div className="w-px h-6 bg-gray-300"></div>
+
+                <div className="text-sm px-4" style={{ color: '#717171' }}>
+                  {guestsText}
+                </div>
+
+                <div className="bg-[#5EC6D8] text-white p-2.5 rounded-full">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M13 13L10.1 10.1M11.6667 6.33333C11.6667 9.27885 9.27885 11.6667 6.33333 11.6667C3.38781 11.6667 1 9.27885 1 6.33333C1 3.38781 3.38781 1 6.33333 1C9.27885 1 11.6667 3.38781 11.6667 6.33333Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
               </button>
             </div>
+
+            {/* Filters button */}
+            <button
+              className="flex items-center gap-2 px-4 py-2.5 border border-gray-300 rounded-xl hover:border-gray-400 transition-colors"
+              onClick={() => setShowFilterModal(true)}
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1.5 4H14.5M3.5 8H12.5M6 12H10" stroke="#222222" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+              <span className="text-[12px]" style={{ fontWeight: 600, color: '#222222' }}>
+                Filtres
+              </span>
+            </button>
           </div>
         </div>
       </header>
-
-      {/* Sticky compact search bar - moved below header */}
-      <div className="sticky top-[80px] z-40 bg-white border-b border-gray-200 py-3 px-4 sm:px-6 lg:px-20">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            {/* Compact search info */}
-            <button className="flex items-center border border-gray-200 rounded-full shadow-sm hover:shadow-md transition-shadow bg-white pl-6 pr-2 py-2">
-              <div className="flex items-center gap-3">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M13.5 6.5V14.5H10V11C10 10.4477 9.55228 10 9 10H7C6.44772 10 6 10.4477 6 11V14.5H2.5V6.5" stroke="#222222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M0.5 8L8 1.5L15.5 8" stroke="#222222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-
-              <div className="text-sm px-4" style={{ fontWeight: 600, color: '#222222' }}>
-                {searchParams.destination || 'N\'importe où'}
-              </div>
-              
-              <div className="w-px h-6 bg-gray-300"></div>
-              
-              <div className="text-sm px-4" style={{ fontWeight: 600, color: '#222222' }}>
-                {formatDateRange()}
-              </div>
-              
-              <div className="w-px h-6 bg-gray-300"></div>
-              
-              <div className="text-sm px-4" style={{ color: '#717171' }}>
-                {guestsText}
-              </div>
-              
-              <div className="bg-[#10B981] text-white p-2.5 rounded-full">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M13 13L10.1 10.1M11.6667 6.33333C11.6667 9.27885 9.27885 11.6667 6.33333 11.6667C3.38781 11.6667 1 9.27885 1 6.33333C1 3.38781 3.38781 1 6.33333 1C9.27885 1 11.6667 3.38781 11.6667 6.33333Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-            </button>
-          </div>
-
-          {/* Filters button */}
-          <button
-            className="flex items-center gap-2 px-4 py-2.5 border border-gray-300 rounded-xl hover:border-gray-400 transition-colors"
-            onClick={() => setShowFilterModal(true)}
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1.5 4H14.5M3.5 8H12.5M6 12H10" stroke="#222222" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
-            <span className="text-[12px]" style={{ fontWeight: 600, color: '#222222' }}>
-              Filtres
-            </span>
-          </button>
-        </div>
-      </div>
 
       {/* Main content */}
       <div className="flex">
@@ -716,6 +702,30 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
         isOpen={showFilterModal}
         onClose={() => setShowFilterModal(false)}
       />
+
+      {/* Language Modal */}
+      {showLanguageModal && (
+        <LanguageModal
+          isOpen={showLanguageModal}
+          onClose={() => setShowLanguageModal(false)}
+        />
+      )}
+
+      {/* Become Host Modal */}
+      {showBecomeHostModal && (
+        <BecomeHostModal
+          isOpen={showBecomeHostModal}
+          onClose={() => setShowBecomeHostModal(false)}
+        />
+      )}
+
+      {/* Auth Modal */}
+      {showAuthModal && (
+        <AuthModal
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+        />
+      )}
     </div>
   );
 }
