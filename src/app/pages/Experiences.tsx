@@ -386,10 +386,12 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Search bar - smooth opacity transition synchronized with CompactSearchBar */}
+      {/* Search bar - smooth opacity transition synchronized with CompactSearchBar
+          The SearchBar keeps its space in the layout and scrolls off-screen naturally.
+          Only opacity changes - no height collapse to prevent layout shift. */}
       <div
-        className={`transition-all duration-300 ease-in-out overflow-hidden ${
-          isScrolled ? 'opacity-0 max-h-0 pointer-events-none' : 'opacity-100 max-h-[200px]'
+        className={`transition-opacity duration-300 ease-in-out ${
+          isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100'
         }`}
       >
         <SearchBar type="experiences" onSearch={onSearch} />
