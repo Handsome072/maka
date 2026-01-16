@@ -278,7 +278,7 @@ export function SearchBar({ onSearch }: { onSearch?: (params: any) => void }) {
   return (
     <div className="px-4 sm:px-6 lg:px-20 pt-4 py-3 pb-10 relative bg-[#F7F7F7]">
       <div
-        className="max-w-3xl mx-auto relative"
+        className="max-w-4xl mx-auto relative"
         ref={dropdownRef}
       >
         <div
