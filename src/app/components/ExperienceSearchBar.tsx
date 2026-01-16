@@ -88,7 +88,7 @@ export function ExperienceSearchBar({ onSearch }: ExperienceSearchBarProps) {
         backgroundRepeat: 'no-repeat'
       }}
     >
-      <div className="px-4 sm:px-6 lg:px-20 py-3 pb-6">
+      <div className="px-4 sm:px-6 lg:px-12 py-3 pb-6">
         <div
           className="max-w-3xl mx-auto relative"
           ref={searchBarRef}
