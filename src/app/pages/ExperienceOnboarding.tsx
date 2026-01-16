@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import { MapPin } from 'lucide-react';
 import Image from 'next/image';
 
@@ -9,8 +9,104 @@ interface ExperienceOnboardingProps {
 type ExperienceCategory = 'art-design' | 'cuisine' | 'fitness' | 'histoire' | 'nature' | null;
 type ExperienceType = 'visite-archi' | 'atelier-art' | 'visite-galeries' | 'shopping-mode' | null;
 
+type StepType = 'category' | 'type' | 'location' | 'intro' | 'experience-years' | 'qualifications' | 'online-profiles' | 'address-info' | 'meeting-location' | 'confirm-location' | 'map-marker' | 'photos' | 'title' | 'describe' | 'program-intro' | 'program' | 'tarification';
+
+interface StepSection {
+  id: number;
+  name: string;
+  steps: StepType[];
+  icon: ReactNode;
+}
+
+const stepSections: StepSection[] = [
+  {
+    id: 1,
+    name: 'À propos de vous',
+    steps: ['experience-years', 'qualifications', 'online-profiles', 'address-info'],
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+      </svg>
+    )
+  },
+  {
+    id: 2,
+    name: 'Lieu',
+    steps: ['meeting-location', 'confirm-location', 'map-marker'],
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+        <circle cx="12" cy="10" r="3"/>
+      </svg>
+    )
+  },
+  {
+    id: 3,
+    name: 'Photos',
+    steps: ['photos'],
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+        <circle cx="8.5" cy="8.5" r="1.5"/>
+        <polyline points="21 15 16 10 5 21"/>
+      </svg>
+    )
+  },
+  {
+    id: 4,
+    name: 'Expérience',
+    steps: ['title', 'describe'],
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/>
+        <line x1="16" y1="17" x2="8" y2="17"/>
+      </svg>
+    )
+  },
+  {
+    id: 5,
+    name: 'Programme',
+    steps: ['program-intro', 'program'],
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <line x1="8" y1="6" x2="21" y2="6"/>
+        <line x1="8" y1="12" x2="21" y2="12"/>
+        <line x1="8" y1="18" x2="21" y2="18"/>
+        <line x1="3" y1="6" x2="3.01" y2="6"/>
+        <line x1="3" y1="12" x2="3.01" y2="12"/>
+        <line x1="3" y1="18" x2="3.01" y2="18"/>
+      </svg>
+    )
+  },
+  {
+    id: 6,
+    name: 'Tarification',
+    steps: ['tarification'],
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <line x1="12" y1="1" x2="12" y2="23"/>
+        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+      </svg>
+    )
+  },
+  {
+    id: 7,
+    name: 'Terminer',
+    steps: [],
+    icon: (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+        <polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+    )
+  }
+];
+
 export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) {
-  const [currentStep, setCurrentStep] = useState<'category' | 'type' | 'location' | 'intro' | 'experience-years' | 'qualifications' | 'online-profiles' | 'address-info' | 'meeting-location' | 'confirm-location' | 'map-marker' | 'photos' | 'title' | 'describe' | 'program-intro' | 'program' | 'tarification'>('category');
+  const [currentStep, setCurrentStep] = useState<StepType>('category');
   const [selectedCategory, setSelectedCategory] = useState<ExperienceCategory>(null);
   const [selectedType, setSelectedType] = useState<ExperienceType>(null);
   const [location, setLocation] = useState('');
@@ -83,6 +179,190 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
   const [pricePerPerson, setPricePerPerson] = useState(7);
   const [showPricingBreakdown, setShowPricingBreakdown] = useState(false);
   const [pricingStep, setPricingStep] = useState<'participants' | 'price'>('participants');
+
+  // Helper: Get current step section
+  const getCurrentStepSection = (): StepSection | null => {
+    return stepSections.find(section => section.steps.includes(currentStep)) || null;
+  };
+
+  // Helper: Check if a section is completed (all its steps are before current step)
+  const isSectionCompleted = (sectionId: number): boolean => {
+    const section = stepSections.find(s => s.id === sectionId);
+    if (!section) return false;
+    const currentSection = getCurrentStepSection();
+    if (!currentSection) return false;
+    return sectionId < currentSection.id;
+  };
+
+  // Helper: Check if a section is current
+  const isSectionCurrent = (sectionId: number): boolean => {
+    const currentSection = getCurrentStepSection();
+    return currentSection?.id === sectionId;
+  };
+
+  // Step Layout Component
+  const StepLayout = ({
+    children,
+    stepNumber,
+    stepName,
+    onBack,
+    onNext,
+    nextDisabled = false,
+    nextLabel = 'Suivant',
+    showBackButton = true,
+    leftFooterContent,
+  }: {
+    children: ReactNode;
+    stepNumber: number;
+    stepName: string;
+    onBack?: () => void;
+    onNext?: () => void;
+    nextDisabled?: boolean;
+    nextLabel?: string;
+    showBackButton?: boolean;
+    leftFooterContent?: ReactNode;
+  }) => {
+    return (
+      <div className="min-h-screen bg-white flex flex-col">
+        {/* Mobile Header */}
+        <header className="md:hidden fixed top-0 left-0 right-0 bg-[#222222] px-4 py-3 flex items-center justify-between z-30">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white text-sm font-semibold">
+              R
+            </div>
+            <span className="text-white text-sm">
+              {stepName} <span className="opacity-70">{stepNumber} sur 7</span>
+            </span>
+          </div>
+          <button 
+            onClick={() => onNavigate('annonces')}
+            className="p-2 hover:bg-white/10 rounded-full transition-colors"
+          >
+            <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </header>
+
+        {/* Desktop Header */}
+        <header className="hidden md:flex fixed top-0 left-20 right-0 bg-white border-b border-gray-200 px-8 py-4 items-center justify-between z-20">
+          <div className="flex items-center gap-3">
+            <p className="text-sm" style={{ color: '#717171' }}>
+              {stepName} <span style={{ color: '#222222', fontWeight: 600 }}>Étape {stepNumber} sur 7</span>
+            </p>
+          </div>
+          <button 
+            onClick={() => onNavigate('annonces')}
+            className="px-4 py-2 text-sm hover:bg-gray-100 rounded-lg transition-colors border border-gray-300"
+            style={{ fontWeight: 600, color: '#222222' }}
+          >
+            Enregistrer et quitter
+          </button>
+        </header>
+
+        {/* Left Sidebar - Desktop only */}
+        <aside className="hidden md:flex fixed top-0 left-0 bottom-0 w-20 bg-[#222222] flex-col items-center py-6 z-30">
+          {/* Logo */}
+          <div className="mb-8">
+            <Image
+              src="/logoIcon.png"
+              alt="Logo"
+              width={40}
+              height={40}
+              className="cursor-pointer hover:opacity-70 transition-opacity invert brightness-0 invert"
+              onClick={() => onNavigate('annonces')}
+            />
+          </div>
+          
+          {/* User initial */}
+          <div className="w-10 h-10 rounded-full bg-white/10 border-2 border-white/30 flex items-center justify-center text-white text-sm font-semibold mb-6">
+            R
+          </div>
+
+          {/* Step icons */}
+          <div className="flex flex-col gap-4 flex-1">
+            {stepSections.map((section) => {
+              const isCompleted = isSectionCompleted(section.id);
+              const isCurrent = isSectionCurrent(section.id);
+              
+              return (
+                <div
+                  key={section.id}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                    isCurrent
+                      ? 'bg-white text-[#222222]'
+                      : isCompleted
+                      ? 'bg-white/30 text-white'
+                      : 'bg-white/10 text-white/50'
+                  }`}
+                >
+                  {section.icon}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Skip button at bottom */}
+          <button 
+            onClick={() => onNavigate('annonces')}
+            className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M13 17l5-5-5-5M6 17l5-5-5-5"/>
+            </svg>
+          </button>
+        </aside>
+
+        {/* Main Content */}
+        <main className="flex-1 md:ml-20 pt-16 md:pt-20 pb-24 md:pb-28 overflow-y-auto">
+          <div className="h-full flex items-center justify-center px-4 md:px-16 py-8 md:py-12">
+            {children}
+          </div>
+        </main>
+
+        {/* Mobile Footer */}
+        <footer className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-4 z-20">
+          <button
+            onClick={onNext}
+            disabled={nextDisabled}
+            className={`w-full py-3 rounded-xl text-white text-base transition-colors ${
+              nextDisabled ? 'bg-gray-300 cursor-not-allowed' : 'bg-[#000000] hover:bg-[#222222]'
+            }`}
+            style={{ fontWeight: 600 }}
+          >
+            {nextLabel}
+          </button>
+        </footer>
+
+        {/* Desktop Footer */}
+        <footer className="hidden md:flex fixed bottom-0 left-20 right-0 bg-white border-t border-gray-200 px-8 py-4 items-center justify-between z-20">
+          {leftFooterContent ? (
+            leftFooterContent
+          ) : showBackButton && onBack ? (
+            <button
+              onClick={onBack}
+              className="text-base hover:underline"
+              style={{ fontWeight: 600, color: '#222222' }}
+            >
+              Retour
+            </button>
+          ) : (
+            <div></div>
+          )}
+          <button
+            onClick={onNext}
+            disabled={nextDisabled}
+            className={`px-8 py-3 rounded-lg text-white text-base transition-colors ${
+              nextDisabled ? 'bg-gray-300 cursor-not-allowed' : 'bg-[#000000] hover:bg-[#222222]'
+            }`}
+            style={{ fontWeight: 600 }}
+          >
+            {nextLabel}
+          </button>
+        </footer>
+      </div>
+    );
+  };
 
   // Load saved data on mount
   useEffect(() => {
@@ -1490,1321 +1770,695 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
     const categoryText = selectedCategory === 'art-design' ? "l'art et du design" : "ce domaine";
     
     return (
-      <div className="min-h-screen bg-white flex flex-col">
-        {/* Header with Logo and Save */}
-        <header className="px-8 py-6 flex items-center justify-between border-b border-gray-200">
-          <Image
-            src="/logoIcon.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            className="cursor-pointer hover:opacity-70 transition-opacity"
-            onClick={() => onNavigate('annonces')}
-          />
-          <div className="flex items-center gap-6">
-            <p className="text-sm" style={{ color: '#717171' }}>
-              À propos de vous <span style={{ color: '#222222', fontWeight: 600 }}>Étape 1 sur 7</span>
-            </p>
-            <button className="px-6 py-2 text-sm hover:bg-gray-100 rounded-lg transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
-              Enregistrer et quitter
+      <StepLayout
+        stepNumber={1}
+        stepName="À propos de vous"
+        onBack={() => setCurrentStep('intro')}
+        onNext={() => setCurrentStep('qualifications')}
+      >
+        <div className="max-w-2xl w-full text-center">
+          <h1 className="text-3xl md:text-5xl mb-8 md:mb-12" style={{ fontWeight: 600, color: '#222222' }}>
+            Depuis combien d'années<br />
+            travaillez-vous dans le<br />
+            domaine de {categoryText} ?
+          </h1>
+
+          {/* Counter */}
+          <div className="flex items-center justify-center gap-6 md:gap-8">
+            <button
+              onClick={() => setExperienceYears(Math.max(0, experienceYears - 1))}
+              className="w-12 h-12 md:w-14 md:h-14 rounded-full border-2 border-gray-300 hover:border-gray-900 transition-colors flex items-center justify-center"
+              disabled={experienceYears === 0}
+            >
+              <svg className="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </button>
+
+            <div className="text-6xl md:text-8xl" style={{ fontWeight: 600, color: '#222222', minWidth: '120px' }}>
+              {experienceYears}
+            </div>
+
+            <button
+              onClick={() => setExperienceYears(experienceYears + 1)}
+              className="w-12 h-12 md:w-14 md:h-14 rounded-full border-2 border-gray-300 hover:border-gray-900 transition-colors flex items-center justify-center"
+            >
+              <svg className="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
             </button>
           </div>
-        </header>
-
-        {/* Sidebar + Content */}
-        <div className="flex flex-1">
-          {/* Left Sidebar - Progress */}
-          <div className="w-20 bg-gray-900 flex flex-col items-center py-8 gap-6">
-            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#222222">
-                <circle cx="12" cy="8" r="4"/>
-                <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
-              </svg>
-            </div>
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="w-10 h-10 rounded-full bg-gray-700"></div>
-            ))}
-          </div>
-
-          {/* Main Content */}
-          <div className="flex-1 flex items-center justify-center px-16 py-12">
-            <div className="max-w-2xl w-full text-center">
-              <h1 className="text-5xl mb-12" style={{ fontWeight: 600, color: '#222222' }}>
-                Depuis combien d'années<br />
-                travaillez-vous dans le<br />
-                domaine de {categoryText} ?
-              </h1>
-
-              {/* Counter */}
-              <div className="flex items-center justify-center gap-8 mb-16">
-                <button
-                  onClick={() => setExperienceYears(Math.max(0, experienceYears - 1))}
-                  className="w-14 h-14 rounded-full border-2 border-gray-300 hover:border-gray-900 transition-colors flex items-center justify-center"
-                  disabled={experienceYears === 0}
-                >
-                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                  </svg>
-                </button>
-
-                <div className="text-8xl" style={{ fontWeight: 600, color: '#222222', minWidth: '200px' }}>
-                  {experienceYears}
-                </div>
-
-                <button
-                  onClick={() => setExperienceYears(experienceYears + 1)}
-                  className="w-14 h-14 rounded-full border-2 border-gray-300 hover:border-gray-900 transition-colors flex items-center justify-center"
-                >
-                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
-
-        {/* Footer Navigation */}
-        <div className="border-t border-gray-200 px-8 py-6 flex justify-between items-center">
-          <button
-            onClick={() => setCurrentStep('intro')}
-            className="px-6 py-3 text-base hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2"
-            style={{ fontWeight: 600, color: '#222222' }}
-          >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-            Retour
-          </button>
-          <button
-            onClick={() => setCurrentStep('qualifications')}
-            className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
-            style={{ fontWeight: 600 }}
-          >
-            Suivant
-          </button>
-        </div>
-      </div>
+      </StepLayout>
     );
   }
 
   // Step 6: Qualifications
   if (currentStep === 'qualifications') {
     return (
-      <div className="min-h-screen bg-white flex flex-col">
-        {/* Header with Logo and Save */}
-        <header className="px-8 py-6 flex items-center justify-between border-b border-gray-200">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setCurrentStep('experience-years')}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
+      <>
+        <StepLayout
+          stepNumber={1}
+          stepName="À propos de vous"
+          onBack={() => setCurrentStep('experience-years')}
+          onNext={() => setCurrentStep('online-profiles')}
+          leftFooterContent={
+            <button onClick={() => setShowTipsModal(true)} className="text-base hover:underline hidden md:block" style={{ fontWeight: 600, color: '#222222' }}>
+              Découvrir nos conseils
             </button>
-            <Image
-              src="/logoIcon.png"
-              alt="Logo"
-              width={48}
-              height={48}
-              className="cursor-pointer hover:opacity-70 transition-opacity"
-              onClick={() => onNavigate('annonces')}
-            />
-          </div>
-          <div className="flex items-center gap-6">
-            <p className="text-sm" style={{ color: '#717171' }}>
-              À propos de vous <span style={{ color: '#222222', fontWeight: 600 }}>Étape 1 sur 7</span>
+          }
+        >
+          <div className="max-w-2xl w-full">
+            {/* Profile Initial */}
+            <div className="flex justify-center mb-6 md:mb-8">
+              <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gray-900 flex items-center justify-center text-white text-3xl md:text-4xl" style={{ fontWeight: 600 }}>
+                R
+              </div>
+            </div>
+
+            <h1 className="text-2xl md:text-4xl text-center mb-3 md:mb-4" style={{ fontWeight: 600, color: '#222222' }}>
+              Décrivez vos qualifications
+            </h1>
+            
+            <p className="text-center text-sm md:text-base mb-8 md:mb-12" style={{ color: '#717171' }}>
+              Aidez les voyageurs à mieux vous connaître.
             </p>
-            <button className="px-6 py-2 text-sm hover:bg-gray-100 rounded-lg transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
-              Enregistrer et quitter
-            </button>
-          </div>
-        </header>
 
-        {/* Sidebar + Content */}
-        <div className="flex flex-1">
-          {/* Left Sidebar - Profile */}
-          <div className="w-20 bg-gray-900 flex flex-col items-center py-8 gap-6">
-            <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="white">
-                <circle cx="12" cy="8" r="4"/>
-                <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
-              </svg>
-            </div>
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="w-10 h-10 rounded-full bg-gray-700"></div>
-            ))}
-          </div>
-
-          {/* Main Content */}
-          <div className="flex-1 flex items-center justify-center px-16 py-12">
-            <div className="max-w-2xl w-full">
-              {/* Profile Initial */}
-              <div className="flex justify-center mb-8">
-                <div className="w-24 h-24 rounded-full bg-gray-900 flex items-center justify-center text-white text-4xl" style={{ fontWeight: 600 }}>
-                  R
+            {/* Sections */}
+            <div className="space-y-3 md:space-y-4">
+              {/* Présentation */}
+              <button
+                onClick={() => setShowPresentationModal(true)}
+                className="w-full border-2 border-gray-300 rounded-xl px-4 md:px-6 py-4 md:py-5 flex items-center justify-between hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex items-center gap-3 md:gap-4">
+                  <div className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm md:text-base" style={{ fontWeight: 600, color: '#222222' }}>
+                      Présentation
+                    </p>
+                    <p className="text-xs md:text-sm" style={{ color: '#717171' }}>
+                      Comment vous présentez-vous ?
+                    </p>
+                  </div>
                 </div>
-              </div>
+                <svg className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+              </button>
 
-              <h1 className="text-4xl text-center mb-4" style={{ fontWeight: 600, color: '#222222' }}>
-                Décrivez vos qualifications
-              </h1>
-              
-              <p className="text-center text-base mb-12" style={{ color: '#717171' }}>
-                Aidez les voyageurs à mieux vous connaître.
-              </p>
-
-              {/* Sections - Now just buttons that open modals */}
-              <div className="space-y-4">
-                {/* Présentation */}
-                <button
-                  onClick={() => setShowPresentationModal(true)}
-                  className="w-full border-2 border-gray-300 rounded-xl px-6 py-5 flex items-center justify-between hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center">
-                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                        <line x1="12" y1="5" x2="12" y2="19" />
-                        <line x1="5" y1="12" x2="19" y2="12" />
-                      </svg>
-                    </div>
-                    <div className="text-left">
-                      <p className="text-base" style={{ fontWeight: 600, color: '#222222' }}>
-                        Présentation
-                      </p>
-                      <p className="text-sm" style={{ color: '#717171' }}>
-                        Comment vous présentez-vous ?
-                      </p>
-                    </div>
+              {/* Expertise */}
+              <button
+                onClick={() => setShowExpertiseModal(true)}
+                className="w-full border-2 border-gray-300 rounded-xl px-4 md:px-6 py-4 md:py-5 flex items-center justify-between hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex items-center gap-3 md:gap-4">
+                  <div className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
                   </div>
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                    <path d="M9 18l6-6-6-6" />
-                  </svg>
-                </button>
-
-                {/* Expertise */}
-                <button
-                  onClick={() => setShowExpertiseModal(true)}
-                  className="w-full border-2 border-gray-300 rounded-xl px-6 py-5 flex items-center justify-between hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center">
-                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                        <line x1="12" y1="5" x2="12" y2="19" />
-                        <line x1="5" y1="12" x2="19" y2="12" />
-                      </svg>
-                    </div>
-                    <div className="text-left">
-                      <p className="text-base" style={{ fontWeight: 600, color: '#222222' }}>
-                        Expertise
-                      </p>
-                      <p className="text-sm" style={{ color: '#717171' }}>
-                        Mettez en avant votre expérience
-                      </p>
-                    </div>
+                  <div className="text-left">
+                    <p className="text-sm md:text-base" style={{ fontWeight: 600, color: '#222222' }}>
+                      Expertise
+                    </p>
+                    <p className="text-xs md:text-sm" style={{ color: '#717171' }}>
+                      Mettez en avant votre expérience
+                    </p>
                   </div>
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                    <path d="M9 18l6-6-6-6" />
-                  </svg>
-                </button>
+                </div>
+                <svg className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+              </button>
 
-                {/* Distinction obtenue */}
-                <button
-                  onClick={() => setShowDistinctionModal(true)}
-                  className="w-full border-2 border-gray-300 rounded-xl px-6 py-5 flex items-center justify-between hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center">
-                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                        <line x1="12" y1="5" x2="12" y2="19" />
-                        <line x1="5" y1="12" x2="19" y2="12" />
-                      </svg>
-                    </div>
-                    <div className="text-left">
-                      <p className="text-base" style={{ fontWeight: 600, color: '#222222' }}>
-                        Distinction obtenue <span style={{ color: '#717171', fontWeight: 400 }}>(facultatif)</span>
-                      </p>
-                      <p className="text-sm" style={{ color: '#717171' }}>
-                        Ajoutez un moment fort de votre carrière
-                      </p>
-                    </div>
+              {/* Distinction obtenue */}
+              <button
+                onClick={() => setShowDistinctionModal(true)}
+                className="w-full border-2 border-gray-300 rounded-xl px-4 md:px-6 py-4 md:py-5 flex items-center justify-between hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex items-center gap-3 md:gap-4">
+                  <div className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
                   </div>
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                    <path d="M9 18l6-6-6-6" />
-                  </svg>
-                </button>
-              </div>
+                  <div className="text-left">
+                    <p className="text-sm md:text-base" style={{ fontWeight: 600, color: '#222222' }}>
+                      Distinction obtenue <span style={{ color: '#717171', fontWeight: 400 }}>(facultatif)</span>
+                    </p>
+                    <p className="text-xs md:text-sm" style={{ color: '#717171' }}>
+                      Ajoutez un moment fort de votre carrière
+                    </p>
+                  </div>
+                </div>
+                <svg className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+              </button>
+            </div>
 
-              {/* Help Text */}
-              <div className="mt-8 text-sm" style={{ color: '#717171' }}>
-                <button onClick={() => setShowTipsModal(true)} className="hover:underline">
-                  Découvrir nos conseils
-                </button>
-              </div>
+            {/* Help Text - Mobile only */}
+            <div className="mt-6 text-sm text-center md:hidden" style={{ color: '#717171' }}>
+              <button onClick={() => setShowTipsModal(true)} className="hover:underline">
+                Découvrir nos conseils
+              </button>
             </div>
           </div>
-        </div>
-
-        {/* Footer Navigation */}
-        <div className="border-t border-gray-200 px-8 py-6 flex justify-between items-center">
-          <button
-            onClick={() => setCurrentStep('experience-years')}
-            className="px-6 py-3 text-base hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2"
-            style={{ fontWeight: 600, color: '#222222' }}
-          >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-            Retour
-          </button>
-          <button
-            onClick={() => setCurrentStep('online-profiles')}
-            className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
-            style={{ fontWeight: 600 }}
-          >
-            Suivant
-          </button>
-        </div>
-
+        </StepLayout>
         {/* Modals */}
         {renderPresentationModal()}
         {renderTipsModal()}
         {renderExpertiseModal()}
         {renderDistinctionModal()}
-      </div>
+      </>
     );
   }
 
   // Step 7: Online Profiles
   if (currentStep === 'online-profiles') {
-    // Show initial interface with social logos if no links added yet
-    if (websiteLinks.length === 0) {
-      return (
-        <div className="min-h-screen bg-white flex flex-col">
-          {/* Header */}
-          <header className="px-8 py-6 flex items-center justify-between border-b border-gray-200">
-            <div className="flex items-center gap-4">
-              <button 
-                onClick={() => setCurrentStep('qualifications')}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-              >
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                  <path d="M15 18l-6-6 6-6" />
-                </svg>
-              </button>
-              <Image
-                src="/logoIcon.png"
-                alt="Logo"
-                width={48}
-                height={48}
-                className="cursor-pointer hover:opacity-70 transition-opacity"
-                onClick={() => onNavigate('annonces')}
-              />
-            </div>
-            <div className="flex items-center gap-6">
-              <p className="text-sm" style={{ color: '#717171' }}>
-                À propos de vous <span style={{ color: '#222222', fontWeight: 600 }}>Étape 1 sur 7</span>
-              </p>
-              <button className="px-6 py-2 text-sm hover:bg-gray-100 rounded-lg transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
-                Enregistrer et quitter
-              </button>
-            </div>
-          </header>
+    const onlineProfilesContent = websiteLinks.length === 0 ? (
+      <div className="max-w-2xl w-full">
+        <h1 className="text-3xl md:text-5xl mb-4 md:mb-6 text-center" style={{ fontWeight: 600, color: '#222222' }}>
+          Ajoutez vos profils<br />en ligne
+        </h1>
+        
+        <p className="text-sm md:text-base mb-8 md:mb-12 max-w-xl mx-auto text-center" style={{ color: '#717171' }}>
+          Pour nous aider à confirmer vos compétences, ajoutez des liens vers vos commentaires, 
+          les articles de presse que vous avez reçus et votre site web. Les voyageurs ne les verront pas.
+        </p>
 
-          {/* Sidebar + Content */}
-          <div className="flex flex-1">
-            {/* Left Sidebar */}
-            <div className="w-20 bg-gray-900 flex flex-col items-center py-8 gap-6">
-              <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="white">
-                  <circle cx="12" cy="8" r="4"/>
-                  <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
-                </svg>
-              </div>
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="w-10 h-10 rounded-full bg-gray-700"></div>
-              ))}
-            </div>
-
-            {/* Main Content */}
-            <div className="flex-1 flex items-center justify-center px-16 py-12">
-              <div className="max-w-2xl w-full">
-                <h1 className="text-5xl mb-6 text-center" style={{ fontWeight: 600, color: '#222222' }}>
-                  Ajoutez vos profils<br />en ligne
-                </h1>
-                
-                <p className="text-base mb-12 max-w-xl mx-auto text-center" style={{ color: '#717171' }}>
-                  Pour nous aider à confirmer vos compétences, ajoutez des liens vers vos commentaires, 
-                  les articles de presse que vous avez reçus et votre site web. Les voyageurs ne les verront pas.
-                </p>
-
-                {/* Social Platform Cards */}
-                <div className="flex justify-center gap-6 mb-12">
-                  {/* Facebook */}
-                  <div className="w-32 h-32 rounded-2xl bg-white shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow">
-                    <svg className="w-16 h-16" viewBox="0 0 48 48" fill="none">
-                      <circle cx="24" cy="24" r="20" fill="#1877F2"/>
-                      <path d="M29.5 15.5H26.5C25.119 15.5 24 16.619 24 18V21H29.5L28.5 26H24V38H19V26H15.5V21H19V17.5C19 14.462 21.462 12 24.5 12H29.5V15.5Z" fill="white"/>
-                    </svg>
-                  </div>
-
-                  {/* Google */}
-                  <div className="w-32 h-32 rounded-2xl bg-white shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow">
-                    <svg className="w-16 h-16" viewBox="0 0 48 48">
-                      <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
-                      <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
-                      <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
-                      <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
-                    </svg>
-                  </div>
-
-                  {/* Yelp */}
-                  <div className="w-32 h-32 rounded-2xl bg-white shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow">
-                    <svg className="w-16 h-16" viewBox="0 0 48 48">
-                      <path fill="#D32323" d="M24.7,33.8l-5.5,9.4c-0.4,0.7-1.4,0.8-1.9,0.2l-2.3-2.3c-0.5-0.5-0.5-1.4,0.1-1.9l5.5-4.8c0.8-0.7,2-0.1,2,0.9L24.7,33.8z"/>
-                      <path fill="#D32323" d="M24.3,30.2c-0.8,0.1-1.5-0.5-1.5-1.3l-0.8-8.3c-0.1-0.8,0.7-1.5,1.5-1.3l3.9,0.9c0.8,0.2,1.3,1,1,1.8l-2.6,7.4C25.6,29.9,25,30.1,24.3,30.2z"/>
-                      <path fill="#D32323" d="M20.5,28.1c-0.7-0.4-0.8-1.4-0.3-2l4.4-6c0.5-0.7,1.5-0.7,2,0l1.9,2.6c0.5,0.7,0.3,1.6-0.4,2l-6.2,3.7C21.4,28.7,21,28.5,20.5,28.1z"/>
-                      <path fill="#D32323" d="M29.8,20.3l7.8-3.5c0.7-0.3,1.5,0.2,1.5,1l-0.1,2.9c0,0.7-0.6,1.3-1.3,1.2l-7.1-0.4c-1,0-1.4-1.2-0.7-1.8L29.8,20.3z"/>
-                      <path fill="#D32323" d="M18.5,7.5l-0.9,12.8c0,0.9-1.1,1.3-1.7,0.6l-5.2-6.1c-0.6-0.7-0.4-1.8,0.4-2.2l9.5-4.8c0.9-0.5,1.9,0.3,1.7,1.3L18.5,7.5z"/>
-                    </svg>
-                  </div>
-                </div>
-
-                {/* Add Profile Button */}
-                <div className="flex justify-center">
-                  <button
-                    onClick={() => setShowAddLinkModal(true)}
-                    className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
-                    style={{ fontWeight: 600 }}
-                  >
-                    Ajouter un profil
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Footer Navigation */}
-          <div className="border-t border-gray-200 px-8 py-6 flex justify-between items-center">
-            <button
-              onClick={() => setCurrentStep('qualifications')}
-              className="px-6 py-3 text-base hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2"
-              style={{ fontWeight: 600, color: '#222222' }}
-            >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
-              Retour
-            </button>
-            <button
-              onClick={() => setCurrentStep('address-info')}
-              className="text-base hover:underline"
-              style={{ fontWeight: 600, color: '#222222' }}
-            >
-              Ignorer
-            </button>
-          </div>
-
-          {/* Add Link Modal */}
-          {renderAddLinkModal()}
-        </div>
-      );
-    }
-
-    // Show list interface when there are links
-    return (
-      <div className="min-h-screen bg-white flex flex-col">
-        {/* Header */}
-        <header className="px-8 py-6 flex items-center justify-between border-b border-gray-200">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setCurrentStep('qualifications')}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
-            </button>
-            <Image
-              src="/logoIcon.png"
-              alt="Logo"
-              width={48}
-              height={48}
-              className="cursor-pointer hover:opacity-70 transition-opacity"
-              onClick={() => onNavigate('annonces')}
-            />
-          </div>
-          <div className="flex items-center gap-6">
-            <p className="text-sm" style={{ color: '#717171' }}>
-              À propos de vous <span style={{ color: '#222222', fontWeight: 600 }}>Étape 1 sur 7</span>
-            </p>
-            <button className="px-6 py-2 text-sm hover:bg-gray-100 rounded-lg transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
-              Enregistrer et quitter
-            </button>
-          </div>
-        </header>
-
-        {/* Sidebar + Content */}
-        <div className="flex flex-1">
-          {/* Left Sidebar */}
-          <div className="w-20 bg-gray-900 flex flex-col items-center py-8 gap-6">
-            <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="white">
-                <circle cx="12" cy="8" r="4"/>
-                <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
-              </svg>
-            </div>
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="w-10 h-10 rounded-full bg-gray-700"></div>
-            ))}
-          </div>
-
-          {/* Main Content */}
-          <div className="flex-1 flex items-center justify-center px-16 py-12">
-            <div className="max-w-2xl w-full">
-              <h1 className="text-5xl mb-6 text-center" style={{ fontWeight: 600, color: '#222222' }}>
-                Ajoutez vos profils<br />en ligne
-              </h1>
-              
-              <p className="text-base mb-12 max-w-xl mx-auto text-center" style={{ color: '#717171' }}>
-                Pour nous aider à confirmer vos compétences, ajoutez des liens vers vos commentaires, 
-                les articles de presse que vous avez reçus et votre site web. Les voyageurs ne les verront pas.
-              </p>
-
-              {/* Saved Links */}
-              <div className="space-y-4 mb-6">
-                {websiteLinks.map((link, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-3 px-4 py-4 border border-gray-300 rounded-xl hover:border-gray-900 transition-colors"
-                  >
-                    <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-                      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-                    </svg>
-                    <span className="flex-1 text-left" style={{ color: '#222222' }}>{link}</span>
-                    <button
-                      onClick={() => setWebsiteLinks(websiteLinks.filter((_, i) => i !== index))}
-                      className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                    >
-                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                        <path d="M18 6L6 18M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
-                ))}
-              </div>
-
-              {/* Add Another Link Button */}
-              <button
-                onClick={() => setShowAddLinkModal(true)}
-                className="w-full py-3 text-gray-700 font-medium hover:bg-gray-50 rounded-xl transition-colors border border-transparent hover:border-gray-200"
-                style={{ fontWeight: 600 }}
-              >
-                Ajouter un autre lien
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer Navigation */}
-        <div className="border-t border-gray-200 px-8 py-6 flex justify-between items-center">
-          <button
-            onClick={() => setCurrentStep('qualifications')}
-            className="px-6 py-3 text-base hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2"
-            style={{ fontWeight: 600, color: '#222222' }}
-          >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-              <path d="M15 18l-6-6 6-6" />
+        {/* Social Platform Cards */}
+        <div className="flex justify-center gap-4 md:gap-6 mb-8 md:mb-12">
+          <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl bg-white shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow">
+            <svg className="w-12 h-12 md:w-16 md:h-16" viewBox="0 0 48 48" fill="none">
+              <circle cx="24" cy="24" r="20" fill="#1877F2"/>
+              <path d="M29.5 15.5H26.5C25.119 15.5 24 16.619 24 18V21H29.5L28.5 26H24V38H19V26H15.5V21H19V17.5C19 14.462 21.462 12 24.5 12H29.5V15.5Z" fill="white"/>
             </svg>
-            Retour
-          </button>
+          </div>
+          <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl bg-white shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow">
+            <svg className="w-12 h-12 md:w-16 md:h-16" viewBox="0 0 48 48">
+              <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+              <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+              <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+              <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+            </svg>
+          </div>
+          <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl bg-white shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow">
+            <svg className="w-12 h-12 md:w-16 md:h-16" viewBox="0 0 48 48">
+              <path fill="#D32323" d="M24.7,33.8l-5.5,9.4c-0.4,0.7-1.4,0.8-1.9,0.2l-2.3-2.3c-0.5-0.5-0.5-1.4,0.1-1.9l5.5-4.8c0.8-0.7,2-0.1,2,0.9L24.7,33.8z"/>
+              <path fill="#D32323" d="M24.3,30.2c-0.8,0.1-1.5-0.5-1.5-1.3l-0.8-8.3c-0.1-0.8,0.7-1.5,1.5-1.3l3.9,0.9c0.8,0.2,1.3,1,1,1.8l-2.6,7.4C25.6,29.9,25,30.1,24.3,30.2z"/>
+              <path fill="#D32323" d="M20.5,28.1c-0.7-0.4-0.8-1.4-0.3-2l4.4-6c0.5-0.7,1.5-0.7,2,0l1.9,2.6c0.5,0.7,0.3,1.6-0.4,2l-6.2,3.7C21.4,28.7,21,28.5,20.5,28.1z"/>
+              <path fill="#D32323" d="M29.8,20.3l7.8-3.5c0.7-0.3,1.5,0.2,1.5,1l-0.1,2.9c0,0.7-0.6,1.3-1.3,1.2l-7.1-0.4c-1,0-1.4-1.2-0.7-1.8L29.8,20.3z"/>
+              <path fill="#D32323" d="M18.5,7.5l-0.9,12.8c0,0.9-1.1,1.3-1.7,0.6l-5.2-6.1c-0.6-0.7-0.4-1.8,0.4-2.2l9.5-4.8c0.9-0.5,1.9,0.3,1.7,1.3L18.5,7.5z"/>
+            </svg>
+          </div>
+        </div>
+
+        {/* Add Profile Button */}
+        <div className="flex justify-center">
           <button
-            onClick={() => setCurrentStep('address-info')}
+            onClick={() => setShowAddLinkModal(true)}
             className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
             style={{ fontWeight: 600 }}
           >
-            Suivant
+            Ajouter un profil
           </button>
         </div>
-
-        {/* Add Link Modal */}
-        {renderAddLinkModal()}
       </div>
+    ) : (
+      <div className="max-w-2xl w-full">
+        <h1 className="text-3xl md:text-5xl mb-4 md:mb-6 text-center" style={{ fontWeight: 600, color: '#222222' }}>
+          Ajoutez vos profils<br />en ligne
+        </h1>
+        
+        <p className="text-sm md:text-base mb-8 md:mb-12 max-w-xl mx-auto text-center" style={{ color: '#717171' }}>
+          Pour nous aider à confirmer vos compétences, ajoutez des liens vers vos commentaires, 
+          les articles de presse que vous avez reçus et votre site web. Les voyageurs ne les verront pas.
+        </p>
+
+        {/* Saved Links */}
+        <div className="space-y-3 md:space-y-4 mb-6">
+          {websiteLinks.map((link, index) => (
+            <div
+              key={index}
+              className="flex items-center gap-3 px-3 md:px-4 py-3 md:py-4 border border-gray-300 rounded-xl hover:border-gray-900 transition-colors"
+            >
+              <svg className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+              </svg>
+              <span className="flex-1 text-left text-sm md:text-base truncate" style={{ color: '#222222' }}>{link}</span>
+              <button
+                onClick={() => setWebsiteLinks(websiteLinks.filter((_, i) => i !== index))}
+                className="p-1 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {/* Add Another Link Button */}
+        <button
+          onClick={() => setShowAddLinkModal(true)}
+          className="w-full py-3 text-gray-700 font-medium hover:bg-gray-50 rounded-xl transition-colors border border-transparent hover:border-gray-200 text-sm md:text-base"
+          style={{ fontWeight: 600 }}
+        >
+          Ajouter un autre lien
+        </button>
+      </div>
+    );
+
+    return (
+      <>
+        <StepLayout
+          stepNumber={1}
+          stepName="À propos de vous"
+          onBack={() => setCurrentStep('qualifications')}
+          onNext={() => setCurrentStep('address-info')}
+          nextLabel={websiteLinks.length === 0 ? 'Ignorer' : 'Suivant'}
+        >
+          {onlineProfilesContent}
+        </StepLayout>
+        {renderAddLinkModal()}
+      </>
     );
   }
 
   // Step 8: Address Info
   if (currentStep === 'address-info') {
     return (
-      <div className="min-h-screen bg-white flex flex-col">
-        {/* Header */}
-        <header className="px-8 py-6 flex items-center justify-between border-b border-gray-200">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setCurrentStep('online-profiles')}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
-            </button>
-            <Image
-              src="/logoIcon.png"
-              alt="Logo"
-              width={48}
-              height={48}
-              className="cursor-pointer hover:opacity-70 transition-opacity"
-              onClick={() => onNavigate('annonces')}
-            />
-          </div>
-          <div className="flex items-center gap-6">
-            <p className="text-sm" style={{ color: '#717171' }}>
-              À propos de vous <span style={{ color: '#222222', fontWeight: 600 }}>Étape 1 sur 7</span>
-            </p>
-            <button className="px-6 py-2 text-sm hover:bg-gray-100 rounded-lg transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
-              Enregistrer et quitter
-            </button>
-          </div>
-        </header>
+      <StepLayout
+        stepNumber={1}
+        stepName="À propos de vous"
+        onBack={() => setCurrentStep('online-profiles')}
+        onNext={() => setCurrentStep('meeting-location')}
+      >
+        <div className="max-w-2xl w-full">
+          <h1 className="text-2xl md:text-4xl mb-6 md:mb-12 text-center" style={{ fontWeight: 600, color: '#222222' }}>
+            Parlez-nous un peu de vous
+          </h1>
 
-        {/* Sidebar + Content */}
-        <div className="flex flex-1">
-          {/* Left Sidebar */}
-          <div className="w-20 bg-gray-900 flex flex-col items-center py-8 gap-6">
-            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#222222">
-                <circle cx="12" cy="8" r="4"/>
-                <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
-              </svg>
+          <div className="space-y-3 md:space-y-4">
+            {/* Country Dropdown */}
+            <div>
+              <label className="block text-xs md:text-sm mb-1 md:mb-2" style={{ color: '#222222', fontWeight: 600 }}>
+                Quelle est votre adresse résidentielle ?
+              </label>
+              <p className="text-xs mb-2" style={{ color: '#717171' }}>
+                Les voyageurs ne verront pas ces informations.
+              </p>
+              <select
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                className="w-full px-3 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors text-sm md:text-base"
+                style={{ color: '#222222' }}
+              >
+                <option value="Madagascar">Madagascar</option>
+                <option value="France">France</option>
+                <option value="Canada">Canada</option>
+                <option value="États-Unis">États-Unis</option>
+              </select>
             </div>
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="w-10 h-10 rounded-full bg-gray-700"></div>
-            ))}
-          </div>
 
-          {/* Main Content */}
-          <div className="flex-1 flex items-center justify-center px-16 py-12">
-            <div className="max-w-2xl w-full">
-              <h1 className="text-5xl mb-12 text-center" style={{ fontWeight: 600, color: '#222222' }}>
-                Parlez-nous un peu de vous
-              </h1>
+            {/* Street Address */}
+            <div>
+              <label className="block text-xs md:text-sm mb-1 md:mb-2" style={{ color: '#222222', fontWeight: 600 }}>
+                Adresse du domicile ou de la rue
+              </label>
+              <input
+                type="text"
+                value={streetAddress}
+                onChange={(e) => setStreetAddress(e.target.value)}
+                className="w-full px-3 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors text-sm md:text-base"
+                placeholder="Adresse"
+                style={{ color: '#222222' }}
+              />
+            </div>
 
-              <div className="space-y-4">
-                {/* Country Dropdown */}
-                <div>
-                  <label className="block text-sm mb-2" style={{ color: '#222222', fontWeight: 600 }}>
-                    Quelle est votre adresse résidentielle ?
-                  </label>
-                  <p className="text-xs mb-2" style={{ color: '#717171' }}>
-                    Les voyageurs ne verront pas ces informations.
-                  </p>
-                  <select
-                    value={country}
-                    onChange={(e) => setCountry(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors"
-                    style={{ color: '#222222' }}
-                  >
-                    <option value="Madagascar">Madagascar</option>
-                    <option value="France">France</option>
-                    <option value="Canada">Canada</option>
-                    <option value="États-Unis">États-Unis</option>
-                  </select>
-                </div>
+            {/* Apartment */}
+            <div>
+              <input
+                type="text"
+                value={apartment}
+                onChange={(e) => setApartment(e.target.value)}
+                className="w-full px-3 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors text-sm md:text-base"
+                placeholder="Appartement, étage, immeuble (si applicable)"
+                style={{ color: '#222222' }}
+              />
+            </div>
 
-                {/* Street Address */}
-                <div>
-                  <label className="block text-sm mb-2" style={{ color: '#222222', fontWeight: 600 }}>
-                    Adresse du domicile ou de la rue
-                  </label>
-                  <input
-                    type="text"
-                    value={streetAddress}
-                    onChange={(e) => setStreetAddress(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors"
-                    placeholder="Adresse"
-                    style={{ color: '#222222' }}
-                  />
-                </div>
+            {/* Commune */}
+            <div>
+              <label className="block text-xs md:text-sm mb-1 md:mb-2" style={{ color: '#222222', fontWeight: 600 }}>
+                Commune
+              </label>
+              <input
+                type="text"
+                value={commune}
+                onChange={(e) => setCommune(e.target.value)}
+                className="w-full px-3 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors text-sm md:text-base"
+                placeholder="Commune"
+                style={{ color: '#222222' }}
+              />
+            </div>
 
-                {/* Apartment */}
-                <div>
-                  <input
-                    type="text"
-                    value={apartment}
-                    onChange={(e) => setApartment(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors"
-                    placeholder="Appartement, étage, immeuble (si applicable)"
-                    style={{ color: '#222222' }}
-                  />
-                </div>
+            {/* Province */}
+            <div>
+              <label className="block text-xs md:text-sm mb-1 md:mb-2" style={{ color: '#222222', fontWeight: 600 }}>
+                Province/État/Territoire (si applicable)
+              </label>
+              <input
+                type="text"
+                value={province}
+                onChange={(e) => setProvince(e.target.value)}
+                className="w-full px-3 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors text-sm md:text-base"
+                placeholder="Province"
+                style={{ color: '#222222' }}
+              />
+            </div>
 
-                {/* Commune */}
-                <div>
-                  <label className="block text-sm mb-2" style={{ color: '#222222', fontWeight: 600 }}>
-                    Commune
-                  </label>
-                  <input
-                    type="text"
-                    value={commune}
-                    onChange={(e) => setCommune(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors"
-                    placeholder="Commune"
-                    style={{ color: '#222222' }}
-                  />
-                </div>
-
-                {/* Province */}
-                <div>
-                  <label className="block text-sm mb-2" style={{ color: '#222222', fontWeight: 600 }}>
-                    Province/État/Territoire (si applicable)
-                  </label>
-                  <input
-                    type="text"
-                    value={province}
-                    onChange={(e) => setProvince(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors"
-                    placeholder="Province"
-                    style={{ color: '#222222' }}
-                  />
-                </div>
-
-                {/* Postal Code */}
-                <div>
-                  <label className="block text-sm mb-2" style={{ color: '#222222', fontWeight: 600 }}>
-                    Code postal (si applicable)
-                  </label>
-                  <input
-                    type="text"
-                    value={postalCode}
-                    onChange={(e) => setPostalCode(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors"
-                    placeholder="Code postal"
-                    style={{ color: '#222222' }}
-                  />
-                </div>
-              </div>
+            {/* Postal Code */}
+            <div>
+              <label className="block text-xs md:text-sm mb-1 md:mb-2" style={{ color: '#222222', fontWeight: 600 }}>
+                Code postal (si applicable)
+              </label>
+              <input
+                type="text"
+                value={postalCode}
+                onChange={(e) => setPostalCode(e.target.value)}
+                className="w-full px-3 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors text-sm md:text-base"
+                placeholder="Code postal"
+                style={{ color: '#222222' }}
+              />
             </div>
           </div>
         </div>
-
-        {/* Footer Navigation */}
-        <div className="border-t border-gray-200 px-8 py-6 flex justify-between items-center">
-          <button
-            onClick={() => setCurrentStep('online-profiles')}
-            className="px-6 py-3 text-base hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2"
-            style={{ fontWeight: 600, color: '#222222' }}
-          >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-            Retour
-          </button>
-          <button
-            onClick={() => setCurrentStep('meeting-location')}
-            className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
-            style={{ fontWeight: 600 }}
-          >
-            Suivant
-          </button>
-        </div>
-      </div>
+      </StepLayout>
     );
   }
 
   // Step 9: Meeting Location
   if (currentStep === 'meeting-location') {
     return (
-      <div className="min-h-screen bg-white flex flex-col">
-        {/* Header */}
-        <header className="px-8 py-6 flex items-center justify-between border-b border-gray-200">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setCurrentStep('address-info')}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
-            </button>
-            <Image
-              src="/logoIcon.png"
-              alt="Logo"
-              width={48}
-              height={48}
-              className="cursor-pointer hover:opacity-70 transition-opacity"
-              onClick={() => onNavigate('annonces')}
-            />
-          </div>
-          <div className="flex items-center gap-6">
-            <p className="text-sm" style={{ color: '#717171' }}>
-              Lieu <span style={{ color: '#222222', fontWeight: 600 }}>Étape 2 sur 7</span>
-            </p>
-            <button className="px-6 py-2 text-sm hover:bg-gray-100 rounded-lg transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
-              Enregistrer et quitter
-            </button>
-          </div>
-        </header>
+      <StepLayout
+        stepNumber={2}
+        stepName="Lieu"
+        onBack={() => setCurrentStep('address-info')}
+        onNext={() => setCurrentStep('confirm-location')}
+      >
+        <div className="max-w-2xl w-full">
+          <h1 className="text-2xl md:text-4xl mb-4 md:mb-6 text-center" style={{ fontWeight: 600, color: '#222222' }}>
+            Où les voyageurs doivent-ils vous retrouver ?
+          </h1>
+          <p className="text-sm md:text-base text-center mb-8 md:mb-12" style={{ color: '#717171' }}>
+            Les voyageurs verront cette adresse sur votre annonce.
+          </p>
 
-        {/* Sidebar + Content */}
-        <div className="flex flex-1">
-          {/* Left Sidebar */}
-          <div className="w-20 bg-gray-900 flex flex-col items-center py-8 gap-6">
-            <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="white">
-                <circle cx="12" cy="8" r="4"/>
-                <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
-              </svg>
-            </div>
-            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#222222" stroke="#222222" strokeWidth="2">
+          <div className="relative">
+            <div className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2">
+              <svg className="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                 <circle cx="12" cy="10" r="3"/>
               </svg>
             </div>
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="w-10 h-10 rounded-full bg-gray-700"></div>
-            ))}
-          </div>
-
-          {/* Main Content */}
-          <div className="flex-1 flex items-center justify-center px-16 py-12">
-            <div className="max-w-2xl w-full">
-              <h1 className="text-5xl mb-6 text-center" style={{ fontWeight: 600, color: '#222222' }}>
-                Où les voyageurs doivent-ils vous retrouver ?
-              </h1>
-              <p className="text-center mb-12" style={{ color: '#717171' }}>
-                Les voyageurs verront cette adresse sur votre annonce.
-              </p>
-
-              <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2">
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                    <circle cx="12" cy="10" r="3"/>
-                  </svg>
-                </div>
-                <input
-                  type="text"
-                  value={meetingLocation}
-                  onChange={(e) => setMeetingLocation(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl outline-none focus:border-gray-900 transition-colors"
-                  placeholder="Saisir une adresse"
-                  style={{ color: '#222222' }}
-                />
-              </div>
-            </div>
+            <input
+              type="text"
+              value={meetingLocation}
+              onChange={(e) => setMeetingLocation(e.target.value)}
+              className="w-full pl-10 md:pl-12 pr-3 md:pr-4 py-3 md:py-4 border border-gray-300 rounded-xl outline-none focus:border-gray-900 transition-colors text-sm md:text-base"
+              placeholder="Saisir une adresse"
+              style={{ color: '#222222' }}
+            />
           </div>
         </div>
-
-        {/* Footer Navigation */}
-        <div className="border-t border-gray-200 px-8 py-6 flex justify-between items-center">
-          <button
-            onClick={() => setCurrentStep('address-info')}
-            className="px-6 py-3 text-base hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2"
-            style={{ fontWeight: 600, color: '#222222' }}
-          >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-            Retour
-          </button>
-          <button
-            onClick={() => setCurrentStep('confirm-location')}
-            className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
-            style={{ fontWeight: 600 }}
-          >
-            Suivant
-          </button>
-        </div>
-      </div>
+      </StepLayout>
     );
   }
 
   // Step 10: Confirm Location
   if (currentStep === 'confirm-location') {
     return (
-      <div className="min-h-screen bg-white flex flex-col">
-        {/* Header */}
-        <header className="px-8 py-6 flex items-center justify-between border-b border-gray-200">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setCurrentStep('meeting-location')}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
-            </button>
-            <Image
-              src="/logoIcon.png"
-              alt="Logo"
-              width={48}
-              height={48}
-              className="cursor-pointer hover:opacity-70 transition-opacity"
-              onClick={() => onNavigate('annonces')}
-            />
-          </div>
-          <div className="flex items-center gap-6">
-            <p className="text-sm" style={{ color: '#717171' }}>
-              Lieu <span style={{ color: '#222222', fontWeight: 600 }}>Étape 2 sur 7</span>
-            </p>
-            <button className="px-6 py-2 text-sm hover:bg-gray-100 rounded-lg transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
-              Enregistrer et quitter
-            </button>
-          </div>
-        </header>
+      <StepLayout
+        stepNumber={2}
+        stepName="Lieu"
+        onBack={() => setCurrentStep('meeting-location')}
+        onNext={() => setCurrentStep('map-marker')}
+      >
+        <div className="max-w-lg w-full">
+          <h1 className="text-2xl md:text-4xl mb-4 md:mb-6 text-center" style={{ fontWeight: 600, color: '#222222' }}>
+            Confirmez le lieu
+          </h1>
+          <p className="text-sm md:text-base text-center mb-6 md:mb-12" style={{ color: '#717171' }}>
+            Assurez-vous que cette adresse est correcte. Vous ne pourrez plus la modifier une fois votre annonce envoyée.
+          </p>
 
-        {/* Sidebar + Content */}
-        <div className="flex flex-1">
-          {/* Left Sidebar */}
-          <div className="w-20 bg-gray-900 flex flex-col items-center py-8 gap-6">
-            <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="white">
-                <circle cx="12" cy="8" r="4"/>
-                <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
-              </svg>
+          <div className="space-y-3 md:space-y-4">
+            <div>
+              <label className="block text-xs mb-1 md:mb-2" style={{ color: '#717171' }}>Pays/région</label>
+              <select
+                value={confirmCountry}
+                onChange={(e) => setConfirmCountry(e.target.value)}
+                className="w-full px-3 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors text-sm md:text-base"
+                style={{ color: '#222222' }}
+              >
+                <option value="Madagascar">Madagascar</option>
+                <option value="France">France</option>
+                <option value="Canada">Canada</option>
+                <option value="États-Unis">États-Unis</option>
+              </select>
             </div>
-            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#222222" stroke="#222222" strokeWidth="2">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                <circle cx="12" cy="10" r="3"/>
-              </svg>
+
+            <div>
+              <label className="block text-xs mb-1 md:mb-2" style={{ color: '#717171' }}>Numéro et route de site</label>
+              <input
+                type="text"
+                value={siteAddress}
+                onChange={(e) => setSiteAddress(e.target.value)}
+                placeholder="4GJC+24M, Rue Ranaivo Paul"
+                className="w-full px-3 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors text-sm md:text-base"
+                style={{ color: '#222222' }}
+              />
             </div>
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="w-10 h-10 rounded-full bg-gray-700"></div>
-            ))}
-          </div>
 
-          {/* Main Content */}
-          <div className="flex-1 flex items-center justify-center px-16 py-12">
-            <div className="max-w-lg w-full">
-              <h1 className="text-5xl mb-6 text-center" style={{ fontWeight: 600, color: '#222222' }}>
-                Confirmez le lieu
-              </h1>
-              <p className="text-center mb-12" style={{ color: '#717171' }}>
-                Assurez-vous que cette adresse est correcte. Vous ne pourrez plus la modifier une fois votre annonce envoyée.
-              </p>
+            <div>
+              <input
+                type="text"
+                value={siteApartment}
+                onChange={(e) => setSiteApartment(e.target.value)}
+                placeholder="Appartement, étage, immeuble (si applicable)"
+                className="w-full px-3 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors text-sm md:text-base"
+                style={{ color: '#222222' }}
+              />
+            </div>
 
-              <div className="space-y-4">
-                {/* Country/Region */}
-                <div>
-                  <label className="block text-xs mb-2" style={{ color: '#717171' }}>Pays/région</label>
-                  <select
-                    value={confirmCountry}
-                    onChange={(e) => setConfirmCountry(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors"
-                    style={{ color: '#222222' }}
-                  >
-                    <option value="Madagascar">Madagascar</option>
-                    <option value="France">France</option>
-                    <option value="Canada">Canada</option>
-                    <option value="États-Unis">États-Unis</option>
-                  </select>
-                </div>
+            <div>
+              <label className="block text-xs mb-1 md:mb-2" style={{ color: '#717171' }}>Commune</label>
+              <input
+                type="text"
+                value={siteCommune}
+                onChange={(e) => setSiteCommune(e.target.value)}
+                placeholder="Antananarivo"
+                className="w-full px-3 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors text-sm md:text-base"
+                style={{ color: '#222222' }}
+              />
+            </div>
 
-                {/* Street Address */}
-                <div>
-                  <label className="block text-xs mb-2" style={{ color: '#717171' }}>Numéro et route de site</label>
-                  <input
-                    type="text"
-                    value={siteAddress}
-                    onChange={(e) => setSiteAddress(e.target.value)}
-                    placeholder="4GJC+24M, Rue Ranaivo Paul"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors"
-                    style={{ color: '#222222' }}
-                  />
-                </div>
+            <div>
+              <label className="block text-xs mb-1 md:mb-2" style={{ color: '#717171' }}>Province/État/Territoire (si applicable)</label>
+              <input
+                type="text"
+                value={siteProvince}
+                onChange={(e) => setSiteProvince(e.target.value)}
+                placeholder="Analamanga"
+                className="w-full px-3 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors text-sm md:text-base"
+                style={{ color: '#222222' }}
+              />
+            </div>
 
-                {/* Apartment */}
-                <div>
-                  <input
-                    type="text"
-                    value={siteApartment}
-                    onChange={(e) => setSiteApartment(e.target.value)}
-                    placeholder="Appartement, étage, immeuble (si applicable)"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors"
-                    style={{ color: '#222222' }}
-                  />
-                </div>
+            <div>
+              <label className="block text-xs mb-1 md:mb-2" style={{ color: '#717171' }}>Code postal (si applicable)</label>
+              <input
+                type="text"
+                value={sitePostalCode}
+                onChange={(e) => setSitePostalCode(e.target.value)}
+                placeholder="Code postal"
+                className="w-full px-3 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors text-sm md:text-base"
+                style={{ color: '#222222' }}
+              />
+            </div>
 
-                {/* Commune */}
-                <div>
-                  <label className="block text-xs mb-2" style={{ color: '#717171' }}>Commune</label>
-                  <input
-                    type="text"
-                    value={siteCommune}
-                    onChange={(e) => setSiteCommune(e.target.value)}
-                    placeholder="Antananarivo"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors"
-                    style={{ color: '#222222' }}
-                  />
-                </div>
-
-                {/* Province */}
-                <div>
-                  <label className="block text-xs mb-2" style={{ color: '#717171' }}>Province/État/Territoire (si applicable)</label>
-                  <input
-                    type="text"
-                    value={siteProvince}
-                    onChange={(e) => setSiteProvince(e.target.value)}
-                    placeholder="Analamanga"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors"
-                    style={{ color: '#222222' }}
-                  />
-                </div>
-
-                {/* Postal Code */}
-                <div>
-                  <label className="block text-xs mb-2" style={{ color: '#717171' }}>Code postal (si applicable)</label>
-                  <input
-                    type="text"
-                    value={sitePostalCode}
-                    onChange={(e) => setSitePostalCode(e.target.value)}
-                    placeholder="Code postal"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors"
-                    style={{ color: '#222222' }}
-                  />
-                </div>
-
-                {/* Site Name (Optional) */}
-                <div>
-                  <input
-                    type="text"
-                    value={siteName}
-                    onChange={(e) => setSiteName(e.target.value)}
-                    placeholder="Nom du lieu (facultatif)"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors"
-                    style={{ color: '#222222' }}
-                  />
-                </div>
-              </div>
+            <div>
+              <input
+                type="text"
+                value={siteName}
+                onChange={(e) => setSiteName(e.target.value)}
+                placeholder="Nom du lieu (facultatif)"
+                className="w-full px-3 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg outline-none focus:border-gray-900 transition-colors text-sm md:text-base"
+                style={{ color: '#222222' }}
+              />
             </div>
           </div>
         </div>
-
-        {/* Footer Navigation */}
-        <div className="border-t border-gray-200 px-8 py-6 flex justify-between items-center">
-          <button
-            onClick={() => setCurrentStep('meeting-location')}
-            className="px-6 py-3 text-base hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2"
-            style={{ fontWeight: 600, color: '#222222' }}
-          >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-            Retour
-          </button>
-          <button
-            onClick={() => setCurrentStep('map-marker')}
-            className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
-            style={{ fontWeight: 600 }}
-          >
-            Suivant
-          </button>
-        </div>
-      </div>
+      </StepLayout>
     );
   }
 
   // Step 11: Map Marker
   if (currentStep === 'map-marker') {
     return (
-      <div className="min-h-screen bg-white flex flex-col">
-        {/* Header */}
-        <header className="px-8 py-6 flex items-center justify-between border-b border-gray-200">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setCurrentStep('confirm-location')}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
-            </button>
-            <Image
-              src="/logoIcon.png"
-              alt="Logo"
-              width={48}
-              height={48}
-              className="cursor-pointer hover:opacity-70 transition-opacity"
-              onClick={() => onNavigate('annonces')}
-            />
-          </div>
-          <div className="flex items-center gap-6">
-            <p className="text-sm" style={{ color: '#717171' }}>
-              Lieu <span style={{ color: '#222222', fontWeight: 600 }}>Étape 2 sur 7</span>
-            </p>
-            <button className="px-6 py-2 text-sm hover:bg-gray-100 rounded-lg transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
-              Enregistrer et quitter
-            </button>
-          </div>
-        </header>
+      <StepLayout
+        stepNumber={2}
+        stepName="Lieu"
+        onBack={() => setCurrentStep('confirm-location')}
+        onNext={() => setCurrentStep('photos')}
+      >
+        <div className="max-w-2xl w-full">
+          <h1 className="text-2xl md:text-4xl mb-6 md:mb-12 text-center" style={{ fontWeight: 600, color: '#222222' }}>
+            Le repère est-il au bon<br className="hidden md:block" /> endroit ?
+          </h1>
 
-        {/* Sidebar + Content */}
-        <div className="flex flex-1">
-          {/* Left Sidebar */}
-          <div className="w-20 bg-gray-900 flex flex-col items-center py-8 gap-6">
-            <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="white">
-                <circle cx="12" cy="8" r="4"/>
-                <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
-              </svg>
-            </div>
-            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#222222" stroke="#222222" strokeWidth="2">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                <circle cx="12" cy="10" r="3"/>
-              </svg>
-            </div>
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="w-10 h-10 rounded-full bg-gray-700"></div>
-            ))}
-          </div>
+          {/* Map Container */}
+          <div className="relative w-full h-[300px] md:h-[400px] rounded-2xl overflow-hidden shadow-lg">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3774.8896376584!2d47.5183249!3d-18.9141944!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x21f07e5e4c6c1b5f%3A0x6c3f9d5b8b4b8b4b!2sRue%20Ranaivo%20Paul%2C%20Antananarivo%2C%20Madagascar!5e0!3m2!1sfr!2sfr!4v1234567890123!5m2!1sfr!2sfr"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
 
-          {/* Main Content */}
-          <div className="flex-1 flex items-center justify-center px-16 py-12">
-            <div className="max-w-2xl w-full">
-              <h1 className="text-5xl mb-12 text-center" style={{ fontWeight: 600, color: '#222222' }}>
-                Le repère est-il au bon<br />endroit ?
-              </h1>
-
-              {/* Map Container */}
-              <div className="relative w-full h-[500px] rounded-2xl overflow-hidden mb-8 shadow-lg">
-                {/* Google Maps iframe */}
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3774.8896376584!2d47.5183249!3d-18.9141944!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x21f07e5e4c6c1b5f%3A0x6c3f9d5b8b4b8b4b!2sRue%20Ranaivo%20Paul%2C%20Antananarivo%2C%20Madagascar!5e0!3m2!1sfr!2sfr!4v1234567890123!5m2!1sfr!2sfr"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                ></iframe>
-
-                {/* Address Card Overlay */}
-                <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10">
-                  <div className="bg-white rounded-lg shadow-xl px-4 py-3 flex items-center gap-3 min-w-[350px]">
-                    <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center flex-shrink-0">
-                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="white">
-                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                      </svg>
-                    </div>
-                    <span className="text-sm" style={{ color: '#222222' }}>
-                      {location || 'Antananarivo, Madagascar'}
-                    </span>
-                  </div>
+            {/* Address Card Overlay */}
+            <div className="absolute top-3 md:top-4 left-1/2 -translate-x-1/2 z-10">
+              <div className="bg-white rounded-lg shadow-xl px-3 md:px-4 py-2 md:py-3 flex items-center gap-2 md:gap-3 min-w-[250px] md:min-w-[350px]">
+                <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-black flex items-center justify-center flex-shrink-0">
+                  <svg className="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 24 24" fill="white">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                  </svg>
                 </div>
-
-                {/* Repositioning Button */}
-                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
-                  <button
-                    className="px-6 py-3 rounded-full text-white text-sm shadow-lg hover:opacity-90 transition-opacity"
-                    style={{ fontWeight: 600, backgroundColor: '#717171' }}
-                  >
-                    Déplacer la carte pour repositionner le repère
-                  </button>
-                </div>
+                <span className="text-xs md:text-sm" style={{ color: '#222222' }}>
+                  {location || 'Antananarivo, Madagascar'}
+                </span>
               </div>
             </div>
+
+            {/* Repositioning Button */}
+            <div className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-10">
+              <button
+                className="px-4 md:px-6 py-2 md:py-3 rounded-full text-white text-xs md:text-sm shadow-lg hover:opacity-90 transition-opacity"
+                style={{ fontWeight: 600, backgroundColor: '#717171' }}
+              >
+                Déplacer la carte pour repositionner le repère
+              </button>
+            </div>
           </div>
         </div>
-
-        {/* Footer Navigation */}
-        <div className="border-t border-gray-200 px-8 py-6 flex justify-between items-center">
-          <button
-            onClick={() => setCurrentStep('confirm-location')}
-            className="px-6 py-3 text-base hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2"
-            style={{ fontWeight: 600, color: '#222222' }}
-          >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-            Retour
-          </button>
-          <button
-            onClick={() => setCurrentStep('photos')}
-            className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
-            style={{ fontWeight: 600 }}
-          >
-            Suivant
-          </button>
-        </div>
-      </div>
+      </StepLayout>
     );
   }
 
   // Step 12: Photos
   if (currentStep === 'photos') {
-    // Ensure photos is always an array
     const safePhotos = Array.isArray(photos) ? photos : [];
     
     return (
       <>
         {renderPhotoTipsModal()}
         {renderAddPhotoModal()}
-        <div className="min-h-screen bg-white flex flex-col">
-          {/* Header */}
-          <header className="px-8 py-6 flex items-center justify-between border-b border-gray-200">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setCurrentStep('map-marker')}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
+        <StepLayout
+          stepNumber={3}
+          stepName="Photos"
+          onBack={() => setCurrentStep('map-marker')}
+          onNext={() => setCurrentStep('title')}
+          nextDisabled={photos.length < 5}
+          leftFooterContent={
+            <button onClick={() => setShowPhotoTipsModal(true)} className="text-sm md:text-base hover:underline hidden md:block" style={{ fontWeight: 600, color: '#222222' }}>
+              Obtenir des conseils
             </button>
-            <Image
-              src="/logoIcon.png"
-              alt="Logo"
-              width={48}
-              height={48}
-              className="cursor-pointer hover:opacity-70 transition-opacity"
-              onClick={() => onNavigate('annonces')}
-            />
-          </div>
-          <div className="flex items-center gap-6">
-            <p className="text-sm" style={{ color: '#717171' }}>
-              Photos <span style={{ color: '#222222', fontWeight: 600 }}>Étape 3 sur 7</span>
+          }
+        >
+          <div className="max-w-2xl w-full">
+            <h1 className="text-2xl md:text-4xl mb-3 md:mb-4 text-center" style={{ fontWeight: 600, color: '#222222' }}>
+              Ajoutez des photos qui<br className="hidden md:block" /> mettent en valeur vos<br className="hidden md:block" /> compétences
+            </h1>
+            <p className="text-sm md:text-base text-center mb-8 md:mb-12" style={{ color: '#717171' }}>
+              Ajoutez au moins 5 photos.
             </p>
-            <button className="px-6 py-2 text-sm hover:bg-gray-100 rounded-lg transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
-              Enregistrer et quitter
-            </button>
-          </div>
-        </header>
 
-        {/* Sidebar + Content */}
-        <div className="flex flex-1">
-          {/* Left Sidebar */}
-          <div className="w-20 bg-gray-900 flex flex-col items-center py-8 gap-6">
-            <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="white">
-                <circle cx="12" cy="8" r="4"/>
-                <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
-              </svg>
-            </div>
-            <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="white" stroke="white" strokeWidth="2">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                <circle cx="12" cy="10" r="3"/>
-              </svg>
-            </div>
-            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5"/>
-                <polyline points="21 15 16 10 5 21"/>
-              </svg>
-            </div>
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="w-10 h-10 rounded-full bg-gray-700"></div>
-            ))}
-          </div>
-
-          {/* Main Content */}
-          <div className="flex-1 flex items-center justify-center px-16 py-12">
-            <div className="max-w-2xl w-full">
-              <h1 className="text-5xl mb-4 text-center" style={{ fontWeight: 600, color: '#222222' }}>
-                Ajoutez des photos qui<br />mettent en valeur vos<br />compétences
-              </h1>
-              <p className="text-center mb-12" style={{ color: '#717171' }}>
-                Ajoutez au moins 5 photos.
-              </p>
-
-              {/* Photo Grid */}
-              {safePhotos.length > 0 ? (
-                <div className="grid grid-cols-3 gap-4 mb-8">
-                  {safePhotos.map((photo, index) => (
-                    <div key={index} className="relative aspect-[4/3] rounded-xl overflow-hidden bg-gray-200">
-                      <img 
-                        src={photo} 
-                        alt={`Photo ${index + 1}`} 
-                        className="w-full h-full object-cover"
-                      />
-                      {index === 0 && (
-                        <div className="absolute bottom-3 left-3 px-3 py-1 bg-white rounded-lg shadow-sm">
-                          <span className="text-xs" style={{ fontWeight: 600, color: '#222222' }}>Couverture</span>
-                        </div>
-                      )}
-                      <button
-                        onClick={() => setPhotos(safePhotos.filter((_, i) => i !== index))}
-                        className="absolute top-2 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors shadow-sm"
-                      >
-                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                          <path d="M18 6L6 18M6 6l12 12" />
-                        </svg>
-                      </button>
-                    </div>
-                  ))}
-                  {/* Add Photo Button */}
-                  <button
-                    onClick={() => setShowAddPhotoModal(true)}
-                    className="aspect-[4/3] rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center hover:border-gray-400 hover:bg-gray-50 transition-colors"
-                  >
-                    <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="1.5">
-                      <path d="M12 5v14M5 12h14"/>
-                    </svg>
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <div className="flex justify-center mb-12">
-                    <div className="flex gap-4">
-                      {/* Mock photos showing example */}
-                      <div className="w-48 h-36 rounded-xl overflow-hidden shadow-lg transform rotate-[-4deg]">
-                        <img 
-                          src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=400&h=300&fit=crop" 
-                          alt="Example 1" 
-                          className="w-full h-full object-cover"
-                        />
+            {safePhotos.length > 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-6 md:mb-8">
+                {safePhotos.map((photo, index) => (
+                  <div key={index} className="relative aspect-[4/3] rounded-xl overflow-hidden bg-gray-200">
+                    <img src={photo} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" />
+                    {index === 0 && (
+                      <div className="absolute bottom-2 md:bottom-3 left-2 md:left-3 px-2 md:px-3 py-1 bg-white rounded-lg shadow-sm">
+                        <span className="text-[10px] md:text-xs" style={{ fontWeight: 600, color: '#222222' }}>Couverture</span>
                       </div>
-                      <div className="w-48 h-36 rounded-xl overflow-hidden shadow-lg transform rotate-[4deg]">
-                        <img 
-                          src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop" 
-                          alt="Example 2" 
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  {/* Add Button - Only shown when no photos */}
-                  <div className="flex justify-center">
+                    )}
                     <button
-                      onClick={() => setShowAddPhotoModal(true)}
-                      className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
-                      style={{ fontWeight: 600 }}
+                      onClick={() => setPhotos(safePhotos.filter((_, i) => i !== index))}
+                      className="absolute top-2 right-2 w-6 h-6 md:w-7 md:h-7 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors shadow-sm"
                     >
-                      Ajouter
+                      <svg className="w-3 h-3 md:w-3.5 md:h-3.5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
+                        <path d="M18 6L6 18M6 6l12 12" />
+                      </svg>
                     </button>
                   </div>
-                </>
-              )}
+                ))}
+                <button
+                  onClick={() => setShowAddPhotoModal(true)}
+                  className="aspect-[4/3] rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center hover:border-gray-400 hover:bg-gray-50 transition-colors"
+                >
+                  <svg className="w-10 h-10 md:w-12 md:h-12" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="1.5">
+                    <path d="M12 5v14M5 12h14"/>
+                  </svg>
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="flex justify-center mb-8 md:mb-12">
+                  <div className="flex gap-3 md:gap-4">
+                    <div className="w-32 h-24 md:w-48 md:h-36 rounded-xl overflow-hidden shadow-lg transform rotate-[-4deg]">
+                      <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=400&h=300&fit=crop" alt="Example 1" className="w-full h-full object-cover" />
+                    </div>
+                    <div className="w-32 h-24 md:w-48 md:h-36 rounded-xl overflow-hidden shadow-lg transform rotate-[4deg]">
+                      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop" alt="Example 2" className="w-full h-full object-cover" />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-center">
+                  <button
+                    onClick={() => setShowAddPhotoModal(true)}
+                    className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+                    style={{ fontWeight: 600 }}
+                  >
+                    Ajouter
+                  </button>
+                </div>
+              </>
+            )}
+            
+            {/* Mobile tips link */}
+            <div className="mt-6 text-center md:hidden">
+              <button onClick={() => setShowPhotoTipsModal(true)} className="text-sm hover:underline" style={{ fontWeight: 600, color: '#222222' }}>
+                Obtenir des conseils
+              </button>
             </div>
           </div>
-        </div>
-
-        {/* Footer Navigation */}
-        <div className="border-t border-gray-200 px-8 py-6 flex justify-between items-center">
-          <button
-            onClick={() => setShowPhotoTipsModal(true)}
-            className="text-base hover:underline"
-            style={{ fontWeight: 600, color: '#222222' }}
-          >
-            Obtenir des conseils
-          </button>
-          <button
-            onClick={() => setCurrentStep('title')}
-            className="px-8 py-3 rounded-lg text-white text-base hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
-            style={{ fontWeight: 600, backgroundColor: photos.length >= 5 ? '#000000' : '#E5E5E5' }}
-            disabled={photos.length < 5}
-          >
-            Suivant
-          </button>
-        </div>
-        </div>
+        </StepLayout>
       </>
     );
   }
@@ -2814,124 +2468,48 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
     return (
       <>
         {renderTitleTipsModal()}
-        <div className="min-h-screen bg-white flex flex-col">
-          {/* Header */}
-          <header className="px-8 py-6 flex items-center justify-between border-b border-gray-200">
-            <div className="flex items-center gap-4">
-              <button 
-                onClick={() => setCurrentStep('photos')}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-              >
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                  <path d="M15 18l-6-6 6-6" />
-                </svg>
-              </button>
-              <Image
-                src="/logoIcon.png"
-                alt="Logo"
-                width={48}
-                height={48}
-                className="cursor-pointer hover:opacity-70 transition-opacity"
-                onClick={() => onNavigate('annonces')}
-              />
-            </div>
-            <div className="flex items-center gap-6">
-              <p className="text-sm" style={{ color: '#717171' }}>
-                Expérience <span style={{ color: '#222222', fontWeight: 600 }}>Étape 4 sur 7</span>
-              </p>
-              <button className="px-6 py-2 text-sm hover:bg-gray-100 rounded-lg transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
-                Enregistrer et quitter
-              </button>
-            </div>
-          </header>
-
-          {/* Sidebar + Content */}
-          <div className="flex flex-1">
-            {/* Left Sidebar */}
-            <div className="w-20 bg-gray-900 flex flex-col items-center py-8 gap-6">
-              <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="white">
-                  <circle cx="12" cy="8" r="4"/>
-                  <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
-                </svg>
-              </div>
-              <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="white" stroke="white" strokeWidth="2">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                  <circle cx="12" cy="10" r="3"/>
-                </svg>
-              </div>
-              <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="white" stroke="white" strokeWidth="2">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                  <circle cx="8.5" cy="8.5" r="1.5"/>
-                  <polyline points="21 15 16 10 5 21"/>
-                </svg>
-              </div>
-              <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                  <polyline points="14 2 14 8 20 8"/>
-                  <line x1="16" y1="13" x2="8" y2="13"/>
-                  <line x1="16" y1="17" x2="8" y2="17"/>
-                  <polyline points="10 9 9 9 8 9"/>
-                </svg>
-              </div>
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="w-10 h-10 rounded-full bg-gray-700"></div>
-              ))}
-            </div>
-
-            {/* Main Content */}
-            <div className="flex-1 flex items-center justify-center px-16 py-12">
-              <div className="max-w-2xl w-full">
-                <h1 className="text-5xl mb-12 text-center" style={{ fontWeight: 600, color: '#222222' }}>
-                  Donnez un titre à votre<br />expérience
-                </h1>
-
-                {/* Title Input */}
-                <div className="mb-8">
-                  <textarea
-                    value={experienceTitle}
-                    onChange={(e) => {
-                      if (e.target.value.length <= 60) {
-                        setExperienceTitle(e.target.value);
-                      }
-                    }}
-                    placeholder="Créez des sandales en cuir avec un artisan de Tokyo"
-                    className={`w-full px-4 py-3 border-b-2 border-gray-300 focus:border-gray-900 outline-none resize-none transition-all ${experienceTitle ? 'text-4xl' : 'text-2xl'}`}
-                    style={{ color: experienceTitle ? '#222222' : '#B0B0B0', fontWeight: experienceTitle ? 600 : 400 }}
-                    rows={2}
-                  />
-                  <div className="flex justify-end mt-2">
-                    <span className="text-sm" style={{ color: '#717171' }}>
-                      Caractères restants : {60 - experienceTitle.length}/60
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Footer Navigation */}
-          <div className="border-t border-gray-200 px-8 py-6 flex justify-between items-center">
+        <StepLayout
+          stepNumber={4}
+          stepName="Détails"
+          onBack={() => setCurrentStep('photos')}
+          onNext={() => setCurrentStep('describe')}
+          nextDisabled={experienceTitle.trim().length === 0}
+          leftFooterContent={
             <button
               onClick={() => setShowTitleTipsModal(true)}
-              className="text-base hover:underline"
+              className="text-sm md:text-base hover:underline"
               style={{ fontWeight: 600, color: '#222222' }}
             >
               Obtenir des conseils
             </button>
-            <button
-              onClick={() => setCurrentStep('describe')}
-              className="px-8 py-3 rounded-lg text-white text-base hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
-              style={{ fontWeight: 600, backgroundColor: experienceTitle.trim().length > 0 ? '#000000' : '#E5E5E5' }}
-              disabled={experienceTitle.trim().length === 0}
-            >
-              Suivant
-            </button>
+          }
+        >
+          <div className="max-w-2xl w-full text-center">
+            <h1 className="text-3xl md:text-5xl mb-8 md:mb-12" style={{ fontWeight: 600, color: '#222222' }}>
+              Donnez un titre à votre<br />expérience
+            </h1>
+
+            <div className="mb-8">
+              <textarea
+                value={experienceTitle}
+                onChange={(e) => {
+                  if (e.target.value.length <= 60) {
+                    setExperienceTitle(e.target.value);
+                  }
+                }}
+                placeholder="Créez des sandales en cuir avec un artisan de Tokyo"
+                className={`w-full px-4 py-3 border-b-2 border-gray-300 focus:border-gray-900 outline-none resize-none transition-all ${experienceTitle ? 'text-2xl md:text-4xl' : 'text-xl md:text-2xl'}`}
+                style={{ color: experienceTitle ? '#222222' : '#B0B0B0', fontWeight: experienceTitle ? 600 : 400 }}
+                rows={2}
+              />
+              <div className="flex justify-end mt-2">
+                <span className="text-sm" style={{ color: '#717171' }}>
+                  Caractères restants : {60 - experienceTitle.length}/60
+                </span>
+              </div>
+            </div>
           </div>
-        </div>
+        </StepLayout>
       </>
     );
   }
@@ -2939,296 +2517,169 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
   // Step 14: Describe
   if (currentStep === 'describe') {
     return (
-      <div className="min-h-screen bg-white flex flex-col">
-        {/* Header */}
-        <header className="px-8 py-6 flex items-center justify-between border-b border-gray-200">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setCurrentStep('title')}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
-            </button>
-            <Image
-              src="/logoIcon.png"
-              alt="Logo"
-              width={48}
-              height={48}
-              className="cursor-pointer hover:opacity-70 transition-opacity"
-              onClick={() => onNavigate('annonces')}
-            />
-          </div>
-          <div className="flex items-center gap-6">
-            <p className="text-sm" style={{ color: '#717171' }}>
-              Expérience <span style={{ color: '#222222', fontWeight: 600 }}>Étape 4 sur 7</span>
-            </p>
-            <button className="px-6 py-2 text-sm hover:bg-gray-100 rounded-lg transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
-              Enregistrer et quitter
-            </button>
-          </div>
-        </header>
-
-        {/* Sidebar + Content */}
-        <div className="flex flex-1">
-          {/* Left Sidebar */}
-          <div className="w-20 bg-gray-900 flex flex-col items-center py-8 gap-6">
-            <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="white">
-                <circle cx="12" cy="8" r="4"/>
-                <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
-              </svg>
-            </div>
-            <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="white" stroke="white" strokeWidth="2">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                <circle cx="12" cy="10" r="3"/>
-              </svg>
-            </div>
-            <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="white" stroke="white" strokeWidth="2">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5"/>
-                <polyline points="21 15 16 10 5 21"/>
-              </svg>
-            </div>
-            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/>
-                <line x1="16" y1="17" x2="8" y2="17"/>
-                <polyline points="10 9 9 9 8 9"/>
-              </svg>
-            </div>
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="w-10 h-10 rounded-full bg-gray-700"></div>
-            ))}
-          </div>
-
-          {/* Main Content */}
-          <div className="flex-1 flex items-center justify-center px-16 py-12">
-            <div className="max-w-2xl w-full">
-              <h2 className="text-xl text-center mb-4" style={{ color: '#717171' }}>
-                Décrivez votre expérience
-              </h2>
-              <div className="mb-16">
-                <textarea
-                  value={experienceDescription}
-                  onChange={(e) => {
-                    if (e.target.value.length <= 5000) {
-                      setExperienceDescription(e.target.value);
-                    }
-                  }}
-                  placeholder="Confectionnez vos propres sandales en cuir"
-                  className={`w-full px-0 py-2 border-0 outline-none resize-none text-center transition-all ${experienceDescription ? 'text-5xl' : 'text-4xl'}`}
-                  style={{ 
-                    color: experienceDescription ? '#222222' : '#B0B0B0', 
-                    fontWeight: experienceDescription ? 700 : 500,
-                    lineHeight: '1.1'
-                  }}
-                  rows={3}
-                />
-              </div>
-              <p className="text-sm text-center" style={{ color: '#717171' }}>
-                Décrivez ce que feront les voyageurs. Par exemple : « Confectionnez vos propres sandales en cuir ».
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer Navigation */}
-        <div className="border-t border-gray-200 px-8 py-6 flex justify-between items-center">
+      <StepLayout
+        stepNumber={4}
+        stepName="Détails"
+        onBack={() => setCurrentStep('title')}
+        onNext={() => setCurrentStep('program-intro')}
+        nextDisabled={experienceDescription.trim().length === 0}
+        leftFooterContent={
           <button
-            className="text-base hover:underline"
+            className="text-sm md:text-base hover:underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
             Obtenir des conseils
           </button>
-          <button
-            onClick={() => setCurrentStep('program-intro')}
-            className="px-8 py-3 rounded-lg text-white text-base hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
-            style={{ fontWeight: 600, backgroundColor: experienceDescription.trim().length > 0 ? '#000000' : '#E5E5E5' }}
-            disabled={experienceDescription.trim().length === 0}
-          >
-            Suivant
-          </button>
+        }
+      >
+        <div className="max-w-2xl w-full text-center">
+          <h2 className="text-lg md:text-xl mb-4" style={{ color: '#717171' }}>
+            Décrivez votre expérience
+          </h2>
+          <div className="mb-8 md:mb-16">
+            <textarea
+              value={experienceDescription}
+              onChange={(e) => {
+                if (e.target.value.length <= 5000) {
+                  setExperienceDescription(e.target.value);
+                }
+              }}
+              placeholder="Confectionnez vos propres sandales en cuir"
+              className={`w-full px-0 py-2 border-0 outline-none resize-none text-center transition-all ${experienceDescription ? 'text-3xl md:text-5xl' : 'text-2xl md:text-4xl'}`}
+              style={{ 
+                color: experienceDescription ? '#222222' : '#B0B0B0', 
+                fontWeight: experienceDescription ? 700 : 500,
+                lineHeight: '1.1'
+              }}
+              rows={3}
+            />
+          </div>
+          <p className="text-sm" style={{ color: '#717171' }}>
+            Décrivez ce que feront les voyageurs. Par exemple : « Confectionnez vos propres sandales en cuir ».
+          </p>
         </div>
-      </div>
+      </StepLayout>
     );
   }
 
   // Step 15: Program Intro
   if (currentStep === 'program-intro') {
     return (
-      <div className="min-h-screen bg-white flex flex-col">
-        {/* Header */}
-        <header className="px-8 py-6 flex items-center justify-between border-b border-gray-200">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setCurrentStep('describe')}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
-            </button>
-            <Image
-              src="/logoIcon.png"
-              alt="Logo"
-              width={48}
-              height={48}
-              className="cursor-pointer hover:opacity-70 transition-opacity"
-              onClick={() => onNavigate('annonces')}
-            />
-          </div>
-          <button className="px-6 py-2 text-sm hover:bg-gray-100 rounded-lg transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
-            Enregistrer et quitter
-          </button>
-        </header>
+      <StepLayout
+        stepNumber={5}
+        stepName="Programme"
+        onBack={() => setCurrentStep('describe')}
+        onNext={() => setCurrentStep('program')}
+      >
+        <div className="max-w-2xl w-full text-center">
+          <h1 className="text-3xl md:text-5xl mb-6 md:mb-8" style={{ fontWeight: 600, color: '#222222' }}>
+            Indiquez aux voyageurs ce<br className="hidden md:block" />qu'ils feront en ajoutant un<br className="hidden md:block" />programme
+          </h1>
 
-        {/* Main Content */}
-        <div className="flex-1 flex items-center justify-center px-16 py-12">
-          <div className="max-w-2xl w-full">
-            <h1 className="text-5xl mb-8 text-center" style={{ fontWeight: 600, color: '#222222' }}>
-              Indiquez aux voyageurs ce<br />qu'ils feront en ajoutant un<br />programme
-            </h1>
-
-            {/* Example Cards */}
-            <div className="space-y-4 mb-8">
-              <div className="flex gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer">
-                <img 
-                  src="https://images.unsplash.com/photo-1565814636199-ae8133055c1c?w=100&h=100&fit=crop"
-                  alt="Préparez-vous"
-                  className="w-20 h-20 rounded-lg object-cover"
-                />
-                <div>
-                  <h3 className="text-base mb-1" style={{ fontWeight: 600, color: '#222222' }}>
-                    Préparez-vous
-                  </h3>
-                  <p className="text-sm" style={{ color: '#717171' }}>
-                    30 minutes
-                  </p>
-                </div>
+          <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
+            <div className="flex gap-3 md:gap-4 p-3 md:p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer">
+              <img 
+                src="https://images.unsplash.com/photo-1565814636199-ae8133055c1c?w=100&h=100&fit=crop"
+                alt="Préparez-vous"
+                className="w-16 h-16 md:w-20 md:h-20 rounded-lg object-cover"
+              />
+              <div className="text-left">
+                <h3 className="text-sm md:text-base mb-1" style={{ fontWeight: 600, color: '#222222' }}>
+                  Préparez-vous
+                </h3>
+                <p className="text-xs md:text-sm" style={{ color: '#717171' }}>
+                  30 minutes
+                </p>
               </div>
+            </div>
 
-              <div className="flex gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer">
-                <img 
-                  src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=100&h=100&fit=crop"
-                  alt="Révisez la théorie des couleurs"
-                  className="w-20 h-20 rounded-lg object-cover"
-                />
-                <div>
-                  <h3 className="text-base mb-1" style={{ fontWeight: 600, color: '#222222' }}>
-                    Révisez la théorie des couleurs
-                  </h3>
-                  <p className="text-sm" style={{ color: '#717171' }}>
-                    1 heure
-                  </p>
-                </div>
+            <div className="flex gap-3 md:gap-4 p-3 md:p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer">
+              <img 
+                src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=100&h=100&fit=crop"
+                alt="Révisez la théorie des couleurs"
+                className="w-16 h-16 md:w-20 md:h-20 rounded-lg object-cover"
+              />
+              <div className="text-left">
+                <h3 className="text-sm md:text-base mb-1" style={{ fontWeight: 600, color: '#222222' }}>
+                  Révisez la théorie des couleurs
+                </h3>
+                <p className="text-xs md:text-sm" style={{ color: '#717171' }}>
+                  1 heure
+                </p>
               </div>
+            </div>
 
-              <div className="flex gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer">
-                <img 
-                  src="https://images.unsplash.com/photo-1580477667995-2b94f01c9516?w=100&h=100&fit=crop"
-                  alt="Apprenez la restauration d'art"
-                  className="w-20 h-20 rounded-lg object-cover"
-                />
-                <div>
-                  <h3 className="text-base mb-1" style={{ fontWeight: 600, color: '#222222' }}>
-                    Apprenez la restauration d'art
-                  </h3>
-                  <p className="text-sm" style={{ color: '#717171' }}>
-                    90 minutes
-                  </p>
-                </div>
+            <div className="flex gap-3 md:gap-4 p-3 md:p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer">
+              <img 
+                src="https://images.unsplash.com/photo-1580477667995-2b94f01c9516?w=100&h=100&fit=crop"
+                alt="Apprenez la restauration d'art"
+                className="w-16 h-16 md:w-20 md:h-20 rounded-lg object-cover"
+              />
+              <div className="text-left">
+                <h3 className="text-sm md:text-base mb-1" style={{ fontWeight: 600, color: '#222222' }}>
+                  Apprenez la restauration d'art
+                </h3>
+                <p className="text-xs md:text-sm" style={{ color: '#717171' }}>
+                  90 minutes
+                </p>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Footer Navigation */}
-        <div className="border-t border-gray-200 px-8 py-6 flex justify-end">
-          <button
-            onClick={() => setCurrentStep('program')}
-            className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
-            style={{ fontWeight: 600 }}
-          >
-            Suivant
-          </button>
-        </div>
-      </div>
+      </StepLayout>
     );
   }
 
   // Step 16: Program
   if (currentStep === 'program') {
     return (
-      <div className="min-h-screen bg-white flex flex-col">
-        {/* Header */}
-        <header className="px-8 py-6 flex items-center justify-between border-b border-gray-200">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setCurrentStep('program-intro')}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+      <>
+        <StepLayout
+          stepNumber={5}
+          stepName="Programme"
+          onBack={() => setCurrentStep('program-intro')}
+          onNext={() => {
+            setCurrentStep('tarification');
+            setPricingStep('participants');
+            setShowPricingBreakdown(false);
+          }}
+          leftFooterContent={
+            <button
+              className="text-sm md:text-base hover:underline"
+              style={{ fontWeight: 600, color: '#222222' }}
             >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
+              Obtenir des conseils
             </button>
-            <Image
-              src="/logoIcon.png"
-              alt="Logo"
-              width={48}
-              height={48}
-              className="cursor-pointer hover:opacity-70 transition-opacity"
-              onClick={() => onNavigate('annonces')}
-            />
-          </div>
-          <div className="flex items-center gap-6">
-            <p className="text-sm" style={{ color: '#717171' }}>
-              Programme <span style={{ color: '#222222', fontWeight: 600 }}>Étape 5 sur 7</span>
-            </p>
-            <button className="px-6 py-2 text-sm hover:bg-gray-100 rounded-lg transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
-              Enregistrer et quitter
-            </button>
-          </div>
-        </header>
-
-        {/* Main Content */}
-        <div className="flex-1 flex items-center justify-center px-16 py-12">
-          <div className="max-w-2xl w-full">
-            <h1 className="text-4xl mb-2 text-center" style={{ fontWeight: 600, color: '#222222' }}>
+          }
+        >
+          <div className="max-w-2xl w-full text-center">
+            <h1 className="text-2xl md:text-4xl mb-2" style={{ fontWeight: 600, color: '#222222' }}>
               {activities.length > 0 ? 'Votre programme' : 'Créez un programme'}
             </h1>
-            <p className="text-base text-center mb-12" style={{ color: '#717171' }}>
+            <p className="text-sm md:text-base mb-8 md:mb-12" style={{ color: '#717171' }}>
               {activities.length > 0 
                 ? `Ajoutez jusqu'à ${10 - activities.length} activités` 
                 : 'Ajoutez jusqu\'à 10 activités à votre expérience afin que les voyageurs sachent à quoi s\'attendre.'}
             </p>
 
-            {/* Activities List - Display in reverse order (newest first) */}
             {activities.length > 0 && (
               <div className="mb-4 space-y-3">
                 {[...activities].reverse().map((activity, reverseIndex) => {
                   const index = activities.length - 1 - reverseIndex;
                   return (
-                    <div key={index} className="p-4 border border-gray-300 rounded-xl flex gap-4 items-start hover:border-gray-400 transition-colors">
-                      {/* Activity Photo Thumbnail */}
+                    <div key={index} className="p-3 md:p-4 border border-gray-300 rounded-xl flex gap-3 md:gap-4 items-start hover:border-gray-400 transition-colors text-left">
                       {activity.photo && (
                         <div className="flex-shrink-0">
                           <img 
                             src={activity.photo} 
                             alt={activity.title}
-                            className="w-14 h-14 rounded-lg object-cover"
+                            className="w-12 h-12 md:w-14 md:h-14 rounded-lg object-cover"
                           />
                         </div>
                       )}
                       
-                      {/* Activity Content */}
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-base mb-1" style={{ fontWeight: 600, color: '#222222' }}>
+                        <h3 className="text-sm md:text-base mb-1" style={{ fontWeight: 600, color: '#222222' }}>
                           {activity.title || `Activité ${index + 1}`} • {
                             activity.duration < 60 
                               ? `${activity.duration} min` 
@@ -3238,7 +2689,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                           }
                         </h3>
                         {activity.description && (
-                          <p className="text-sm" style={{ color: '#717171' }}>
+                          <p className="text-xs md:text-sm" style={{ color: '#717171' }}>
                             {activity.description}
                           </p>
                         )}
@@ -3249,7 +2700,6 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
               </div>
             )}
 
-            {/* Add Activity Button */}
             <button
               onClick={() => {
                 setActivityTitle('');
@@ -3260,39 +2710,18 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                 setActivityModalStep('title');
                 setShowActivityModal(true);
               }}
-              className="w-full p-5 border border-gray-300 rounded-xl hover:border-gray-900 transition-colors flex items-center justify-center gap-2"
+              className="w-full p-4 md:p-5 border border-gray-300 rounded-xl hover:border-gray-900 transition-colors flex items-center justify-center gap-2"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
                 <line x1="12" y1="5" x2="12" y2="19"/>
                 <line x1="5" y1="12" x2="19" y2="12"/>
               </svg>
-              <span className="text-base" style={{ fontWeight: 400, color: '#222222' }}>
+              <span className="text-sm md:text-base" style={{ fontWeight: 400, color: '#222222' }}>
                 Ajouter une activité
               </span>
             </button>
           </div>
-        </div>
-
-        {/* Footer Navigation */}
-        <div className="border-t border-gray-200 px-8 py-6 flex justify-between items-center">
-          <button
-            className="text-base hover:underline"
-            style={{ fontWeight: 600, color: '#222222' }}
-          >
-            Obtenir des conseils
-          </button>
-          <button
-            onClick={() => {
-              setCurrentStep('tarification');
-              setPricingStep('participants');
-              setShowPricingBreakdown(false);
-            }}
-            className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
-            style={{ fontWeight: 600 }}
-          >
-            Suivant
-          </button>
-        </div>
+        </StepLayout>
 
         {/* Activity Modal */}
         {showActivityModal && (
@@ -3811,235 +3240,188 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
             </div>
           </div>
         )}
-      </div>
+      </>
     );
   }
 
   // Step 17: Pricing
   if (currentStep === 'tarification') {
-    // Calculate service fee (assume 14% for example)
     const serviceFeePercentage = 14;
     const basePrice = pricePerPerson;
     const serviceFee = (basePrice * serviceFeePercentage) / 100;
     const youEarn = basePrice - serviceFee;
 
     return (
-      <div className="min-h-screen bg-white flex flex-col">
-        {/* Header */}
-        <header className="px-8 py-6 flex items-center justify-between border-b border-gray-200">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => {
-                if (pricingStep === 'price') {
-                  setPricingStep('participants');
-                  setShowPricingBreakdown(false);
-                } else {
-                  setCurrentStep('program');
-                  setPricingStep('participants');
-                  setShowPricingBreakdown(false);
-                }
-              }}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
-            </button>
-            <Image
-              src="/logoIcon.png"
-              alt="Logo"
-              width={48}
-              height={48}
-              className="cursor-pointer hover:opacity-70 transition-opacity"
-              onClick={() => onNavigate('annonces')}
-            />
-          </div>
-          <div className="flex items-center gap-6">
-            <p className="text-sm" style={{ color: '#717171' }}>
-              Tarification <span style={{ color: '#222222', fontWeight: 600 }}>Étape 6 sur 7</span>
-            </p>
-            <button className="px-6 py-2 text-sm hover:bg-gray-100 rounded-lg transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
-              Enregistrer et quitter
-            </button>
-          </div>
-        </header>
-
-        {/* Main Content */}
-        <div className="flex-1 flex items-center justify-center px-16 py-12">
-          <div className="max-w-2xl w-full">
-            {/* Step 1: Max Participants */}
-            {pricingStep === 'participants' && (
-              <>
-                <h1 className="text-4xl mb-16 text-center" style={{ fontWeight: 600, color: '#222222' }}>
-                  Indiquez le maximum de participants
-                </h1>
-
-                {/* Participant Counter */}
-                <div className="flex items-center justify-center gap-8 mb-16">
-                  <button
-                    onClick={() => setMaxParticipants(Math.max(1, maxParticipants - 1))}
-                    disabled={maxParticipants <= 1}
-                    className="w-12 h-12 rounded-full border-2 border-gray-300 hover:border-gray-900 transition-colors flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed"
-                  >
-                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                      <line x1="5" y1="12" x2="19" y2="12"/>
-                    </svg>
-                  </button>
-                  
-                  <div className="text-9xl" style={{ fontWeight: 300, color: '#222222' }}>
-                    {maxParticipants}
-                  </div>
-                  
-                  <button
-                    onClick={() => setMaxParticipants(maxParticipants + 1)}
-                    className="w-12 h-12 rounded-full border-2 border-gray-300 hover:border-gray-900 transition-colors flex items-center justify-center"
-                  >
-                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                      <line x1="12" y1="5" x2="12" y2="19"/>
-                      <line x1="5" y1="12" x2="19" y2="12"/>
-                    </svg>
-                  </button>
-                </div>
-              </>
-            )}
-
-            {/* Step 2: Price per Person */}
-            {pricingStep === 'price' && (
-              <>
-                <h1 className="text-4xl mb-16 text-center" style={{ fontWeight: 600, color: '#222222' }}>
-                  Prix par voyageur
-                </h1>
-
-                {/* Price Input */}
-                <div className="flex items-center justify-center mb-4">
-                  <div className="flex items-baseline">
-                    <span className="text-9xl" style={{ fontWeight: 300, color: '#222222' }}>
-                      $
-                    </span>
-                    <input
-                      type="number"
-                      value={pricePerPerson}
-                      onChange={(e) => {
-                        const val = parseInt(e.target.value);
-                        if (!isNaN(val) && val > 0) {
-                          setPricePerPerson(val);
-                        } else if (e.target.value === '') {
-                          setPricePerPerson(1);
-                        }
-                      }}
-                      className="text-9xl text-center outline-none w-64"
-                      style={{ fontWeight: 300, color: '#222222' }}
-                      min="1"
-                    />
-                  </div>
-                </div>
-
-                {/* "You earn" link and breakdown */}
-                <div className="mb-16">
-                  <div className="text-center mb-4">
-                    <button
-                      onClick={() => setShowPricingBreakdown(!showPricingBreakdown)}
-                      className="text-sm hover:underline inline-flex items-center gap-1"
-                      style={{ color: '#222222', fontWeight: 400 }}
-                    >
-                      Vous gagnez {youEarn.toFixed(0)}$
-                      <svg 
-                        className={`w-3 h-3 transition-transform ${showPricingBreakdown ? 'rotate-180' : ''}`} 
-                        viewBox="0 0 24 24" 
-                        fill="none" 
-                        stroke="currentColor" 
-                        strokeWidth="2"
-                      >
-                        <polyline points="6 9 12 15 18 9" />
-                      </svg>
-                    </button>
-                  </div>
-
-                  {/* Pricing Breakdown Card */}
-                  {showPricingBreakdown && (
-                    <div className="max-w-md mx-auto border border-gray-300 rounded-xl p-6">
-                      <div className="space-y-3">
-                        <div className="flex justify-between items-center">
-                          <span className="text-base" style={{ color: '#222222' }}>
-                            Prix de base
-                          </span>
-                          <span className="text-base" style={{ color: '#222222', fontWeight: 600 }}>
-                            ${basePrice}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-base" style={{ color: '#222222' }}>
-                            Frais de service HOMIQIO ({serviceFeePercentage} %)
-                          </span>
-                          <span className="text-base" style={{ color: '#222222', fontWeight: 600 }}>
-                            -${serviceFee.toFixed(0)}
-                          </span>
-                        </div>
-                        <div className="border-t border-gray-300 pt-3 flex justify-between items-center">
-                          <span className="text-base" style={{ color: '#222222', fontWeight: 600 }}>
-                            Vous gagnez
-                          </span>
-                          <span className="text-base" style={{ color: '#222222', fontWeight: 600 }}>
-                            ${youEarn.toFixed(0)}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="mt-4 text-center">
-                        <button
-                          onClick={() => setShowPricingBreakdown(false)}
-                          className="text-sm hover:underline inline-flex items-center gap-1"
-                          style={{ color: '#222222', fontWeight: 400 }}
-                        >
-                          Afficher moins
-                          <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <polyline points="18 15 12 9 6 15" />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Info link */}
-                <div className="text-center">
-                  <button className="text-sm hover:underline" style={{ color: '#222222', textDecoration: 'underline' }}>
-                    En savoir plus sur la tarification
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Footer Navigation */}
-        <div className="border-t border-gray-200 px-8 py-6 flex justify-between items-center">
-          {pricingStep === 'price' ? (
+      <StepLayout
+        stepNumber={6}
+        stepName="Tarification"
+        onBack={() => {
+          if (pricingStep === 'price') {
+            setPricingStep('participants');
+            setShowPricingBreakdown(false);
+          } else {
+            setCurrentStep('program');
+            setPricingStep('participants');
+            setShowPricingBreakdown(false);
+          }
+        }}
+        onNext={() => {
+          if (pricingStep === 'participants') {
+            setPricingStep('price');
+            setShowPricingBreakdown(false);
+          } else {
+            onNavigate('annonces');
+          }
+        }}
+        leftFooterContent={
+          pricingStep === 'price' ? (
             <button
-              className="text-base hover:underline"
+              className="text-sm md:text-base hover:underline"
               style={{ fontWeight: 600, color: '#222222' }}
             >
               Découvrir nos conseils
             </button>
-          ) : (
-            <div></div>
+          ) : undefined
+        }
+      >
+        <div className="max-w-2xl w-full text-center">
+          {pricingStep === 'participants' && (
+            <>
+              <h1 className="text-2xl md:text-4xl mb-8 md:mb-16" style={{ fontWeight: 600, color: '#222222' }}>
+                Indiquez le maximum de participants
+              </h1>
+
+              <div className="flex items-center justify-center gap-6 md:gap-8 mb-8 md:mb-16">
+                <button
+                  onClick={() => setMaxParticipants(Math.max(1, maxParticipants - 1))}
+                  disabled={maxParticipants <= 1}
+                  className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-gray-300 hover:border-gray-900 transition-colors flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <svg className="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                </button>
+                
+                <div className="text-7xl md:text-9xl" style={{ fontWeight: 300, color: '#222222' }}>
+                  {maxParticipants}
+                </div>
+                
+                <button
+                  onClick={() => setMaxParticipants(maxParticipants + 1)}
+                  className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-gray-300 hover:border-gray-900 transition-colors flex items-center justify-center"
+                >
+                  <svg className="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                </button>
+              </div>
+            </>
           )}
-          <button
-            onClick={() => {
-              if (pricingStep === 'participants') {
-                setPricingStep('price');
-                setShowPricingBreakdown(false);
-              } else {
-                onNavigate('annonces');
-              }
-            }}
-            className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
-            style={{ fontWeight: 600 }}
-          >
-            Suivant
-          </button>
+
+          {pricingStep === 'price' && (
+            <>
+              <h1 className="text-2xl md:text-4xl mb-8 md:mb-16" style={{ fontWeight: 600, color: '#222222' }}>
+                Prix par voyageur
+              </h1>
+
+              <div className="flex items-center justify-center mb-4">
+                <div className="flex items-baseline">
+                  <span className="text-6xl md:text-9xl" style={{ fontWeight: 300, color: '#222222' }}>
+                    $
+                  </span>
+                  <input
+                    type="number"
+                    value={pricePerPerson}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      if (!isNaN(val) && val > 0) {
+                        setPricePerPerson(val);
+                      } else if (e.target.value === '') {
+                        setPricePerPerson(1);
+                      }
+                    }}
+                    className="text-6xl md:text-9xl text-center outline-none w-32 md:w-64"
+                    style={{ fontWeight: 300, color: '#222222' }}
+                    min="1"
+                  />
+                </div>
+              </div>
+
+              <div className="mb-8 md:mb-16">
+                <div className="text-center mb-4">
+                  <button
+                    onClick={() => setShowPricingBreakdown(!showPricingBreakdown)}
+                    className="text-sm hover:underline inline-flex items-center gap-1"
+                    style={{ color: '#222222', fontWeight: 400 }}
+                  >
+                    Vous gagnez {youEarn.toFixed(0)}$
+                    <svg 
+                      className={`w-3 h-3 transition-transform ${showPricingBreakdown ? 'rotate-180' : ''}`} 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      strokeWidth="2"
+                    >
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                  </button>
+                </div>
+
+                {showPricingBreakdown && (
+                  <div className="max-w-md mx-auto border border-gray-300 rounded-xl p-4 md:p-6">
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm md:text-base" style={{ color: '#222222' }}>
+                          Prix de base
+                        </span>
+                        <span className="text-sm md:text-base" style={{ color: '#222222', fontWeight: 600 }}>
+                          ${basePrice}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm md:text-base" style={{ color: '#222222' }}>
+                          Frais de service ({serviceFeePercentage} %)
+                        </span>
+                        <span className="text-sm md:text-base" style={{ color: '#222222', fontWeight: 600 }}>
+                          -${serviceFee.toFixed(0)}
+                        </span>
+                      </div>
+                      <div className="border-t border-gray-300 pt-3 flex justify-between items-center">
+                        <span className="text-sm md:text-base" style={{ color: '#222222', fontWeight: 600 }}>
+                          Vous gagnez
+                        </span>
+                        <span className="text-sm md:text-base" style={{ color: '#222222', fontWeight: 600 }}>
+                          ${youEarn.toFixed(0)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 text-center">
+                      <button
+                        onClick={() => setShowPricingBreakdown(false)}
+                        className="text-sm hover:underline inline-flex items-center gap-1"
+                        style={{ color: '#222222', fontWeight: 400 }}
+                      >
+                        Afficher moins
+                        <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <polyline points="18 15 12 9 6 15" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="text-center">
+                <button className="text-sm hover:underline" style={{ color: '#222222', textDecoration: 'underline' }}>
+                  En savoir plus sur la tarification
+                </button>
+              </div>
+            </>
+          )}
         </div>
-      </div>
+      </StepLayout>
     );
   }
 
