@@ -59,7 +59,7 @@ export function SearchOverlay({
 
       {/* Content */}
       <div
-        className="relative bg-white"
+        className="relative bg-[#F7F7F7]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -80,7 +80,7 @@ export function SearchOverlay({
         </div>
 
         {/* Search bar based on current page */}
-        <div className="bg-white">
+        <div className="bg-[#F7F7F7]">
           {currentPage === "logements" && <SearchBar onSearch={onSearch} />}
           {currentPage === "experiences" && (
             <ExperienceSearchBar onSearch={onSearch} />

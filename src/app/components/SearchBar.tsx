@@ -276,9 +276,9 @@ export function SearchBar({ onSearch }: { onSearch?: (params: any) => void }) {
       : "";
 
   return (
-    <div className="px-4 sm:px-6 lg:px-20 py-6 relative bg-white">
+    <div className="px-4 sm:px-6 lg:px-20 py-4 relative bg-[#F7F7F7]">
       <div
-        className="max-w-5xl mx-auto relative"
+        className="max-w-3xl mx-auto relative"
         ref={dropdownRef}
       >
         <div
@@ -294,7 +294,7 @@ export function SearchBar({ onSearch }: { onSearch?: (params: any) => void }) {
         >
           {/* Destination */}
           <div
-            className={`flex-1 px-8 py-4 cursor-pointer relative transition-all ${
+            className={`flex-1 px-8 py-3 cursor-pointer relative transition-all ${
               showDestinations
                 ? "bg-white shadow-md z-10"
                 : "bg-transparent"
@@ -361,7 +361,7 @@ export function SearchBar({ onSearch }: { onSearch?: (params: any) => void }) {
 
           {/* Dates */}
           <div
-            className={`flex-1 px-8 py-4 cursor-pointer relative transition-all ${
+            className={`flex-[0.8] px-8 py-3 cursor-pointer relative transition-all ${
               showDatePicker
                 ? "bg-white shadow-md z-10"
                 : "bg-transparent"
@@ -408,7 +408,7 @@ export function SearchBar({ onSearch }: { onSearch?: (params: any) => void }) {
           )}
 
           {/* Voyageurs + Rechercher - Wrapper with ref */}
-          <div ref={guestsDropdownRef} className="flex-1 relative">
+          <div ref={guestsDropdownRef} className="flex-[1.2] relative">
             <div
               className={`flex-1 py-0.5 flex items-center relative transition-all ${
                 showGuestsPicker
@@ -432,7 +432,7 @@ export function SearchBar({ onSearch }: { onSearch?: (params: any) => void }) {
               }}
             >
               <div
-                className="flex-1 flex flex-row items-center px-8 py-4 cursor-pointer relative"
+                className="flex-1 flex flex-row items-center px-8 py-3 cursor-pointer relative"
                 onClick={() => {
                   setShowGuestsPicker(true);
                   setShowDestinations(false);

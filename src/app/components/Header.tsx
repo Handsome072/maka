@@ -46,7 +46,7 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
       <>
         <header
           ref={headerRef}
-          className="sticky top-0 z-50 bg-white"
+          className="sticky top-0 z-50 bg-[#F7F7F7]"
         >
           <div className="px-4 sm:px-6 lg:px-20 py-4">
             <div className="flex items-center justify-between relative">
