@@ -386,8 +386,14 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Search bar - visible seulement quand on n'a pas scrollé */}
-      {!isScrolled && <SearchBar type="experiences" onSearch={onSearch} />}
+      {/* Search bar - smooth opacity transition synchronized with CompactSearchBar */}
+      <div
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${
+          isScrolled ? 'opacity-0 max-h-0 pointer-events-none' : 'opacity-100 max-h-[200px]'
+        }`}
+      >
+        <SearchBar type="experiences" onSearch={onSearch} />
+      </div>
 
       <main className="pb-12">
         {/* HOMIQIO Originals */}

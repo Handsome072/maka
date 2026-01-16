@@ -26,13 +26,13 @@ export function ScrollProvider({ children }: ScrollProviderProps) {
       const scrollY = window.scrollY;
       
       setIsScrolled((prevScrolled) => {
-        // Hysteresis: large gap to prevent flickering
-        // Switch to compact when scrollY > 120
-        // Switch back to normal when scrollY < 60
-        // 60px buffer zone (60-120) where state doesn't change
-        if (!prevScrolled && scrollY > 120) {
+        // Hysteresis: small buffer to prevent flickering while staying responsive
+        // Switch to compact when scrollY > 50 (triggers early for snappy feel)
+        // Switch back to normal when scrollY < 20 (returns quickly when near top)
+        // 30px buffer zone (20-50) where state doesn't change
+        if (!prevScrolled && scrollY > 50) {
           return true;
-        } else if (prevScrolled && scrollY < 60) {
+        } else if (prevScrolled && scrollY < 20) {
           return false;
         }
         return prevScrolled;

@@ -25,6 +25,10 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+
+  // Disable source maps in development to suppress missing .map file warnings
+  // from third-party libraries (e.g., motion/framer-motion)
+  productionBrowserSourceMaps: false,
 };
 
 export default nextConfig;
