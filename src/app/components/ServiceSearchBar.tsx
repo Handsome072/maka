@@ -72,7 +72,7 @@ export function ServiceSearchBar({ onSearch }: ServiceSearchBarProps) {
         backgroundRepeat: 'no-repeat'
       }}
     >
-      <div className="px-4 sm:px-6 lg:px-20 py-3 pb-6">
+      <div className="px-4 sm:px-6 lg:px-12 py-3 pb-6">
         <div className="max-w-3xl mx-auto relative" ref={searchBarRef}>
           <div 
             className="flex items-center rounded-full shadow-sm hover:shadow-md transition-shadow relative"
