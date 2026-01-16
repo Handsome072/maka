@@ -192,8 +192,14 @@ export function Services({ isScrolled, onServiceClick, onSearch }: ServicesProps
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Search bar - visible seulement quand on n'a pas scrollé */}
-      {!isScrolled && <SearchBar type="services" onSearch={onSearch} />}
+      {/* Search bar - smooth opacity transition synchronized with CompactSearchBar */}
+      <div
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${
+          isScrolled ? 'opacity-0 max-h-0 pointer-events-none' : 'opacity-100 max-h-[200px]'
+        }`}
+      >
+        <SearchBar type="services" onSearch={onSearch} />
+      </div>
 
       <main className="pb-12">
         {/* Section Chefs privés avec défilement horizontal */}
