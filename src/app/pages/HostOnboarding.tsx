@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 import Image from 'next/image';
 
@@ -43,6 +43,19 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
   const [addressPostalCode, setAddressPostalCode] = useState('');
   const [legalEntity, setLegalEntity] = useState<'yes' | 'no' | null>(null);
   const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.classList.add('scrollbar-hide');
+    document.body.classList.add('scrollbar-hide');
+    document.documentElement.style.overflow = 'auto';
+    document.body.style.overflow = 'auto';
+    return () => {
+      document.documentElement.classList.remove('scrollbar-hide');
+      document.body.classList.remove('scrollbar-hide');
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    };
+  }, []);
 
   const toggleAmenity = (amenity: string) => {
     if (selectedAmenities.includes(amenity)) {
@@ -119,7 +132,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
   // Intro page
   if (currentStep === 'intro') {
     return (
-      <div className="min-h-screen bg-white flex">
+      <div className="min-h-screen bg-white flex overflow-y-auto scrollbar-hide">
         {/* Left side */}
         <div className="flex-1 flex items-center justify-center px-12">
           <div className="max-w-md">
@@ -226,9 +239,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
   // Step 1: Introduction
   if (currentStep === 'step1') {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -251,7 +264,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="flex min-h-[calc(100vh-88px)]">
+        <div className="flex min-h-[calc(100vh-88px)] pt-32 pb-32">
           {/* Left side */}
           <div className="flex-1 flex items-center justify-center px-12 py-16">
             <div className="max-w-lg">
@@ -280,7 +293,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
             onClick={() => setCurrentStep('intro')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
@@ -324,9 +337,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     ];
 
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -349,7 +362,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="max-w-3xl mx-auto px-8 py-16">
+        <div className="max-w-3xl mx-auto px-8 pt-32 pb-32">
           <h1 className="text-3xl mb-8 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             Parmi les propositions suivantes, laquelle décrit le mieux votre logement ?
           </h1>
@@ -375,7 +388,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
             onClick={() => setCurrentStep('step1')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
@@ -401,9 +414,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
   // Space type selection
   if (currentStep === 'space-type') {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -426,7 +439,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="max-w-2xl mx-auto px-8 py-16">
+        <div className="max-w-2xl mx-auto px-8 pt-32 pb-32">
           <h1 className="text-3xl mb-2 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             Quel type de logement sera à la disposition des voyageurs ?
           </h1>
@@ -509,7 +522,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
             onClick={() => setCurrentStep('property-type')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
@@ -535,9 +548,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
   // Location
   if (currentStep === 'location') {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -560,7 +573,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="max-w-2xl mx-auto px-8 py-16">
+        <div className="max-w-2xl mx-auto px-8 pt-32 pb-32">
           <h1 className="text-3xl mb-2 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             Où est situé votre logement ?
           </h1>
@@ -602,7 +615,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
             onClick={() => setCurrentStep('space-type')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
@@ -628,9 +641,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
   // Confirm address
   if (currentStep === 'confirm-address') {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -653,7 +666,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="max-w-2xl mx-auto px-8 py-16">
+        <div className="max-w-2xl mx-auto px-8 pt-32 pb-32">
           <h1 className="text-3xl mb-2 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             Confirmez votre adresse
           </h1>
@@ -793,7 +806,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
             onClick={() => setCurrentStep('location')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
@@ -816,9 +829,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
   // Pin Location - "Le repère est-il au bon endroit ?"
   if (currentStep === 'pin-location') {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -841,7 +854,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="max-w-4xl mx-auto px-8 py-16">
+        <div className="max-w-4xl mx-auto px-8 pt-32 pb-32">
           <h1 className="text-3xl mb-2 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             Le repère est-il au bon endroit ?
           </h1>
@@ -879,7 +892,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
             onClick={() => setCurrentStep('confirm-address')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
@@ -902,9 +915,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
   // Guest Info - "Donnez les informations principales"
   if (currentStep === 'guest-info') {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -927,7 +940,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="max-w-2xl mx-auto px-8 py-16">
+        <div className="max-w-2xl mx-auto px-8 pt-32 pb-32">
           <h1 className="text-3xl mb-2 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             Donnez les informations principales concernant votre logement
           </h1>
@@ -1024,7 +1037,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
             onClick={() => setCurrentStep('pin-location')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
@@ -1047,9 +1060,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
   // Step 2 Intro - "Faites sortir votre annonce du lot"
   if (currentStep === 'step2-intro') {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -1072,7 +1085,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="flex min-h-[calc(100vh-88px)]">
+        <div className="flex min-h-[calc(100vh-88px)] pt-32 pb-32">
           {/* Left side */}
           <div className="flex-1 flex items-center justify-center px-12 py-16">
             <div className="max-w-lg">
@@ -1101,7 +1114,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
             onClick={() => setCurrentStep('guest-info')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
@@ -1141,9 +1154,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     ];
 
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -1166,7 +1179,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="max-w-3xl mx-auto px-8 py-16">
+        <div className="max-w-3xl mx-auto px-8 pt-32 pb-32">
           <h1 className="text-3xl mb-2" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             Indiquez aux voyageurs quels sont les équipements de votre logement
           </h1>
@@ -1226,7 +1239,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
             onClick={() => setCurrentStep('step2-intro')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
@@ -1255,9 +1268,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     }
 
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -1280,7 +1293,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="max-w-3xl mx-auto px-8 py-16">
+        <div className="max-w-3xl mx-auto px-8 pt-32 pb-32">
           <h1 className="text-3xl mb-2 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             Ajoutez quelques photos de votre maison
           </h1>
@@ -1309,7 +1322,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
             onClick={() => setCurrentStep('amenities')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
@@ -1462,9 +1475,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
   // Photo Review - "Est voilà ! Est-ce que tout semble en ordre ?"
   if (currentStep === 'photo-review') {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -1487,7 +1500,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="max-w-3xl mx-auto px-8 py-16">
+        <div className="max-w-3xl mx-auto px-8 pt-32 pb-32">
           <h1 className="text-3xl mb-2 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             Et voilà ! Est-ce que tout semble en ordre ?
           </h1>
@@ -1569,7 +1582,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
             onClick={() => setCurrentStep('photos')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
@@ -1592,9 +1605,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
   // Title - "À présent, donnez un titre à votre annonce"
   if (currentStep === 'title') {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -1617,7 +1630,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="max-w-2xl mx-auto px-8 py-16">
+        <div className="max-w-2xl mx-auto px-8 pt-32 pb-32">
           <h1 className="text-3xl mb-2" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             À présent, donnez un titre à votre annonce (type : maison)
           </h1>
@@ -1656,7 +1669,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
             onClick={() => setCurrentStep('photo-review')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
@@ -1691,9 +1704,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     ];
 
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -1716,7 +1729,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="max-w-2xl mx-auto px-8 py-16">
+        <div className="max-w-2xl mx-auto px-8 pt-32 pb-32">
           <h1 className="text-3xl mb-2" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             Passons maintenant à la description de votre logement (type : maison)
           </h1>
@@ -1749,7 +1762,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
             onClick={() => setCurrentStep('title')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
@@ -1772,9 +1785,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
   // Description - "Créez votre description"
   if (currentStep === 'description') {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -1797,7 +1810,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="max-w-2xl mx-auto px-8 py-16">
+        <div className="max-w-2xl mx-auto px-8 pt-32 pb-32">
           <h1 className="text-3xl mb-2" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             Créez votre description
           </h1>
@@ -1836,7 +1849,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
             onClick={() => setCurrentStep('highlights')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
@@ -1862,9 +1875,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
   // Step 3 Intro - "Terminez et publiez"
   if (currentStep === 'step3-intro') {
     return (
-      <div className="min-h-screen bg-white flex flex-col">
+      <div className="min-h-screen bg-white flex flex-col overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -1887,7 +1900,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="flex-1 flex items-center justify-center px-8 py-16">
+        <div className="flex-1 flex items-center justify-center px-8 pt-32 pb-32">
           <div className="max-w-6xl w-full grid grid-cols-2 gap-16 items-center">
             {/* Left side - Text */}
             <div>
@@ -1914,7 +1927,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer */}
-        <div className="sticky bottom-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
             onClick={() => setCurrentStep('description')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
@@ -1937,9 +1950,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
   // Reservation Settings - "Choisissez vos paramètres de réservation"
   if (currentStep === 'reservation-settings') {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -1962,7 +1975,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="max-w-2xl mx-auto px-8 py-16">
+        <div className="max-w-2xl mx-auto px-8 pt-32 pb-32">
           <h1 className="text-3xl mb-2 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             Choisissez vos paramètres de réservation
           </h1>
@@ -2028,7 +2041,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
             onClick={() => setCurrentStep('step3-intro')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
@@ -2051,9 +2064,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
   // Pricing - "À présent, définissez un prix de base"
   if (currentStep === 'pricing') {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -2076,7 +2089,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="max-w-2xl mx-auto px-8 py-16">
+        <div className="max-w-2xl mx-auto px-8 pt-32 pb-32">
           <h1 className="text-3xl mb-2 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             À présent, définissez un prix de base pour les jours de semaine
           </h1>
@@ -2135,7 +2148,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
             onClick={() => setCurrentStep('reservation-settings')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
@@ -2160,9 +2173,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     const weekendPrice = Math.round(basePrice * (1 + weekendSupplement / 100));
     
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -2185,7 +2198,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="max-w-2xl mx-auto px-8 py-16">
+        <div className="max-w-2xl mx-auto px-8 pt-32 pb-32">
           <h1 className="text-3xl mb-2 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             Fixez un tarif week-end
           </h1>
@@ -2271,7 +2284,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
             onClick={() => setCurrentStep('pricing')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
@@ -2301,9 +2314,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     ];
 
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -2326,7 +2339,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="max-w-2xl mx-auto px-8 py-16">
+        <div className="max-w-2xl mx-auto px-8 pt-32 pb-32">
           <h1 className="text-3xl mb-2" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             Ajoutez des réductions
           </h1>
@@ -2382,7 +2395,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
             onClick={() => setCurrentStep('weekend-pricing')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
@@ -2411,9 +2424,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     ];
 
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -2436,7 +2449,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="max-w-2xl mx-auto px-8 py-16">
+        <div className="max-w-2xl mx-auto px-8 pt-32 pb-32">
           <h1 className="text-3xl mb-12" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             Indiquez les informations liées à la sécurité
           </h1>
@@ -2496,7 +2509,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
             onClick={() => setCurrentStep('discounts')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
@@ -2521,9 +2534,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     const isFormValid = addressStreet.trim() !== '' && addressCity.trim() !== '' && legalEntity !== null;
 
     return (
-      <div className="min-h-screen bg-white flex flex-col">
+      <div className="min-h-screen bg-white flex flex-col overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -2542,7 +2555,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="flex-1 px-8 py-12">
+        <div className="flex-1 px-8 pt-32 pb-32">
           <div className="max-w-2xl mx-auto">
             <h1 className="text-3xl mb-2" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
               Ajoutez quelques dernières informations
@@ -2681,7 +2694,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer */}
-        <div className="sticky bottom-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline" style={{ fontWeight: 600, color: '#222222' }}>
             Retour
           </button>
@@ -2712,9 +2725,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
   // Verification Points - "Points importants à vérifier"
   if (currentStep === 'verification-points') {
     return (
-      <div className="min-h-screen bg-white flex flex-col">
+      <div className="min-h-screen bg-white flex flex-col overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -2740,7 +2753,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="flex-1 px-8 py-12">
+        <div className="flex-1 px-8 pt-32 pb-32">
           <div className="max-w-4xl mx-auto flex gap-12">
             {/* Left side - Verification items */}
             <div className="flex-1">
