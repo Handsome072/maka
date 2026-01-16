@@ -56,7 +56,7 @@ export function ExperienceCard({
           className="absolute top-3 right-3 hover:scale-110 transition-transform z-10"
         >
           <Heart
-            className={`w-6 h-6 ${isFavorite ? 'fill-[#1E3A5F] text-[#1E3A5F]' : 'fill-black/50 text-white'} stroke-2`}
+            className={`w-6 h-6 ${isFavorite ? 'fill-red-500 text-red-500' : 'fill-black/50 text-white'} stroke-2`}
           />
         </button>
 

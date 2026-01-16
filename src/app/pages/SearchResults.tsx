@@ -260,7 +260,7 @@ function PropertyCard({ property }: { property: Property }) {
           <Heart
             className={`w-6 h-6 ${
               isFavorite
-                ? 'fill-[#FF385C] stroke-[#FF385C]'
+                ? 'fill-red-500 stroke-red-500'
                 : 'fill-black/50 stroke-white'
             }`}
             strokeWidth={2}

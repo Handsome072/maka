@@ -69,7 +69,7 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
                 onClick={() => setIsFavorite(!isFavorite)}
                 className="flex items-center gap-2 px-3 py-2 rounded-lg transition-colors"
               >
-                <Heart className={`w-4 h-4 ${isFavorite ? 'fill-[#10B981] text-[#10B981]' : ''}`} />
+                <Heart className={`w-4 h-4 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
                 <span className="text-sm underline" style={{ fontWeight: 600 }}>Enregistrer</span>
               </button>
             </div>
