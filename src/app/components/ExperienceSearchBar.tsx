@@ -88,9 +88,9 @@ export function ExperienceSearchBar({ onSearch }: ExperienceSearchBarProps) {
         backgroundRepeat: 'no-repeat'
       }}
     >
-      <div className="px-4 sm:px-6 lg:px-20 py-6">
+      <div className="px-4 sm:px-6 lg:px-20 py-4">
         <div
-          className="max-w-5xl mx-auto relative"
+          className="max-w-3xl mx-auto relative"
           ref={searchBarRef}
         >
           <div
@@ -106,7 +106,7 @@ export function ExperienceSearchBar({ onSearch }: ExperienceSearchBarProps) {
           >
             {/* Destination */}
             <div
-              className={`flex-1 px-8 py-4.5 cursor-pointer relative transition-all ${
+              className={`flex-1 px-8 py-3 cursor-pointer relative transition-all ${
                 showDestinations
                   ? "bg-white shadow-md z-10"
                   : "bg-transparent"
@@ -158,7 +158,7 @@ export function ExperienceSearchBar({ onSearch }: ExperienceSearchBarProps) {
 
             {/* Dates */}
             <div
-              className={`flex-1 px-8 py-4.5 cursor-pointer relative transition-all ${
+              className={`flex-[0.8] px-8 py-3 cursor-pointer relative transition-all ${
                 showDatePicker
                   ? "bg-white shadow-md z-10"
                   : "bg-transparent"
@@ -206,7 +206,7 @@ export function ExperienceSearchBar({ onSearch }: ExperienceSearchBarProps) {
 
             {/* Voyageurs + Rechercher */}
             <div
-              className={`flex-1 py-0.5 flex items-center relative transition-all ${
+              className={`flex-[1.2] py-0.5 flex items-center relative transition-all ${
                 showGuestsPicker
                   ? "bg-white shadow-md z-10"
                   : "bg-transparent"
@@ -228,7 +228,7 @@ export function ExperienceSearchBar({ onSearch }: ExperienceSearchBarProps) {
               }}
             >
               <div
-                className="w-full flex-1 flex flex-row items-center px-8 py-4 cursor-pointer relative"
+                className="w-full flex-1 flex flex-row items-center px-8 py-3 cursor-pointer relative"
                 onClick={() => {
                   setShowGuestsPicker(true);
                   setShowDestinations(false);
@@ -345,7 +345,7 @@ export function ExperienceSearchBar({ onSearch }: ExperienceSearchBarProps) {
 
 export function CompactExperienceSearchBar() {
   return (
-    <div className="bg-white border-b border-gray-200">
+    <div className="bg-[#F7F7F7]">
       <div className="px-4 sm:px-6 lg:px-20 py-4">
         <div className="w-fit mx-auto">
           <div className="flex items-center gap-3 border border-gray-300 rounded-full shadow-sm hover:shadow-md transition-shadow bg-white px-6 py-2.5">
