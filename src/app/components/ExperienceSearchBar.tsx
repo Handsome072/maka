@@ -88,7 +88,7 @@ export function ExperienceSearchBar({ onSearch }: ExperienceSearchBarProps) {
         backgroundRepeat: 'no-repeat'
       }}
     >
-      <div className="px-4 sm:px-6 lg:px-20 py-4">
+      <div className="px-4 sm:px-6 lg:px-20 py-3 pb-6">
         <div
           className="max-w-3xl mx-auto relative"
           ref={searchBarRef}
@@ -106,7 +106,7 @@ export function ExperienceSearchBar({ onSearch }: ExperienceSearchBarProps) {
           >
             {/* Destination */}
             <div
-              className={`flex-1 px-8 py-3 cursor-pointer relative transition-all ${
+              className={`flex-1 px-8 py-2 cursor-pointer relative transition-all ${
                 showDestinations
                   ? "bg-white shadow-md z-10"
                   : "bg-transparent"
@@ -158,7 +158,7 @@ export function ExperienceSearchBar({ onSearch }: ExperienceSearchBarProps) {
 
             {/* Dates */}
             <div
-              className={`flex-[0.8] px-8 py-3 cursor-pointer relative transition-all ${
+              className={`flex-[0.8] px-8 py-2 cursor-pointer relative transition-all ${
                 showDatePicker
                   ? "bg-white shadow-md z-10"
                   : "bg-transparent"
@@ -228,7 +228,7 @@ export function ExperienceSearchBar({ onSearch }: ExperienceSearchBarProps) {
               }}
             >
               <div
-                className="w-full flex-1 flex flex-row items-center px-8 py-3 cursor-pointer relative"
+                className="w-full flex-1 flex flex-row items-center px-8 py-2 cursor-pointer relative"
                 onClick={() => {
                   setShowGuestsPicker(true);
                   setShowDestinations(false);

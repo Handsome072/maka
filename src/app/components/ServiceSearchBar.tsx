@@ -72,7 +72,7 @@ export function ServiceSearchBar({ onSearch }: ServiceSearchBarProps) {
         backgroundRepeat: 'no-repeat'
       }}
     >
-      <div className="px-4 sm:px-6 lg:px-20 py-4">
+      <div className="px-4 sm:px-6 lg:px-20 py-3 pb-6">
         <div className="max-w-3xl mx-auto relative" ref={searchBarRef}>
           <div 
             className="flex items-center rounded-full shadow-sm hover:shadow-md transition-shadow relative"
@@ -80,7 +80,7 @@ export function ServiceSearchBar({ onSearch }: ServiceSearchBarProps) {
           >
             {/* Destination */}
             <div 
-              className={`flex-1 px-8 py-3 cursor-pointer relative transition-all ${
+              className={`flex-1 px-8 py-2 cursor-pointer relative transition-all ${
                 activeDropdown === 'destination' 
                   ? 'bg-white shadow-md z-10' 
                   : 'bg-transparent'
@@ -114,7 +114,7 @@ export function ServiceSearchBar({ onSearch }: ServiceSearchBarProps) {
 
             {/* Dates */}
             <div 
-              className={`flex-[0.8] px-8 py-3 cursor-pointer relative transition-all ${
+              className={`flex-[0.8] px-8 py-2 cursor-pointer relative transition-all ${
                 activeDropdown === 'dates' 
                   ? 'bg-white shadow-md z-10' 
                   : 'bg-transparent'
@@ -164,7 +164,7 @@ export function ServiceSearchBar({ onSearch }: ServiceSearchBarProps) {
               }}
             >
               <div 
-                className="w-full flex-1 flex flex-row items-center px-8 py-3 cursor-pointer relative"
+                className="w-full flex-1 flex flex-row items-center px-8 py-2 cursor-pointer relative"
                 onClick={() => setActiveDropdown(activeDropdown === 'service' ? null : 'service')}
               >
                 <div className='w-1/3'>
