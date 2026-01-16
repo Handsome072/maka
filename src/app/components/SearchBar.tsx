@@ -276,7 +276,7 @@ export function SearchBar({ onSearch }: { onSearch?: (params: any) => void }) {
       : "";
 
   return (
-    <div className="px-4 sm:px-6 lg:px-20 py-4 relative bg-[#F7F7F7]">
+    <div className="px-4 sm:px-6 lg:px-20 pt-4 py-3 pb-10 relative bg-[#F7F7F7]">
       <div
         className="max-w-3xl mx-auto relative"
         ref={dropdownRef}
@@ -294,7 +294,7 @@ export function SearchBar({ onSearch }: { onSearch?: (params: any) => void }) {
         >
           {/* Destination */}
           <div
-            className={`flex-1 px-8 py-3 cursor-pointer relative transition-all ${
+            className={`flex-1 px-8 py-2 cursor-pointer relative transition-all ${
               showDestinations
                 ? "bg-white shadow-md z-10"
                 : "bg-transparent"
@@ -361,7 +361,7 @@ export function SearchBar({ onSearch }: { onSearch?: (params: any) => void }) {
 
           {/* Dates */}
           <div
-            className={`flex-[0.8] px-8 py-3 cursor-pointer relative transition-all ${
+            className={`flex-[0.8] px-8 py-2 cursor-pointer relative transition-all ${
               showDatePicker
                 ? "bg-white shadow-md z-10"
                 : "bg-transparent"
@@ -432,7 +432,7 @@ export function SearchBar({ onSearch }: { onSearch?: (params: any) => void }) {
               }}
             >
               <div
-                className="flex-1 flex flex-row items-center px-8 py-3 cursor-pointer relative"
+                className="flex-1 flex flex-row items-center px-8 py-2 cursor-pointer relative"
                 onClick={() => {
                   setShowGuestsPicker(true);
                   setShowDestinations(false);
