@@ -95,7 +95,7 @@ export function ImageCarouselModal({
               onClick={onFavoriteToggle}
               className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
             >
-              <Heart className={`w-5 h-5 ${isFavorite ? 'fill-[#10B981] text-[#10B981]' : 'text-white'}`} />
+              <Heart className={`w-5 h-5 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-white'}`} />
             </button>
           )}
         </div>
