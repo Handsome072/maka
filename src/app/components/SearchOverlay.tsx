@@ -1,6 +1,4 @@
 import { SearchBar } from "./SearchBar";
-import { ExperienceSearchBar } from "./ExperienceSearchBar";
-import { ServiceSearchBar } from "./ServiceSearchBar";
 import { useEffect, RefObject, useState } from "react";
 import { HeaderContent } from "./HeaderContent";
 import { MenuDropdown } from "./MenuDropdown";
@@ -81,11 +79,7 @@ export function SearchOverlay({
 
         {/* Search bar based on current page */}
         <div className="bg-[#F7F7F7]">
-          {currentPage === "logements" && <SearchBar onSearch={onSearch} />}
-          {currentPage === "experiences" && (
-            <ExperienceSearchBar onSearch={onSearch} />
-          )}
-          {currentPage === "services" && <ServiceSearchBar onSearch={onSearch} />}
+          <SearchBar type={currentPage} onSearch={onSearch} />
         </div>
       </div>
 

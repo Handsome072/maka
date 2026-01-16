@@ -13,6 +13,9 @@ import { useState, useRef, useEffect } from "react";
 import { DatePicker } from "./DatePicker";
 import { ExperienceDatePicker } from "./ExperienceDatePicker";
 import { GuestsPicker } from "./GuestsPicker";
+import { ServiceDestinationPicker } from "./ServiceDestinationPicker";
+import { ServiceDatePicker } from "./ServiceDatePicker";
+import { ServiceTypePicker } from "./ServiceTypePicker";
 
 const allDestinations = [
   {
@@ -115,7 +118,12 @@ const allDestinations = [
   },
 ];
 
-export function SearchBar({ onSearch }: { onSearch?: (params: any) => void }) {
+interface SearchBarProps {
+  onSearch?: (params: any) => void;
+  type?: 'logements' | 'experiences' | 'services';
+}
+
+export function SearchBar({ onSearch, type = 'logements' }: SearchBarProps) {
   const [showDestinations, setShowDestinations] =
     useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -137,8 +145,9 @@ export function SearchBar({ onSearch }: { onSearch?: (params: any) => void }) {
     adults: 0,
     children: 0,
     babies: 0,
-    pets: 0,
+    pets: type === 'services' ? 0 : 0,
   });
+  const [serviceType, setServiceType] = useState('');
   const [checkInDate, setCheckInDate] = useState<Date | null>(
     null,
   );
@@ -276,7 +285,9 @@ export function SearchBar({ onSearch }: { onSearch?: (params: any) => void }) {
       : "";
 
   return (
-    <div className="px-4 sm:px-6 lg:px-12 pt-4 py-3 pb-10 relative bg-[#F7F7F7]">
+    <div
+      className="px-4 sm:px-6 lg:px-12 pt-4 py-3 pb-10 relative bg-[#F7F7F7]"
+    >
       <div
         className="max-w-4xl mx-auto relative"
         ref={dropdownRef}
@@ -407,8 +418,76 @@ export function SearchBar({ onSearch }: { onSearch?: (params: any) => void }) {
             <div className="w-px h-8 bg-gray-300"></div>
           )}
 
-          {/* Voyageurs + Rechercher - Wrapper with ref */}
-          <div ref={guestsDropdownRef} className="flex-[1.2] relative">
+          {/* Section conditionnelle selon le type */}
+          {type === 'services' ? (
+            /* Type de service + Rechercher - Pour Services */
+            <div className="flex-[1.2] relative">
+              <div
+                className="flex-1 py-0.5 flex items-center relative transition-all bg-transparent"
+                style={{
+                  borderRadius: "0 32px 32px 0",
+                  ...(!showDestinations &&
+                  !showDatePicker
+                    ? {
+                        borderTop: "1px solid #DDDDDD",
+                        borderBottom: "1px solid #DDDDDD",
+                        borderRight: "1px solid #DDDDDD",
+                        borderLeft: "none",
+                      }
+                    : {}),
+                }}
+              >
+                <div className="flex-1 flex flex-row items-center px-8 py-2 cursor-pointer relative">
+                  <div className="w-1/3">
+                    <label
+                      className="block text-xs mb-1 cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap"
+                      style={{ fontWeight: 600, color: "#222222" }}
+                    >
+                      Type de service
+                    </label>
+                    <div
+                      className="w-full outline-none text-sm cursor-pointer"
+                      style={{ color: "#717171" }}
+                    >
+                      <span className="block overflow-hidden text-ellipsis whitespace-nowrap">
+                        {serviceType || (
+                          <span className="text-gray-400">
+                            Ajouter un service...
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-white rounded-full transition-all flex items-center gap-2"
+                  onClick={handleSearchClick}
+                  style={{
+                    backgroundColor: "#5EC6D8",
+                    padding:
+                      showDestinations ||
+                      showDatePicker
+                        ? "14px 24px"
+                        : "14px",
+                  }}
+                >
+                  <Search className="w-4 h-4" />
+                  {(showDestinations ||
+                    showDatePicker) && (
+                    <span
+                      className="text-sm"
+                      style={{ fontWeight: 600 }}
+                    >
+                      Rechercher
+                    </span>
+                  )}
+                </button>
+              </div>
+            </div>
+          ) : (
+            /* Voyageurs + Rechercher - Pour Logements/Expériences */
+            <div ref={guestsDropdownRef} className="flex-[1.2] relative">
             <div
               className={`flex-1 py-0.5 flex items-center relative transition-all ${
                 showGuestsPicker
@@ -516,9 +595,11 @@ export function SearchBar({ onSearch }: { onSearch?: (params: any) => void }) {
                   setGuestsCount(guests)
                 }
                 currentGuests={guestsCount}
+                showPets={type === 'logements'}
               />
             )}
           </div>
+          )}
         </div>
 
         {/* Dropdown suggestions */}
@@ -601,16 +682,39 @@ export function SearchBar({ onSearch }: { onSearch?: (params: any) => void }) {
         {/* Date Picker Dropdown */}
         {showDatePicker && (
           <div ref={dateDropdownRef}>
-            <ExperienceDatePicker
-              onClose={() => setShowDatePicker(false)}
-              onSelect={(dateText) => {
-                setSelectedDate(dateText);
-              }}
-              onDatesChange={(start, end) => {
-                setCheckInDate(start);
-                setCheckOutDate(end);
-              }}
-            />
+            {type === 'logements' ? (
+              <DatePicker
+                onClose={() => setShowDatePicker(false)}
+                onSelect={(dateText) => {
+                  setSelectedDate(dateText);
+                }}
+                onDatesChange={(start, end) => {
+                  setCheckInDate(start);
+                  setCheckOutDate(end);
+                }}
+              />
+            ) : type === 'services' ? (
+              <ServiceDatePicker
+                onClose={() => setShowDatePicker(false)}
+                onSelect={(dateText) => {
+                  setSelectedDate(dateText);
+                }}
+                onDateChange={(date) => {
+                  setCheckInDate(date);
+                }}
+              />
+            ) : (
+              <ExperienceDatePicker
+                onClose={() => setShowDatePicker(false)}
+                onSelect={(dateText) => {
+                  setSelectedDate(dateText);
+                }}
+                onDatesChange={(start, end) => {
+                  setCheckInDate(start);
+                  setCheckOutDate(end);
+                }}
+              />
+            )}
           </div>
         )}
       </div>

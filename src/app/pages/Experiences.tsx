@@ -1,6 +1,6 @@
 import { ExperienceCard } from '../components/ExperienceCard';
 import { PropertyCarousel } from '../components/PropertyCarousel';
-import { ExperienceSearchBar } from '../components/ExperienceSearchBar';
+import { SearchBar } from '../components/SearchBar';
 import { motion } from 'motion/react';
 import { useRef } from 'react';
 import { useInView } from 'motion/react';
@@ -387,7 +387,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
   return (
     <div className="min-h-screen bg-white">
       {/* Search bar - visible seulement quand on n'a pas scrollé */}
-      {!isScrolled && <ExperienceSearchBar onSearch={onSearch} />}
+      {!isScrolled && <SearchBar type="experiences" onSearch={onSearch} />}
 
       <main className="pb-12">
         {/* HOMIQIO Originals */}

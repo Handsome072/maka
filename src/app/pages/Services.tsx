@@ -1,7 +1,7 @@
 import { ServiceCategoryCard } from '../components/ServiceCategoryCard';
 import { ServiceCard } from '../components/ServiceCard';
 import { PropertyCarousel } from '../components/PropertyCarousel';
-import { ServiceSearchBar } from '../components/ServiceSearchBar';
+import { SearchBar } from '../components/SearchBar';
 
 interface ServicesProps {
   isScrolled: boolean;
@@ -193,7 +193,7 @@ export function Services({ isScrolled, onServiceClick, onSearch }: ServicesProps
   return (
     <div className="min-h-screen bg-white">
       {/* Search bar - visible seulement quand on n'a pas scrollé */}
-      {!isScrolled && <ServiceSearchBar onSearch={onSearch} />}
+      {!isScrolled && <SearchBar type="services" onSearch={onSearch} />}
 
       <main className="pb-12">
         {/* Section Chefs privés avec défilement horizontal */}
