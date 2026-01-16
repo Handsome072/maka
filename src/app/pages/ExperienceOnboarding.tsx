@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { MapPin } from 'lucide-react';
-import { Logo } from '@/app/components/Logo';
+import Image from 'next/image';
 
 interface ExperienceOnboardingProps {
   onNavigate: (page: string) => void;
@@ -10,7 +10,7 @@ type ExperienceCategory = 'art-design' | 'cuisine' | 'fitness' | 'histoire' | 'n
 type ExperienceType = 'visite-archi' | 'atelier-art' | 'visite-galeries' | 'shopping-mode' | null;
 
 export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) {
-  const [currentStep, setCurrentStep] = useState<'category' | 'type' | 'location' | 'intro' | 'experience-years' | 'qualifications' | 'online-profiles' | 'address-info' | 'meeting-location' | 'confirm-location' | 'map-marker' | 'photos' | 'title' | 'describe' | 'program-intro' | 'program'>('category');
+  const [currentStep, setCurrentStep] = useState<'category' | 'type' | 'location' | 'intro' | 'experience-years' | 'qualifications' | 'online-profiles' | 'address-info' | 'meeting-location' | 'confirm-location' | 'map-marker' | 'photos' | 'title' | 'describe' | 'program-intro' | 'program' | 'tarification'>('category');
   const [selectedCategory, setSelectedCategory] = useState<ExperienceCategory>(null);
   const [selectedType, setSelectedType] = useState<ExperienceType>(null);
   const [location, setLocation] = useState('');
@@ -821,8 +821,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                 />
                 <label
                   htmlFor="photo-upload"
-                  className="px-6 py-2 rounded-lg text-white text-sm hover:opacity-90 transition-opacity cursor-pointer"
-                  style={{ fontWeight: 600, backgroundColor: '#222222' }}
+                  className="px-6 py-2 rounded-lg text-white text-sm bg-[#000000] hover:bg-[#222222] transition-colors cursor-pointer"
+                  style={{ fontWeight: 600 }}
                 >
                   Parcourir
                 </label>
@@ -861,7 +861,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
               className="px-6 py-2 rounded-lg text-sm hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
               style={{ 
                 fontWeight: 600, 
-                backgroundColor: uploadedPhotosTemp.length > 0 ? '#222222' : '#E5E5E5',
+                backgroundColor: uploadedPhotosTemp.length > 0 ? '#000000' : '#E5E5E5',
                 color: uploadedPhotosTemp.length > 0 ? 'white' : '#717171'
               }}
             >
@@ -1040,9 +1040,14 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
       <div className="min-h-screen bg-white flex flex-col">
         {/* Header */}
         <header className="px-8 py-6 flex items-center justify-between border-b border-gray-200">
-          <button onClick={() => onNavigate('annonces')} className="hover:opacity-70 transition-opacity">
-            <Logo />
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            className="cursor-pointer hover:opacity-70 transition-opacity"
+            onClick={() => onNavigate('annonces')}
+          />
           <button 
             onClick={() => onNavigate('annonces')}
             className="px-6 py-2 rounded-lg text-sm hover:bg-gray-100 transition-colors"
@@ -1187,7 +1192,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                 className={`px-8 py-3 rounded-lg text-white text-base transition-opacity ${
                   selectedCategory ? 'hover:opacity-90' : 'opacity-40 cursor-not-allowed'
                 }`}
-                style={{ fontWeight: 600, backgroundColor: selectedCategory ? '#222222' : '#E5E5E5' }}
+                style={{ fontWeight: 600, backgroundColor: selectedCategory ? '#000000' : '#E5E5E5' }}
               >
                 Suivant
               </button>
@@ -1204,9 +1209,14 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
       <div className="min-h-screen bg-white flex flex-col">
         {/* Header */}
         <header className="px-8 py-6 flex items-center justify-between border-b border-gray-200">
-          <button onClick={() => onNavigate('annonces')} className="hover:opacity-70 transition-opacity">
-            <Logo />
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            className="cursor-pointer hover:opacity-70 transition-opacity"
+            onClick={() => onNavigate('annonces')}
+          />
           <button 
             onClick={() => onNavigate('annonces')}
             className="px-6 py-2 rounded-lg text-sm hover:bg-gray-100 transition-colors"
@@ -1285,7 +1295,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                   className={`px-8 py-3 rounded-lg text-white text-base transition-opacity ${
                     selectedType ? 'hover:opacity-90' : 'opacity-40 cursor-not-allowed'
                   }`}
-                  style={{ fontWeight: 600, backgroundColor: selectedType ? '#222222' : '#E5E5E5' }}
+                  style={{ fontWeight: 600, backgroundColor: selectedType ? '#000000' : '#E5E5E5' }}
                 >
                   Suivant
                 </button>
@@ -1322,9 +1332,14 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
       <div className="min-h-screen bg-white flex flex-col">
         {/* Header */}
         <header className="px-8 py-6 flex items-center justify-between border-b border-gray-200">
-          <button onClick={() => onNavigate('annonces')} className="hover:opacity-70 transition-opacity">
-            <Logo />
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            className="cursor-pointer hover:opacity-70 transition-opacity"
+            onClick={() => onNavigate('annonces')}
+          />
           <button 
             onClick={() => onNavigate('annonces')}
             className="px-6 py-2 rounded-lg text-sm hover:bg-gray-100 transition-colors"
@@ -1380,7 +1395,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                   className={`px-8 py-3 rounded-lg text-white text-base transition-opacity ${
                     location.trim() ? 'hover:opacity-90' : 'opacity-40 cursor-not-allowed'
                   }`}
-                  style={{ fontWeight: 600, backgroundColor: location.trim() ? '#222222' : '#E5E5E5' }}
+                  style={{ fontWeight: 600, backgroundColor: location.trim() ? '#000000' : '#E5E5E5' }}
                 >
                   Suivant
                 </button>
@@ -1459,8 +1474,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
           <div className="max-w-7xl mx-auto flex justify-end">
             <button
               onClick={() => setCurrentStep('experience-years')}
-              className="px-8 py-3 rounded-lg text-white text-base hover:opacity-90 transition-opacity"
-              style={{ fontWeight: 600, backgroundColor: '#222222' }}
+              className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+              style={{ fontWeight: 600 }}
             >
               Commencer
             </button>
@@ -1478,9 +1493,14 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
       <div className="min-h-screen bg-white flex flex-col">
         {/* Header with Logo and Save */}
         <header className="px-8 py-6 flex items-center justify-between border-b border-gray-200">
-          <button onClick={() => onNavigate('annonces')} className="hover:opacity-70 transition-opacity">
-            <Logo />
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            className="cursor-pointer hover:opacity-70 transition-opacity"
+            onClick={() => onNavigate('annonces')}
+          />
           <div className="flex items-center gap-6">
             <p className="text-sm" style={{ color: '#717171' }}>
               À propos de vous <span style={{ color: '#222222', fontWeight: 600 }}>Étape 1 sur 7</span>
@@ -1559,8 +1579,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
           </button>
           <button
             onClick={() => setCurrentStep('qualifications')}
-            className="px-8 py-3 rounded-lg text-white text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -1584,9 +1604,14 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                 <path d="M15 18l-6-6 6-6" />
               </svg>
             </button>
-            <button onClick={() => onNavigate('annonces')} className="hover:opacity-70 transition-opacity">
-              <Logo />
-            </button>
+            <Image
+              src="/logoIcon.png"
+              alt="Logo"
+              width={48}
+              height={48}
+              className="cursor-pointer hover:opacity-70 transition-opacity"
+              onClick={() => onNavigate('annonces')}
+            />
           </div>
           <div className="flex items-center gap-6">
             <p className="text-sm" style={{ color: '#717171' }}>
@@ -1736,8 +1761,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
           </button>
           <button
             onClick={() => setCurrentStep('online-profiles')}
-            className="px-8 py-3 rounded-lg text-white text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -1769,9 +1794,14 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                   <path d="M15 18l-6-6 6-6" />
                 </svg>
               </button>
-              <button onClick={() => onNavigate('annonces')} className="hover:opacity-70 transition-opacity">
-                <Logo />
-              </button>
+              <Image
+                src="/logoIcon.png"
+                alt="Logo"
+                width={48}
+                height={48}
+                className="cursor-pointer hover:opacity-70 transition-opacity"
+                onClick={() => onNavigate('annonces')}
+              />
             </div>
             <div className="flex items-center gap-6">
               <p className="text-sm" style={{ color: '#717171' }}>
@@ -1846,8 +1876,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                 <div className="flex justify-center">
                   <button
                     onClick={() => setShowAddLinkModal(true)}
-                    className="px-8 py-3 rounded-lg text-white text-base hover:opacity-90 transition-opacity"
-                    style={{ fontWeight: 600, backgroundColor: '#222222' }}
+                    className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+                    style={{ fontWeight: 600 }}
                   >
                     Ajouter un profil
                   </button>
@@ -1897,9 +1927,14 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                 <path d="M15 18l-6-6 6-6" />
               </svg>
             </button>
-            <button onClick={() => onNavigate('annonces')} className="hover:opacity-70 transition-opacity">
-              <Logo />
-            </button>
+            <Image
+              src="/logoIcon.png"
+              alt="Logo"
+              width={48}
+              height={48}
+              className="cursor-pointer hover:opacity-70 transition-opacity"
+              onClick={() => onNavigate('annonces')}
+            />
           </div>
           <div className="flex items-center gap-6">
             <p className="text-sm" style={{ color: '#717171' }}>
@@ -1988,8 +2023,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
           </button>
           <button
             onClick={() => setCurrentStep('address-info')}
-            className="px-8 py-3 rounded-lg text-white text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -2016,9 +2051,14 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                 <path d="M15 18l-6-6 6-6" />
               </svg>
             </button>
-            <button onClick={() => onNavigate('annonces')} className="hover:opacity-70 transition-opacity">
-              <Logo />
-            </button>
+            <Image
+              src="/logoIcon.png"
+              alt="Logo"
+              width={48}
+              height={48}
+              className="cursor-pointer hover:opacity-70 transition-opacity"
+              onClick={() => onNavigate('annonces')}
+            />
           </div>
           <div className="flex items-center gap-6">
             <p className="text-sm" style={{ color: '#717171' }}>
@@ -2164,8 +2204,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
           </button>
           <button
             onClick={() => setCurrentStep('meeting-location')}
-            className="px-8 py-3 rounded-lg text-white text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -2189,9 +2229,14 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                 <path d="M15 18l-6-6 6-6" />
               </svg>
             </button>
-            <button onClick={() => onNavigate('annonces')} className="hover:opacity-70 transition-opacity">
-              <Logo />
-            </button>
+            <Image
+              src="/logoIcon.png"
+              alt="Logo"
+              width={48}
+              height={48}
+              className="cursor-pointer hover:opacity-70 transition-opacity"
+              onClick={() => onNavigate('annonces')}
+            />
           </div>
           <div className="flex items-center gap-6">
             <p className="text-sm" style={{ color: '#717171' }}>
@@ -2268,8 +2313,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
           </button>
           <button
             onClick={() => setCurrentStep('confirm-location')}
-            className="px-8 py-3 rounded-lg text-white text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -2293,9 +2338,14 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                 <path d="M15 18l-6-6 6-6" />
               </svg>
             </button>
-            <button onClick={() => onNavigate('annonces')} className="hover:opacity-70 transition-opacity">
-              <Logo />
-            </button>
+            <Image
+              src="/logoIcon.png"
+              alt="Logo"
+              width={48}
+              height={48}
+              className="cursor-pointer hover:opacity-70 transition-opacity"
+              onClick={() => onNavigate('annonces')}
+            />
           </div>
           <div className="flex items-center gap-6">
             <p className="text-sm" style={{ color: '#717171' }}>
@@ -2449,8 +2499,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
           </button>
           <button
             onClick={() => setCurrentStep('map-marker')}
-            className="px-8 py-3 rounded-lg text-white text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -2474,9 +2524,14 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                 <path d="M15 18l-6-6 6-6" />
               </svg>
             </button>
-            <button onClick={() => onNavigate('annonces')} className="hover:opacity-70 transition-opacity">
-              <Logo />
-            </button>
+            <Image
+              src="/logoIcon.png"
+              alt="Logo"
+              width={48}
+              height={48}
+              className="cursor-pointer hover:opacity-70 transition-opacity"
+              onClick={() => onNavigate('annonces')}
+            />
           </div>
           <div className="flex items-center gap-6">
             <p className="text-sm" style={{ color: '#717171' }}>
@@ -2571,8 +2626,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
           </button>
           <button
             onClick={() => setCurrentStep('photos')}
-            className="px-8 py-3 rounded-lg text-white text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -2602,9 +2657,14 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                 <path d="M15 18l-6-6 6-6" />
               </svg>
             </button>
-            <button onClick={() => onNavigate('annonces')} className="hover:opacity-70 transition-opacity">
-              <Logo />
-            </button>
+            <Image
+              src="/logoIcon.png"
+              alt="Logo"
+              width={48}
+              height={48}
+              className="cursor-pointer hover:opacity-70 transition-opacity"
+              onClick={() => onNavigate('annonces')}
+            />
           </div>
           <div className="flex items-center gap-6">
             <p className="text-sm" style={{ color: '#717171' }}>
@@ -2714,8 +2774,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                   <div className="flex justify-center">
                     <button
                       onClick={() => setShowAddPhotoModal(true)}
-                      className="px-8 py-3 rounded-lg text-white text-base hover:opacity-90 transition-opacity"
-                      style={{ fontWeight: 600, backgroundColor: '#222222' }}
+                      className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+                      style={{ fontWeight: 600 }}
                     >
                       Ajouter
                     </button>
@@ -2738,7 +2798,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
           <button
             onClick={() => setCurrentStep('title')}
             className="px-8 py-3 rounded-lg text-white text-base hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
-            style={{ fontWeight: 600, backgroundColor: photos.length >= 5 ? '#222222' : '#E5E5E5' }}
+            style={{ fontWeight: 600, backgroundColor: photos.length >= 5 ? '#000000' : '#E5E5E5' }}
             disabled={photos.length < 5}
           >
             Suivant
@@ -2766,9 +2826,14 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                   <path d="M15 18l-6-6 6-6" />
                 </svg>
               </button>
-              <button onClick={() => onNavigate('annonces')} className="hover:opacity-70 transition-opacity">
-                <Logo />
-              </button>
+              <Image
+                src="/logoIcon.png"
+                alt="Logo"
+                width={48}
+                height={48}
+                className="cursor-pointer hover:opacity-70 transition-opacity"
+                onClick={() => onNavigate('annonces')}
+              />
             </div>
             <div className="flex items-center gap-6">
               <p className="text-sm" style={{ color: '#717171' }}>
@@ -2860,7 +2925,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
             <button
               onClick={() => setCurrentStep('describe')}
               className="px-8 py-3 rounded-lg text-white text-base hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
-              style={{ fontWeight: 600, backgroundColor: experienceTitle.trim().length > 0 ? '#222222' : '#E5E5E5' }}
+              style={{ fontWeight: 600, backgroundColor: experienceTitle.trim().length > 0 ? '#000000' : '#E5E5E5' }}
               disabled={experienceTitle.trim().length === 0}
             >
               Suivant
@@ -2886,9 +2951,14 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                 <path d="M15 18l-6-6 6-6" />
               </svg>
             </button>
-            <button onClick={() => onNavigate('annonces')} className="hover:opacity-70 transition-opacity">
-              <Logo />
-            </button>
+            <Image
+              src="/logoIcon.png"
+              alt="Logo"
+              width={48}
+              height={48}
+              className="cursor-pointer hover:opacity-70 transition-opacity"
+              onClick={() => onNavigate('annonces')}
+            />
           </div>
           <div className="flex items-center gap-6">
             <p className="text-sm" style={{ color: '#717171' }}>
@@ -2979,7 +3049,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
           <button
             onClick={() => setCurrentStep('program-intro')}
             className="px-8 py-3 rounded-lg text-white text-base hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
-            style={{ fontWeight: 600, backgroundColor: experienceDescription.trim().length > 0 ? '#222222' : '#E5E5E5' }}
+            style={{ fontWeight: 600, backgroundColor: experienceDescription.trim().length > 0 ? '#000000' : '#E5E5E5' }}
             disabled={experienceDescription.trim().length === 0}
           >
             Suivant
@@ -3004,9 +3074,14 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                 <path d="M15 18l-6-6 6-6" />
               </svg>
             </button>
-            <button onClick={() => onNavigate('annonces')} className="hover:opacity-70 transition-opacity">
-              <Logo />
-            </button>
+            <Image
+              src="/logoIcon.png"
+              alt="Logo"
+              width={48}
+              height={48}
+              className="cursor-pointer hover:opacity-70 transition-opacity"
+              onClick={() => onNavigate('annonces')}
+            />
           </div>
           <button className="px-6 py-2 text-sm hover:bg-gray-100 rounded-lg transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
             Enregistrer et quitter
@@ -3077,8 +3152,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
         <div className="border-t border-gray-200 px-8 py-6 flex justify-end">
           <button
             onClick={() => setCurrentStep('program')}
-            className="px-8 py-3 rounded-lg text-white text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -3102,9 +3177,14 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                 <path d="M15 18l-6-6 6-6" />
               </svg>
             </button>
-            <button onClick={() => onNavigate('annonces')} className="hover:opacity-70 transition-opacity">
-              <Logo />
-            </button>
+            <Image
+              src="/logoIcon.png"
+              alt="Logo"
+              width={48}
+              height={48}
+              className="cursor-pointer hover:opacity-70 transition-opacity"
+              onClick={() => onNavigate('annonces')}
+            />
           </div>
           <div className="flex items-center gap-6">
             <p className="text-sm" style={{ color: '#717171' }}>
@@ -3207,8 +3287,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
               setPricingStep('participants');
               setShowPricingBreakdown(false);
             }}
-            className="px-8 py-3 rounded-lg text-white text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
@@ -3271,8 +3351,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                         }
                       }}
                       disabled={!activityTitle.trim()}
-                      className="px-6 py-2 rounded-lg text-white text-base hover:opacity-90 transition-opacity disabled:opacity-40"
-                      style={{ fontWeight: 600, backgroundColor: '#222222' }}
+                      className="px-6 py-2 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors disabled:opacity-40"
+                      style={{ fontWeight: 600 }}
                     >
                       Suivant
                     </button>
@@ -3436,8 +3516,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                   <div className="flex justify-end pt-6 border-t border-gray-200">
                     <button
                       onClick={() => setActivityModalStep('title')}
-                      className="px-6 py-2 rounded-lg text-white text-base hover:opacity-90 transition-opacity"
-                      style={{ fontWeight: 600, backgroundColor: '#222222' }}
+                      className="px-6 py-2 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+                      style={{ fontWeight: 600 }}
                     >
                       Continuer
                     </button>
@@ -3514,8 +3594,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                       onClick={() => {
                         setActivityModalStep('duration');
                       }}
-                      className="px-6 py-2 rounded-lg text-white text-base hover:opacity-90 transition-opacity"
-                      style={{ fontWeight: 600, backgroundColor: '#222222' }}
+                      className="px-6 py-2 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+                      style={{ fontWeight: 600 }}
                     >
                       Suivant
                     </button>
@@ -3585,8 +3665,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                   <div className="flex justify-end pt-6 border-t border-gray-200">
                     <button
                       onClick={() => setActivityModalStep('photo')}
-                      className="px-6 py-2 rounded-lg text-white text-base hover:opacity-90 transition-opacity"
-                      style={{ fontWeight: 600, backgroundColor: '#222222' }}
+                      className="px-6 py-2 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+                      style={{ fontWeight: 600 }}
                     >
                       Suivant
                     </button>
@@ -3720,8 +3800,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                         setActivityModalStep('title');
                       }}
                       disabled={!activityPhoto}
-                      className="px-6 py-2 rounded-lg text-white text-base hover:opacity-90 transition-opacity disabled:opacity-40"
-                      style={{ fontWeight: 600, backgroundColor: '#222222' }}
+                      className="px-6 py-2 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors disabled:opacity-40"
+                      style={{ fontWeight: 600 }}
                     >
                       Suivant
                     </button>
@@ -3765,9 +3845,14 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                 <path d="M15 18l-6-6 6-6" />
               </svg>
             </button>
-            <button onClick={() => onNavigate('annonces')} className="hover:opacity-70 transition-opacity">
-              <Logo />
-            </button>
+            <Image
+              src="/logoIcon.png"
+              alt="Logo"
+              width={48}
+              height={48}
+              className="cursor-pointer hover:opacity-70 transition-opacity"
+              onClick={() => onNavigate('annonces')}
+            />
           </div>
           <div className="flex items-center gap-6">
             <p className="text-sm" style={{ color: '#717171' }}>
@@ -3948,8 +4033,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                 onNavigate('annonces');
               }
             }}
-            className="px-8 py-3 rounded-lg text-white text-base hover:opacity-90 transition-opacity"
-            style={{ fontWeight: 600, backgroundColor: '#222222' }}
+            className="px-8 py-3 rounded-lg text-white text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            style={{ fontWeight: 600 }}
           >
             Suivant
           </button>
