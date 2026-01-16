@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
+import Image from 'next/image';
 
 interface HostOnboardingProps {
   onNavigate: (page: string, data?: any) => void;
@@ -192,11 +193,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
 
         {/* Header */}
         <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-8 py-6">
-          <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#10B981" />
-            </svg>
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            onClick={() => onNavigate('logements')}
+          />
           <button 
             onClick={() => onNavigate('logements')}
             className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors"
@@ -226,11 +229,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
-          <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#222222" />
-            </svg>
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            onClick={() => onNavigate('logements')}
+          />
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -322,11 +327,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
-          <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#222222" />
-            </svg>
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            onClick={() => onNavigate('logements')}
+          />
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -397,11 +404,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
-          <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#222222" />
-            </svg>
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            onClick={() => onNavigate('logements')}
+          />
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -529,11 +538,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
-          <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#222222" />
-            </svg>
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            onClick={() => onNavigate('logements')}
+          />
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -620,11 +631,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
-          <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#222222" />
-            </svg>
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            onClick={() => onNavigate('logements')}
+          />
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -806,11 +819,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
-          <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#222222" />
-            </svg>
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            onClick={() => onNavigate('logements')}
+          />
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -890,11 +905,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
-          <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#222222" />
-            </svg>
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            onClick={() => onNavigate('logements')}
+          />
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -1033,11 +1050,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
-          <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#222222" />
-            </svg>
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            onClick={() => onNavigate('logements')}
+          />
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -1125,11 +1144,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
-          <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#222222" />
-            </svg>
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            onClick={() => onNavigate('logements')}
+          />
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -1237,11 +1258,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
-          <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#222222" />
-            </svg>
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            onClick={() => onNavigate('logements')}
+          />
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -1442,11 +1465,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
-          <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#222222" />
-            </svg>
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            onClick={() => onNavigate('logements')}
+          />
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -1570,11 +1595,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
-          <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#222222" />
-            </svg>
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            onClick={() => onNavigate('logements')}
+          />
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -1667,11 +1694,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
-          <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#222222" />
-            </svg>
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            onClick={() => onNavigate('logements')}
+          />
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -1746,11 +1775,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
-          <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#222222" />
-            </svg>
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            onClick={() => onNavigate('logements')}
+          />
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -1834,11 +1865,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white flex flex-col">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
-          <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#222222" />
-            </svg>
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            onClick={() => onNavigate('logements')}
+          />
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -1907,11 +1940,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
-          <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#222222" />
-            </svg>
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            onClick={() => onNavigate('logements')}
+          />
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -2019,11 +2054,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
-          <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#222222" />
-            </svg>
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            onClick={() => onNavigate('logements')}
+          />
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -2126,11 +2163,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
-          <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#222222" />
-            </svg>
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            onClick={() => onNavigate('logements')}
+          />
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -2265,11 +2304,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
-          <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#222222" />
-            </svg>
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            onClick={() => onNavigate('logements')}
+          />
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -2373,11 +2414,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
-          <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#222222" />
-            </svg>
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            onClick={() => onNavigate('logements')}
+          />
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -2481,11 +2524,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white flex flex-col">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
-          <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#222222" />
-            </svg>
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            onClick={() => onNavigate('logements')}
+          />
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -2670,11 +2715,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white flex flex-col">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-10">
-          <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-            <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
-              <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#222222" />
-            </svg>
-          </button>
+          <Image
+            src="/logoIcon.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            onClick={() => onNavigate('logements')}
+          />
           <div className="flex gap-3">
             <button className="text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Passer en mode voyageur
