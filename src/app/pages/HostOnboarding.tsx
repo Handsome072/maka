@@ -264,7 +264,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="flex min-h-[calc(100vh-88px)] pt-32 pb-32">
+        <div className="flex min-h-screen pt-[88px] pb-[88px]">
           {/* Left side */}
           <div className="flex-1 flex items-center justify-center px-12 py-16">
             <div className="max-w-lg">
@@ -1085,7 +1085,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="flex min-h-[calc(100vh-88px)] pt-32 pb-32">
+        <div className="flex min-h-screen pt-[88px] pb-[88px]">
           {/* Left side */}
           <div className="flex-1 flex items-center justify-center px-12 py-16">
             <div className="max-w-lg">
@@ -1584,7 +1584,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Footer */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
-            onClick={() => setCurrentStep('photos')}
+            onClick={() => setCurrentStep('amenities')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
