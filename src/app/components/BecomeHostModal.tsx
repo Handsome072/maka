@@ -56,227 +56,153 @@ export function BecomeHostModal({
 
   return (
     <div
-      className="fixed inset-0 z-[70] flex items-center justify-center"
+      className="fixed inset-0 z-[70] flex items-center justify-center backdrop-blur-sm"
       onClick={onClose}
     >
-      {/* Overlay background */}
-      <div className="absolute inset-0 bg-black/50" />
+      {/* Overlay background with subtle blur */}
+      <div className="absolute inset-0 bg-black/60 transition-opacity" />
 
       {/* Modal */}
       <div
         ref={modalRef}
-        className="relative bg-white rounded-4xl w-full max-w-6xl mx-4"
+        className="relative bg-white rounded-3xl w-full max-w-5xl mx-4 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
-        style={{ height: "80vh" }}
+        style={{ height: "85vh", maxHeight: "700px" }}
       >
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-6 left-6 w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors"
+          className="absolute top-5 left-5 z-10 w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-full transition-all duration-200 hover:scale-105 active:scale-95"
+          aria-label="Close modal"
         >
-          <X className="w-4 h-4" />
+          <X className="w-5 h-5 text-gray-600" />
         </button>
 
         {/* Content */}
-        <div className="px-6 py-16 w-full h-full flex flex-col">
+        <div className="px-8 py-12 w-full h-full flex flex-col">
           {/* Title */}
-          <h2
-            className="text-center text-2xl mb-20 mt-4"
-            style={{ fontWeight: 600 }}
-          >
-            Que souhaitez-vous proposer ?
-          </h2>
+          <div className="text-center mb-16 mt-8">
+            <h2 className="text-3xl font-semibold text-gray-900 tracking-tight">
+              Que souhaitez-vous proposer ?
+            </h2>
+            <p className="text-gray-500 mt-3 text-sm">
+              Sélectionnez le type d'offre que vous souhaitez créer
+            </p>
+          </div>
 
           {/* Options Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full flex-1 mx-auto mb-20">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl mx-auto flex-1 items-center">
             {/* Logement */}
             <button
               onClick={() => handleOptionClick("logement")}
-              className={`flex flex-col items-center justify-center p-8 border-2 rounded-xl cursor-pointer transition-all ${
-                selectedOption === 'logement' ? 'border-gray-900 bg-gray-50' : 'border-gray-200 hover:border-gray-400'
+              className={`group relative flex flex-col items-center justify-center p-8 rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden ${
+                selectedOption === 'logement'
+                  ? 'bg-gray-900 shadow-xl scale-105 ring-2 ring-gray-900 ring-offset-4'
+                  : 'bg-white border-2 border-gray-200 hover:border-gray-400 hover:shadow-lg hover:scale-102 active:scale-98'
               }`}
             >
-              <div className="mb-6">
-                <svg
-                  width="64"
-                  height="64"
-                  viewBox="0 0 64 64"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  {/* House icon */}
-                  <rect
-                    x="16"
-                    y="28"
-                    width="32"
-                    height="28"
-                    fill="#E8E8E8"
+              <div className="mb-5 transition-transform duration-300 group-hover:scale-105 relative">
+                <div className={`w-32 h-32 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 ${
+                  selectedOption === 'logement' ? 'ring-4 ring-white/20' : ''
+                }`}>
+                  <img
+                    src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400"
+                    alt="Modern house exterior"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
-                  <rect
-                    x="16"
-                    y="28"
-                    width="32"
-                    height="4"
-                    fill="#B8B8B8"
-                  />
-                  <polygon
-                    points="32,12 12,28 16,28 16,24 48,24 48,28 52,28"
-                    fill="#6B6B6B"
-                  />
-                  <rect
-                    x="26"
-                    y="38"
-                    width="12"
-                    height="18"
-                    fill="#10B981"
-                  />
-                  <circle
-                    cx="20"
-                    cy="18"
-                    r="3"
-                    fill="#4CAF50"
-                  />
-                </svg>
+                </div>
               </div>
-              <span
-                className="text-base"
-                style={{ fontWeight: 600 }}
-              >
+              <span className={`text-lg font-semibold transition-colors ${
+                selectedOption === 'logement' ? 'text-white' : 'text-gray-900'
+              }`}>
                 Logement
+              </span>
+              <span className={`text-xs mt-2 transition-colors ${
+                selectedOption === 'logement' ? 'text-gray-300' : 'text-gray-500'
+              }`}>
+                Maison, appartement...
               </span>
             </button>
 
             {/* Expérience */}
             <button
               onClick={() => handleOptionClick("experience")}
-              className={`flex flex-col items-center justify-center p-8 border-2 rounded-xl cursor-pointer transition-all ${
-                selectedOption === 'experience' ? 'border-gray-900 bg-gray-50' : 'border-gray-200 hover:border-gray-400'
+              className={`group relative flex flex-col items-center justify-center p-8 rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden ${
+                selectedOption === 'experience'
+                  ? 'bg-gray-900 shadow-xl scale-105 ring-2 ring-gray-900 ring-offset-4'
+                  : 'bg-white border-2 border-gray-200 hover:border-gray-400 hover:shadow-lg hover:scale-102 active:scale-98'
               }`}
             >
-              <div className="mb-6">
-                <svg
-                  width="64"
-                  height="64"
-                  viewBox="0 0 64 64"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  {/* Hot air balloon */}
-                  <ellipse
-                    cx="32"
-                    cy="28"
-                    rx="16"
-                    ry="20"
-                    fill="#10B981"
+              <div className="mb-5 transition-transform duration-300 group-hover:scale-105 relative">
+                <div className={`w-32 h-32 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 ${
+                  selectedOption === 'experience' ? 'ring-4 ring-white/20' : ''
+                }`}>
+                  <img
+                    src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400"
+                    alt="Adventure experience - mountain landscape"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
-                  <path
-                    d="M24 44 L28 28 L36 28 L40 44 Z"
-                    fill="#8B4513"
-                  />
-                  <rect
-                    x="26"
-                    y="44"
-                    width="12"
-                    height="8"
-                    fill="#D4A574"
-                    stroke="#8B4513"
-                    strokeWidth="1"
-                  />
-                  <line
-                    x1="28"
-                    y1="28"
-                    x2="26"
-                    y2="44"
-                    stroke="#8B4513"
-                    strokeWidth="1.5"
-                  />
-                  <line
-                    x1="36"
-                    y1="28"
-                    x2="38"
-                    y2="44"
-                    stroke="#8B4513"
-                    strokeWidth="1.5"
-                  />
-                  <line
-                    x1="32"
-                    y1="28"
-                    x2="32"
-                    y2="44"
-                    stroke="#8B4513"
-                    strokeWidth="1"
-                  />
-                </svg>
+                </div>
               </div>
-              <span
-                className="text-base"
-                style={{ fontWeight: 600 }}
-              >
+              <span className={`text-lg font-semibold transition-colors ${
+                selectedOption === 'experience' ? 'text-white' : 'text-gray-900'
+              }`}>
                 Expérience
+              </span>
+              <span className={`text-xs mt-2 transition-colors ${
+                selectedOption === 'experience' ? 'text-gray-300' : 'text-gray-500'
+              }`}>
+                Activité, visite guidée...
               </span>
             </button>
 
             {/* Service */}
             <button
               onClick={() => handleOptionClick("service")}
-              className={`flex flex-col items-center justify-center p-8 border-2 rounded-xl cursor-pointer transition-all ${
-                selectedOption === 'service' ? 'border-gray-900 bg-gray-50' : 'border-gray-200 hover:border-gray-400'
+              className={`group relative flex flex-col items-center justify-center p-8 rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden ${
+                selectedOption === 'service'
+                  ? 'bg-gray-900 shadow-xl scale-105 ring-2 ring-gray-900 ring-offset-4'
+                  : 'bg-white border-2 border-gray-200 hover:border-gray-400 hover:shadow-lg hover:scale-102 active:scale-98'
               }`}
             >
-              <div className="mb-6">
-                <svg
-                  width="64"
-                  height="64"
-                  viewBox="0 0 64 64"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  {/* Bell icon */}
-                  <path
-                    d="M32 16 L32 20 M32 20 C26 20 22 24 22 30 L22 38 L18 42 L46 42 L42 38 L42 30 C42 24 38 20 32 20 Z M28 46 C28 48 30 50 32 50 C34 50 36 48 36 46"
-                    stroke="#2C2C2C"
-                    strokeWidth="2.5"
-                    fill="none"
-                    strokeLinecap="round"
+              <div className="mb-5 transition-transform duration-300 group-hover:scale-105 relative">
+                <div className={`w-32 h-32 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 ${
+                  selectedOption === 'service' ? 'ring-4 ring-white/20' : ''
+                }`}>
+                  <img
+                    src="https://images.unsplash.com/photo-1556761175-b413da4baf72?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400"
+                    alt="Professional service - team collaboration"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
-                  <line
-                    x1="18"
-                    y1="42"
-                    x2="46"
-                    y2="42"
-                    stroke="#2C2C2C"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                  />
-                  <circle
-                    cx="40"
-                    cy="24"
-                    r="3"
-                    fill="#10B981"
-                  />
-                </svg>
+                </div>
               </div>
-              <span
-                className="text-base"
-                style={{ fontWeight: 600 }}
-              >
+              <span className={`text-lg font-semibold transition-colors ${
+                selectedOption === 'service' ? 'text-white' : 'text-gray-900'
+              }`}>
                 Service
+              </span>
+              <span className={`text-xs mt-2 transition-colors ${
+                selectedOption === 'service' ? 'text-gray-300' : 'text-gray-500'
+              }`}>
+                Prestation, assistance...
               </span>
             </button>
           </div>
 
-          <div className='border absolute bottom-0 right-0 w-full'>
-            {/* Footer with Next button */}
-            <div className="flex justify-end pt-6 pb-4 px-6 ">
+          {/* Footer with Next button */}
+          <div className="border-t border-gray-100 mt-auto pt-6">
+            <div className="flex justify-between items-center">
+              <p className="text-sm text-gray-500">
+                {selectedOption ? '1 option sélectionnée' : 'Aucune sélection'}
+              </p>
               <button
                 onClick={handleNextClick}
                 disabled={!selectedOption}
-                className={`px-6 py-3 rounded-lg text-sm transition-opacity ${
-                  selectedOption 
-                    ? 'bg-gray-900 text-white hover:opacity-90' 
-                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                className={`px-8 py-3.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                  selectedOption
+                    ? 'bg-gray-900 text-white hover:bg-gray-800 hover:shadow-lg hover:scale-105 active:scale-95'
+                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 }`}
-                style={{ fontWeight: 600 }}
               >
                 Suivant
               </button>
