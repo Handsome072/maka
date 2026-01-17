@@ -120,6 +120,8 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
             onClose={() => setShowSearchOverlay(false)}
             headerRef={headerRef}
             onSearch={onSearch}
+            onClientSpaceClick={onClientSpaceClick}
+            isHost={isHost}
           />
         )}
 
