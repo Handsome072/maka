@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Search } from 'lucide-react';
 import { HeaderRightMenu } from './HeaderRightMenu';
 import { LanguageModal } from './LanguageModal';
@@ -9,10 +10,20 @@ import { BecomeHostModal } from './BecomeHostModal';
 import { AuthModal } from './AuthModal';
 
 export function LegalHeader() {
+  const router = useRouter();
   const [showMenuDropdown, setShowMenuDropdown] = useState(false);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [showBecomeHostModal, setShowBecomeHostModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+
+  // Handle navigation - same logic as main Header
+  const handleNavigate = (page: 'host-onboarding' | 'experience-onboarding') => {
+    if (page === 'host-onboarding') {
+      router.push('/host-onboarding');
+    } else if (page === 'experience-onboarding') {
+      router.push('/experience-onboarding');
+    }
+  };
 
   return (
     <>
@@ -77,6 +88,15 @@ export function LegalHeader() {
         <BecomeHostModal
           isOpen={showBecomeHostModal}
           onClose={() => setShowBecomeHostModal(false)}
+          onSelectOption={(option) => {
+            if (option === 'logement') {
+              handleNavigate('host-onboarding');
+            } else if (option === 'experience') {
+              handleNavigate('experience-onboarding');
+            }
+            // Service sera implémenté plus tard
+            setShowBecomeHostModal(false);
+          }}
         />
       )}
 
