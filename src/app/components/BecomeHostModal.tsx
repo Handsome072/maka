@@ -97,8 +97,8 @@ export function BecomeHostModal({
               onClick={() => handleOptionClick("logement")}
               className={`group relative flex flex-col items-center justify-center p-8 rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden ${
                 selectedOption === 'logement'
-                  ? 'bg-gray-100 shadow-xl scale-105 ring-2 ring-gray-300 ring-offset-4'
-                  : 'bg-white border-2 border-gray-200 hover:border-gray-400 hover:shadow-lg hover:scale-102 active:scale-98'
+                  ? 'bg-white shadow-2xl scale-105'
+                  : 'bg-white hover:shadow-lg hover:scale-102 active:scale-98'
               }`}
             >
               <div className="mb-5 transition-transform duration-300 group-hover:scale-105 relative">
@@ -129,8 +129,8 @@ export function BecomeHostModal({
               onClick={() => handleOptionClick("experience")}
               className={`group relative flex flex-col items-center justify-center p-8 rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden ${
                 selectedOption === 'experience'
-                  ? 'bg-gray-100 shadow-xl scale-105 ring-2 ring-gray-300 ring-offset-4'
-                  : 'bg-white border-2 border-gray-200 hover:border-gray-400 hover:shadow-lg hover:scale-102 active:scale-98'
+                  ? 'bg-white shadow-2xl scale-105'
+                  : 'bg-white hover:shadow-lg hover:scale-102 active:scale-98'
               }`}
             >
               <div className="mb-5 transition-transform duration-300 group-hover:scale-105 relative">
@@ -161,8 +161,8 @@ export function BecomeHostModal({
               onClick={() => handleOptionClick("service")}
               className={`group relative flex flex-col items-center justify-center p-8 rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden ${
                 selectedOption === 'service'
-                  ? 'bg-gray-100 shadow-xl scale-105 ring-2 ring-gray-300 ring-offset-4'
-                  : 'bg-white border-2 border-gray-200 hover:border-gray-400 hover:shadow-lg hover:scale-102 active:scale-98'
+                  ? 'bg-white shadow-2xl scale-105'
+                  : 'bg-white hover:shadow-lg hover:scale-102 active:scale-98'
               }`}
             >
               <div className="mb-5 transition-transform duration-300 group-hover:scale-105 relative">
