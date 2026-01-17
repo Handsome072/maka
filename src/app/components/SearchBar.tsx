@@ -724,30 +724,30 @@ export function SearchBar({ onSearch, type = 'logements' }: SearchBarProps) {
 
 export function CompactSearchBar({ currentPage, onOpen }: { currentPage: 'logements' | 'experiences' | 'services'; onOpen?: () => void }) {
   return (
-    <div className="w-fit mx-auto">
+    <div className="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-3xl mx-auto">
       <button 
         onClick={onOpen}
-        className="flex items-center border border-gray-200 rounded-full shadow-sm hover:shadow-md transition-shadow bg-white pl-6 pr-2 py-2 cursor-pointer"
+        className="flex items-center border border-gray-200 rounded-full shadow-sm hover:shadow-md transition-shadow bg-white pl-3 sm:pl-6 pr-2 py-2 cursor-pointer w-full"
         style={{
           boxShadow: '0 1px 2px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05)'
         }}
       >
         {/* Icône spécifique selon la page */}
-        <div className="flex items-center gap-3 flex-shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
           {currentPage === 'logements' && (
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4">
               <path d="M13.5 6.5V14.5H10V11C10 10.4477 9.55228 10 9 10H7C6.44772 10 6 10.4477 6 11V14.5H2.5V6.5" stroke="#222222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               <path d="M0.5 8L8 1.5L15.5 8" stroke="#222222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           )}
           {currentPage === 'experiences' && (
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4">
               <path d="M8 14.5C11.5899 14.5 14.5 11.5899 14.5 8C14.5 4.41015 11.5899 1.5 8 1.5C4.41015 1.5 1.5 4.41015 1.5 8C1.5 11.5899 4.41015 14.5 8 14.5Z" stroke="#222222" strokeWidth="1.5"/>
               <path d="M8 4V8L10.5 9.5" stroke="#222222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           )}
           {currentPage === 'services' && (
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4">
               <rect x="1.5" y="1.5" width="5" height="5" rx="1" stroke="#222222" strokeWidth="1.5"/>
               <rect x="9.5" y="1.5" width="5" height="5" rx="1" stroke="#222222" strokeWidth="1.5"/>
               <rect x="1.5" y="9.5" width="5" height="5" rx="1" stroke="#222222" strokeWidth="1.5"/>
@@ -758,41 +758,44 @@ export function CompactSearchBar({ currentPage, onOpen }: { currentPage: 'logeme
 
         {/* N'importe où */}
         <div
-          className="text-sm px-4 rounded-full transition-colors flex-shrink-0"
+          className="text-xs sm:text-sm px-2 sm:px-4 rounded-full transition-colors flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap"
           style={{ fontWeight: 600, color: '#222222' }}
         >
-          N'importe où
+          <span className="hidden sm:inline overflow-hidden text-ellipsis">N'importe où</span>
+          <span className="sm:hidden overflow-hidden text-ellipsis">Où</span>
         </div>
         
         {/* Séparateur */}
-        <div className="w-px h-6 bg-gray-300 flex-shrink-0"></div>
+        <div className="w-px h-4 sm:h-6 bg-gray-300 flex-shrink-0"></div>
         
         {/* Dates flexibles */}
         <div
-          className="text-sm px-4 rounded-full transition-colors flex-shrink-0"
+          className="text-xs sm:text-sm px-2 sm:px-4 rounded-full transition-colors flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap"
           style={{ fontWeight: 600, color: '#222222' }}
         >
-          Dates flexibles
+          <span className="hidden sm:inline overflow-hidden text-ellipsis">Dates flexibles</span>
+          <span className="sm:hidden overflow-hidden text-ellipsis">Quand</span>
         </div>
         
         {/* Séparateur */}
-        <div className="w-px h-6 bg-gray-300 flex-shrink-0"></div>
+        <div className="w-px h-4 sm:h-6 bg-gray-300 flex-shrink-0"></div>
         
-        {/* Ajouter (texte change selon la page) */}
+        {/* Ajouter */}
         <div 
-          className="text-sm px-4 rounded-full transition-colors flex-shrink-0"
+          className="text-xs sm:text-sm px-2 sm:px-4 rounded-full transition-colors flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap"
           style={{ color: '#717171' }}
         >
-          {currentPage === 'services' ? 'Ajouter' : 'Ajouter des voyageurs'}
+          <span className="hidden lg:inline overflow-hidden text-ellipsis">{currentPage === 'services' ? 'Ajouter' : 'Ajouter des voyageurs'}</span>
+          <span className="lg:hidden overflow-hidden text-ellipsis">Qui</span>
         </div>
         
         {/* Bouton de recherche */}
         <div className="ml-auto flex-shrink-0">
           <div
-            className="bg-[#5EC6D8] text-white p-2.5 rounded-full"
+            className="bg-[#5EC6D8] text-white p-2 sm:p-2.5 rounded-full"
             aria-label="Rechercher"
           >
-            <Search className="w-3.5 h-3.5" />
+            <Search className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
           </div>
         </div>
       </button>

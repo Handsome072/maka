@@ -86,7 +86,7 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
                     isScrolled ? 'opacity-100' : 'opacity-0 pointer-events-none'
                   }`}
                 >
-                  <div className="flex-1 mx-8">
+                  <div className="flex-1 mx-2 sm:mx-4 md:mx-8">
                     <CompactSearchBar
                       currentPage={currentPage}
                       onOpen={() => setShowSearchOverlay(true)}
