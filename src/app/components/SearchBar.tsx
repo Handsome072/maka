@@ -10,11 +10,9 @@ import {
   CalendarDays,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
-import { DatePicker } from "./DatePicker";
 import { ExperienceDatePicker } from "./ExperienceDatePicker";
 import { GuestsPicker } from "./GuestsPicker";
 import { ServiceDestinationPicker } from "./ServiceDestinationPicker";
-import { ServiceDatePicker } from "./ServiceDatePicker";
 import { ServiceTypePicker } from "./ServiceTypePicker";
 
 const allDestinations = [
@@ -682,39 +680,16 @@ export function SearchBar({ onSearch, type = 'logements' }: SearchBarProps) {
         {/* Date Picker Dropdown */}
         {showDatePicker && (
           <div ref={dateDropdownRef}>
-            {type === 'logements' ? (
-              <DatePicker
-                onClose={() => setShowDatePicker(false)}
-                onSelect={(dateText) => {
-                  setSelectedDate(dateText);
-                }}
-                onDatesChange={(start, end) => {
-                  setCheckInDate(start);
-                  setCheckOutDate(end);
-                }}
-              />
-            ) : type === 'services' ? (
-              <ServiceDatePicker
-                onClose={() => setShowDatePicker(false)}
-                onSelect={(dateText) => {
-                  setSelectedDate(dateText);
-                }}
-                onDateChange={(date) => {
-                  setCheckInDate(date);
-                }}
-              />
-            ) : (
-              <ExperienceDatePicker
-                onClose={() => setShowDatePicker(false)}
-                onSelect={(dateText) => {
-                  setSelectedDate(dateText);
-                }}
-                onDatesChange={(start, end) => {
-                  setCheckInDate(start);
-                  setCheckOutDate(end);
-                }}
-              />
-            )}
+            <ExperienceDatePicker
+              onClose={() => setShowDatePicker(false)}
+              onSelect={(dateText) => {
+                setSelectedDate(dateText);
+              }}
+              onDatesChange={(start, end) => {
+                setCheckInDate(start);
+                setCheckOutDate(end);
+              }}
+            />
           </div>
         )}
       </div>
