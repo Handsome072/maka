@@ -1,15 +1,25 @@
 import { useState, useEffect } from 'react';
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
-import Image from 'next/image';
+import { Logo } from '@/app/components/Logo';
 
 interface HostOnboardingProps {
   onNavigate: (page: string, data?: any) => void;
   initialStep?: 'intro' | 'step1' | 'property-type' | 'space-type' | 'location' | 'confirm-address' | 'pin-location' | 'guest-info' | 'step2-intro' | 'amenities' | 'photos' | 'photo-upload' | 'photo-review' | 'title' | 'highlights' | 'description' | 'step3-intro' | 'reservation-settings' | 'pricing' | 'weekend-pricing' | 'discounts' | 'security' | 'final-details' | 'verification-points';
   onCompleteOnboarding?: () => void;
+  onStepChange?: (step: string) => void;
 }
 
-export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOnboarding }: HostOnboardingProps) {
+export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOnboarding, onStepChange }: HostOnboardingProps) {
   const [currentStep, setCurrentStep] = useState<'intro' | 'step1' | 'property-type' | 'space-type' | 'location' | 'confirm-address' | 'pin-location' | 'guest-info' | 'step2-intro' | 'amenities' | 'photos' | 'photo-upload' | 'photo-review' | 'title' | 'highlights' | 'description' | 'step3-intro' | 'reservation-settings' | 'pricing' | 'weekend-pricing' | 'discounts' | 'security' | 'final-details' | 'verification-points'>(initialStep);
+
+  // Helper function to change steps - uses onStepChange if provided, otherwise uses setCurrentStep
+  const changeStep = (newStep: typeof currentStep) => {
+    if (onStepChange) {
+      onStepChange(newStep);
+    } else {
+      setCurrentStep(newStep);
+    }
+  };
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [selectedSpaceType, setSelectedSpaceType] = useState<string | null>(null);
   const [address, setAddress] = useState('');
@@ -43,6 +53,11 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
   const [addressPostalCode, setAddressPostalCode] = useState('');
   const [legalEntity, setLegalEntity] = useState<'yes' | 'no' | null>(null);
   const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
+
+  // Sync currentStep with initialStep when it changes (for URL-based navigation)
+  useEffect(() => {
+    setCurrentStep(initialStep);
+  }, [initialStep]);
 
   useEffect(() => {
     document.documentElement.classList.add('scrollbar-hide');
@@ -97,7 +112,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     setTempPhotos([]);
     setShowPhotoUploadModal(false);
     if (uploadedPhotos.length + tempPhotos.length >= 5) {
-      setCurrentStep('photo-review');
+      changeStep('photo-review');
     }
   };
 
@@ -206,13 +221,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
 
         {/* Header */}
         <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-8 py-6">
-          <Image
-            src="/logoIcon.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            onClick={() => onNavigate('logements')}
-          />
+          <div onClick={() => onNavigate('logements')} className="cursor-pointer">
+            <Logo className="h-12" />
+          </div>
           <button 
             onClick={() => onNavigate('logements')}
             className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors"
@@ -225,7 +236,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Footer button */}
         <div className="absolute bottom-0 right-0 px-8 py-8">
           <button
-            onClick={() => setCurrentStep('step1')}
+            onClick={() => changeStep('step1')}
             className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
             style={{ fontWeight: 600 }}
           >
@@ -242,13 +253,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
-          <Image
-            src="/logoIcon.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            onClick={() => onNavigate('logements')}
-          />
+          <div onClick={() => onNavigate('logements')} className="cursor-pointer">
+            <Logo className="h-12" />
+          </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -295,14 +302,14 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Footer */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
-            onClick={() => setCurrentStep('intro')}
+            onClick={() => changeStep('intro')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
             Retour
           </button>
           <button
-            onClick={() => setCurrentStep('property-type')}
+            onClick={() => changeStep('property-type')}
             className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
             style={{ fontWeight: 600 }}
           >
@@ -340,13 +347,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
-          <Image
-            src="/logoIcon.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            onClick={() => onNavigate('logements')}
-          />
+          <div onClick={() => onNavigate('logements')} className="cursor-pointer">
+            <Logo className="h-12" />
+          </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -390,7 +393,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Footer */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
-            onClick={() => setCurrentStep('step1')}
+            onClick={() => changeStep('step1')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
@@ -398,7 +401,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           </button>
           <button
             disabled={!selectedType}
-            onClick={() => selectedType && setCurrentStep('space-type')}
+            onClick={() => selectedType && changeStep('space-type')}
             className={`px-8 py-3 text-white rounded-lg text-base transition-colors bg-[#000000] ${
               selectedType ? 'hover:bg-[#222222]' : 'opacity-40 cursor-not-allowed'
             }`}
@@ -417,13 +420,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
-          <Image
-            src="/logoIcon.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            onClick={() => onNavigate('logements')}
-          />
+          <div onClick={() => onNavigate('logements')} className="cursor-pointer">
+            <Logo className="h-12" />
+          </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -524,7 +523,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Footer */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
-            onClick={() => setCurrentStep('property-type')}
+            onClick={() => changeStep('property-type')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
@@ -532,7 +531,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           </button>
           <button
             disabled={!selectedSpaceType}
-            onClick={() => selectedSpaceType && setCurrentStep('location')}
+            onClick={() => selectedSpaceType && changeStep('location')}
             className={`px-8 py-3 text-white rounded-lg text-base transition-colors bg-[#000000] ${
               selectedSpaceType ? 'hover:bg-[#222222]' : 'opacity-40 cursor-not-allowed'
             }`}
@@ -551,13 +550,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
-          <Image
-            src="/logoIcon.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            onClick={() => onNavigate('logements')}
-          />
+          <div onClick={() => onNavigate('logements')} className="cursor-pointer">
+            <Logo className="h-12" />
+          </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -617,7 +612,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Footer */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
-            onClick={() => setCurrentStep('space-type')}
+            onClick={() => changeStep('space-type')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
@@ -625,7 +620,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           </button>
           <button
             disabled={!address}
-            onClick={() => address && setCurrentStep('confirm-address')}
+            onClick={() => address && changeStep('confirm-address')}
             className={`px-8 py-3 text-white rounded-lg text-base transition-colors bg-[#000000] ${
               address ? 'hover:bg-[#222222]' : 'opacity-40 cursor-not-allowed'
             }`}
@@ -644,13 +639,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
-          <Image
-            src="/logoIcon.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            onClick={() => onNavigate('logements')}
-          />
+          <div onClick={() => onNavigate('logements')} className="cursor-pointer">
+            <Logo className="h-12" />
+          </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -808,14 +799,14 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Footer */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
-            onClick={() => setCurrentStep('location')}
+            onClick={() => changeStep('location')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
             Retour
           </button>
           <button
-            onClick={() => setCurrentStep('pin-location')}
+            onClick={() => changeStep('pin-location')}
             className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
             style={{ fontWeight: 600 }}
           >
@@ -832,13 +823,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
-          <Image
-            src="/logoIcon.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            onClick={() => onNavigate('logements')}
-          />
+          <div onClick={() => onNavigate('logements')} className="cursor-pointer">
+            <Logo className="h-12" />
+          </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -894,14 +881,14 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Footer */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
-            onClick={() => setCurrentStep('confirm-address')}
+            onClick={() => changeStep('confirm-address')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
             Retour
           </button>
           <button
-            onClick={() => setCurrentStep('guest-info')}
+            onClick={() => changeStep('guest-info')}
             className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
             style={{ fontWeight: 600 }}
           >
@@ -918,13 +905,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
-          <Image
-            src="/logoIcon.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            onClick={() => onNavigate('logements')}
-          />
+          <div onClick={() => onNavigate('logements')} className="cursor-pointer">
+            <Logo className="h-12" />
+          </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -1039,14 +1022,14 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Footer */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
-            onClick={() => setCurrentStep('pin-location')}
+            onClick={() => changeStep('pin-location')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
             Retour
           </button>
           <button
-            onClick={() => setCurrentStep('step2-intro')}
+            onClick={() => changeStep('step2-intro')}
             className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
             style={{ fontWeight: 600 }}
           >
@@ -1063,13 +1046,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
-          <Image
-            src="/logoIcon.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            onClick={() => onNavigate('logements')}
-          />
+          <div onClick={() => onNavigate('logements')} className="cursor-pointer">
+            <Logo className="h-12" />
+          </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -1116,14 +1095,14 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Footer */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
-            onClick={() => setCurrentStep('guest-info')}
+            onClick={() => changeStep('guest-info')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
             Retour
           </button>
           <button
-            onClick={() => setCurrentStep('amenities')}
+            onClick={() => changeStep('amenities')}
             className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
             style={{ fontWeight: 600 }}
           >
@@ -1157,13 +1136,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
-          <Image
-            src="/logoIcon.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            onClick={() => onNavigate('logements')}
-          />
+          <div onClick={() => onNavigate('logements')} className="cursor-pointer">
+            <Logo className="h-12" />
+          </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -1241,14 +1216,14 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Footer */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
-            onClick={() => setCurrentStep('step2-intro')}
+            onClick={() => changeStep('step2-intro')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
             Retour
           </button>
           <button
-            onClick={() => setCurrentStep('photos')}
+            onClick={() => changeStep('photos')}
             className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
             style={{ fontWeight: 600 }}
           >
@@ -1263,7 +1238,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
   if (currentStep === 'photos') {
     // Auto-redirect to photo-review if we have photos
     if (uploadedPhotos.length >= 5) {
-      setCurrentStep('photo-review');
+      changeStep('photo-review');
       return null;
     }
 
@@ -1271,13 +1246,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
-          <Image
-            src="/logoIcon.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            onClick={() => onNavigate('logements')}
-          />
+          <div onClick={() => onNavigate('logements')} className="cursor-pointer">
+            <Logo className="h-12" />
+          </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -1324,7 +1295,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Footer */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
-            onClick={() => setCurrentStep('amenities')}
+            onClick={() => changeStep('amenities')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
@@ -1332,7 +1303,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           </button>
           <button
             disabled={uploadedPhotos.length < 5}
-            onClick={() => uploadedPhotos.length >= 5 && setCurrentStep('photo-review')}
+            onClick={() => uploadedPhotos.length >= 5 && changeStep('photo-review')}
             className={`px-8 py-3 rounded-lg text-base transition-colors ${
               uploadedPhotos.length >= 5 ? 'bg-[#000000] hover:bg-[#222222] text-white' : 'bg-[#E5E5E5] text-[#B0B0B0] cursor-not-allowed'
             }`}
@@ -1478,13 +1449,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
-          <Image
-            src="/logoIcon.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            onClick={() => onNavigate('logements')}
-          />
+          <div onClick={() => onNavigate('logements')} className="cursor-pointer">
+            <Logo className="h-12" />
+          </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -1584,14 +1551,14 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Footer */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
-            onClick={() => setCurrentStep('amenities')}
+            onClick={() => changeStep('amenities')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
             Retour
           </button>
           <button
-            onClick={() => setCurrentStep('title')}
+            onClick={() => changeStep('title')}
             className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
             style={{ fontWeight: 600 }}
           >
@@ -1608,13 +1575,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
-          <Image
-            src="/logoIcon.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            onClick={() => onNavigate('logements')}
-          />
+          <div onClick={() => onNavigate('logements')} className="cursor-pointer">
+            <Logo className="h-12" />
+          </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -1671,7 +1634,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Footer */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
-            onClick={() => setCurrentStep('photo-review')}
+            onClick={() => changeStep('photo-review')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
@@ -1679,7 +1642,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           </button>
           <button
             disabled={listingTitle.trim().length === 0}
-            onClick={() => listingTitle.trim().length > 0 && setCurrentStep('highlights')}
+            onClick={() => listingTitle.trim().length > 0 && changeStep('highlights')}
             className={`px-8 py-3 rounded-lg text-base transition-colors ${
               listingTitle.trim().length > 0 ? 'bg-[#000000] hover:bg-[#222222] text-white' : 'bg-[#E5E5E5] text-[#B0B0B0] cursor-not-allowed'
             }`}
@@ -1707,13 +1670,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
-          <Image
-            src="/logoIcon.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            onClick={() => onNavigate('logements')}
-          />
+          <div onClick={() => onNavigate('logements')} className="cursor-pointer">
+            <Logo className="h-12" />
+          </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -1764,14 +1723,14 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Footer */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
-            onClick={() => setCurrentStep('title')}
+            onClick={() => changeStep('title')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
             Retour
           </button>
           <button
-            onClick={() => setCurrentStep('description')}
+            onClick={() => changeStep('description')}
             className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
             style={{ fontWeight: 600 }}
           >
@@ -1788,13 +1747,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
-          <Image
-            src="/logoIcon.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            onClick={() => onNavigate('logements')}
-          />
+          <div onClick={() => onNavigate('logements')} className="cursor-pointer">
+            <Logo className="h-12" />
+          </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -1851,7 +1806,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Footer */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
-            onClick={() => setCurrentStep('highlights')}
+            onClick={() => changeStep('highlights')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
@@ -1859,7 +1814,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           </button>
           <button
             disabled={listingDescription.trim().length === 0}
-            onClick={() => listingDescription.trim().length > 0 && setCurrentStep('step3-intro')}
+            onClick={() => listingDescription.trim().length > 0 && changeStep('step3-intro')}
             className={`px-8 py-3 rounded-lg text-base transition-colors ${
               listingDescription.trim().length > 0 ? 'bg-[#000000] hover:bg-[#222222] text-white' : 'bg-[#E5E5E5] text-[#B0B0B0] cursor-not-allowed'
             }`}
@@ -1878,13 +1833,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white flex flex-col overflow-y-auto scrollbar-hide">
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
-          <Image
-            src="/logoIcon.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            onClick={() => onNavigate('logements')}
-          />
+          <div onClick={() => onNavigate('logements')} className="cursor-pointer">
+            <Logo className="h-12" />
+          </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -1929,14 +1880,14 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Footer */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
-            onClick={() => setCurrentStep('description')}
+            onClick={() => changeStep('description')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
             Retour
           </button>
           <button
-            onClick={() => setCurrentStep('reservation-settings')}
+            onClick={() => changeStep('reservation-settings')}
             className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
             style={{ fontWeight: 600 }}
           >
@@ -1953,13 +1904,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
-          <Image
-            src="/logoIcon.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            onClick={() => onNavigate('logements')}
-          />
+          <div onClick={() => onNavigate('logements')} className="cursor-pointer">
+            <Logo className="h-12" />
+          </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -2043,14 +1990,14 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Footer */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
-            onClick={() => setCurrentStep('step3-intro')}
+            onClick={() => changeStep('step3-intro')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
             Retour
           </button>
           <button
-            onClick={() => setCurrentStep('pricing')}
+            onClick={() => changeStep('pricing')}
             className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
             style={{ fontWeight: 600 }}
           >
@@ -2067,13 +2014,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
-          <Image
-            src="/logoIcon.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            onClick={() => onNavigate('logements')}
-          />
+          <div onClick={() => onNavigate('logements')} className="cursor-pointer">
+            <Logo className="h-12" />
+          </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -2150,14 +2093,14 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Footer */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
-            onClick={() => setCurrentStep('reservation-settings')}
+            onClick={() => changeStep('reservation-settings')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
             Retour
           </button>
           <button
-            onClick={() => setCurrentStep('weekend-pricing')}
+            onClick={() => changeStep('weekend-pricing')}
             className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
             style={{ fontWeight: 600 }}
           >
@@ -2176,13 +2119,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
-          <Image
-            src="/logoIcon.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            onClick={() => onNavigate('logements')}
-          />
+          <div onClick={() => onNavigate('logements')} className="cursor-pointer">
+            <Logo className="h-12" />
+          </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -2286,14 +2225,14 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Footer */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
-            onClick={() => setCurrentStep('pricing')}
+            onClick={() => changeStep('pricing')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
             Retour
           </button>
           <button
-            onClick={() => setCurrentStep('discounts')}
+            onClick={() => changeStep('discounts')}
             className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
             style={{ fontWeight: 600 }}
           >
@@ -2317,13 +2256,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
-          <Image
-            src="/logoIcon.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            onClick={() => onNavigate('logements')}
-          />
+          <div onClick={() => onNavigate('logements')} className="cursor-pointer">
+            <Logo className="h-12" />
+          </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -2397,14 +2332,14 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Footer */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
-            onClick={() => setCurrentStep('weekend-pricing')}
+            onClick={() => changeStep('weekend-pricing')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
             Retour
           </button>
           <button
-            onClick={() => setCurrentStep('security')}
+            onClick={() => changeStep('security')}
             className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
             style={{ fontWeight: 600 }}
           >
@@ -2427,13 +2362,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
-          <Image
-            src="/logoIcon.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            onClick={() => onNavigate('logements')}
-          />
+          <div onClick={() => onNavigate('logements')} className="cursor-pointer">
+            <Logo className="h-12" />
+          </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -2511,14 +2442,14 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Footer */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <button
-            onClick={() => setCurrentStep('discounts')}
+            onClick={() => changeStep('discounts')}
             className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
             Retour
           </button>
           <button
-            onClick={() => setCurrentStep('final-details')}
+            onClick={() => changeStep('final-details')}
             className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
             style={{ fontWeight: 600 }}
           >
@@ -2537,13 +2468,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white flex flex-col overflow-y-auto scrollbar-hide">
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
-          <Image
-            src="/logoIcon.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            onClick={() => onNavigate('logements')}
-          />
+          <div onClick={() => onNavigate('logements')} className="cursor-pointer">
+            <Logo className="h-12" />
+          </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
@@ -2728,13 +2655,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       <div className="min-h-screen bg-white flex flex-col overflow-y-auto scrollbar-hide">
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
-          <Image
-            src="/logoIcon.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            onClick={() => onNavigate('logements')}
-          />
+          <div onClick={() => onNavigate('logements')} className="cursor-pointer">
+            <Logo className="h-12" />
+          </div>
           <div className="flex gap-3">
             <button className="text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Passer en mode voyageur
