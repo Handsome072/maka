@@ -724,7 +724,7 @@ export function SearchBar({ onSearch, type = 'logements' }: SearchBarProps) {
 
 export function CompactSearchBar({ currentPage, onOpen }: { currentPage: 'logements' | 'experiences' | 'services'; onOpen?: () => void }) {
   return (
-    <div className="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-3xl mx-auto">
+    <div className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl mx-auto">
       <button 
         onClick={onOpen}
         className="flex items-center border border-gray-200 rounded-full shadow-sm hover:shadow-md transition-shadow bg-white pl-3 sm:pl-6 pr-2 py-2 cursor-pointer w-full"
