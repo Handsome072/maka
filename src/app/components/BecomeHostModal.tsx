@@ -97,7 +97,7 @@ export function BecomeHostModal({
               onClick={() => handleOptionClick("logement")}
               className={`group relative flex flex-col items-center justify-center p-8 rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden ${
                 selectedOption === 'logement'
-                  ? 'bg-gray-900 shadow-xl scale-105 ring-2 ring-gray-900 ring-offset-4'
+                  ? 'bg-gray-100 shadow-xl scale-105 ring-2 ring-gray-300 ring-offset-4'
                   : 'bg-white border-2 border-gray-200 hover:border-gray-400 hover:shadow-lg hover:scale-102 active:scale-98'
               }`}
             >
@@ -113,12 +113,12 @@ export function BecomeHostModal({
                 </div>
               </div>
               <span className={`text-lg font-semibold transition-colors ${
-                selectedOption === 'logement' ? 'text-white' : 'text-gray-900'
+                selectedOption === 'logement' ? 'text-gray-900' : 'text-gray-900'
               }`}>
                 Logement
               </span>
               <span className={`text-xs mt-2 transition-colors ${
-                selectedOption === 'logement' ? 'text-gray-300' : 'text-gray-500'
+                selectedOption === 'logement' ? 'text-gray-600' : 'text-gray-500'
               }`}>
                 Maison, appartement...
               </span>
@@ -129,7 +129,7 @@ export function BecomeHostModal({
               onClick={() => handleOptionClick("experience")}
               className={`group relative flex flex-col items-center justify-center p-8 rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden ${
                 selectedOption === 'experience'
-                  ? 'bg-gray-900 shadow-xl scale-105 ring-2 ring-gray-900 ring-offset-4'
+                  ? 'bg-gray-100 shadow-xl scale-105 ring-2 ring-gray-300 ring-offset-4'
                   : 'bg-white border-2 border-gray-200 hover:border-gray-400 hover:shadow-lg hover:scale-102 active:scale-98'
               }`}
             >
@@ -145,12 +145,12 @@ export function BecomeHostModal({
                 </div>
               </div>
               <span className={`text-lg font-semibold transition-colors ${
-                selectedOption === 'experience' ? 'text-white' : 'text-gray-900'
+                selectedOption === 'experience' ? 'text-gray-900' : 'text-gray-900'
               }`}>
                 Expérience
               </span>
               <span className={`text-xs mt-2 transition-colors ${
-                selectedOption === 'experience' ? 'text-gray-300' : 'text-gray-500'
+                selectedOption === 'experience' ? 'text-gray-600' : 'text-gray-500'
               }`}>
                 Activité, visite guidée...
               </span>
@@ -161,7 +161,7 @@ export function BecomeHostModal({
               onClick={() => handleOptionClick("service")}
               className={`group relative flex flex-col items-center justify-center p-8 rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden ${
                 selectedOption === 'service'
-                  ? 'bg-gray-900 shadow-xl scale-105 ring-2 ring-gray-900 ring-offset-4'
+                  ? 'bg-gray-100 shadow-xl scale-105 ring-2 ring-gray-300 ring-offset-4'
                   : 'bg-white border-2 border-gray-200 hover:border-gray-400 hover:shadow-lg hover:scale-102 active:scale-98'
               }`}
             >
@@ -177,12 +177,12 @@ export function BecomeHostModal({
                 </div>
               </div>
               <span className={`text-lg font-semibold transition-colors ${
-                selectedOption === 'service' ? 'text-white' : 'text-gray-900'
+                selectedOption === 'service' ? 'text-gray-900' : 'text-gray-900'
               }`}>
                 Service
               </span>
               <span className={`text-xs mt-2 transition-colors ${
-                selectedOption === 'service' ? 'text-gray-300' : 'text-gray-500'
+                selectedOption === 'service' ? 'text-gray-600' : 'text-gray-500'
               }`}>
                 Prestation, assistance...
               </span>
