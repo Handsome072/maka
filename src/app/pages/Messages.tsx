@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Search, Settings, Send, Archive, PlaneTakeoff, X } from 'lucide-react';
 import { Logo } from '@/app/components/Logo';
 
@@ -27,6 +27,9 @@ export function Messages({ onNavigate }: { onNavigate?: (page: string) => void }
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [feedbackText, setFeedbackText] = useState('');
   const [reportProblem, setReportProblem] = useState(false);
+  
+  // State pour gérer les messages dynamiquement
+  const [dynamicMessages, setDynamicMessages] = useState<{ [conversationId: string]: Message[] }>({});
 
   // Mock conversations
   const conversations: Conversation[] = [
@@ -73,8 +76,8 @@ export function Messages({ onNavigate }: { onNavigate?: (page: string) => void }
     }
   ];
 
-  // Mock messages for selected conversation
-  const messages: Message[] = selectedConversation ? [
+  // Messages mock initiaux (préservés pour la démo)
+  const mockMessages: Message[] = [
     { id: '1', text: 'Salama tompoko', sender: 'other', time: '14:40' },
     { id: '2', text: 'Izao dia développera fa ietiko ato tao malahatra ambrany de niho sabo hitady fianakaviana raha ofana mlay son dalar', sender: 'other', time: '14:51' },
     { id: '3', text: 'rahi ny tao tena ngona mishaka toa ... mora to ming client masoany raako', sender: 'me', time: '14:53' },
@@ -93,42 +96,72 @@ export function Messages({ onNavigate }: { onNavigate?: (page: string) => void }
     { id: '16', text: 'mbeng zo za nifi may ee', sender: 'me', time: '15:02' },
     { id: '17', text: 'fa za zao fitea ngisari mbera', sender: 'me', time: '15:02' },
     { id: '18', text: 'Okay mbsy izany', sender: 'other', time: '15:03' }
+  ];
+
+  // Combiner les messages mock avec les messages dynamiques
+  const messages: Message[] = selectedConversation ? [
+    ...mockMessages,
+    ...(dynamicMessages[selectedConversation] || [])
   ] : [];
+
+  // Fonction pour envoyer un message
+  const handleSendMessage = useCallback(() => {
+    if (!messageText.trim() || !selectedConversation) return;
+
+    const newMessage: Message = {
+      id: `dynamic-${Date.now()}`,
+      text: messageText.trim(),
+      sender: 'me',
+      time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+    };
+
+    setDynamicMessages(prev => ({
+      ...prev,
+      [selectedConversation]: [...(prev[selectedConversation] || []), newMessage]
+    }));
+
+    setMessageText('');
+  }, [messageText, selectedConversation]);
 
   const hasMessages = conversations.length > 0;
 
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="border-b border-gray-200 px-6 lg:px-20 py-5 flex items-center justify-between">
-        <div className="flex items-center gap-8">
-          <button 
-            onClick={() => onNavigate?.('home')}
-            className="cursor-pointer"
-          >
-            <Logo />
-          </button>
-        </div>
+      <header className="border-b border-gray-200">
+        <div className="px-4 sm:px-6 lg:px-12 py-5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-8">
+              <button 
+                onClick={() => onNavigate?.('home')}
+                className="cursor-pointer"
+              >
+                <Logo />
+              </button>
+            </div>
 
-        <div className="flex items-center gap-4">
-          <span className="text-sm" style={{ fontWeight: 500, color: '#222222' }}>Devenir hôte</span>
-          <button className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-white">
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-          </button>
-          <button className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center">
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
+            <div className="flex items-center gap-4">
+              <span className="text-sm" style={{ fontWeight: 500, color: '#222222' }}>Devenir hôte</span>
+              <button className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-white">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </button>
+              <button className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
       </header>
 
       {/* Messages Content */}
       {!hasMessages ? (
         /* Empty State */
-        <div className="max-w-3xl mx-auto px-6 pt-8">
+        <div className="px-4 sm:px-6 lg:px-12 pt-8">
+          <div className="max-w-3xl mx-auto">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-3xl" style={{ fontWeight: 600, color: '#222222' }}>Messages</h1>
             <div className="flex items-center gap-3">
@@ -184,10 +217,12 @@ export function Messages({ onNavigate }: { onNavigate?: (page: string) => void }
               Lorsque vous recevrez un nouveau message, il apparaîtra ici.
             </p>
           </div>
+          </div>
         </div>
       ) : (
         /* Messages List and Chat */
-        <div className="flex h-[calc(100vh-73px)]">
+        <div className="px-4 sm:px-6 lg:px-12">
+          <div className="flex h-[calc(100vh-73px)]">
           {/* Left Sidebar - Conversations List */}
           <div className="w-[380px] border-r border-gray-200 flex flex-col bg-white">
             <div className="px-6 pt-6 pb-4 border-b border-gray-200">
@@ -307,13 +342,13 @@ export function Messages({ onNavigate }: { onNavigate?: (page: string) => void }
                         <div 
                           className={`max-w-[70%] px-4 py-2 rounded-lg ${
                             msg.sender === 'me' 
-                              ? 'bg-emerald-600 text-white' 
+                              ? 'bg-black text-white' 
                               : 'bg-gray-100 text-gray-900'
                           }`}
                         >
                           <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
                           <span className={`text-xs mt-1 block ${
-                            msg.sender === 'me' ? 'text-emerald-100' : 'text-gray-500'
+                            msg.sender === 'me' ? 'text-gray-300' : 'text-gray-500'
                           }`}>
                             {msg.time}
                           </span>
@@ -330,11 +365,18 @@ export function Messages({ onNavigate }: { onNavigate?: (page: string) => void }
                       type="text"
                       value={messageText}
                       onChange={(e) => setMessageText(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                       placeholder="Écrire un message..."
                       className="flex-1 px-4 py-3 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                     />
                     <button 
-                      className="w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center hover:bg-emerald-700 transition-colors"
+                      onClick={handleSendMessage}
+                      disabled={!messageText.trim()}
+                      className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
+                        messageText.trim() 
+                          ? 'bg-black hover:bg-gray-800' 
+                          : 'bg-gray-300 cursor-not-allowed'
+                      }`}
                     >
                       <Send className="w-5 h-5 text-white" />
                     </button>
@@ -356,6 +398,7 @@ export function Messages({ onNavigate }: { onNavigate?: (page: string) => void }
               </div>
             )}
           </div>
+        </div>
         </div>
       )}
 
