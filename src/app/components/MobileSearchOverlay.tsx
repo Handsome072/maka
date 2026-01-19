@@ -277,6 +277,26 @@ export function MobileSearchOverlay({
     const showPets = currentPage === 'logements';
     const showServiceType = currentPage === 'services';
 
+    const isFinalStep = (!showServiceType && expandedSection === 'guests') || (showServiceType && expandedSection === 'service');
+
+    const handlePrimaryAction = () => {
+        // Si on est sur la dernière étape (Voyageurs ou Type de service), lancer la recherche
+        if (isFinalStep) {
+            handleSearch();
+            return;
+        }
+
+        // Sinon, avancer à l'étape suivante
+        if (expandedSection === 'destination') {
+            setExpandedSection('dates');
+        } else if (expandedSection === 'dates') {
+            setExpandedSection(showServiceType ? 'service' : 'guests');
+        } else {
+            // Fallback : lancer la recherche
+            handleSearch();
+        }
+    };
+
     return (
         <AnimatePresence>
             {isOpen && (
@@ -482,7 +502,7 @@ export function MobileSearchOverlay({
                                             </div>
 
                                             {/* Calendrier vertical multi-mois */}
-                                            <div className="relative max-h-80 overflow-y-auto space-y-6">
+                                            <div className="relative max-h-80 overflow-y-auto space-y-6 pb-4">
                                                 {/* En-tête des jours fixe */}
                                                 <div className="sticky top-0 z-10 bg-white pb-2">
                                                     <div className="grid grid-cols-7 gap-1">
@@ -535,19 +555,21 @@ export function MobileSearchOverlay({
                                                         </div>
                                                     );
                                                 })}
-                                            </div>
 
-                                            {/* Afficher plus de dates */}
-                                            <button
-                                                type="button"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setVisibleMonthCount((prev) => prev + 3);
-                                                }}
-                                                className="mt-4 w-full py-3 border border-gray-300 rounded-xl text-sm font-medium text-gray-800 hover:bg-gray-50"
-                                            >
-                                                Afficher plus de dates
-                                            </button>
+                                                {/* Afficher plus de dates (en bas du scroll) */}
+                                                <div className="mt-4">
+                                                    <button
+                                                        type="button"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setVisibleMonthCount((prev) => prev + 3);
+                                                        }}
+                                                        className="w-full py-3 border border-gray-300 rounded-xl text-sm font-medium text-gray-800 hover:bg-gray-50"
+                                                    >
+                                                        Afficher plus de dates
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     ) : (
                                         <div className="p-4 flex items-center justify-between cursor-pointer">
@@ -733,12 +755,12 @@ export function MobileSearchOverlay({
                         </button>
 
                         <button
-                            onClick={handleSearch}
+                            onClick={handlePrimaryAction}
                             className="flex items-center gap-2 px-6 py-3 rounded-lg text-white font-medium transition-colors"
-                            style={{ backgroundColor: '#E91E63' }}
+                            style={{ backgroundColor: isFinalStep ? '#E91E63' : '#222222' }}
                         >
-                            <Search className="w-4 h-4" />
-                            <span>Rechercher</span>
+                            {isFinalStep && <Search className="w-4 h-4" />}
+                            <span>{isFinalStep ? 'Rechercher' : 'Suivant'}</span>
                         </button>
                     </div>
                 </motion.div>
