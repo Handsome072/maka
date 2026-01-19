@@ -831,7 +831,7 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
 
         {/* Hôtels à la une (Madrid) */}
         <PropertyCarousel
-          title="test"
+          title="Hôtels à la une (Madrid)"
           showMoreLink={true}
         >
           {madridHotels.map((property, index) => (
