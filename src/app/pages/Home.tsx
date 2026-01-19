@@ -11,15 +11,20 @@ interface HomeProps {
 }
 
 function useWindowWidth() {
-  const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+  const [width, setWidth] = useState(1200); // Always start with default value
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // Set mounted to true and get actual window width on client
+    setMounted(true);
+    setWidth(window.innerWidth);
+
     const handleResize = () => setWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  return width;
+  return { width, mounted };
 }
 
 function getCardWidth(windowWidth: number): string {
@@ -32,8 +37,9 @@ function getCardWidth(windowWidth: number): string {
 
 export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
   const { isAuthenticated } = useAuth();
-  const windowWidth = useWindowWidth();
-  const cardWidth = getCardWidth(windowWidth);
+  const { width: windowWidth, mounted } = useWindowWidth();
+  // Use undefined during SSR to avoid inline styles, let CSS handle it
+  const cardWidth = mounted ? getCardWidth(windowWidth) : undefined;
 
   // Données pour "Annonces consultées récemment" (Recently Viewed Properties)
   const recentlyViewedProperties = [
