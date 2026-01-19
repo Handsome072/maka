@@ -35,10 +35,10 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
     const [showAuthModal, setShowAuthModal] = useState(false);
 
     const { user } = useAuth();
-    
+
     // Internal ref for the header element
     const headerRef = useRef<HTMLElement>(null);
-    
+
     // Forward the ref to parent component
     useImperativeHandle(ref, () => headerRef.current as HTMLElement);
 
@@ -46,19 +46,26 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
       <>
         <header
           ref={headerRef}
-          className="sticky top-0 z-50 bg-[#F7F7F7]"
+          className="z-50 bg-[#F7F7F7]"
         >
           <div className="px-4 sm:px-6 lg:px-12 py-4">
             <div className="flex items-center justify-between relative">
-              {/* Logo - Always visible */}
+              {/* Logo - Responsive: texte masqué pour S < 950 */}
               <Link
                 href={ROUTES.HOME}
                 className="flex items-center gap-1 flex-shrink-0 relative z-10 border-0"
               >
+                {/* Logo complet visible pour S >= 950 */}
                 <img
                   src="/logo.png"
                   alt="HOMIQIO Logo"
-                  className="w-[150px] h-auto border-0"
+                  className="hidden min-[950px]:block w-[150px] h-auto border-0"
+                />
+                {/* Icône seule visible pour S < 950 */}
+                <img
+                  src="/logoIcon.png"
+                  alt="HOMIQIO"
+                  className="block min-[950px]:hidden w-[40px] h-auto border-0"
                 />
               </Link>
 
@@ -66,9 +73,8 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
               <div className="flex-1 relative">
                 {/* HeaderContent - Normal mode (visible when NOT scrolled) */}
                 <div
-                  className={`transition-opacity duration-300 ease-in-out ${
-                    isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100'
-                  }`}
+                  className={`transition-opacity duration-300 ease-in-out ${isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100'
+                    }`}
                 >
                   <HeaderContent
                     currentPage={currentPage}
@@ -82,9 +88,8 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
 
                 {/* CompactSearchBar - Compact mode (visible when scrolled) */}
                 <div
-                  className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ease-in-out ${
-                    isScrolled ? 'opacity-100' : 'opacity-0 pointer-events-none'
-                  }`}
+                  className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ease-in-out ${isScrolled ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                    }`}
                 >
                   <div className="flex-1 mx-2 sm:mx-4 md:mx-8">
                     <CompactSearchBar

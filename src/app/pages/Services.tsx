@@ -2,6 +2,7 @@ import { ServiceCategoryCard } from '../components/ServiceCategoryCard';
 import { ServiceCard } from '../components/ServiceCard';
 import { PropertyCarousel } from '../components/PropertyCarousel';
 import { SearchBar } from '../components/SearchBar';
+import { useState, useEffect } from 'react';
 
 interface ServicesProps {
   isScrolled: boolean;
@@ -9,7 +10,29 @@ interface ServicesProps {
   onSearch?: (params: any) => void;
 }
 
+function useWindowWidth() {
+  const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return width;
+}
+
+function getCardWidth(windowWidth: number): string {
+  if (windowWidth < 745) return 'calc((100vw - 48px - 16px) / 2.1)';
+  if (windowWidth < 950) return 'calc((100vw - 80px - 48px) / 4)';
+  if (windowWidth < 1127) return 'calc((100vw - 80px - 64px) / 5)';
+  if (windowWidth < 1285) return 'calc((100vw - 96px - 96px) / 6)';
+  return '  calc((100vw - 96px - 112px) / 7)';
+}
+
 export function Services({ isScrolled, onServiceClick, onSearch }: ServicesProps) {
+  const windowWidth = useWindowWidth();
+  const cardWidth = getCardWidth(windowWidth);
   // Données pour la section Chefs privés (nouvelle section horizontale)
   const chefsPrivesSection = [
     {
@@ -192,14 +215,8 @@ export function Services({ isScrolled, onServiceClick, onSearch }: ServicesProps
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Search bar - smooth opacity transition synchronized with CompactSearchBar
-          The SearchBar keeps its space in the layout and scrolls off-screen naturally.
-          Only opacity changes - no height collapse to prevent layout shift. */}
-      <div
-        className={`transition-opacity duration-300 ease-in-out ${
-          isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100'
-        }`}
-      >
+      {/* Search bar - hidden on mobile (S < 745) */}
+      <div className="hidden md:block">
         <SearchBar type="services" onSearch={onSearch} />
       </div>
 
@@ -210,7 +227,7 @@ export function Services({ isScrolled, onServiceClick, onSearch }: ServicesProps
           showMoreLink={true}
         >
           {chefsPrivesSection.map((service) => (
-            <div key={service.id} className="w-[280px] sm:w-[300px] lg:w-[320px]">
+            <div key={service.id} style={{ width: cardWidth }} className="transition-all duration-300">
               <ServiceCard {...service} onClick={onServiceClick} />
             </div>
           ))}
@@ -223,7 +240,7 @@ export function Services({ isScrolled, onServiceClick, onSearch }: ServicesProps
           showMoreLink={true}
         >
           {coachingServices.map((service) => (
-            <div key={service.id} className="w-[280px] sm:w-[300px] lg:w-[320px]">
+            <div key={service.id} style={{ width: cardWidth }} className="transition-all duration-300">
               <ServiceCard {...service} onClick={onServiceClick} />
             </div>
           ))}
@@ -235,7 +252,7 @@ export function Services({ isScrolled, onServiceClick, onSearch }: ServicesProps
           showMoreLink={true}
         >
           {massageServices.map((service) => (
-            <div key={service.id} className="w-[280px] sm:w-[300px] lg:w-[320px]">
+            <div key={service.id} style={{ width: cardWidth }} className="transition-all duration-300">
               <ServiceCard {...service} onClick={onServiceClick} />
             </div>
           ))}

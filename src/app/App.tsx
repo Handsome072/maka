@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { MobileNav } from './components/MobileNav';
 import { Home } from './pages/Home';
 import { Experiences } from './pages/Experiences';
 import { Services } from './pages/Services';
@@ -23,6 +24,7 @@ import { PhoneVerification } from './pages/PhoneVerification';
 import { ExperienceOnboarding } from './pages/ExperienceOnboarding';
 import { AuthProvider } from './context/AuthContext';
 import { getListingData, saveListingData } from './utils/listingStorage';
+import { Search } from 'lucide-react';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<'logements' | 'experiences' | 'services' | 'property-details' | 'experience-details' | 'service-details' | 'booking-request' | 'search-results' | 'client-space' | 'messages' | 'privacy' | 'terms' | 'how-it-works' | 'company-info' | 'host-onboarding' | 'annonces' | 'verification-points' | 'identity-verification' | 'edit-listing' | 'phone-verification' | 'experience-onboarding'>('logements');
@@ -168,19 +170,83 @@ export default function App() {
     }, 100);
   };
 
+  const isMainPage = currentPage === 'logements' || currentPage === 'experiences' || currentPage === 'services';
+  const showMobileElements = isMainPage;
+
   return (
     <AuthProvider>
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white pb-16 md:pb-0">
         {currentPage !== 'property-details' && currentPage !== 'experience-details' && currentPage !== 'service-details' && currentPage !== 'booking-request' && currentPage !== 'search-results' && currentPage !== 'client-space' && currentPage !== 'messages' && currentPage !== 'privacy' && currentPage !== 'terms' && currentPage !== 'how-it-works' && currentPage !== 'company-info' && currentPage !== 'host-onboarding' && currentPage !== 'annonces' && currentPage !== 'verification-points' && currentPage !== 'identity-verification' && currentPage !== 'edit-listing' && currentPage !== 'phone-verification' && currentPage !== 'experience-onboarding' && (
-          <Header 
-            ref={headerRef} 
-            currentPage={currentPage} 
-            onNavigate={handleNavigate} 
-            isScrolled={isScrolled} 
-            onSearch={handleSearch}
-            onClientSpaceClick={() => handleNavigate('client-space')}
-            isHost={isHost}
-          />
+          <>
+            {/* Mobile Header - visible only for S < 745 */}
+            <div className="md:hidden sticky top-0 z-50 bg-[#F7F7F7]">
+              {/* Mobile Search Button */}
+              <div className="px-4 py-3">
+                <button 
+                  className="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 rounded-full py-3 px-6 shadow-sm hover:shadow-md transition-shadow"
+                  onClick={() => {}}
+                >
+                  <Search className="w-4 h-4 text-gray-600" />
+                  <span className="text-sm font-medium text-gray-700">Commencer ma recherche</span>
+                </button>
+              </div>
+              
+              {/* Mobile Navigation Tabs */}
+              <div className="flex items-center justify-center gap-6 px-4 pb-2 border-b border-gray-200">
+                <button 
+                  onClick={() => handleNavigate('logements')}
+                  className={`flex flex-col items-center gap-1 py-2 px-3 ${currentPage === 'logements' ? 'border-b-2 border-black' : ''}`}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M9 22V12H15V22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <span className="text-xs font-medium">Logements</span>
+                </button>
+                
+                <button 
+                  onClick={() => handleNavigate('experiences')}
+                  className={`flex flex-col items-center gap-1 py-2 px-3 relative ${currentPage === 'experiences' ? 'border-b-2 border-black' : ''}`}
+                >
+                  <div className="relative">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M12 6V12L16 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    <span className="absolute -top-2 -right-4 text-white text-[8px] px-1 rounded-full" style={{ fontWeight: 600, background: 'linear-gradient(357.5deg, #3e567c 1.59%, #3a5475 21.23%, #2d3c5b 58.6%, #809dc0 97.4%)', borderRadius: '10px 10px 10px 2px' }}>NOUVEAU</span>
+                  </div>
+                  <span className="text-xs font-medium">Expériences</span>
+                </button>
+                
+                <button 
+                  onClick={() => handleNavigate('services')}
+                  className={`flex flex-col items-center gap-1 py-2 px-3 relative ${currentPage === 'services' ? 'border-b-2 border-black' : ''}`}
+                >
+                  <div className="relative">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M9 3V21M15 3V21M3 9H21M3 15H21" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                    <span className="absolute -top-2 -right-4 text-white text-[8px] px-1" style={{ fontWeight: 600, background: 'linear-gradient(357.5deg, #3e567c 1.59%, #3a5475 21.23%, #2d3c5b 58.6%, #809dc0 97.4%)', borderRadius: '10px 10px 10px 2px' }}>NOUVEAU</span>
+                  </div>
+                  <span className="text-xs font-medium">Services</span>
+                </button>
+              </div>
+            </div>
+            
+            {/* Desktop/Tablet Header - hidden for S < 745 */}
+            <div className="hidden md:block">
+              <Header 
+                ref={headerRef} 
+                currentPage={currentPage} 
+                onNavigate={handleNavigate} 
+                isScrolled={isScrolled} 
+                onSearch={handleSearch}
+                onClientSpaceClick={() => handleNavigate('client-space')}
+                isHost={isHost}
+              />
+            </div>
+          </>
         )}
         
         {currentPage === 'logements' && <Home isScrolled={isScrolled} onPropertyClick={() => handleNavigate('property-details')} onSearch={handleSearch} />}
@@ -206,6 +272,16 @@ export default function App() {
         {currentPage === 'experience-onboarding' && <ExperienceOnboarding onNavigate={handleNavigate} />}
         
         {currentPage !== 'property-details' && currentPage !== 'experience-details' && currentPage !== 'service-details' && currentPage !== 'booking-request' && currentPage !== 'search-results' && currentPage !== 'client-space' && currentPage !== 'messages' && currentPage !== 'privacy' && currentPage !== 'terms' && currentPage !== 'how-it-works' && currentPage !== 'company-info' && currentPage !== 'host-onboarding' && currentPage !== 'annonces' && currentPage !== 'verification-points' && currentPage !== 'identity-verification' && currentPage !== 'edit-listing' && currentPage !== 'phone-verification' && currentPage !== 'experience-onboarding' && <Footer onNavigate={handleNavigate} />}
+        
+        {/* Mobile Navigation - visible only for S < 745 on main pages */}
+        {showMobileElements && (
+          <MobileNav 
+            isScrolled={isScrolled}
+            onSearchClick={() => {}}
+            onFavoritesClick={() => {}}
+            onLoginClick={() => handleNavigate('client-space')}
+          />
+        )}
       </div>
     </AuthProvider>
   );

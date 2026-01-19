@@ -26,8 +26,8 @@ export function HeaderContent({
 
   return (
     <div className="flex-1">
-      {/* Navigation centrale */}
-      <nav className="hidden lg:flex items-center gap-8 justify-center">
+      {/* Navigation centrale - visible pour S >= 768 */}
+      <nav className="hidden md:flex items-center gap-8 justify-center">
         <Link
           href={ROUTES.HOME}
           className={`flex items-center gap-2 py-4 ${

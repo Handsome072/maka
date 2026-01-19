@@ -2,6 +2,7 @@ import { PropertyCard } from '../components/PropertyCard';
 import { PropertyCarousel } from '../components/PropertyCarousel';
 import { SearchBar } from '../components/SearchBar';
 import { useAuth } from '../context/AuthContext';
+import { useState, useEffect } from 'react';
 
 interface HomeProps {
   isScrolled: boolean;
@@ -9,8 +10,30 @@ interface HomeProps {
   onSearch?: (params: any) => void;
 }
 
+function useWindowWidth() {
+  const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return width;
+}
+
+function getCardWidth(windowWidth: number): string {
+  if (windowWidth < 745) return 'calc((100vw - 48px - 16px) / 2.1)';
+  if (windowWidth < 950) return 'calc((100vw - 80px - 48px) / 4)';
+  if (windowWidth < 1127) return 'calc((100vw - 80px - 64px) / 5)';
+  if (windowWidth < 1285) return 'calc((100vw - 96px - 96px) / 6)';
+  return 'calc((100vw - 96px - 112px) / 7)';
+}
+
 export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
   const { isAuthenticated } = useAuth();
+  const windowWidth = useWindowWidth();
+  const cardWidth = getCardWidth(windowWidth);
 
   // Données pour "Annonces consultées récemment" (Recently Viewed Properties)
   const recentlyViewedProperties = [
@@ -791,14 +814,8 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
 
   return (
     <>
-      {/* Search bar - smooth opacity transition synchronized with CompactSearchBar
-          The SearchBar keeps its space in the layout and scrolls off-screen naturally.
-          Only opacity changes - no height collapse to prevent layout shift. */}
-      <div
-        className={`transition-opacity duration-300 ease-in-out ${
-          isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100'
-        }`}
-      >
+      {/* Search bar - hidden on mobile and when scrolled */}
+      <div className={`hidden md:block transition-all duration-300 ${isScrolled ? 'max-h-0 overflow-hidden opacity-0' : 'max-h-40 opacity-100'}`}>
         <SearchBar onSearch={onSearch} />
       </div>
 
@@ -810,7 +827,7 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
             showMoreLink={true}
           >
             {recentlyViewedProperties.map((property, index) => (
-              <div key={index} className="w-[280px] sm:w-[300px] lg:w-[320px]">
+              <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
                 <PropertyCard {...property} onClick={() => onPropertyClick()} />
               </div>
             ))}
@@ -823,7 +840,7 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
           showMoreLink={true}
         >
           {parisProperties.map((property, index) => (
-            <div key={index} className="w-[280px] sm:w-[300px] lg:w-[320px]">
+            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
               <PropertyCard {...property} onClick={() => onPropertyClick()} />
             </div>
           ))}
@@ -835,7 +852,7 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
           showMoreLink={true}
         >
           {madridHotels.map((property, index) => (
-            <div key={index} className="w-[280px] sm:w-[300px] lg:w-[320px]">
+            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
               <PropertyCard {...property} onClick={() => onPropertyClick()} />
             </div>
           ))}
@@ -847,7 +864,7 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
           showMoreLink={true}
         >
           {londonProperties.map((property, index) => (
-            <div key={index} className="w-[280px] sm:w-[300px] lg:w-[320px]">
+            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
               <PropertyCard {...property} onClick={() => onPropertyClick()} />
             </div>
           ))}
@@ -859,7 +876,7 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
           showMoreLink={true}
         >
           {riyadProperties.map((property, index) => (
-            <div key={index} className="w-[280px] sm:w-[300px] lg:w-[320px]">
+            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
               <PropertyCard {...property} onClick={() => onPropertyClick()} />
             </div>
           ))}
@@ -871,7 +888,7 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
           showMoreLink={true}
         >
           {dubaiProperties.map((property, index) => (
-            <div key={index} className="w-[280px] sm:w-[300px] lg:w-[320px]">
+            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
               <PropertyCard {...property} onClick={() => onPropertyClick()} />
             </div>
           ))}
@@ -883,7 +900,7 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
           showMoreLink={true}
         >
           {madridApartments.map((property, index) => (
-            <div key={index} className="w-[280px] sm:w-[300px] lg:w-[320px]">
+            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
               <PropertyCard {...property} onClick={() => onPropertyClick()} />
             </div>
           ))}
@@ -895,7 +912,7 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
           showMoreLink={true}
         >
           {romeProperties.map((property, index) => (
-            <div key={index} className="w-[280px] sm:w-[300px] lg:w-[320px]">
+            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
               <PropertyCard {...property} onClick={() => onPropertyClick()} />
             </div>
           ))}
@@ -907,7 +924,7 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
           showMoreLink={true}
         >
           {milanProperties.map((property, index) => (
-            <div key={index} className="w-[280px] sm:w-[300px] lg:w-[320px]">
+            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
               <PropertyCard {...property} onClick={() => onPropertyClick()} />
             </div>
           ))}
@@ -919,7 +936,7 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
           showMoreLink={true}
         >
           {budapestProperties.map((property, index) => (
-            <div key={index} className="w-[280px] sm:w-[300px] lg:w-[320px]">
+            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
               <PropertyCard {...property} onClick={() => onPropertyClick()} />
             </div>
           ))}
@@ -931,7 +948,7 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
           showMoreLink={true}
         >
           {barcelonaProperties.map((property, index) => (
-            <div key={index} className="w-[280px] sm:w-[300px] lg:w-[320px]">
+            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
               <PropertyCard {...property} onClick={() => onPropertyClick()} />
             </div>
           ))}
@@ -943,7 +960,7 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
           showMoreLink={true}
         >
           {capeTownProperties.map((property, index) => (
-            <div key={index} className="w-[280px] sm:w-[300px] lg:w-[320px]">
+            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
               <PropertyCard {...property} onClick={() => onPropertyClick()} />
             </div>
           ))}
