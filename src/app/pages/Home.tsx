@@ -819,7 +819,7 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
 
         {/* Logements populaires · Paris */}
         <PropertyCarousel
-          title="TEst"
+          title="Logements populaires · Paris"
           showMoreLink={true}
         >
           {parisProperties.map((property, index) => (
