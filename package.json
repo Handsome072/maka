@@ -6,7 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "export": "next build",
+    "deploy:prepare": "npm run export && cp public/.htaccess out/.htaccess",
+    "deploy:verify": "./verify-build.sh",
+    "deploy:zip": "cd out && zip -r ../homiqio-deploy.zip . && cd ..",
+    "deploy:full": "npm run deploy:prepare && npm run deploy:zip && npm run deploy:verify"
   },
   "dependencies": {
     "@emotion/react": "11.14.0",
