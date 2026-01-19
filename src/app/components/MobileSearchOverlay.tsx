@@ -27,17 +27,38 @@ const destinations = [
     },
     {
         icon: Landmark,
-        title: "Paris, Île-de-France",
-        description: "Célèbre pour des sites comme : Tour Eiffel",
+        title: "Lyon, Auvergne-Rhône-Alpes",
+        description: "Célèbre pour des sites comme : Basilique Notre-Dame de Fourvière",
         bgColor: "bg-green-100",
         iconColor: "text-green-600",
     },
     {
         icon: Building,
-        title: "Lyon, Auvergne-Rhône-Alpes",
-        description: "Célèbre pour des sites comme : Basilique Notre-Dame de Fourvière",
+        title: "Montpellier, Occitanie",
+        description: "Populaire auprès des voyageurs à proximité",
         bgColor: "bg-orange-100",
         iconColor: "text-orange-600",
+    },
+    {
+        icon: Landmark,
+        title: "Toulouse, Occitanie",
+        description: "Célèbre pour des sites comme : Basilique Saint-Sernin",
+        bgColor: "bg-pink-100",
+        iconColor: "text-pink-600",
+    },
+    {
+        icon: Landmark,
+        title: "Barcelone, Espagne",
+        description: "Destination balnéaire prisée",
+        bgColor: "bg-orange-100",
+        iconColor: "text-orange-600",
+    },
+    {
+        icon: MapPin,
+        title: "Bordeaux, Nouvelle-Aquitaine",
+        description: "À 415 km",
+        bgColor: "bg-gray-100",
+        iconColor: "text-gray-600",
     },
 ];
 
@@ -68,7 +89,7 @@ export function MobileSearchOverlay({
 }: MobileSearchOverlayProps) {
     const [searchValue, setSearchValue] = useState('');
     const [selectedDestination, setSelectedDestination] = useState('');
-    const [showMoreDestinations, setShowMoreDestinations] = useState(false);
+    const [isDestinationExpanded, setIsDestinationExpanded] = useState(false);
 
     const [expandedSection, setExpandedSection] = useState<'destination' | 'dates' | 'guests' | 'service' | null>('destination');
 
@@ -194,50 +215,60 @@ export function MobileSearchOverlay({
                     exit={{ opacity: 0, y: '100%' }}
                     transition={{ duration: 0.3, ease: 'easeOut' }}
                 >
-                    {/* Header avec tabs et bouton X */}
-                    <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200">
-                        <div className="flex items-center justify-around flex-1">
-                            <button
-                                onClick={() => handleTabClick('logements')}
-                                className={`flex flex-col items-center gap-1 px-4 ${currentPage === 'logements' ? 'text-black' : 'text-gray-400'}`}
+                    {/* Header avec tabs et bouton X - masqué en mode étendu */}
+                    <AnimatePresence>
+                        {!isDestinationExpanded && (
+                            <motion.div
+                                className="flex items-center justify-between px-4 py-4 border-b border-gray-200"
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{ duration: 0.2 }}
                             >
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                    <path d="M9 22V12H15V22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                                <span className={`text-xs font-medium ${currentPage === 'logements' ? 'border-b-2 border-black pb-1' : ''}`}>Logements</span>
-                            </button>
+                                <div className="flex items-center justify-around flex-1">
+                                    <button
+                                        onClick={() => handleTabClick('logements')}
+                                        className={`flex flex-col items-center gap-1 px-4 ${currentPage === 'logements' ? 'text-black' : 'text-gray-400'}`}
+                                    >
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M9 22V12H15V22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                        <span className={`text-xs font-medium ${currentPage === 'logements' ? 'border-b-2 border-black pb-1' : ''}`}>Logements</span>
+                                    </button>
 
-                            <button
-                                onClick={() => handleTabClick('experiences')}
-                                className={`flex flex-col items-center gap-1 px-4 ${currentPage === 'experiences' ? 'text-black' : 'text-gray-400'}`}
-                            >
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
-                                    <path d="M12 6V12L16 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                                </svg>
-                                <span className={`text-xs font-medium ${currentPage === 'experiences' ? 'border-b-2 border-black pb-1' : ''}`}>Expériences</span>
-                            </button>
+                                    <button
+                                        onClick={() => handleTabClick('experiences')}
+                                        className={`flex flex-col items-center gap-1 px-4 ${currentPage === 'experiences' ? 'text-black' : 'text-gray-400'}`}
+                                    >
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+                                            <path d="M12 6V12L16 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                                        </svg>
+                                        <span className={`text-xs font-medium ${currentPage === 'experiences' ? 'border-b-2 border-black pb-1' : ''}`}>Expériences</span>
+                                    </button>
 
-                            <button
-                                onClick={() => handleTabClick('services')}
-                                className={`flex flex-col items-center gap-1 px-4 ${currentPage === 'services' ? 'text-black' : 'text-gray-400'}`}
-                            >
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
-                                    <path d="M9 3V21M15 3V21M3 9H21M3 15H21" stroke="currentColor" strokeWidth="2" />
-                                </svg>
-                                <span className={`text-xs font-medium ${currentPage === 'services' ? 'border-b-2 border-black pb-1' : ''}`}>Services</span>
-                            </button>
-                        </div>
+                                    <button
+                                        onClick={() => handleTabClick('services')}
+                                        className={`flex flex-col items-center gap-1 px-4 ${currentPage === 'services' ? 'text-black' : 'text-gray-400'}`}
+                                    >
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
+                                            <path d="M9 3V21M15 3V21M3 9H21M3 15H21" stroke="currentColor" strokeWidth="2" />
+                                        </svg>
+                                        <span className={`text-xs font-medium ${currentPage === 'services' ? 'border-b-2 border-black pb-1' : ''}`}>Services</span>
+                                    </button>
+                                </div>
 
-                        <button
-                            onClick={onClose}
-                            className="p-2 rounded-full border border-gray-300 hover:bg-gray-100 transition-colors ml-2"
-                        >
-                            <X className="w-4 h-4" />
-                        </button>
-                    </div>
+                                <button
+                                    onClick={onClose}
+                                    className="p-2 rounded-full border border-gray-300 hover:bg-gray-100 transition-colors ml-2"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
                     {/* Contenu scrollable */}
                     <div className="flex-1 overflow-y-auto bg-[#F7F7F7]">
@@ -256,12 +287,24 @@ export function MobileSearchOverlay({
                                             placeholder="Rechercher une destination"
                                             value={searchValue}
                                             onChange={(e) => setSearchValue(e.target.value)}
-                                            className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-gray-200"
+                                            onFocus={() => setIsDestinationExpanded(true)}
+                                            className={`w-full pl-12 py-4 border border-gray-300 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-gray-200 ${isDestinationExpanded ? 'pr-12' : 'pr-4'}`}
                                         />
+                                        {isDestinationExpanded && (
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setIsDestinationExpanded(false);
+                                                }}
+                                                className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded-full transition-colors"
+                                            >
+                                                <ChevronRight className="w-5 h-5 text-gray-500" />
+                                            </button>
+                                        )}
                                     </div>
                                     <p className="text-sm text-gray-500 mb-3">Suggestions de destinations</p>
                                     <div className="space-y-2">
-                                        {destinations.slice(0, showMoreDestinations ? destinations.length : 3).map((dest, index) => {
+                                        {destinations.slice(0, isDestinationExpanded ? destinations.length : 3).map((dest, index) => {
                                             const Icon = dest.icon;
                                             return (
                                                 <button
@@ -270,6 +313,7 @@ export function MobileSearchOverlay({
                                                         e.stopPropagation();
                                                         setSelectedDestination(dest.title);
                                                         setSearchValue(dest.title);
+                                                        setIsDestinationExpanded(false);
                                                         setExpandedSection('dates');
                                                     }}
                                                     className={`w-full flex items-center gap-3 p-3 rounded-xl transition-colors ${selectedDestination === dest.title ? 'bg-gray-100' : 'hover:bg-gray-50'}`}
@@ -285,15 +329,17 @@ export function MobileSearchOverlay({
                                             );
                                         })}
                                     </div>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setShowMoreDestinations(!showMoreDestinations);
-                                        }}
-                                        className="w-full flex items-center justify-center gap-1 py-3 text-gray-500 hover:text-gray-700"
-                                    >
-                                        <ChevronDown className={`w-5 h-5 transition-transform ${showMoreDestinations ? 'rotate-180' : ''}`} />
-                                    </button>
+                                    {!isDestinationExpanded && (
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setIsDestinationExpanded(true);
+                                            }}
+                                            className="w-full flex items-center justify-center gap-1 py-3 text-gray-500 hover:text-gray-700"
+                                        >
+                                            <ChevronDown className="w-5 h-5" />
+                                        </button>
+                                    )}
                                 </div>
                             ) : (
                                 <div className="p-4 flex items-center justify-between cursor-pointer">
@@ -303,122 +349,142 @@ export function MobileSearchOverlay({
                             )}
                         </div>
 
-                        {/* Section Quand */}
-                        <div
-                            className={`mx-4 mt-4 bg-white rounded-2xl overflow-hidden transition-all ${expandedSection === 'dates' ? 'shadow-xl border-2 border-gray-200' : 'shadow-sm border border-gray-100'}`}
-                            onClick={() => setExpandedSection('dates')}
-                        >
-                            {expandedSection === 'dates' ? (
-                                <div className="p-6">
-                                    <h2 className="text-xl font-semibold mb-4">Quand ?</h2>
+                        {/* Section Quand - masquée en mode étendu */}
+                        <AnimatePresence>
+                            {!isDestinationExpanded && (
+                                <motion.div
+                                    className={`mx-4 mt-4 bg-white rounded-2xl overflow-hidden transition-all ${expandedSection === 'dates' ? 'shadow-xl border-2 border-gray-200' : 'shadow-sm border border-gray-100'}`}
+                                    onClick={() => setExpandedSection('dates')}
+                                    initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                                    animate={{ opacity: 1, height: 'auto', marginTop: 16 }}
+                                    exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    {expandedSection === 'dates' ? (
+                                        <div className="p-6">
+                                            <h2 className="text-xl font-semibold mb-4">Quand ?</h2>
 
-                                    {/* Navigation du mois */}
-                                    <div className="flex items-center justify-between mb-4">
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
-                                            }}
-                                            className="p-2 hover:bg-gray-100 rounded-full"
-                                        >
-                                            <ChevronLeft className="w-5 h-5" />
-                                        </button>
-                                        <h3 className="text-base font-semibold">
-                                            {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
-                                        </h3>
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
-                                            }}
-                                            className="p-2 hover:bg-gray-100 rounded-full"
-                                        >
-                                            <ChevronRight className="w-5 h-5" />
-                                        </button>
-                                    </div>
-
-                                    {/* Jours de la semaine */}
-                                    <div className="grid grid-cols-7 gap-1 mb-2">
-                                        {weekDays.map((day, index) => (
-                                            <div key={index} className="text-center text-xs font-semibold text-gray-500 py-2">
-                                                {day}
+                                            {/* Navigation du mois */}
+                                            <div className="flex items-center justify-between mb-4">
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
+                                                    }}
+                                                    className="p-2 hover:bg-gray-100 rounded-full"
+                                                >
+                                                    <ChevronLeft className="w-5 h-5" />
+                                                </button>
+                                                <h3 className="text-base font-semibold">
+                                                    {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
+                                                </h3>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
+                                                    }}
+                                                    className="p-2 hover:bg-gray-100 rounded-full"
+                                                >
+                                                    <ChevronRight className="w-5 h-5" />
+                                                </button>
                                             </div>
-                                        ))}
-                                    </div>
 
-                                    {/* Calendrier */}
-                                    <div className="grid grid-cols-7 gap-1">
-                                        {days.map((day, index) => {
-                                            if (!day) return <div key={index} />;
-                                            const isStart = isStartDate(day);
-                                            const isEnd = isEndDate(day);
-                                            const inRange = isInRange(day);
-                                            const isSelected = isStart || isEnd;
+                                            {/* Jours de la semaine */}
+                                            <div className="grid grid-cols-7 gap-1 mb-2">
+                                                {weekDays.map((day, index) => (
+                                                    <div key={index} className="text-center text-xs font-semibold text-gray-500 py-2">
+                                                        {day}
+                                                    </div>
+                                                ))}
+                                            </div>
 
-                                            return (
-                                                <button
-                                                    key={index}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleDateClick(day);
-                                                    }}
-                                                    className={`aspect-square flex items-center justify-center text-sm transition-colors ${isSelected ? 'bg-gray-900 text-white rounded-full' :
-                                                            inRange ? 'bg-gray-100' : 'hover:bg-gray-50'
-                                                        }`}
-                                                >
-                                                    {day.getDate()}
-                                                </button>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="p-4 flex items-center justify-between cursor-pointer">
-                                    <span className="text-gray-500 font-medium">Quand</span>
-                                    <span className="text-gray-900">{formatDateRange()}</span>
-                                </div>
-                            )}
-                        </div>
+                                            {/* Calendrier */}
+                                            <div className="grid grid-cols-7 gap-1">
+                                                {days.map((day, index) => {
+                                                    if (!day) return <div key={index} />;
+                                                    const isStart = isStartDate(day);
+                                                    const isEnd = isEndDate(day);
+                                                    const inRange = isInRange(day);
+                                                    const isSelected = isStart || isEnd;
 
-                        {/* Section Voyageurs ou Type de service */}
-                        {showServiceType ? (
-                            <div
-                                className={`mx-4 mt-4 mb-4 bg-white rounded-2xl overflow-hidden transition-all ${expandedSection === 'service' ? 'shadow-xl border-2 border-gray-200' : 'shadow-sm border border-gray-100'}`}
-                                onClick={() => setExpandedSection('service')}
-                            >
-                                {expandedSection === 'service' ? (
-                                    <div className="p-6">
-                                        <h2 className="text-xl font-semibold mb-4">Type de service</h2>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            {serviceTypes.map((type, index) => (
-                                                <button
-                                                    key={index}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        setSelectedServiceType(type);
-                                                    }}
-                                                    className={`p-3 rounded-xl border text-sm font-medium transition-colors ${selectedServiceType === type
-                                                            ? 'border-gray-900 bg-gray-50'
-                                                            : 'border-gray-200 hover:border-gray-400'
-                                                        }`}
-                                                >
-                                                    {type}
-                                                </button>
-                                            ))}
+                                                    return (
+                                                        <button
+                                                            key={index}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleDateClick(day);
+                                                            }}
+                                                            className={`aspect-square flex items-center justify-center text-sm transition-colors ${isSelected ? 'bg-gray-900 text-white rounded-full' :
+                                                                    inRange ? 'bg-gray-100' : 'hover:bg-gray-50'
+                                                                }`}
+                                                        >
+                                                            {day.getDate()}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
                                         </div>
-                                    </div>
-                                ) : (
-                                    <div className="p-4 flex items-center justify-between cursor-pointer">
-                                        <span className="text-gray-500 font-medium">Type de service</span>
-                                        <span className="text-gray-900">{selectedServiceType || "Ajouter un service"}</span>
-                                    </div>
-                                )}
-                            </div>
-                        ) : (
-                            <div
-                                className={`mx-4 mt-4 mb-4 bg-white rounded-2xl overflow-hidden transition-all ${expandedSection === 'guests' ? 'shadow-xl border-2 border-gray-200' : 'shadow-sm border border-gray-100'}`}
-                                onClick={() => setExpandedSection('guests')}
-                            >
+                                    ) : (
+                                        <div className="p-4 flex items-center justify-between cursor-pointer">
+                                            <span className="text-gray-500 font-medium">Quand</span>
+                                            <span className="text-gray-900">{formatDateRange()}</span>
+                                        </div>
+                                    )}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+
+                        {/* Section Voyageurs ou Type de service - masquée en mode étendu */}
+                        <AnimatePresence>
+                            {!isDestinationExpanded && showServiceType && (
+                                <motion.div
+                                    className={`mx-4 mt-4 mb-4 bg-white rounded-2xl overflow-hidden transition-all ${expandedSection === 'service' ? 'shadow-xl border-2 border-gray-200' : 'shadow-sm border border-gray-100'}`}
+                                    onClick={() => setExpandedSection('service')}
+                                    initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                                    animate={{ opacity: 1, height: 'auto', marginTop: 16 }}
+                                    exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    {expandedSection === 'service' ? (
+                                        <div className="p-6">
+                                            <h2 className="text-xl font-semibold mb-4">Type de service</h2>
+                                            <div className="grid grid-cols-2 gap-2">
+                                                {serviceTypes.map((type, index) => (
+                                                    <button
+                                                        key={index}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setSelectedServiceType(type);
+                                                        }}
+                                                        className={`p-3 rounded-xl border text-sm font-medium transition-colors ${selectedServiceType === type
+                                                                ? 'border-gray-900 bg-gray-50'
+                                                                : 'border-gray-200 hover:border-gray-400'
+                                                            }`}
+                                                    >
+                                                        {type}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="p-4 flex items-center justify-between cursor-pointer">
+                                            <span className="text-gray-500 font-medium">Type de service</span>
+                                            <span className="text-gray-900">{selectedServiceType || "Ajouter un service"}</span>
+                                        </div>
+                                    )}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                        <AnimatePresence>
+                            {!isDestinationExpanded && !showServiceType && (
+                                <motion.div
+                                    className={`mx-4 mt-4 mb-4 bg-white rounded-2xl overflow-hidden transition-all ${expandedSection === 'guests' ? 'shadow-xl border-2 border-gray-200' : 'shadow-sm border border-gray-100'}`}
+                                    onClick={() => setExpandedSection('guests')}
+                                    initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                                    animate={{ opacity: 1, height: 'auto', marginTop: 16 }}
+                                    exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                                    transition={{ duration: 0.2 }}
+                                >
                                 {expandedSection === 'guests' ? (
                                     <div className="p-6">
                                         <h2 className="text-xl font-semibold mb-4">Voyageurs</h2>
@@ -527,8 +593,9 @@ export function MobileSearchOverlay({
                                         <span className="text-gray-900">{guestsText}</span>
                                     </div>
                                 )}
-                            </div>
-                        )}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </div>
 
                     {/* Footer avec actions */}
