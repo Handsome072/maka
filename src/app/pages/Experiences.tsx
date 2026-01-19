@@ -2,7 +2,7 @@ import { ExperienceCard } from '../components/ExperienceCard';
 import { PropertyCarousel } from '../components/PropertyCarousel';
 import { SearchBar } from '../components/SearchBar';
 import { motion } from 'motion/react';
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useInView } from 'motion/react';
 
 interface ExperiencesProps {
@@ -11,10 +11,31 @@ interface ExperiencesProps {
   onSearch?: (params: any) => void;
 }
 
+function useWindowWidth() {
+  const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return width;
+}
+
+function getCardWidth(windowWidth: number): string {
+  if (windowWidth < 745) return 'calc((100vw - 48px - 16px) / 2.1)';
+  if (windowWidth < 950) return 'calc((100vw - 80px - 48px) / 4)';
+  if (windowWidth < 1127) return 'calc((100vw - 80px - 64px) / 5)';
+  if (windowWidth < 1285) return 'calc((100vw - 96px - 96px) / 6)';
+  return 'calc((100vw - 96px - 112px) / 7)';
+}
+
 export function Experiences({ isScrolled, onExperienceClick, onSearch }: ExperiencesProps) {
-  // Ref for section title animation
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
+  const windowWidth = useWindowWidth();
+  const cardWidth = getCardWidth(windowWidth);
 
   // HOMIQIO Originals - Organisées par des hôtes d'exception
   const originalsExperiences = [
@@ -386,14 +407,8 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Search bar - smooth opacity transition synchronized with CompactSearchBar
-          The SearchBar keeps its space in the layout and scrolls off-screen naturally.
-          Only opacity changes - no height collapse to prevent layout shift. */}
-      <div
-        className={`transition-opacity duration-300 ease-in-out ${
-          isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100'
-        }`}
-      >
+      {/* Search bar - hidden on mobile (S < 745) */}
+      <div className="hidden md:block">
         <SearchBar type="experiences" onSearch={onSearch} />
       </div>
 
@@ -405,7 +420,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
           showMoreLink={true}
         >
           {originalsExperiences.map((experience, index) => (
-            <div key={index} className="w-[280px] sm:w-[300px] lg:w-[320px]">
+            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
               <ExperienceCard {...experience} onClick={() => onExperienceClick?.()} />
             </div>
           ))}
@@ -430,7 +445,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
           showMoreLink={true}
         >
           {popularExperiences.map((experience, index) => (
-            <div key={index} className="w-[280px] sm:w-[300px] lg:w-[320px]">
+            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
               <ExperienceCard {...experience} onClick={() => onExperienceClick?.()} />
             </div>
           ))}
@@ -442,7 +457,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
           showMoreLink={true}
         >
           {londonExperiences.map((experience, index) => (
-            <div key={index} className="w-[280px] sm:w-[300px] lg:w-[320px]">
+            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
               <ExperienceCard {...experience} onClick={() => onExperienceClick?.()} />
             </div>
           ))}
@@ -454,7 +469,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
           showMoreLink={true}
         >
           {dubaiExperiences.map((experience, index) => (
-            <div key={index} className="w-[280px] sm:w-[300px] lg:w-[320px]">
+            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
               <ExperienceCard {...experience} onClick={() => onExperienceClick?.()} />
             </div>
           ))}
@@ -466,7 +481,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
           showMoreLink={true}
         >
           {madridExperiences.map((experience, index) => (
-            <div key={index} className="w-[280px] sm:w-[300px] lg:w-[320px]">
+            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
               <ExperienceCard {...experience} onClick={() => onExperienceClick?.()} />
             </div>
           ))}
@@ -478,7 +493,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
           showMoreLink={true}
         >
           {romeExperiences.map((experience, index) => (
-            <div key={index} className="w-[280px] sm:w-[300px] lg:w-[320px]">
+            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
               <ExperienceCard {...experience} onClick={() => onExperienceClick?.()} />
             </div>
           ))}

@@ -30,8 +30,9 @@ export function HeaderRightMenu({
 
   return (
     <div className="flex items-center gap-2.5 flex-shrink-0">
+      {/* Bouton Devenir hôte - visible uniquement pour S >= 1127 */}
       <button
-        className="hidden md:block px-4 py-3 hover:bg-gray-100 rounded-full transition-all duration-200 text-sm"
+        className="hidden min-[1127px]:block px-4 py-3 hover:bg-gray-100 rounded-full transition-all duration-200 text-sm"
         style={{ fontWeight: 600 }}
         onClick={() => {
           if (isHost && onAnnoncesClick) {
