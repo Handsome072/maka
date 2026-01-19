@@ -23,11 +23,11 @@ function useWindowWidth() {
 }
 
 function getCardWidth(windowWidth: number): string {
-  if (windowWidth < 745) return 'calc((100vw - 48px - 16px) / 2.1)';
+  if (windowWidth < 745) return 'calc(100vw - 32px - 80px)';
   if (windowWidth < 950) return 'calc((100vw - 80px - 48px) / 4)';
   if (windowWidth < 1127) return 'calc((100vw - 80px - 64px) / 5)';
   if (windowWidth < 1285) return 'calc((100vw - 96px - 96px) / 6)';
-  return '  calc((100vw - 96px - 112px) / 7)';
+  return 'calc((100vw - 96px - 112px) / 7)';
 }
 
 export function Services({ isScrolled, onServiceClick, onSearch }: ServicesProps) {
