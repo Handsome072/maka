@@ -2,16 +2,7 @@
 <!--
 
 
-# General guidelines
-
-Any general rules you want the AI to follow.
-For example:
-
-* Only use absolute positioning when necessary. Opt for responsive and well structured layouts that use flexbox and grid by default
-* Refactor code as you go to keep code clean
-* Keep file sizes small and put helper functions and components in their own files.
-
---------------
+`
 
 # Design system guidelines
 Rules for how the AI should make generations look like your company's design system
