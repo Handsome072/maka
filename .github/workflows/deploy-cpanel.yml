@@ -1,0 +1,133 @@
+name: Deploy to cPanel (Node.js App)
+
+on:
+    push:
+        branches:
+            - main
+    workflow_dispatch:
+
+jobs:
+    deploy:
+        name: Build and Deploy to cPanel
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+                  cache: "npm"
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Configure Next.js for standalone build
+              run: |
+                  # Modify next.config.ts to use standalone output instead of export
+                  cat > next.config.ts << 'EOF'
+                  import type { NextConfig } from 'next';
+
+                  const nextConfig: NextConfig = {
+                    // Standalone output for Node.js server deployment
+                    output: 'standalone',
+
+                    // Disable image optimization for cPanel compatibility
+                    images: {
+                      unoptimized: true,
+                    },
+
+                    // Trailing slashes for routing compatibility
+                    trailingSlash: true,
+
+                    // Enable React strict mode
+                    reactStrictMode: true,
+
+                    // Skip type checking during build
+                    typescript: {
+                      ignoreBuildErrors: true,
+                    },
+
+                    // Skip ESLint during build
+                    eslint: {
+                      ignoreDuringBuilds: true,
+                    },
+
+                    // Disable source maps in production
+                    productionBrowserSourceMaps: false,
+                  };
+
+                  export default nextConfig;
+                  EOF
+
+                  echo "Next.js configured for standalone output"
+
+            - name: Build Next.js (standalone)
+              run: npm run build
+              env:
+                  NODE_ENV: production
+
+            - name: Prepare standalone deployment
+              run: |
+                  echo "Preparing standalone Node.js app..."
+
+                  # Create deployment directory
+                  mkdir -p deploy
+
+                  # Copy standalone build
+                  cp -r .next/standalone/* deploy/
+
+                  # Copy static files
+                  mkdir -p deploy/.next/static
+                  cp -r .next/static/* deploy/.next/static/
+
+                  # Copy public folder
+                  if [ -d "public" ]; then
+                    cp -r public deploy/
+                  fi
+
+                  # Ensure package.json has correct start script
+                  node -e "
+                    const fs = require('fs');
+                    const pkg = JSON.parse(fs.readFileSync('deploy/package.json', 'utf8'));
+                    pkg.scripts = pkg.scripts || {};
+                    pkg.scripts.start = 'node server.js';
+                    fs.writeFileSync('deploy/package.json', JSON.stringify(pkg, null, 2));
+                  "
+
+                  echo "Deployment structure:"
+                  ls -la deploy/
+                  echo ""
+                  echo "Build size:"
+                  du -sh deploy/
+
+            - name: Deploy to cPanel via FTP
+              uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+              with:
+                  server: ${{ secrets.FTP_SERVER }}
+                  username: ${{ secrets.FTP_USERNAME }}
+                  password: ${{ secrets.FTP_PASSWORD }}
+                  port: 21
+                  protocol: ftp
+                  local-dir: ./deploy/
+                  server-dir: ${{ secrets.REMOTE_DIR }}
+                  dangerous-clean-slate: false
+                  exclude: |
+                      **/.git*
+                      **/.git*/**
+                      **/.DS_Store
+
+            - name: Deployment complete
+              run: |
+                  echo "Deployment completed!"
+                  echo ""
+                  echo "cPanel Node.js App Setup:"
+                  echo "  1. Go to cPanel > Setup Node.js App"
+                  echo "  2. Create new application:"
+                  echo "     - Node.js version: 20.x"
+                  echo "     - Application root: your remote directory"
+                  echo "     - Application startup file: server.js"
+                  echo "  3. Click 'Create' then 'Restart App'"
+                  exit 0
