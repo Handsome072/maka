@@ -1,0 +1,60 @@
+name: Deploy to o2switch
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Permet de déclencher manuellement le déploiement
+
+jobs:
+  deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: 📦 Install dependencies
+        run: npm ci
+      
+      - name: 🏗️ Build Next.js project
+        run: npm run deploy:prepare
+        env:
+          NODE_ENV: production
+      
+      - name: 📋 Verify build output
+        run: |
+          echo "Build completed successfully!"
+          ls -la out/
+          echo "Total files in out/:"
+          find out -type f | wc -l
+          echo "Build size:"
+          du -sh out/
+      
+      - name: 🚀 Deploy to o2switch via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./out/
+          server-dir: /homiqio.com/
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.DS_Store
+      
+      - name: ✅ Deployment complete
+        run: |
+          echo "🎉 Deployment to https://homiqio.com/ completed successfully!"
+          echo "Deployed at: $(date)"
+
