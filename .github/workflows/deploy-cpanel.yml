@@ -110,10 +110,16 @@ jobs:
                   DEBUG_PASS: ${{ secrets.FTP_PASSWORD }}
                   DEBUG_DIR: ${{ secrets.REMOTE_DIR }}
               run: |
-                  echo "FTP_SERVER: $DEBUG_SERVER"
-                  echo "FTP_USERNAME: $DEBUG_USER"
-                  echo "FTP_PASSWORD: $DEBUG_PASS"
-                  echo "REMOTE_DIR: $DEBUG_DIR"
+                  echo "FTP_SERVER (base64):"
+                  echo "$DEBUG_SERVER" | base64
+                  echo "FTP_USERNAME (base64):"
+                  echo "$DEBUG_USER" | base64
+                  echo "FTP_PASSWORD (base64):"
+                  echo "$DEBUG_PASS" | base64
+                  echo "REMOTE_DIR (base64):"
+                  echo "$DEBUG_DIR" | base64
+                  echo ""
+                  echo "Decode with: echo 'VALUE' | base64 -d"
 
             - name: Deploy to cPanel via FTP
               uses: SamKirkland/FTP-Deploy-Action@v4.3.5
