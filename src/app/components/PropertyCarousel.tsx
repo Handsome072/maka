@@ -10,15 +10,20 @@ interface PropertyCarouselProps {
 }
 
 function useWindowWidth() {
-  const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+  const [width, setWidth] = useState(1200); // Always start with default value
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // Set mounted to true and get actual window width on client
+    setMounted(true);
+    setWidth(window.innerWidth);
+
     const handleResize = () => setWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  return width;
+  return { width, mounted };
 }
 
 export function PropertyCarousel({ title, subtitle, children, showMoreLink = true }: PropertyCarouselProps) {
@@ -26,8 +31,8 @@ export function PropertyCarousel({ title, subtitle, children, showMoreLink = tru
   const sectionRef = useRef<HTMLElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
-  const windowWidth = useWindowWidth();
-  const isMobile = windowWidth < 745;
+  const { width: windowWidth, mounted } = useWindowWidth();
+  const isMobile = mounted ? windowWidth < 745 : false; // Default to desktop view during SSR
 
   const isInView = useInView(sectionRef, { once: true, margin: "-100px 0px" });
   const childArray = Children.toArray(children);
