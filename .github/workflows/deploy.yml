@@ -47,7 +47,7 @@ jobs:
           port: 21
           protocol: ftp
           local-dir: ./out/
-          server-dir: ./
+          server-dir: /homiqio.com/
           dangerous-clean-slate: false
           exclude: |
             **/.git*
