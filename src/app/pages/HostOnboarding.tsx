@@ -147,26 +147,26 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
   // Intro page
   if (currentStep === 'intro') {
     return (
-      <div className="min-h-screen bg-white flex overflow-y-auto scrollbar-hide">
+      <div className="min-h-screen bg-white flex flex-col md:flex-row overflow-y-auto scrollbar-hide">
         {/* Left side */}
-        <div className="flex-1 flex items-center justify-center px-12">
-          <div className="max-w-md">
-            <h1 className="text-5xl mb-12" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.1' }}>
+        <div className="flex-1 flex items-center justify-center px-6 sm:px-8 md:px-12 py-8 md:py-0">
+          <div className="max-w-md w-full">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl mb-8 sm:mb-10 md:mb-12" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.1' }}>
               Commencer sur HOMIQIO, c'est facile
             </h1>
           </div>
         </div>
 
         {/* Right side */}
-        <div className="flex-1 flex items-center justify-center px-12 bg-gradient-to-br from-gray-50 to-white">
-          <div className="max-w-lg space-y-12">
+        <div className="flex-1 flex items-center justify-center px-6 sm:px-8 md:px-12 py-8 md:py-0 bg-gradient-to-br from-gray-50 to-white">
+          <div className="max-w-lg w-full space-y-8 sm:space-y-10 md:space-y-12">
             {/* Step 1 */}
-            <div className="flex gap-6 items-start">
+            <div className="flex gap-4 sm:gap-6 items-start">
               <div className="flex-1">
-                <div className="text-lg mb-2" style={{ fontWeight: 600, color: '#222222' }}>
+                <div className="text-base sm:text-lg mb-2" style={{ fontWeight: 600, color: '#222222' }}>
                   1 Parlez-nous de votre logement
                 </div>
-                <p className="text-base" style={{ color: '#717171', lineHeight: '1.5' }}>
+                <p className="text-sm sm:text-base" style={{ color: '#717171', lineHeight: '1.5' }}>
                   Donnez-nous quelques informations de base, par exemple indiquez-nous où il se trouve et combien de voyageurs il peut accueillir.
                 </p>
               </div>
@@ -180,12 +180,12 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
             </div>
 
             {/* Step 2 */}
-            <div className="flex gap-6 items-start">
+            <div className="flex gap-4 sm:gap-6 items-start">
               <div className="flex-1">
-                <div className="text-lg mb-2" style={{ fontWeight: 600, color: '#222222' }}>
+                <div className="text-base sm:text-lg mb-2" style={{ fontWeight: 600, color: '#222222' }}>
                   2 Faites en sorte de vous démarquer
                 </div>
-                <p className="text-base" style={{ color: '#717171', lineHeight: '1.5' }}>
+                <p className="text-sm sm:text-base" style={{ color: '#717171', lineHeight: '1.5' }}>
                   Ajoutez au moins 5 photos, un titre et une description. Nous allons vous aider.
                 </p>
               </div>
@@ -199,12 +199,12 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
             </div>
 
             {/* Step 3 */}
-            <div className="flex gap-6 items-start">
+            <div className="flex gap-4 sm:gap-6 items-start">
               <div className="flex-1">
-                <div className="text-lg mb-2" style={{ fontWeight: 600, color: '#222222' }}>
+                <div className="text-base sm:text-lg mb-2" style={{ fontWeight: 600, color: '#222222' }}>
                   3 Terminez et publiez
                 </div>
-                <p className="text-base" style={{ color: '#717171', lineHeight: '1.5' }}>
+                <p className="text-sm sm:text-base" style={{ color: '#717171', lineHeight: '1.5' }}>
                   Choisissez un prix de départ, vérifiez quelques détails, puis publiez votre annonce.
                 </p>
               </div>
@@ -220,13 +220,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Header */}
-        <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-8 py-6">
+        <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 sm:px-6 md:px-8 py-4 sm:py-5 md:py-6">
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
-            <Logo className="h-12" />
+            <Logo className="h-8 sm:h-10 md:h-12" />
           </div>
-          <button 
+          <button
             onClick={() => onNavigate('logements')}
-            className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors"
+            className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm hover:bg-gray-50 rounded-full transition-colors"
             style={{ fontWeight: 600, color: '#222222' }}
           >
             Quitter
@@ -234,10 +234,10 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer button */}
-        <div className="absolute bottom-0 right-0 px-8 py-8">
+        <div className="absolute bottom-0 right-0 px-4 sm:px-6 md:px-8 py-6 sm:py-7 md:py-8">
           <button
             onClick={() => changeStep('step1')}
-            className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            className="px-6 sm:px-8 py-2.5 sm:py-3 text-white rounded-lg text-sm sm:text-base bg-[#000000] hover:bg-[#222222] transition-colors"
             style={{ fontWeight: 600 }}
           >
             Commencer
@@ -252,20 +252,21 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-4 sm:px-6 md:px-8 py-2 sm:py-3 flex items-center justify-between z-20">
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
-            <Logo className="h-12" />
+            <Logo className="h-8 sm:h-10 md:h-12" />
           </div>
-          <div className="flex gap-3">
-            <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
+          <div className="flex gap-2 sm:gap-3">
+            <button className="hidden sm:block px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
             </button>
             <button
               onClick={() => onNavigate('logements')}
-              className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors border border-gray-300"
+              className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm hover:bg-gray-50 rounded-full transition-colors border border-gray-300"
               style={{ fontWeight: 600, color: '#222222' }}
             >
-              Enregistrer et quitter
+              <span className="hidden sm:inline">Enregistrer et quitter</span>
+              <span className="sm:hidden">Quitter</span>
             </button>
           </div>
         </div>
@@ -300,17 +301,17 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 sm:px-6 md:px-8 py-2 sm:py-3 flex items-center justify-between z-20">
           <button
             onClick={() => changeStep('intro')}
-            className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
+            className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base hover:bg-gray-50 rounded-lg transition-colors underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
             Retour
           </button>
           <button
             onClick={() => changeStep('property-type')}
-            className="px-8 py-3 text-white rounded-lg text-base bg-[#000000] hover:bg-[#222222] transition-colors"
+            className="px-6 sm:px-8 py-2 sm:py-3 text-white rounded-lg text-sm sm:text-base bg-[#000000] hover:bg-[#222222] transition-colors"
             style={{ fontWeight: 600 }}
           >
             Suivant
@@ -346,43 +347,44 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-4 sm:px-6 md:px-8 py-2 sm:py-3 flex items-center justify-between z-20">
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
-            <Logo className="h-12" />
+            <Logo className="h-8 sm:h-10 md:h-12" />
           </div>
-          <div className="flex gap-3">
-            <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
+          <div className="flex gap-2 sm:gap-3">
+            <button className="hidden sm:block px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
             </button>
             <button
               onClick={() => onNavigate('logements')}
-              className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors border border-gray-300"
+              className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm hover:bg-gray-50 rounded-full transition-colors border border-gray-300"
               style={{ fontWeight: 600, color: '#222222' }}
             >
-              Enregistrer et quitter
+              <span className="hidden sm:inline">Enregistrer et quitter</span>
+              <span className="sm:hidden">Quitter</span>
             </button>
           </div>
         </div>
 
         {/* Content */}
-        <div className="max-w-3xl mx-auto px-8 pt-32 pb-32">
-          <h1 className="text-3xl mb-8 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 md:px-8 pt-20 sm:pt-24 md:pt-32 pb-20 sm:pb-24 md:pb-32">
+          <h1 className="text-xl sm:text-2xl md:text-3xl mb-6 sm:mb-8 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             Parmi les propositions suivantes, laquelle décrit le mieux votre logement ?
           </h1>
 
-          <div className="grid grid-cols-3 gap-4 mb-24">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 mb-16 sm:mb-24">
             {propertyTypes.map((type) => (
               <button
                 key={type.id}
                 onClick={() => setSelectedType(type.id)}
-                className={`p-6 rounded-xl border-2 transition-all hover:border-gray-900 ${
+                className={`p-4 sm:p-6 rounded-xl border-2 transition-all hover:border-gray-900 ${
                   selectedType === type.id
                     ? 'border-gray-900 bg-gray-50'
                     : 'border-gray-300 bg-white'
                 }`}
               >
-                <div className="text-3xl mb-2">{type.icon}</div>
-                <div className="text-sm" style={{ fontWeight: 600, color: '#222222' }}>
+                <div className="text-2xl sm:text-3xl mb-1 sm:mb-2">{type.icon}</div>
+                <div className="text-xs sm:text-sm" style={{ fontWeight: 600, color: '#222222' }}>
                   {type.label}
                 </div>
               </button>
@@ -391,10 +393,10 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 sm:px-6 md:px-8 py-2 sm:py-3 flex items-center justify-between z-20">
           <button
             onClick={() => changeStep('step1')}
-            className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
+            className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base hover:bg-gray-50 rounded-lg transition-colors underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
             Retour
@@ -402,7 +404,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           <button
             disabled={!selectedType}
             onClick={() => selectedType && changeStep('space-type')}
-            className={`px-8 py-3 text-white rounded-lg text-base transition-colors bg-[#000000] ${
+            className={`px-6 sm:px-8 py-2 sm:py-3 text-white rounded-lg text-sm sm:text-base transition-colors bg-[#000000] ${
               selectedType ? 'hover:bg-[#222222]' : 'opacity-40 cursor-not-allowed'
             }`}
             style={{ fontWeight: 600 }}
@@ -419,27 +421,28 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-4 sm:px-6 md:px-8 py-2 sm:py-3 flex items-center justify-between z-20">
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
-            <Logo className="h-12" />
+            <Logo className="h-8 sm:h-10 md:h-12" />
           </div>
-          <div className="flex gap-3">
-            <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
+          <div className="flex gap-2 sm:gap-3">
+            <button className="hidden sm:block px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
               Des questions ?
             </button>
             <button
               onClick={() => onNavigate('logements')}
-              className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors border border-gray-300"
+              className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm hover:bg-gray-50 rounded-full transition-colors border border-gray-300"
               style={{ fontWeight: 600, color: '#222222' }}
             >
-              Enregistrer et quitter
+              <span className="hidden sm:inline">Enregistrer et quitter</span>
+              <span className="sm:hidden">Quitter</span>
             </button>
           </div>
         </div>
 
         {/* Content */}
-        <div className="max-w-2xl mx-auto px-8 pt-32 pb-32">
-          <h1 className="text-3xl mb-2 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 md:px-8 pt-20 sm:pt-24 md:pt-32 pb-20 sm:pb-24 md:pb-32">
+          <h1 className="text-xl sm:text-2xl md:text-3xl mb-2 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             Quel type de logement sera à la disposition des voyageurs ?
           </h1>
 
@@ -447,17 +450,17 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
             {/* Un logement entier */}
             <button
               onClick={() => setSelectedSpaceType('entire')}
-              className={`w-full p-6 rounded-xl border-2 transition-all text-left flex items-start justify-between ${
+              className={`w-full p-4 sm:p-6 rounded-xl border-2 transition-all text-left flex items-start justify-between ${
                 selectedSpaceType === 'entire'
                   ? 'border-gray-900 bg-gray-50'
                   : 'border-gray-300 bg-white hover:border-gray-900'
               }`}
             >
               <div className="flex-1">
-                <h3 className="text-base mb-1" style={{ fontWeight: 600, color: '#222222' }}>
+                <h3 className="text-sm sm:text-base mb-1" style={{ fontWeight: 600, color: '#222222' }}>
                   Un logement entier
                 </h3>
-                <p className="text-sm" style={{ color: '#717171', lineHeight: '1.5' }}>
+                <p className="text-xs sm:text-sm" style={{ color: '#717171', lineHeight: '1.5' }}>
                   Les voyageurs disposent du logement dans son intégralité.
                 </p>
               </div>
@@ -471,17 +474,17 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
             {/* Une chambre */}
             <button
               onClick={() => setSelectedSpaceType('room')}
-              className={`w-full p-6 rounded-xl border-2 transition-all text-left flex items-start justify-between ${
+              className={`w-full p-4 sm:p-6 rounded-xl border-2 transition-all text-left flex items-start justify-between ${
                 selectedSpaceType === 'room'
                   ? 'border-gray-900 bg-gray-50'
                   : 'border-gray-300 bg-white hover:border-gray-900'
               }`}
             >
               <div className="flex-1">
-                <h3 className="text-base mb-1" style={{ fontWeight: 600, color: '#222222' }}>
+                <h3 className="text-sm sm:text-base mb-1" style={{ fontWeight: 600, color: '#222222' }}>
                   Une chambre
                 </h3>
-                <p className="text-sm" style={{ color: '#717171', lineHeight: '1.5' }}>
+                <p className="text-xs sm:text-sm" style={{ color: '#717171', lineHeight: '1.5' }}>
                   Les voyageurs ont leur propre chambre dans un logement et ont accès à des espaces partagés.
                 </p>
               </div>
@@ -495,17 +498,17 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
             {/* Une chambre partagée dans une auberge de jeunesse */}
             <button
               onClick={() => setSelectedSpaceType('shared')}
-              className={`w-full p-6 rounded-xl border-2 transition-all text-left flex items-start justify-between ${
+              className={`w-full p-4 sm:p-6 rounded-xl border-2 transition-all text-left flex items-start justify-between ${
                 selectedSpaceType === 'shared'
                   ? 'border-gray-900 bg-gray-50'
                   : 'border-gray-300 bg-white hover:border-gray-900'
               }`}
             >
               <div className="flex-1">
-                <h3 className="text-base mb-1" style={{ fontWeight: 600, color: '#222222' }}>
+                <h3 className="text-sm sm:text-base mb-1" style={{ fontWeight: 600, color: '#222222' }}>
                   Une chambre partagée dans une auberge de jeunesse
                 </h3>
-                <p className="text-sm" style={{ color: '#717171', lineHeight: '1.5' }}>
+                <p className="text-xs sm:text-sm" style={{ color: '#717171', lineHeight: '1.5' }}>
                   Les voyageurs dorment dans une chambre partagée dans une auberge de jeunesse gérée par un professionnel, avec du personnel sur place 24h/24, 7j/7.
                 </p>
               </div>
@@ -521,10 +524,10 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 sm:px-6 md:px-8 py-2 sm:py-3 flex items-center justify-between z-20">
           <button
             onClick={() => changeStep('property-type')}
-            className="px-6 py-3 text-base hover:bg-gray-50 rounded-lg transition-colors underline"
+            className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base hover:bg-gray-50 rounded-lg transition-colors underline"
             style={{ fontWeight: 600, color: '#222222' }}
           >
             Retour
@@ -532,7 +535,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
           <button
             disabled={!selectedSpaceType}
             onClick={() => selectedSpaceType && changeStep('location')}
-            className={`px-8 py-3 text-white rounded-lg text-base transition-colors bg-[#000000] ${
+            className={`px-6 sm:px-8 py-2 sm:py-3 text-white rounded-lg text-sm sm:text-base transition-colors bg-[#000000] ${
               selectedSpaceType ? 'hover:bg-[#222222]' : 'opacity-40 cursor-not-allowed'
             }`}
             style={{ fontWeight: 600 }}
