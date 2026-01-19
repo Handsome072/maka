@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { X, Search, Navigation, Building, Landmark, MapPin, ChevronDown, ChevronLeft, ChevronRight, Minus, Plus } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useState, useEffect, useMemo } from 'react';
+import { X, Search, Navigation, Building, Landmark, MapPin, ChevronDown, ChevronRight, Minus, Plus } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface MobileSearchOverlayProps {
     isOpen: boolean;
@@ -96,6 +96,9 @@ export function MobileSearchOverlay({
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [startDate, setStartDate] = useState<Date | null>(null);
     const [endDate, setEndDate] = useState<Date | null>(null);
+    const [selectedQuickOption, setSelectedQuickOption] = useState<string | null>(null);
+
+    const [visibleMonthCount, setVisibleMonthCount] = useState(4); // mois actuel + 3 suivants
 
     const [guestsCount, setGuestsCount] = useState({
         adults: 0,
@@ -161,7 +164,63 @@ export function MobileSearchOverlay({
         return days;
     };
 
+    // Dates rapides : Aujourd'hui, Demain, Ce week-end
+    const quickDates = useMemo(() => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        // Prochain week-end (samedi - dimanche)
+        const dayOfWeek = today.getDay(); // 0 = dimanche ... 6 = samedi
+        const daysUntilSaturday = dayOfWeek === 0 ? 6 : (6 - dayOfWeek);
+        const nextSaturday = new Date(today);
+        nextSaturday.setDate(nextSaturday.getDate() + daysUntilSaturday);
+
+        const nextSunday = new Date(nextSaturday);
+        nextSunday.setDate(nextSunday.getDate() + 1);
+
+        const formatShortDate = (date: Date) => {
+            const day = date.getDate();
+            const month = monthNames[date.getMonth()].substring(0, 4).toLowerCase();
+            return `${day} ${month}.`;
+        };
+
+        const formatWeekendRange = (start: Date, end: Date) => {
+            const startDay = start.getDate();
+            const endDay = end.getDate();
+            const month = monthNames[start.getMonth()].substring(0, 4).toLowerCase();
+            return `${startDay}–${endDay} ${month}.`;
+        };
+
+        return {
+            today: {
+                date: today,
+                label: formatShortDate(today),
+            },
+            tomorrow: {
+                date: tomorrow,
+                label: formatShortDate(tomorrow),
+            },
+            weekend: {
+                start: nextSaturday,
+                end: nextSunday,
+                label: formatWeekendRange(nextSaturday, nextSunday),
+            },
+        };
+    }, []);
+
+    const handleQuickDateSelect = (start: Date, end: Date, optionName: string) => {
+        setSelectedQuickOption(optionName);
+        setStartDate(start);
+        setEndDate(end);
+    };
+
     const handleDateClick = (day: Date) => {
+        // Dès qu'on clique manuellement sur une date, on sort du mode \"rapide\"
+        setSelectedQuickOption(null);
+
         if (!startDate || (startDate && endDate)) {
             setStartDate(day);
             setEndDate(null);
@@ -200,7 +259,20 @@ export function MobileSearchOverlay({
     const totalGuests = guestsCount.adults + guestsCount.children + guestsCount.babies;
     const guestsText = totalGuests > 0 ? `${totalGuests} voyageur${totalGuests > 1 ? 's' : ''}` : "Ajouter des voyageurs";
 
-    const days = getDaysInMonth(currentMonth);
+    // Mois de base pour le scroll vertical (tronqué au début du mois)
+    const baseMonth = useMemo(() => {
+        const d = new Date();
+        return new Date(d.getFullYear(), d.getMonth(), 1);
+    }, []);
+
+    const monthsToRender = useMemo(() => {
+        const months: Date[] = [];
+        for (let i = 0; i < visibleMonthCount; i++) {
+            const monthDate = new Date(baseMonth.getFullYear(), baseMonth.getMonth() + i, 1);
+            months.push(monthDate);
+        }
+        return months;
+    }, [baseMonth, visibleMonthCount]);
 
     const showPets = currentPage === 'logements';
     const showServiceType = currentPage === 'services';
@@ -364,65 +436,118 @@ export function MobileSearchOverlay({
                                         <div className="p-6">
                                             <h2 className="text-xl font-semibold mb-4">Quand ?</h2>
 
-                                            {/* Navigation du mois */}
-                                            <div className="flex items-center justify-between mb-4">
+                                            {/* Options rapides : Aujourd'hui / Demain / Ce week-end */}
+                                            <div className="flex gap-2 mb-4 overflow-x-auto">
                                                 <button
+                                                    className={`w-fit px-3 py-3 rounded-xl border text-left transition-colors ${selectedQuickOption === 'today'
+                                                        ? 'border-gray-900 bg-gray-50'
+                                                        : 'border-gray-300 hover:border-gray-400'
+                                                        }`}
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
+                                                        handleQuickDateSelect(quickDates.today.date, quickDates.today.date, 'today');
                                                     }}
-                                                    className="p-2 hover:bg-gray-100 rounded-full"
                                                 >
-                                                    <ChevronLeft className="w-5 h-5" />
+                                                    <div className="text-sm font-semibold">Aujourd'hui</div>
+                                                    <div className="text-xs text-gray-500">{quickDates.today.label}</div>
                                                 </button>
-                                                <h3 className="text-base font-semibold">
-                                                    {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
-                                                </h3>
+
                                                 <button
+                                                    className={`w-fit px-3 py-3 rounded-xl border text-left transition-colors ${selectedQuickOption === 'tomorrow'
+                                                        ? 'border-gray-900 bg-gray-50'
+                                                        : 'border-gray-300 hover:border-gray-400'
+                                                        }`}
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
+                                                        handleQuickDateSelect(quickDates.tomorrow.date, quickDates.tomorrow.date, 'tomorrow');
                                                     }}
-                                                    className="p-2 hover:bg-gray-100 rounded-full"
                                                 >
-                                                    <ChevronRight className="w-5 h-5" />
+                                                    <div className="text-sm font-semibold">Demain</div>
+                                                    <div className="text-xs text-gray-500">{quickDates.tomorrow.label}</div>
+                                                </button>
+
+                                                <button
+                                                    className={`w-fit px-3 py-3 rounded-xl border text-left transition-colors ${selectedQuickOption === 'weekend'
+                                                        ? 'border-gray-900 bg-gray-50'
+                                                        : 'border-gray-300 hover:border-gray-400'
+                                                        }`}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleQuickDateSelect(quickDates.weekend.start, quickDates.weekend.end, 'weekend');
+                                                    }}
+                                                >
+                                                    <div className="text-sm font-semibold">Ce week-end</div>
+                                                    <div className="text-xs text-gray-500">{quickDates.weekend.label}</div>
                                                 </button>
                                             </div>
 
-                                            {/* Jours de la semaine */}
-                                            <div className="grid grid-cols-7 gap-1 mb-2">
-                                                {weekDays.map((day, index) => (
-                                                    <div key={index} className="text-center text-xs font-semibold text-gray-500 py-2">
-                                                        {day}
+                                            {/* Calendrier vertical multi-mois */}
+                                            <div className="relative max-h-80 overflow-y-auto space-y-6">
+                                                {/* En-tête des jours fixe */}
+                                                <div className="sticky top-0 z-10 bg-white pb-2">
+                                                    <div className="grid grid-cols-7 gap-1">
+                                                        {weekDays.map((day, index) => (
+                                                            <div key={index} className="text-center text-xs font-semibold text-gray-500 py-1">
+                                                                {day}
+                                                            </div>
+                                                        ))}
                                                     </div>
-                                                ))}
-                                            </div>
+                                                </div>
 
-                                            {/* Calendrier */}
-                                            <div className="grid grid-cols-7 gap-1">
-                                                {days.map((day, index) => {
-                                                    if (!day) return <div key={index} />;
-                                                    const isStart = isStartDate(day);
-                                                    const isEnd = isEndDate(day);
-                                                    const inRange = isInRange(day);
-                                                    const isSelected = isStart || isEnd;
-
+                                                {monthsToRender.map((monthDate) => {
+                                                    const days = getDaysInMonth(monthDate);
                                                     return (
-                                                        <button
-                                                            key={index}
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                handleDateClick(day);
-                                                            }}
-                                                            className={`aspect-square flex items-center justify-center text-sm transition-colors ${isSelected ? 'bg-gray-900 text-white rounded-full' :
-                                                                    inRange ? 'bg-gray-100' : 'hover:bg-gray-50'
-                                                                }`}
-                                                        >
-                                                            {day.getDate()}
-                                                        </button>
+                                                        <div key={`${monthDate.getFullYear()}-${monthDate.getMonth()}`}>
+                                                            <div className="flex items-center justify-center mb-2">
+                                                                <h3 className="text-base font-semibold">
+                                                                    {monthNames[monthDate.getMonth()]} {monthDate.getFullYear()}
+                                                                </h3>
+                                                            </div>
+
+                                                            {/* Jours du mois */}
+                                                            <div className="grid grid-cols-7 gap-1">
+                                                                {days.map((day, index) => {
+                                                                    if (!day) return <div key={index} />;
+                                                                    const isStart = isStartDate(day);
+                                                                    const isEnd = isEndDate(day);
+                                                                    const inRange = isInRange(day);
+                                                                    const isSelected = isStart || isEnd;
+
+                                                                    return (
+                                                                        <button
+                                                                            key={index}
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                handleDateClick(day);
+                                                                            }}
+                                                                            className={`aspect-square flex items-center justify-center text-sm transition-colors ${isSelected
+                                                                                ? 'bg-gray-900 text-white rounded-full'
+                                                                                : inRange
+                                                                                    ? 'bg-gray-100'
+                                                                                    : 'hover:bg-gray-50'
+                                                                                }`}
+                                                                        >
+                                                                            {day.getDate()}
+                                                                        </button>
+                                                                    );
+                                                                })}
+                                                            </div>
+                                                        </div>
                                                     );
                                                 })}
                                             </div>
+
+                                            {/* Afficher plus de dates */}
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setVisibleMonthCount((prev) => prev + 3);
+                                                }}
+                                                className="mt-4 w-full py-3 border border-gray-300 rounded-xl text-sm font-medium text-gray-800 hover:bg-gray-50"
+                                            >
+                                                Afficher plus de dates
+                                            </button>
                                         </div>
                                     ) : (
                                         <div className="p-4 flex items-center justify-between cursor-pointer">
@@ -457,8 +582,8 @@ export function MobileSearchOverlay({
                                                             setSelectedServiceType(type);
                                                         }}
                                                         className={`p-3 rounded-xl border text-sm font-medium transition-colors ${selectedServiceType === type
-                                                                ? 'border-gray-900 bg-gray-50'
-                                                                : 'border-gray-200 hover:border-gray-400'
+                                                            ? 'border-gray-900 bg-gray-50'
+                                                            : 'border-gray-200 hover:border-gray-400'
                                                             }`}
                                                     >
                                                         {type}
@@ -485,114 +610,114 @@ export function MobileSearchOverlay({
                                     exit={{ opacity: 0, height: 0, marginTop: 0 }}
                                     transition={{ duration: 0.2 }}
                                 >
-                                {expandedSection === 'guests' ? (
-                                    <div className="p-6">
-                                        <h2 className="text-xl font-semibold mb-4">Voyageurs</h2>
+                                    {expandedSection === 'guests' ? (
+                                        <div className="p-6">
+                                            <h2 className="text-xl font-semibold mb-4">Voyageurs</h2>
 
-                                        {/* Adultes */}
-                                        <div className="flex items-center justify-between py-4 border-b border-gray-200">
-                                            <div>
-                                                <div className="font-semibold">Adultes</div>
-                                                <div className="text-sm text-gray-500">13 ans et plus</div>
-                                            </div>
-                                            <div className="flex items-center gap-3">
-                                                <button
-                                                    onClick={(e) => { e.stopPropagation(); updateGuestCount('adults', -1); }}
-                                                    disabled={guestsCount.adults <= 0}
-                                                    className={`w-8 h-8 rounded-full border flex items-center justify-center ${guestsCount.adults <= 0 ? 'opacity-40' : ''}`}
-                                                >
-                                                    <Minus className="w-4 h-4" />
-                                                </button>
-                                                <span className="w-6 text-center">{guestsCount.adults}</span>
-                                                <button
-                                                    onClick={(e) => { e.stopPropagation(); updateGuestCount('adults', 1); }}
-                                                    className="w-8 h-8 rounded-full border flex items-center justify-center"
-                                                >
-                                                    <Plus className="w-4 h-4" />
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        {/* Enfants */}
-                                        <div className="flex items-center justify-between py-4 border-b border-gray-200">
-                                            <div>
-                                                <div className="font-semibold">Enfants</div>
-                                                <div className="text-sm text-gray-500">De 2 à 12 ans</div>
-                                            </div>
-                                            <div className="flex items-center gap-3">
-                                                <button
-                                                    onClick={(e) => { e.stopPropagation(); updateGuestCount('children', -1); }}
-                                                    disabled={guestsCount.children <= 0}
-                                                    className={`w-8 h-8 rounded-full border flex items-center justify-center ${guestsCount.children <= 0 ? 'opacity-40' : ''}`}
-                                                >
-                                                    <Minus className="w-4 h-4" />
-                                                </button>
-                                                <span className="w-6 text-center">{guestsCount.children}</span>
-                                                <button
-                                                    onClick={(e) => { e.stopPropagation(); updateGuestCount('children', 1); }}
-                                                    className="w-8 h-8 rounded-full border flex items-center justify-center"
-                                                >
-                                                    <Plus className="w-4 h-4" />
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        {/* Bébés */}
-                                        <div className={`flex items-center justify-between py-4 ${showPets ? 'border-b border-gray-200' : ''}`}>
-                                            <div>
-                                                <div className="font-semibold">Bébés</div>
-                                                <div className="text-sm text-gray-500">- de 2 ans</div>
-                                            </div>
-                                            <div className="flex items-center gap-3">
-                                                <button
-                                                    onClick={(e) => { e.stopPropagation(); updateGuestCount('babies', -1); }}
-                                                    disabled={guestsCount.babies <= 0}
-                                                    className={`w-8 h-8 rounded-full border flex items-center justify-center ${guestsCount.babies <= 0 ? 'opacity-40' : ''}`}
-                                                >
-                                                    <Minus className="w-4 h-4" />
-                                                </button>
-                                                <span className="w-6 text-center">{guestsCount.babies}</span>
-                                                <button
-                                                    onClick={(e) => { e.stopPropagation(); updateGuestCount('babies', 1); }}
-                                                    className="w-8 h-8 rounded-full border flex items-center justify-center"
-                                                >
-                                                    <Plus className="w-4 h-4" />
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        {/* Animaux - uniquement pour Logements */}
-                                        {showPets && (
-                                            <div className="flex items-center justify-between py-4">
+                                            {/* Adultes */}
+                                            <div className="flex items-center justify-between py-4 border-b border-gray-200">
                                                 <div>
-                                                    <div className="font-semibold">Animaux domestiques</div>
-                                                    <div className="text-sm text-gray-500 underline">Vous voyagez avec un animal d'assistance ?</div>
+                                                    <div className="font-semibold">Adultes</div>
+                                                    <div className="text-sm text-gray-500">13 ans et plus</div>
                                                 </div>
                                                 <div className="flex items-center gap-3">
                                                     <button
-                                                        onClick={(e) => { e.stopPropagation(); updateGuestCount('pets', -1); }}
-                                                        disabled={guestsCount.pets <= 0}
-                                                        className={`w-8 h-8 rounded-full border flex items-center justify-center ${guestsCount.pets <= 0 ? 'opacity-40' : ''}`}
+                                                        onClick={(e) => { e.stopPropagation(); updateGuestCount('adults', -1); }}
+                                                        disabled={guestsCount.adults <= 0}
+                                                        className={`w-8 h-8 rounded-full border flex items-center justify-center ${guestsCount.adults <= 0 ? 'opacity-40' : ''}`}
                                                     >
                                                         <Minus className="w-4 h-4" />
                                                     </button>
-                                                    <span className="w-6 text-center">{guestsCount.pets}</span>
+                                                    <span className="w-6 text-center">{guestsCount.adults}</span>
                                                     <button
-                                                        onClick={(e) => { e.stopPropagation(); updateGuestCount('pets', 1); }}
+                                                        onClick={(e) => { e.stopPropagation(); updateGuestCount('adults', 1); }}
                                                         className="w-8 h-8 rounded-full border flex items-center justify-center"
                                                     >
                                                         <Plus className="w-4 h-4" />
                                                     </button>
                                                 </div>
                                             </div>
-                                        )}
-                                    </div>
-                                ) : (
-                                    <div className="p-4 flex items-center justify-between cursor-pointer">
-                                        <span className="text-gray-500 font-medium">Voyageurs</span>
-                                        <span className="text-gray-900">{guestsText}</span>
-                                    </div>
-                                )}
+
+                                            {/* Enfants */}
+                                            <div className="flex items-center justify-between py-4 border-b border-gray-200">
+                                                <div>
+                                                    <div className="font-semibold">Enfants</div>
+                                                    <div className="text-sm text-gray-500">De 2 à 12 ans</div>
+                                                </div>
+                                                <div className="flex items-center gap-3">
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); updateGuestCount('children', -1); }}
+                                                        disabled={guestsCount.children <= 0}
+                                                        className={`w-8 h-8 rounded-full border flex items-center justify-center ${guestsCount.children <= 0 ? 'opacity-40' : ''}`}
+                                                    >
+                                                        <Minus className="w-4 h-4" />
+                                                    </button>
+                                                    <span className="w-6 text-center">{guestsCount.children}</span>
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); updateGuestCount('children', 1); }}
+                                                        className="w-8 h-8 rounded-full border flex items-center justify-center"
+                                                    >
+                                                        <Plus className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            {/* Bébés */}
+                                            <div className={`flex items-center justify-between py-4 ${showPets ? 'border-b border-gray-200' : ''}`}>
+                                                <div>
+                                                    <div className="font-semibold">Bébés</div>
+                                                    <div className="text-sm text-gray-500">- de 2 ans</div>
+                                                </div>
+                                                <div className="flex items-center gap-3">
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); updateGuestCount('babies', -1); }}
+                                                        disabled={guestsCount.babies <= 0}
+                                                        className={`w-8 h-8 rounded-full border flex items-center justify-center ${guestsCount.babies <= 0 ? 'opacity-40' : ''}`}
+                                                    >
+                                                        <Minus className="w-4 h-4" />
+                                                    </button>
+                                                    <span className="w-6 text-center">{guestsCount.babies}</span>
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); updateGuestCount('babies', 1); }}
+                                                        className="w-8 h-8 rounded-full border flex items-center justify-center"
+                                                    >
+                                                        <Plus className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            {/* Animaux - uniquement pour Logements */}
+                                            {showPets && (
+                                                <div className="flex items-center justify-between py-4">
+                                                    <div>
+                                                        <div className="font-semibold">Animaux domestiques</div>
+                                                        <div className="text-sm text-gray-500 underline">Vous voyagez avec un animal d'assistance ?</div>
+                                                    </div>
+                                                    <div className="flex items-center gap-3">
+                                                        <button
+                                                            onClick={(e) => { e.stopPropagation(); updateGuestCount('pets', -1); }}
+                                                            disabled={guestsCount.pets <= 0}
+                                                            className={`w-8 h-8 rounded-full border flex items-center justify-center ${guestsCount.pets <= 0 ? 'opacity-40' : ''}`}
+                                                        >
+                                                            <Minus className="w-4 h-4" />
+                                                        </button>
+                                                        <span className="w-6 text-center">{guestsCount.pets}</span>
+                                                        <button
+                                                            onClick={(e) => { e.stopPropagation(); updateGuestCount('pets', 1); }}
+                                                            className="w-8 h-8 rounded-full border flex items-center justify-center"
+                                                        >
+                                                            <Plus className="w-4 h-4" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <div className="p-4 flex items-center justify-between cursor-pointer">
+                                            <span className="text-gray-500 font-medium">Voyageurs</span>
+                                            <span className="text-gray-900">{guestsText}</span>
+                                        </div>
+                                    )}
                                 </motion.div>
                             )}
                         </AnimatePresence>
