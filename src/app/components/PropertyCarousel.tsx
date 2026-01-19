@@ -65,7 +65,10 @@ export function PropertyCarousel({ title, subtitle, children, showMoreLink = tru
     const container = scrollContainerRef.current;
     if (!container) return;
 
-    const scrollAmount = container.clientWidth * 0.8;
+    const firstChild = container.firstElementChild as HTMLElement | null;
+    const cardWidth = firstChild?.clientWidth ?? container.clientWidth * 0.8;
+
+    const scrollAmount = isMobile ? cardWidth : container.clientWidth * 0.8;
     const targetScroll = direction === 'left'
       ? container.scrollLeft - scrollAmount
       : container.scrollLeft + scrollAmount;
@@ -110,8 +113,8 @@ export function PropertyCarousel({ title, subtitle, children, showMoreLink = tru
             </div>
             {subtitle && <p className="text-sm text-gray-600 mt-1">{subtitle}</p>}
           </div>
-          {/* Navigation arrows - hidden on mobile (S < 745) */}
-          <div className={`flex items-center gap-2 ${isMobile ? 'hidden' : ''}`}>
+          {/* Navigation arrows - always visible, including on mobile */}
+          <div className="flex items-center gap-2">
             <button
               onClick={() => scroll('left')}
               disabled={!canScrollLeft}
