@@ -33,3 +33,10 @@ Thumbs.db
 # Vercel
 .vercel
 
+# Deployment archives
+*.zip
+homiqio-deploy.zip
+
+# FTP credentials (never commit these!)
+.ftpconfig
+.ftppass
