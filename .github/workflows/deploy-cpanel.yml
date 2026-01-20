@@ -178,9 +178,23 @@ jobs:
                   dangerous-clean-slate: false
 
             - name: Trigger unzip on server
+              env:
+                  SITE_URL: ${{ secrets.SITE_URL }}
+                  DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
               run: |
                   echo "Triggering unzip on server..."
-                  RESPONSE=$(curl -s -w "\n%{http_code}" "${{ secrets.SITE_URL }}/unzip.php?token=${{ secrets.DEPLOY_TOKEN }}")
+                  echo "SITE_URL set: $([ -n "$SITE_URL" ] && echo 'yes' || echo 'NO - MISSING!')"
+                  echo "DEPLOY_TOKEN set: $([ -n "$DEPLOY_TOKEN" ] && echo 'yes' || echo 'NO - MISSING!')"
+
+                  if [ -z "$SITE_URL" ] || [ -z "$DEPLOY_TOKEN" ]; then
+                    echo "ERROR: Missing required secrets SITE_URL or DEPLOY_TOKEN"
+                    exit 1
+                  fi
+
+                  URL="${SITE_URL}/unzip.php?token=${DEPLOY_TOKEN}"
+                  echo "Calling unzip endpoint..."
+
+                  RESPONSE=$(curl -s -w "\n%{http_code}" "$URL" || true)
                   HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
                   BODY=$(echo "$RESPONSE" | head -n -1)
 
