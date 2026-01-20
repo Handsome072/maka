@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { MobileNav } from './components/MobileNav';
+import { AuthModal } from './components/AuthModal';
 import { Home } from './pages/Home';
 import { Experiences } from './pages/Experiences';
 import { Services } from './pages/Services';
@@ -37,6 +38,7 @@ export default function App() {
   const [uploadedPhotos, setUploadedPhotos] = useState<string[]>([]);
   const [listingTitle, setListingTitle] = useState('Maison hôte calme');
   const [isHost, setIsHost] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   // Load persisted data on mount
   useEffect(() => {
@@ -285,9 +287,17 @@ export default function App() {
             isScrolled={isScrolled}
             onSearchClick={() => { }}
             onFavoritesClick={() => { }}
-            onLoginClick={() => handleNavigate('client-space')}
+            onLoginClick={() => setShowAuthModal(true)}
+            onMessagesClick={() => handleNavigate('messages')}
+            onProfileClick={() => handleNavigate('client-space')}
           />
         )}
+
+        {/* Auth Modal */}
+        <AuthModal
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+        />
       </div>
     </AuthProvider>
   );

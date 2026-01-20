@@ -6,8 +6,9 @@ import { Header } from '@/app/components/Header';
 import { Footer } from '@/app/components/Footer';
 import { MobileNav } from '@/app/components/MobileNav';
 import { MobileSearchOverlay } from '@/app/components/MobileSearchOverlay';
+import { AuthModal } from '@/app/components/AuthModal';
 import { ScrollProvider, useScroll } from '@/app/hooks/ScrollContext';
-import { AuthProvider } from '@/app/context/AuthContext';
+import { AuthProvider, useAuth } from '@/app/context/AuthContext';
 import { getCurrentPageFromPathname, getNavigationPath } from '@/app/config/routes';
 import { Search } from 'lucide-react';
 
@@ -47,7 +48,9 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const headerRef = useRef<HTMLElement>(null);
   const { isScrolled, handleNavigateScroll } = useScroll();
+  const { user } = useAuth();
   const [showMobileSearch, setShowMobileSearch] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   // Determine current page from pathname
   const currentPage = getCurrentPageFromPathname(pathname);
@@ -170,8 +173,22 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
           onSearchClick={() => setShowMobileSearch(true)}
           onFavoritesClick={() => { }}
           onLoginClick={() => {
+            if (user) {
+              // User is logged in, navigate to client space
+              handleNavigateScroll();
+              router.push('/client-space');
+            } else {
+              // User is not logged in, show auth modal
+              setShowAuthModal(true);
+            }
+          }}
+          onProfileClick={() => {
             handleNavigateScroll();
             router.push('/client-space');
+          }}
+          onMessagesClick={() => {
+            handleNavigateScroll();
+            router.push('/messages');
           }}
         />
       )}
@@ -190,6 +207,14 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
           setShowMobileSearch(false);
         }}
       />
+
+      {/* Auth Modal */}
+      {showAuthModal && (
+        <AuthModal
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+        />
+      )}
     </div>
   );
 }
