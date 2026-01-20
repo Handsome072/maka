@@ -24,7 +24,7 @@ export function TermsOfService({ onNavigate }: TermsOfServiceProps) {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
         <div className="px-6 lg:px-20 py-4">
           <div className="flex items-center justify-between">
             {/* Logo */}
@@ -258,7 +258,7 @@ export function TermsOfService({ onNavigate }: TermsOfServiceProps) {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 mt-16">
+      <footer className="border-t border-gray-100 mt-16">
         <div className="px-6 lg:px-20 py-6">
           <div className="flex items-center gap-2 text-sm" style={{ color: '#717171' }}>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">

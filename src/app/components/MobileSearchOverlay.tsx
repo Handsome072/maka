@@ -301,7 +301,7 @@ export function MobileSearchOverlay({
         <AnimatePresence>
             {isOpen && (
                 <motion.div
-                    className="fixed inset-0 z-[100] bg-[#F7F7F7] flex flex-col"
+                    className="fixed inset-0 z-[100] bg-[#FAFAFA] flex flex-col"
                     initial={{ opacity: 0, y: '100%' }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: '100%' }}
@@ -375,7 +375,7 @@ export function MobileSearchOverlay({
                     </AnimatePresence>
 
                     {/* Contenu scrollable */}
-                    <div className="flex-1 overflow-y-auto bg-[#F7F7F7]">
+                    <div className="flex-1 overflow-y-auto bg-[#FAFAFA]">
                         {/* Section Où */}
                         <div
                             className={`mx-4 mt-4 bg-white rounded-2xl overflow-hidden transition-all ${expandedSection === 'destination' ? 'shadow-xl border-2 border-gray-200' : 'shadow-sm border border-gray-100'}`}

@@ -345,9 +345,9 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
   return (
     <div className="min-h-screen bg-white">
       {/* Header with search bar - combined for seamless positioning */}
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
         {/* Main header row */}
-        <div className="px-4 sm:px-6 lg:px-20 py-4 border-b border-gray-200">
+        <div className="px-4 sm:px-6 lg:px-20 py-4 border-b border-gray-100">
           <div className="flex items-center justify-between">
             {/* Logo */}
             <button

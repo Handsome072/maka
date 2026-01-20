@@ -179,7 +179,7 @@ export default function App() {
         {currentPage !== 'property-details' && currentPage !== 'experience-details' && currentPage !== 'service-details' && currentPage !== 'booking-request' && currentPage !== 'search-results' && currentPage !== 'client-space' && currentPage !== 'messages' && currentPage !== 'privacy' && currentPage !== 'terms' && currentPage !== 'how-it-works' && currentPage !== 'company-info' && currentPage !== 'host-onboarding' && currentPage !== 'annonces' && currentPage !== 'verification-points' && currentPage !== 'identity-verification' && currentPage !== 'edit-listing' && currentPage !== 'phone-verification' && currentPage !== 'experience-onboarding' && (
           <>
             {/* Mobile Header - visible only for S < 745 */}
-            <div className="md:hidden sticky top-0 z-50 bg-[#F7F7F7]">
+            <div className="md:hidden sticky top-0 z-50 bg-[#FAFAFA]">
               {/* Mobile Search Button */}
               <div className="px-4 py-3">
                 <button

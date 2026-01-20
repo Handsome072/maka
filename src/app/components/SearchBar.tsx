@@ -284,7 +284,7 @@ export function SearchBar({ onSearch, type = 'logements' }: SearchBarProps) {
 
   return (
     <div
-      className="px-4 sm:px-6 lg:px-12 pt-4 py-3 pb-10 relative bg-[#F7F7F7]"
+      className="px-4 sm:px-6 lg:px-12 pt-4 py-3 pb-10 relative bg-[#FCFCFC]"
     >
       <div
         className="max-w-4xl mx-auto relative"
