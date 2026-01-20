@@ -13,7 +13,7 @@ interface FooterProps {
  */
 export function Footer({ onNavigate }: FooterProps) {
   return (
-    <footer className="bg-[#F7F7F7] border-t border-gray-200">
+    <footer className="bg-[#FCFCFC] border-t border-gray-100">
       <div className="px-4 sm:px-6 lg:px-20 py-12">
         {/* Footer Links Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16 mb-12">
@@ -140,7 +140,7 @@ export function Footer({ onNavigate }: FooterProps) {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-6 border-t border-gray-300">
+        <div className="pt-6 border-t border-gray-200">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Left - Copyright & Links */}
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 text-sm text-[#222222]">
