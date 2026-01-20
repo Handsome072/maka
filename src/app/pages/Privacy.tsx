@@ -38,7 +38,7 @@ export function Privacy({ onNavigate }: PrivacyProps) {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
         <div className="px-6 lg:px-20 py-4">
           <div className="flex items-center justify-between">
             {/* Logo */}
@@ -351,7 +351,7 @@ export function Privacy({ onNavigate }: PrivacyProps) {
       </div>
 
       {/* Footer */}
-      <footer className="bg-gray-50 border-t border-gray-200 mt-16">
+      <footer className="bg-[#FCFCFC] border-t border-gray-100 mt-16">
         <div className="px-6 lg:px-20 py-12">
           {/* Footer Links Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-8">

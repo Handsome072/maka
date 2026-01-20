@@ -262,7 +262,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
         </header>
 
         {/* Desktop Header */}
-        <header className={`hidden md:flex fixed top-0 left-20 right-0 bg-white border-t-0 transition-all duration-200 px-8 py-4 items-center justify-between z-20 ${isScrolled ? 'border-b border-gray-200' : ''}`}>
+        <header className={`hidden md:flex fixed top-0 left-20 right-0 bg-white border-t-0 transition-all duration-200 px-8 py-4 items-center justify-between z-20 ${isScrolled ? 'border-b border-gray-100' : ''}`}>
           <div className="flex items-center gap-3">
             <p className="text-sm" style={{ color: '#717171' }}>
               {stepName} <span style={{ color: '#222222', fontWeight: 600 }}>Étape {stepNumber} sur 7</span>
