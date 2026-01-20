@@ -395,8 +395,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
                 key={type.id}
                 onClick={() => setSelectedType(type.id)}
                 className={`p-4 sm:p-6 rounded-xl border-2 transition-all hover:border-gray-900 ${selectedType === type.id
-                    ? 'border-gray-900 bg-gray-50'
-                    : 'border-gray-300 bg-white'
+                  ? 'border-gray-900 bg-gray-50'
+                  : 'border-gray-300 bg-white'
                   }`}
               >
                 <div className="text-2xl sm:text-3xl mb-1 sm:mb-2">{type.icon}</div>
@@ -456,7 +456,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 md:px-8 pt-20 sm:pt-24 md:pt-32 pb-20 sm:pb-24 md:pb-32">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 md:px-8 pt-14 sm:pt-16 md:pt-20 pb-20 sm:pb-24 md:pb-32">
           <h1 className="text-xl sm:text-2xl md:text-3xl mb-2 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             Quel type de logement sera à la disposition des voyageurs ?
           </h1>
@@ -466,8 +466,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
             <button
               onClick={() => setSelectedSpaceType('entire')}
               className={`w-full p-4 sm:p-6 rounded-xl border-2 transition-all text-left flex items-start justify-between ${selectedSpaceType === 'entire'
-                  ? 'border-gray-900 bg-gray-50'
-                  : 'border-gray-300 bg-white hover:border-gray-900'
+                ? 'border-gray-900 bg-gray-50'
+                : 'border-gray-300 bg-white hover:border-gray-900'
                 }`}
             >
               <div className="flex-1">
@@ -489,8 +489,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
             <button
               onClick={() => setSelectedSpaceType('room')}
               className={`w-full p-4 sm:p-6 rounded-xl border-2 transition-all text-left flex items-start justify-between ${selectedSpaceType === 'room'
-                  ? 'border-gray-900 bg-gray-50'
-                  : 'border-gray-300 bg-white hover:border-gray-900'
+                ? 'border-gray-900 bg-gray-50'
+                : 'border-gray-300 bg-white hover:border-gray-900'
                 }`}
             >
               <div className="flex-1">
@@ -512,8 +512,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
             <button
               onClick={() => setSelectedSpaceType('shared')}
               className={`w-full p-4 sm:p-6 rounded-xl border-2 transition-all text-left flex items-start justify-between ${selectedSpaceType === 'shared'
-                  ? 'border-gray-900 bg-gray-50'
-                  : 'border-gray-300 bg-white hover:border-gray-900'
+                ? 'border-gray-900 bg-gray-50'
+                : 'border-gray-300 bg-white hover:border-gray-900'
                 }`}
             >
               <div className="flex-1">
@@ -1184,8 +1184,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
                   key={amenity.id}
                   onClick={() => toggleAmenity(amenity.id)}
                   className={`p-6 rounded-xl border-2 transition-all text-left ${selectedAmenities.includes(amenity.id)
-                      ? 'border-gray-900 bg-gray-50'
-                      : 'border-gray-300 bg-white hover:border-gray-900'
+                    ? 'border-gray-900 bg-gray-50'
+                    : 'border-gray-300 bg-white hover:border-gray-900'
                     }`}
                 >
                   <div className="text-2xl mb-2">{amenity.icon}</div>
@@ -1208,8 +1208,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
                   key={amenity.id}
                   onClick={() => toggleAmenity(amenity.id)}
                   className={`p-6 rounded-xl border-2 transition-all text-left ${selectedAmenities.includes(amenity.id)
-                      ? 'border-gray-900 bg-gray-50'
-                      : 'border-gray-300 bg-white hover:border-gray-900'
+                    ? 'border-gray-900 bg-gray-50'
+                    : 'border-gray-300 bg-white hover:border-gray-900'
                     }`}
                 >
                   <div className="text-2xl mb-2">{amenity.icon}</div>
@@ -1710,10 +1710,10 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
                 onClick={() => toggleHighlight(highlight.id)}
                 disabled={!selectedHighlights.includes(highlight.id) && selectedHighlights.length >= 2}
                 className={`p-6 rounded-xl border-2 transition-all ${selectedHighlights.includes(highlight.id)
-                    ? 'border-gray-900 bg-gray-50'
-                    : selectedHighlights.length >= 2
-                      ? 'border-gray-200 bg-white opacity-50 cursor-not-allowed'
-                      : 'border-gray-300 bg-white hover:border-gray-900'
+                  ? 'border-gray-900 bg-gray-50'
+                  : selectedHighlights.length >= 2
+                    ? 'border-gray-200 bg-white opacity-50 cursor-not-allowed'
+                    : 'border-gray-300 bg-white hover:border-gray-900'
                   }`}
               >
                 <div className="text-2xl mb-2">{highlight.icon}</div>
@@ -2307,8 +2307,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
                 <button
                   onClick={() => toggleDiscount(option.id)}
                   className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-all ${selectedDiscounts.includes(option.id)
-                      ? 'bg-gray-900 border-gray-900'
-                      : 'bg-white border-gray-400 hover:border-gray-900'
+                    ? 'bg-gray-900 border-gray-900'
+                    : 'bg-white border-gray-400 hover:border-gray-900'
                     }`}
                 >
                   {selectedDiscounts.includes(option.id) && (
@@ -2590,8 +2590,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
                 <button
                   onClick={() => setLegalEntity('yes')}
                   className={`flex-1 px-6 py-3 rounded-lg border-2 text-base transition-all ${legalEntity === 'yes'
-                      ? 'border-gray-900 bg-gray-50'
-                      : 'border-gray-300 hover:border-gray-900'
+                    ? 'border-gray-900 bg-gray-50'
+                    : 'border-gray-300 hover:border-gray-900'
                     }`}
                   style={{ fontWeight: 600, color: '#222222' }}
                 >
@@ -2600,8 +2600,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
                 <button
                   onClick={() => setLegalEntity('no')}
                   className={`flex-1 px-6 py-3 rounded-lg border-2 text-base transition-all ${legalEntity === 'no'
-                      ? 'border-gray-900 bg-gray-50'
-                      : 'border-gray-300 hover:border-gray-900'
+                    ? 'border-gray-900 bg-gray-50'
+                    : 'border-gray-300 hover:border-gray-900'
                     }`}
                   style={{ fontWeight: 600, color: '#222222' }}
                 >
