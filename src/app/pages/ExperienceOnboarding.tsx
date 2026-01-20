@@ -25,8 +25,8 @@ const stepSections: StepSection[] = [
     steps: ['experience-years', 'qualifications', 'online-profiles', 'address-info'],
     icon: (
       <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-        <circle cx="12" cy="8" r="4"/>
-        <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+        <circle cx="12" cy="8" r="4" />
+        <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
       </svg>
     )
   },
@@ -36,8 +36,8 @@ const stepSections: StepSection[] = [
     steps: ['meeting-location', 'confirm-location', 'map-marker'],
     icon: (
       <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-        <circle cx="12" cy="10" r="3"/>
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+        <circle cx="12" cy="10" r="3" />
       </svg>
     )
   },
@@ -47,9 +47,9 @@ const stepSections: StepSection[] = [
     steps: ['photos'],
     icon: (
       <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-        <circle cx="8.5" cy="8.5" r="1.5"/>
-        <polyline points="21 15 16 10 5 21"/>
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+        <circle cx="8.5" cy="8.5" r="1.5" />
+        <polyline points="21 15 16 10 5 21" />
       </svg>
     )
   },
@@ -59,10 +59,10 @@ const stepSections: StepSection[] = [
     steps: ['title', 'describe'],
     icon: (
       <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-        <polyline points="14 2 14 8 20 8"/>
-        <line x1="16" y1="13" x2="8" y2="13"/>
-        <line x1="16" y1="17" x2="8" y2="17"/>
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+        <polyline points="14 2 14 8 20 8" />
+        <line x1="16" y1="13" x2="8" y2="13" />
+        <line x1="16" y1="17" x2="8" y2="17" />
       </svg>
     )
   },
@@ -72,12 +72,12 @@ const stepSections: StepSection[] = [
     steps: ['program-intro', 'program'],
     icon: (
       <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <line x1="8" y1="6" x2="21" y2="6"/>
-        <line x1="8" y1="12" x2="21" y2="12"/>
-        <line x1="8" y1="18" x2="21" y2="18"/>
-        <line x1="3" y1="6" x2="3.01" y2="6"/>
-        <line x1="3" y1="12" x2="3.01" y2="12"/>
-        <line x1="3" y1="18" x2="3.01" y2="18"/>
+        <line x1="8" y1="6" x2="21" y2="6" />
+        <line x1="8" y1="12" x2="21" y2="12" />
+        <line x1="8" y1="18" x2="21" y2="18" />
+        <line x1="3" y1="6" x2="3.01" y2="6" />
+        <line x1="3" y1="12" x2="3.01" y2="12" />
+        <line x1="3" y1="18" x2="3.01" y2="18" />
       </svg>
     )
   },
@@ -87,8 +87,8 @@ const stepSections: StepSection[] = [
     steps: ['tarification'],
     icon: (
       <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <line x1="12" y1="1" x2="12" y2="23"/>
-        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        <line x1="12" y1="1" x2="12" y2="23" />
+        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
       </svg>
     )
   },
@@ -98,8 +98,8 @@ const stepSections: StepSection[] = [
     steps: [],
     icon: (
       <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-        <polyline points="22 4 12 14.01 9 11.01"/>
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+        <polyline points="22 4 12 14.01 9 11.01" />
       </svg>
     )
   }
@@ -116,7 +116,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
   const [distinction, setDistinction] = useState('');
   const [websiteLinks, setWebsiteLinks] = useState<string[]>([]);
   const [tempLinkInput, setTempLinkInput] = useState('');
-  
+
   // Address form fields
   const [country, setCountry] = useState('Madagascar');
   const [streetAddress, setStreetAddress] = useState('');
@@ -124,10 +124,10 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
   const [commune, setCommune] = useState('');
   const [province, setProvince] = useState('');
   const [postalCode, setPostalCode] = useState('');
-  
+
   // Meeting location
   const [meetingLocation, setMeetingLocation] = useState('');
-  
+
   // Confirm location fields
   const [confirmCountry, setConfirmCountry] = useState('Madagascar');
   const [siteAddress, setSiteAddress] = useState('');
@@ -136,10 +136,10 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
   const [siteProvince, setSiteProvince] = useState('');
   const [sitePostalCode, setSitePostalCode] = useState('');
   const [siteName, setSiteName] = useState('');
-  
+
   // Photos
   const [photos, setPhotos] = useState<string[]>([]);
-  
+
   // Modal states
   const [showPresentationModal, setShowPresentationModal] = useState(false);
   const [showTipsModal, setShowTipsModal] = useState(false);
@@ -148,22 +148,22 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
   const [showAddLinkModal, setShowAddLinkModal] = useState(false);
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
   const [websiteLink, setWebsiteLink] = useState('');
-  
+
   // Photo modals
   const [showPhotoTipsModal, setShowPhotoTipsModal] = useState(false);
   const [showAddPhotoModal, setShowAddPhotoModal] = useState(false);
   const [uploadedPhotosTemp, setUploadedPhotosTemp] = useState<string[]>([]);
-  
+
   // Title
   const [experienceTitle, setExperienceTitle] = useState('');
   const [showTitleTipsModal, setShowTitleTipsModal] = useState(false);
-  
+
   // Description
   const [experienceDescription, setExperienceDescription] = useState('');
-  
+
   // Program
   const [programActivities, setProgramActivities] = useState<string[]>([]);
-  
+
   // Activity modal states
   const [showActivityModal, setShowActivityModal] = useState(false);
   const [activityModalStep, setActivityModalStep] = useState<'title' | 'tips' | 'description' | 'duration' | 'photo'>('title');
@@ -179,6 +179,23 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
   const [pricePerPerson, setPricePerPerson] = useState(7);
   const [showPricingBreakdown, setShowPricingBreakdown] = useState(false);
   const [pricingStep, setPricingStep] = useState<'participants' | 'price'>('participants');
+
+  // Scroll detection
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      setIsScrolled(scrollTop > 0);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Check initial
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   // Helper: Get current step section
   const getCurrentStepSection = (): StepSection | null => {
@@ -234,7 +251,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
               {stepName} <span className="opacity-70">{stepNumber} sur 7</span>
             </span>
           </div>
-          <button 
+          <button
             onClick={() => onNavigate('annonces')}
             className="p-2 hover:bg-white/10 rounded-full transition-colors"
           >
@@ -245,13 +262,13 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
         </header>
 
         {/* Desktop Header */}
-        <header className="hidden md:flex fixed top-0 left-20 right-0 bg-white border-b border-gray-200 px-8 py-4 items-center justify-between z-20">
+        <header className={`hidden md:flex fixed top-0 left-20 right-0 bg-white border-t-0 transition-all duration-200 px-8 py-4 items-center justify-between z-20 ${isScrolled ? 'border-b border-gray-200' : ''}`}>
           <div className="flex items-center gap-3">
             <p className="text-sm" style={{ color: '#717171' }}>
               {stepName} <span style={{ color: '#222222', fontWeight: 600 }}>Étape {stepNumber} sur 7</span>
             </p>
           </div>
-          <button 
+          <button
             onClick={() => onNavigate('annonces')}
             className="px-4 py-2 text-sm hover:bg-gray-100 rounded-lg transition-colors border border-gray-300"
             style={{ fontWeight: 600, color: '#222222' }}
@@ -273,7 +290,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
               onClick={() => onNavigate('annonces')}
             />
           </div>
-          
+
           {/* User initial */}
           <div className="w-10 h-10 rounded-full bg-white/10 border-2 border-white/30 flex items-center justify-center text-white text-sm font-semibold mb-6">
             R
@@ -284,17 +301,16 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
             {stepSections.map((section) => {
               const isCompleted = isSectionCompleted(section.id);
               const isCurrent = isSectionCurrent(section.id);
-              
+
               return (
                 <div
                   key={section.id}
-                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-                    isCurrent
-                      ? 'bg-white text-[#222222]'
-                      : isCompleted
+                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${isCurrent
+                    ? 'bg-white text-[#222222]'
+                    : isCompleted
                       ? 'bg-white/30 text-white'
                       : 'bg-white/10 text-white/50'
-                  }`}
+                    }`}
                 >
                   {section.icon}
                 </div>
@@ -303,12 +319,12 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
           </div>
 
           {/* Skip button at bottom */}
-          <button 
+          <button
             onClick={() => onNavigate('annonces')}
             className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M13 17l5-5-5-5M6 17l5-5-5-5"/>
+              <path d="M13 17l5-5-5-5M6 17l5-5-5-5" />
             </svg>
           </button>
         </aside>
@@ -325,9 +341,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
           <button
             onClick={onNext}
             disabled={nextDisabled}
-            className={`w-full py-3 rounded-xl text-white text-base transition-colors ${
-              nextDisabled ? 'bg-gray-300 cursor-not-allowed' : 'bg-[#000000] hover:bg-[#222222]'
-            }`}
+            className={`w-full py-3 rounded-xl text-white text-base transition-colors ${nextDisabled ? 'bg-gray-300 cursor-not-allowed' : 'bg-[#000000] hover:bg-[#222222]'
+              }`}
             style={{ fontWeight: 600 }}
           >
             {nextLabel}
@@ -352,9 +367,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
           <button
             onClick={onNext}
             disabled={nextDisabled}
-            className={`px-8 py-3 rounded-lg text-white text-base transition-colors ${
-              nextDisabled ? 'bg-gray-300 cursor-not-allowed' : 'bg-[#000000] hover:bg-[#222222]'
-            }`}
+            className={`px-8 py-3 rounded-lg text-white text-base transition-colors ${nextDisabled ? 'bg-gray-300 cursor-not-allowed' : 'bg-[#000000] hover:bg-[#222222]'
+              }`}
             style={{ fontWeight: 600 }}
           >
             {nextLabel}
@@ -636,8 +650,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
             <button
               onClick={() => setShowPresentationModal(false)}
               className="px-6 py-2 rounded-lg text-sm transition-colors"
-              style={{ 
-                fontWeight: 600, 
+              style={{
+                fontWeight: 600,
                 backgroundColor: presentation.trim() ? '#000000' : '#F5F5F5',
                 color: presentation.trim() ? '#FFFFFF' : '#717171'
               }}
@@ -718,9 +732,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
               {tips.map((tip, idx) => (
                 <div
                   key={idx}
-                  className={`flex-shrink-0 px-4 py-3 rounded-lg border-2 cursor-pointer transition-colors ${
-                    idx === currentTipIndex ? 'border-gray-900 bg-gray-50' : 'border-gray-300'
-                  }`}
+                  className={`flex-shrink-0 px-4 py-3 rounded-lg border-2 cursor-pointer transition-colors ${idx === currentTipIndex ? 'border-gray-900 bg-gray-50' : 'border-gray-300'
+                    }`}
                   onClick={() => setCurrentTipIndex(idx)}
                 >
                   <p className="text-sm whitespace-nowrap" style={{ fontWeight: 500, color: '#222222' }}>
@@ -782,8 +795,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
             <button
               onClick={() => setShowExpertiseModal(false)}
               className="px-6 py-2 rounded-lg text-sm transition-colors"
-              style={{ 
-                fontWeight: 600, 
+              style={{
+                fontWeight: 600,
                 backgroundColor: expertise.trim() ? '#000000' : '#F5F5F5',
                 color: expertise.trim() ? '#FFFFFF' : '#717171'
               }}
@@ -843,8 +856,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
             <button
               onClick={() => setShowDistinctionModal(false)}
               className="px-6 py-2 rounded-lg text-sm transition-colors"
-              style={{ 
-                fontWeight: 600, 
+              style={{
+                fontWeight: 600,
                 backgroundColor: distinction.trim() ? '#000000' : '#F5F5F5',
                 color: distinction.trim() ? '#FFFFFF' : '#717171'
               }}
@@ -900,8 +913,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
             <button
               onClick={handleSaveLink}
               className="px-6 py-2 rounded-lg text-sm transition-colors"
-              style={{ 
-                fontWeight: 600, 
+              style={{
+                fontWeight: 600,
                 backgroundColor: tempLinkInput.trim() ? '#000000' : '#F5F5F5',
                 color: tempLinkInput.trim() ? '#FFFFFF' : '#717171'
               }}
@@ -946,9 +959,9 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
             <div className="flex gap-4">
               <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center">
                 <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                  <circle cx="8.5" cy="8.5" r="1.5"/>
-                  <polyline points="21 15 16 10 5 21"/>
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                  <circle cx="8.5" cy="8.5" r="1.5" />
+                  <polyline points="21 15 16 10 5 21" />
                 </svg>
               </div>
               <div className="flex-1">
@@ -965,8 +978,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
             <div className="flex gap-4">
               <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center">
                 <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                  <circle cx="12" cy="13" r="4"/>
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                  <circle cx="12" cy="13" r="4" />
                 </svg>
               </div>
               <div className="flex-1">
@@ -983,9 +996,9 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
             <div className="flex gap-4">
               <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center">
                 <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                  <rect x="5" y="11" width="14" height="10" rx="2" ry="2"/>
-                  <circle cx="12" cy="16" r="1"/>
-                  <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                  <rect x="5" y="11" width="14" height="10" rx="2" ry="2" />
+                  <circle cx="12" cy="16" r="1" />
+                  <path d="M8 11V7a4 4 0 0 1 8 0v4" />
                 </svg>
               </div>
               <div className="flex-1">
@@ -1006,24 +1019,24 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
             </h4>
             <div className="grid grid-cols-2 gap-3">
               <div className="aspect-[4/3] rounded-xl overflow-hidden">
-                <img 
-                  src="https://images.unsplash.com/photo-1757085242675-1a047a53c04d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcnQlMjBwYWludGluZyUyMHdvcmtzaG9wfGVufDF8fHx8MTc2ODQwMDA5N3ww&ixlib=rb-4.1.0&q=80&w=1080" 
-                  alt="Art workshop" 
+                <img
+                  src="https://images.unsplash.com/photo-1757085242675-1a047a53c04d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcnQlMjBwYWludGluZyUyMHdvcmtzaG9wfGVufDF8fHx8MTc2ODQwMDA5N3ww&ixlib=rb-4.1.0&q=80&w=1080"
+                  alt="Art workshop"
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="space-y-3">
                 <div className="aspect-[4/3] rounded-xl overflow-hidden">
-                  <img 
-                    src="https://images.unsplash.com/photo-1634151739970-bba3910d0d36?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb29raW5nJTIwY2xhc3MlMjBmb29kfGVufDF8fHx8MTc2ODM3NTI1NXww&ixlib=rb-4.1.0&q=80&w=1080" 
-                    alt="Cooking class" 
+                  <img
+                    src="https://images.unsplash.com/photo-1634151739970-bba3910d0d36?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb29raW5nJTIwY2xhc3MlMjBmb29kfGVufDF8fHx8MTc2ODM3NTI1NXww&ixlib=rb-4.1.0&q=80&w=1080"
+                    alt="Cooking class"
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="aspect-[4/3] rounded-xl overflow-hidden">
-                  <img 
-                    src="https://images.unsplash.com/photo-1750498407644-ed88cc6bbac4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxoYW5kbWFkZSUyMGNyYWZ0JTIwd29ya3Nob3B8ZW58MXx8fHwxNzY4NDQzNDE3fDA&ixlib=rb-4.1.0&q=80&w=1080" 
-                    alt="Handmade craft" 
+                  <img
+                    src="https://images.unsplash.com/photo-1750498407644-ed88cc6bbac4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxoYW5kbWFkZSUyMGNyYWZ0JTIwd29ya3Nob3B8ZW58MXx8fHwxNzY4NDQzNDE3fDA&ixlib=rb-4.1.0&q=80&w=1080"
+                    alt="Handmade craft"
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -1055,7 +1068,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
             className="absolute top-6 right-6 p-2 hover:bg-gray-100 rounded-full transition-colors z-10"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-              <path d="M12 5v14M5 12h14"/>
+              <path d="M12 5v14M5 12h14" />
             </svg>
           </button>
 
@@ -1072,17 +1085,17 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
           <div className="flex-1 overflow-y-auto mb-6">
             {uploadedPhotosTemp.length === 0 ? (
               /* Drop Zone */
-              <div 
+              <div
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
                 className="border-2 border-dashed border-gray-300 rounded-xl p-12 flex flex-col items-center justify-center"
               >
                 <div className="mb-4">
                   <svg className="w-16 h-16" viewBox="0 0 64 64" fill="none">
-                    <rect x="8" y="16" width="32" height="24" rx="2" stroke="#222222" strokeWidth="2"/>
-                    <rect x="24" y="28" width="32" height="24" rx="2" fill="white" stroke="#222222" strokeWidth="2"/>
-                    <circle cx="32" cy="34" r="2" fill="#222222"/>
-                    <polyline points="24 52 32 42 40 48 56 36 56 52" stroke="#222222" strokeWidth="2" fill="none"/>
+                    <rect x="8" y="16" width="32" height="24" rx="2" stroke="#222222" strokeWidth="2" />
+                    <rect x="24" y="28" width="32" height="24" rx="2" fill="white" stroke="#222222" strokeWidth="2" />
+                    <circle cx="32" cy="34" r="2" fill="#222222" />
+                    <polyline points="24 52 32 42 40 48 56 36 56 52" stroke="#222222" strokeWidth="2" fill="none" />
                   </svg>
                 </div>
                 <p className="text-base mb-1" style={{ fontWeight: 600, color: '#222222' }}>
@@ -1139,8 +1152,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
               onClick={handleAddPhotos}
               disabled={uploadedPhotosTemp.length === 0}
               className="px-6 py-2 rounded-lg text-sm hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
-              style={{ 
-                fontWeight: 600, 
+              style={{
+                fontWeight: 600,
                 backgroundColor: uploadedPhotosTemp.length > 0 ? '#000000' : '#E5E5E5',
                 color: uploadedPhotosTemp.length > 0 ? 'white' : '#717171'
               }}
@@ -1161,10 +1174,10 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
       {
         icon: (
           <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-            <rect x="3" y="3" width="7" height="7"/>
-            <rect x="14" y="3" width="7" height="7"/>
-            <rect x="14" y="14" width="7" height="7"/>
-            <rect x="3" y="14" width="7" height="7"/>
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
           </svg>
         ),
         title: "Mettez en avant l'activité principale",
@@ -1173,8 +1186,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
       {
         icon: (
           <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-            <rect x="3" y="3" width="18" height="18" rx="2"/>
-            <path d="M9 3v18"/>
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <path d="M9 3v18" />
           </svg>
         ),
         title: "Rédigez un titre clair mais accrocheur",
@@ -1183,7 +1196,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
       {
         icon: (
           <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
           </svg>
         ),
         title: "Valorisez un aspect unique",
@@ -1258,12 +1271,12 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                 <div className="flex gap-2">
                   <button className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-gray-400 transition-colors">
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                      <path d="M15 18l-6-6 6-6"/>
+                      <path d="M15 18l-6-6 6-6" />
                     </svg>
                   </button>
                   <button className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-gray-400 transition-colors">
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                      <path d="M9 18l6-6-6-6"/>
+                      <path d="M9 18l6-6-6-6" />
                     </svg>
                   </button>
                 </div>
@@ -1272,9 +1285,9 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
               <div className="grid grid-cols-1 gap-3">
                 {examples.map((example, index) => (
                   <div key={index} className="flex gap-3 p-3 rounded-xl border border-gray-200 hover:border-gray-300 transition-colors cursor-pointer">
-                    <img 
-                      src={example.image} 
-                      alt="" 
+                    <img
+                      src={example.image}
+                      alt=""
                       className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
                     />
                     <div className="flex-1 flex items-center">
@@ -1293,9 +1306,9 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                 En savoir plus
               </h4>
               <div className="flex gap-3 p-4 rounded-xl border border-gray-200 hover:border-gray-300 transition-colors cursor-pointer">
-                <img 
-                  src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=60&h=60&fit=crop" 
-                  alt="" 
+                <img
+                  src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=60&h=60&fit=crop"
+                  alt=""
                   className="w-14 h-14 rounded-lg object-cover flex-shrink-0"
                 />
                 <div className="flex-1">
@@ -1319,7 +1332,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
     return (
       <div className="min-h-screen bg-white flex flex-col">
         {/* Header */}
-        <header className="px-8 py-6 flex items-center justify-between border-b border-gray-200">
+        <header className="px-8 py-6 flex items-center justify-between border-t-0 border-b border-gray-200">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -1328,7 +1341,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
             className="cursor-pointer hover:opacity-70 transition-opacity"
             onClick={() => onNavigate('annonces')}
           />
-          <button 
+          <button
             onClick={() => onNavigate('annonces')}
             className="px-6 py-2 rounded-lg text-sm hover:bg-gray-100 transition-colors"
             style={{ fontWeight: 600, color: '#222222' }}
@@ -1349,17 +1362,16 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
               {/* Art et design */}
               <button
                 onClick={() => handleCategorySelect('art-design')}
-                className={`p-6 rounded-xl border-2 transition-all hover:border-gray-900 ${
-                  selectedCategory === 'art-design' ? 'border-gray-900 bg-gray-50' : 'border-gray-300'
-                }`}
+                className={`p-6 rounded-xl border-2 transition-all hover:border-gray-900 ${selectedCategory === 'art-design' ? 'border-gray-900 bg-gray-50' : 'border-gray-300'
+                  }`}
               >
                 <div className="flex flex-col items-center">
                   <div className="w-20 h-20 mb-4 flex items-center justify-center">
                     <svg className="w-16 h-16" viewBox="0 0 64 64" fill="none">
-                      <rect x="12" y="8" width="32" height="40" rx="2" fill="#FFB4B4" stroke="#E57373" strokeWidth="2"/>
-                      <path d="M20 16 L28 32 L36 20 L44 28" stroke="#E57373" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                      <circle cx="24" cy="20" r="3" fill="#E57373"/>
-                      <rect x="8" y="12" width="8" height="32" rx="1" fill="#D4A574"/>
+                      <rect x="12" y="8" width="32" height="40" rx="2" fill="#FFB4B4" stroke="#E57373" strokeWidth="2" />
+                      <path d="M20 16 L28 32 L36 20 L44 28" stroke="#E57373" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                      <circle cx="24" cy="20" r="3" fill="#E57373" />
+                      <rect x="8" y="12" width="8" height="32" rx="1" fill="#D4A574" />
                     </svg>
                   </div>
                   <p className="text-sm text-center" style={{ fontWeight: 600, color: '#222222' }}>
@@ -1371,18 +1383,17 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
               {/* Cuisine et boissons */}
               <button
                 onClick={() => handleCategorySelect('cuisine')}
-                className={`p-6 rounded-xl border-2 transition-all hover:border-gray-900 ${
-                  selectedCategory === 'cuisine' ? 'border-gray-900 bg-gray-50' : 'border-gray-300'
-                }`}
+                className={`p-6 rounded-xl border-2 transition-all hover:border-gray-900 ${selectedCategory === 'cuisine' ? 'border-gray-900 bg-gray-50' : 'border-gray-300'
+                  }`}
               >
                 <div className="flex flex-col items-center">
                   <div className="w-20 h-20 mb-4 flex items-center justify-center">
                     <svg className="w-16 h-16" viewBox="0 0 64 64" fill="none">
-                      <ellipse cx="32" cy="38" rx="18" ry="4" fill="#FFA726"/>
-                      <path d="M14 38 L14 42 C14 44 16 46 20 46 L44 46 C48 46 50 44 50 42 L50 38" fill="#FF9800"/>
-                      <circle cx="22" cy="28" r="6" fill="#FFD54F"/>
-                      <circle cx="38" cy="30" r="5" fill="#8BC34A"/>
-                      <circle cx="30" cy="24" r="4" fill="#EF5350"/>
+                      <ellipse cx="32" cy="38" rx="18" ry="4" fill="#FFA726" />
+                      <path d="M14 38 L14 42 C14 44 16 46 20 46 L44 46 C48 46 50 44 50 42 L50 38" fill="#FF9800" />
+                      <circle cx="22" cy="28" r="6" fill="#FFD54F" />
+                      <circle cx="38" cy="30" r="5" fill="#8BC34A" />
+                      <circle cx="30" cy="24" r="4" fill="#EF5350" />
                     </svg>
                   </div>
                   <p className="text-sm text-center" style={{ fontWeight: 600, color: '#222222' }}>
@@ -1394,19 +1405,18 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
               {/* Fitness et bien-être */}
               <button
                 onClick={() => handleCategorySelect('fitness')}
-                className={`p-6 rounded-xl border-2 transition-all hover:border-gray-900 ${
-                  selectedCategory === 'fitness' ? 'border-gray-900 bg-gray-50' : 'border-gray-300'
-                }`}
+                className={`p-6 rounded-xl border-2 transition-all hover:border-gray-900 ${selectedCategory === 'fitness' ? 'border-gray-900 bg-gray-50' : 'border-gray-300'
+                  }`}
               >
                 <div className="flex flex-col items-center">
                   <div className="w-20 h-20 mb-4 flex items-center justify-center">
                     <svg className="w-16 h-16" viewBox="0 0 64 64" fill="none">
-                      <rect x="28" y="18" width="8" height="28" rx="4" fill="#64B5F6"/>
-                      <ellipse cx="32" cy="14" rx="6" ry="8" fill="#42A5F5"/>
-                      <circle cx="18" cy="32" r="6" fill="#90CAF9"/>
-                      <circle cx="46" cy="32" r="6" fill="#90CAF9"/>
-                      <rect x="12" y="30" width="12" height="4" rx="2" fill="#42A5F5"/>
-                      <rect x="40" y="30" width="12" height="4" rx="2" fill="#42A5F5"/>
+                      <rect x="28" y="18" width="8" height="28" rx="4" fill="#64B5F6" />
+                      <ellipse cx="32" cy="14" rx="6" ry="8" fill="#42A5F5" />
+                      <circle cx="18" cy="32" r="6" fill="#90CAF9" />
+                      <circle cx="46" cy="32" r="6" fill="#90CAF9" />
+                      <rect x="12" y="30" width="12" height="4" rx="2" fill="#42A5F5" />
+                      <rect x="40" y="30" width="12" height="4" rx="2" fill="#42A5F5" />
                     </svg>
                   </div>
                   <p className="text-sm text-center" style={{ fontWeight: 600, color: '#222222' }}>
@@ -1418,19 +1428,18 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
               {/* Histoire et culture */}
               <button
                 onClick={() => handleCategorySelect('histoire')}
-                className={`p-6 rounded-xl border-2 transition-all hover:border-gray-900 ${
-                  selectedCategory === 'histoire' ? 'border-gray-900 bg-gray-50' : 'border-gray-300'
-                }`}
+                className={`p-6 rounded-xl border-2 transition-all hover:border-gray-900 ${selectedCategory === 'histoire' ? 'border-gray-900 bg-gray-50' : 'border-gray-300'
+                  }`}
               >
                 <div className="flex flex-col items-center">
                   <div className="w-20 h-20 mb-4 flex items-center justify-center">
                     <svg className="w-16 h-16" viewBox="0 0 64 64" fill="none">
-                      <rect x="16" y="12" width="32" height="40" fill="#D7CCC8"/>
-                      <rect x="20" y="16" width="8" height="12" fill="#8D6E63"/>
-                      <rect x="32" y="16" width="8" height="12" fill="#8D6E63"/>
-                      <rect x="20" y="32" width="8" height="12" fill="#8D6E63"/>
-                      <rect x="32" y="32" width="8" height="12" fill="#8D6E63"/>
-                      <path d="M16 12 L32 4 L48 12" fill="#A1887F"/>
+                      <rect x="16" y="12" width="32" height="40" fill="#D7CCC8" />
+                      <rect x="20" y="16" width="8" height="12" fill="#8D6E63" />
+                      <rect x="32" y="16" width="8" height="12" fill="#8D6E63" />
+                      <rect x="20" y="32" width="8" height="12" fill="#8D6E63" />
+                      <rect x="32" y="32" width="8" height="12" fill="#8D6E63" />
+                      <path d="M16 12 L32 4 L48 12" fill="#A1887F" />
                     </svg>
                   </div>
                   <p className="text-sm text-center" style={{ fontWeight: 600, color: '#222222' }}>
@@ -1442,19 +1451,18 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
               {/* Nature et plein air */}
               <button
                 onClick={() => handleCategorySelect('nature')}
-                className={`p-6 rounded-xl border-2 transition-all hover:border-gray-900 ${
-                  selectedCategory === 'nature' ? 'border-gray-900 bg-gray-50' : 'border-gray-300'
-                }`}
+                className={`p-6 rounded-xl border-2 transition-all hover:border-gray-900 ${selectedCategory === 'nature' ? 'border-gray-900 bg-gray-50' : 'border-gray-300'
+                  }`}
               >
                 <div className="flex flex-col items-center">
                   <div className="w-20 h-20 mb-4 flex items-center justify-center">
                     <svg className="w-16 h-16" viewBox="0 0 64 64" fill="none">
-                      <ellipse cx="32" cy="48" rx="24" ry="8" fill="#66BB6A"/>
-                      <path d="M20 48 L24 32 L28 48" fill="#4CAF50"/>
-                      <path d="M36 48 L40 28 L44 48" fill="#388E3C"/>
-                      <circle cx="32" cy="24" r="8" fill="#81C784"/>
-                      <path d="M28 24 Q32 16 36 24" fill="#66BB6A"/>
-                      <ellipse cx="32" cy="40" rx="16" ry="6" fill="#A5D6A7"/>
+                      <ellipse cx="32" cy="48" rx="24" ry="8" fill="#66BB6A" />
+                      <path d="M20 48 L24 32 L28 48" fill="#4CAF50" />
+                      <path d="M36 48 L40 28 L44 48" fill="#388E3C" />
+                      <circle cx="32" cy="24" r="8" fill="#81C784" />
+                      <path d="M28 24 Q32 16 36 24" fill="#66BB6A" />
+                      <ellipse cx="32" cy="40" rx="16" ry="6" fill="#A5D6A7" />
                     </svg>
                   </div>
                   <p className="text-sm text-center" style={{ fontWeight: 600, color: '#222222' }}>
@@ -1469,9 +1477,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
               <button
                 disabled={!selectedCategory}
                 onClick={handleCategoryNext}
-                className={`px-8 py-3 rounded-lg text-white text-base transition-opacity ${
-                  selectedCategory ? 'hover:opacity-90' : 'opacity-40 cursor-not-allowed'
-                }`}
+                className={`px-8 py-3 rounded-lg text-white text-base transition-opacity ${selectedCategory ? 'hover:opacity-90' : 'opacity-40 cursor-not-allowed'
+                  }`}
                 style={{ fontWeight: 600, backgroundColor: selectedCategory ? '#000000' : '#E5E5E5' }}
               >
                 Suivant
@@ -1488,7 +1495,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
     return (
       <div className="min-h-screen bg-white flex flex-col">
         {/* Header */}
-        <header className="px-8 py-6 flex items-center justify-between border-b border-gray-200">
+        <header className="px-8 py-6 flex items-center justify-between border-t-0 border-b border-gray-200">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -1497,7 +1504,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
             className="cursor-pointer hover:opacity-70 transition-opacity"
             onClick={() => onNavigate('annonces')}
           />
-          <button 
+          <button
             onClick={() => onNavigate('annonces')}
             className="px-6 py-2 rounded-lg text-sm hover:bg-gray-100 transition-colors"
             style={{ fontWeight: 600, color: '#222222' }}
@@ -1518,9 +1525,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
               <div className="grid grid-cols-2 gap-4 max-w-xl">
                 <button
                   onClick={() => handleTypeSelect('visite-archi')}
-                  className={`px-6 py-4 rounded-xl border-2 text-base text-left transition-all hover:border-gray-900 ${
-                    selectedType === 'visite-archi' ? 'border-gray-900 bg-gray-50' : 'border-gray-300'
-                  }`}
+                  className={`px-6 py-4 rounded-xl border-2 text-base text-left transition-all hover:border-gray-900 ${selectedType === 'visite-archi' ? 'border-gray-900 bg-gray-50' : 'border-gray-300'
+                    }`}
                   style={{ fontWeight: 500, color: '#222222' }}
                 >
                   Visite architecturale
@@ -1528,9 +1534,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
 
                 <button
                   onClick={() => handleTypeSelect('atelier-art')}
-                  className={`px-6 py-4 rounded-xl border-2 text-base text-left transition-all hover:border-gray-900 ${
-                    selectedType === 'atelier-art' ? 'border-gray-900 bg-gray-50' : 'border-gray-300'
-                  }`}
+                  className={`px-6 py-4 rounded-xl border-2 text-base text-left transition-all hover:border-gray-900 ${selectedType === 'atelier-art' ? 'border-gray-900 bg-gray-50' : 'border-gray-300'
+                    }`}
                   style={{ fontWeight: 500, color: '#222222' }}
                 >
                   Atelier artistique
@@ -1538,9 +1543,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
 
                 <button
                   onClick={() => handleTypeSelect('visite-galeries')}
-                  className={`px-6 py-4 rounded-xl border-2 text-base text-left transition-all hover:border-gray-900 ${
-                    selectedType === 'visite-galeries' ? 'border-gray-900 bg-gray-50' : 'border-gray-300'
-                  }`}
+                  className={`px-6 py-4 rounded-xl border-2 text-base text-left transition-all hover:border-gray-900 ${selectedType === 'visite-galeries' ? 'border-gray-900 bg-gray-50' : 'border-gray-300'
+                    }`}
                   style={{ fontWeight: 500, color: '#222222' }}
                 >
                   Visite de galeries
@@ -1548,9 +1552,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
 
                 <button
                   onClick={() => handleTypeSelect('shopping-mode')}
-                  className={`px-6 py-4 rounded-xl border-2 text-base text-left transition-all hover:border-gray-900 ${
-                    selectedType === 'shopping-mode' ? 'border-gray-900 bg-gray-50' : 'border-gray-300'
-                  }`}
+                  className={`px-6 py-4 rounded-xl border-2 text-base text-left transition-all hover:border-gray-900 ${selectedType === 'shopping-mode' ? 'border-gray-900 bg-gray-50' : 'border-gray-300'
+                    }`}
                   style={{ fontWeight: 500, color: '#222222' }}
                 >
                   Expérience shopping et mode
@@ -1572,9 +1575,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                 <button
                   disabled={!selectedType}
                   onClick={handleTypeNext}
-                  className={`px-8 py-3 rounded-lg text-white text-base transition-opacity ${
-                    selectedType ? 'hover:opacity-90' : 'opacity-40 cursor-not-allowed'
-                  }`}
+                  className={`px-8 py-3 rounded-lg text-white text-base transition-opacity ${selectedType ? 'hover:opacity-90' : 'opacity-40 cursor-not-allowed'
+                    }`}
                   style={{ fontWeight: 600, backgroundColor: selectedType ? '#000000' : '#E5E5E5' }}
                 >
                   Suivant
@@ -1588,10 +1590,10 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                 <div className="flex flex-col items-center">
                   <div className="w-32 h-32 mb-6 flex items-center justify-center">
                     <svg className="w-28 h-28" viewBox="0 0 64 64" fill="none">
-                      <rect x="12" y="8" width="32" height="40" rx="2" fill="#FFB4B4" stroke="#E57373" strokeWidth="2"/>
-                      <path d="M20 16 L28 32 L36 20 L44 28" stroke="#E57373" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                      <circle cx="24" cy="20" r="3" fill="#E57373"/>
-                      <rect x="8" y="12" width="8" height="32" rx="1" fill="#D4A574"/>
+                      <rect x="12" y="8" width="32" height="40" rx="2" fill="#FFB4B4" stroke="#E57373" strokeWidth="2" />
+                      <path d="M20 16 L28 32 L36 20 L44 28" stroke="#E57373" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                      <circle cx="24" cy="20" r="3" fill="#E57373" />
+                      <rect x="8" y="12" width="8" height="32" rx="1" fill="#D4A574" />
                     </svg>
                   </div>
                   <h3 className="text-xl text-center" style={{ fontWeight: 600, color: '#222222' }}>
@@ -1611,7 +1613,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
     return (
       <div className="min-h-screen bg-white flex flex-col">
         {/* Header */}
-        <header className="px-8 py-6 flex items-center justify-between border-b border-gray-200">
+        <header className="px-8 py-6 flex items-center justify-between border-t-0 border-b border-gray-200">
           <Image
             src="/logoIcon.png"
             alt="Logo"
@@ -1620,7 +1622,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
             className="cursor-pointer hover:opacity-70 transition-opacity"
             onClick={() => onNavigate('annonces')}
           />
-          <button 
+          <button
             onClick={() => onNavigate('annonces')}
             className="px-6 py-2 rounded-lg text-sm hover:bg-gray-100 transition-colors"
             style={{ fontWeight: 600, color: '#222222' }}
@@ -1672,9 +1674,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                 <button
                   disabled={!location.trim()}
                   onClick={handleLocationNext}
-                  className={`px-8 py-3 rounded-lg text-white text-base transition-opacity ${
-                    location.trim() ? 'hover:opacity-90' : 'opacity-40 cursor-not-allowed'
-                  }`}
+                  className={`px-8 py-3 rounded-lg text-white text-base transition-opacity ${location.trim() ? 'hover:opacity-90' : 'opacity-40 cursor-not-allowed'
+                    }`}
                   style={{ fontWeight: 600, backgroundColor: location.trim() ? '#000000' : '#E5E5E5' }}
                 >
                   Suivant
@@ -1688,10 +1689,10 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                 <div className="flex flex-col items-center">
                   <div className="w-32 h-32 mb-6 flex items-center justify-center">
                     <svg className="w-28 h-28" viewBox="0 0 64 64" fill="none">
-                      <rect x="12" y="8" width="32" height="40" rx="2" fill="#FFB4B4" stroke="#E57373" strokeWidth="2"/>
-                      <path d="M20 16 L28 32 L36 20 L44 28" stroke="#E57373" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                      <circle cx="24" cy="20" r="3" fill="#E57373"/>
-                      <rect x="8" y="12" width="8" height="32" rx="1" fill="#D4A574"/>
+                      <rect x="12" y="8" width="32" height="40" rx="2" fill="#FFB4B4" stroke="#E57373" strokeWidth="2" />
+                      <path d="M20 16 L28 32 L36 20 L44 28" stroke="#E57373" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                      <circle cx="24" cy="20" r="3" fill="#E57373" />
+                      <rect x="8" y="12" width="8" height="32" rx="1" fill="#D4A574" />
                     </svg>
                   </div>
                   <h3 className="text-xl text-center" style={{ fontWeight: 600, color: '#222222' }}>
@@ -1731,12 +1732,12 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
             <div className="flex flex-col items-center text-center">
               <div className="w-40 h-40 mb-8 flex items-center justify-center transform rotate-12">
                 <svg className="w-full h-full" viewBox="0 0 64 64" fill="none">
-                  <rect x="8" y="4" width="38" height="48" rx="2" fill="#FFB4B4" stroke="#E57373" strokeWidth="2"/>
-                  <path d="M16 12 L24 28 L32 16 L40 24" stroke="#E57373" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                  <circle cx="20" cy="16" r="3" fill="#E57373"/>
-                  <rect x="4" y="8" width="10" height="38" rx="1" fill="#D4A574"/>
-                  <ellipse cx="56" cy="16" rx="4" ry="6" fill="#FFD93D" opacity="0.8"/>
-                  <circle cx="54" cy="44" r="2" fill="#E57373" opacity="0.6"/>
+                  <rect x="8" y="4" width="38" height="48" rx="2" fill="#FFB4B4" stroke="#E57373" strokeWidth="2" />
+                  <path d="M16 12 L24 28 L32 16 L40 24" stroke="#E57373" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                  <circle cx="20" cy="16" r="3" fill="#E57373" />
+                  <rect x="4" y="8" width="10" height="38" rx="1" fill="#D4A574" />
+                  <ellipse cx="56" cy="16" rx="4" ry="6" fill="#FFD93D" opacity="0.8" />
+                  <circle cx="54" cy="44" r="2" fill="#E57373" opacity="0.6" />
                 </svg>
               </div>
               <h3 className="text-2xl mb-2" style={{ fontWeight: 600, color: '#222222' }}>
@@ -1768,7 +1769,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
   // Step 5: Experience Years
   if (currentStep === 'experience-years') {
     const categoryText = selectedCategory === 'art-design' ? "l'art et du design" : "ce domaine";
-    
+
     return (
       <StepLayout
         stepNumber={1}
@@ -1840,7 +1841,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
             <h1 className="text-2xl md:text-4xl text-center mb-3 md:mb-4" style={{ fontWeight: 600, color: '#222222' }}>
               Décrivez vos qualifications
             </h1>
-            
+
             <p className="text-center text-sm md:text-base mb-8 md:mb-12" style={{ color: '#717171' }}>
               Aidez les voyageurs à mieux vous connaître.
             </p>
@@ -1950,9 +1951,9 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
         <h1 className="text-3xl md:text-5xl mb-4 md:mb-6 text-center" style={{ fontWeight: 600, color: '#222222' }}>
           Ajoutez vos profils<br />en ligne
         </h1>
-        
+
         <p className="text-sm md:text-base mb-8 md:mb-12 max-w-xl mx-auto text-center" style={{ color: '#717171' }}>
-          Pour nous aider à confirmer vos compétences, ajoutez des liens vers vos commentaires, 
+          Pour nous aider à confirmer vos compétences, ajoutez des liens vers vos commentaires,
           les articles de presse que vous avez reçus et votre site web. Les voyageurs ne les verront pas.
         </p>
 
@@ -1960,25 +1961,25 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
         <div className="flex justify-center gap-4 md:gap-6 mb-8 md:mb-12">
           <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl bg-white shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow">
             <svg className="w-12 h-12 md:w-16 md:h-16" viewBox="0 0 48 48" fill="none">
-              <circle cx="24" cy="24" r="20" fill="#1877F2"/>
-              <path d="M29.5 15.5H26.5C25.119 15.5 24 16.619 24 18V21H29.5L28.5 26H24V38H19V26H15.5V21H19V17.5C19 14.462 21.462 12 24.5 12H29.5V15.5Z" fill="white"/>
+              <circle cx="24" cy="24" r="20" fill="#1877F2" />
+              <path d="M29.5 15.5H26.5C25.119 15.5 24 16.619 24 18V21H29.5L28.5 26H24V38H19V26H15.5V21H19V17.5C19 14.462 21.462 12 24.5 12H29.5V15.5Z" fill="white" />
             </svg>
           </div>
           <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl bg-white shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow">
             <svg className="w-12 h-12 md:w-16 md:h-16" viewBox="0 0 48 48">
-              <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
-              <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
-              <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
-              <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+              <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
+              <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
+              <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
+              <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
             </svg>
           </div>
           <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl bg-white shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow">
             <svg className="w-12 h-12 md:w-16 md:h-16" viewBox="0 0 48 48">
-              <path fill="#D32323" d="M24.7,33.8l-5.5,9.4c-0.4,0.7-1.4,0.8-1.9,0.2l-2.3-2.3c-0.5-0.5-0.5-1.4,0.1-1.9l5.5-4.8c0.8-0.7,2-0.1,2,0.9L24.7,33.8z"/>
-              <path fill="#D32323" d="M24.3,30.2c-0.8,0.1-1.5-0.5-1.5-1.3l-0.8-8.3c-0.1-0.8,0.7-1.5,1.5-1.3l3.9,0.9c0.8,0.2,1.3,1,1,1.8l-2.6,7.4C25.6,29.9,25,30.1,24.3,30.2z"/>
-              <path fill="#D32323" d="M20.5,28.1c-0.7-0.4-0.8-1.4-0.3-2l4.4-6c0.5-0.7,1.5-0.7,2,0l1.9,2.6c0.5,0.7,0.3,1.6-0.4,2l-6.2,3.7C21.4,28.7,21,28.5,20.5,28.1z"/>
-              <path fill="#D32323" d="M29.8,20.3l7.8-3.5c0.7-0.3,1.5,0.2,1.5,1l-0.1,2.9c0,0.7-0.6,1.3-1.3,1.2l-7.1-0.4c-1,0-1.4-1.2-0.7-1.8L29.8,20.3z"/>
-              <path fill="#D32323" d="M18.5,7.5l-0.9,12.8c0,0.9-1.1,1.3-1.7,0.6l-5.2-6.1c-0.6-0.7-0.4-1.8,0.4-2.2l9.5-4.8c0.9-0.5,1.9,0.3,1.7,1.3L18.5,7.5z"/>
+              <path fill="#D32323" d="M24.7,33.8l-5.5,9.4c-0.4,0.7-1.4,0.8-1.9,0.2l-2.3-2.3c-0.5-0.5-0.5-1.4,0.1-1.9l5.5-4.8c0.8-0.7,2-0.1,2,0.9L24.7,33.8z" />
+              <path fill="#D32323" d="M24.3,30.2c-0.8,0.1-1.5-0.5-1.5-1.3l-0.8-8.3c-0.1-0.8,0.7-1.5,1.5-1.3l3.9,0.9c0.8,0.2,1.3,1,1,1.8l-2.6,7.4C25.6,29.9,25,30.1,24.3,30.2z" />
+              <path fill="#D32323" d="M20.5,28.1c-0.7-0.4-0.8-1.4-0.3-2l4.4-6c0.5-0.7,1.5-0.7,2,0l1.9,2.6c0.5,0.7,0.3,1.6-0.4,2l-6.2,3.7C21.4,28.7,21,28.5,20.5,28.1z" />
+              <path fill="#D32323" d="M29.8,20.3l7.8-3.5c0.7-0.3,1.5,0.2,1.5,1l-0.1,2.9c0,0.7-0.6,1.3-1.3,1.2l-7.1-0.4c-1,0-1.4-1.2-0.7-1.8L29.8,20.3z" />
+              <path fill="#D32323" d="M18.5,7.5l-0.9,12.8c0,0.9-1.1,1.3-1.7,0.6l-5.2-6.1c-0.6-0.7-0.4-1.8,0.4-2.2l9.5-4.8c0.9-0.5,1.9,0.3,1.7,1.3L18.5,7.5z" />
             </svg>
           </div>
         </div>
@@ -1999,9 +2000,9 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
         <h1 className="text-3xl md:text-5xl mb-4 md:mb-6 text-center" style={{ fontWeight: 600, color: '#222222' }}>
           Ajoutez vos profils<br />en ligne
         </h1>
-        
+
         <p className="text-sm md:text-base mb-8 md:mb-12 max-w-xl mx-auto text-center" style={{ color: '#717171' }}>
-          Pour nous aider à confirmer vos compétences, ajoutez des liens vers vos commentaires, 
+          Pour nous aider à confirmer vos compétences, ajoutez des liens vers vos commentaires,
           les articles de presse que vous avez reçus et votre site web. Les voyageurs ne les verront pas.
         </p>
 
@@ -2013,8 +2014,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
               className="flex items-center gap-3 px-3 md:px-4 py-3 md:py-4 border border-gray-300 rounded-xl hover:border-gray-900 transition-colors"
             >
               <svg className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
               </svg>
               <span className="flex-1 text-left text-sm md:text-base truncate" style={{ color: '#222222' }}>{link}</span>
               <button
@@ -2189,8 +2190,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
           <div className="relative">
             <div className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2">
               <svg className="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                <circle cx="12" cy="10" r="3"/>
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" />
               </svg>
             </div>
             <input
@@ -2346,7 +2347,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
               <div className="bg-white rounded-lg shadow-xl px-3 md:px-4 py-2 md:py-3 flex items-center gap-2 md:gap-3 min-w-[250px] md:min-w-[350px]">
                 <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-black flex items-center justify-center flex-shrink-0">
                   <svg className="w-4 h-4 md:w-5 md:h-5" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                   </svg>
                 </div>
                 <span className="text-xs md:text-sm" style={{ color: '#222222' }}>
@@ -2373,7 +2374,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
   // Step 12: Photos
   if (currentStep === 'photos') {
     const safePhotos = Array.isArray(photos) ? photos : [];
-    
+
     return (
       <>
         {renderPhotoTipsModal()}
@@ -2423,7 +2424,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                   className="aspect-[4/3] rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center hover:border-gray-400 hover:bg-gray-50 transition-colors"
                 >
                   <svg className="w-10 h-10 md:w-12 md:h-12" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="1.5">
-                    <path d="M12 5v14M5 12h14"/>
+                    <path d="M12 5v14M5 12h14" />
                   </svg>
                 </button>
               </div>
@@ -2450,7 +2451,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                 </div>
               </>
             )}
-            
+
             {/* Mobile tips link */}
             <div className="mt-6 text-center md:hidden">
               <button onClick={() => setShowPhotoTipsModal(true)} className="text-sm hover:underline" style={{ fontWeight: 600, color: '#222222' }}>
@@ -2546,8 +2547,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
               }}
               placeholder="Confectionnez vos propres sandales en cuir"
               className={`w-full px-0 py-2 border-0 outline-none resize-none text-center transition-all ${experienceDescription ? 'text-3xl md:text-5xl' : 'text-2xl md:text-4xl'}`}
-              style={{ 
-                color: experienceDescription ? '#222222' : '#B0B0B0', 
+              style={{
+                color: experienceDescription ? '#222222' : '#B0B0B0',
                 fontWeight: experienceDescription ? 700 : 500,
                 lineHeight: '1.1'
               }}
@@ -2578,7 +2579,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
 
           <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
             <div className="flex gap-3 md:gap-4 p-3 md:p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer">
-              <img 
+              <img
                 src="https://images.unsplash.com/photo-1565814636199-ae8133055c1c?w=100&h=100&fit=crop"
                 alt="Préparez-vous"
                 className="w-16 h-16 md:w-20 md:h-20 rounded-lg object-cover"
@@ -2594,7 +2595,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
             </div>
 
             <div className="flex gap-3 md:gap-4 p-3 md:p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer">
-              <img 
+              <img
                 src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=100&h=100&fit=crop"
                 alt="Révisez la théorie des couleurs"
                 className="w-16 h-16 md:w-20 md:h-20 rounded-lg object-cover"
@@ -2610,7 +2611,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
             </div>
 
             <div className="flex gap-3 md:gap-4 p-3 md:p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer">
-              <img 
+              <img
                 src="https://images.unsplash.com/photo-1580477667995-2b94f01c9516?w=100&h=100&fit=crop"
                 alt="Apprenez la restauration d'art"
                 className="w-16 h-16 md:w-20 md:h-20 rounded-lg object-cover"
@@ -2657,8 +2658,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
               {activities.length > 0 ? 'Votre programme' : 'Créez un programme'}
             </h1>
             <p className="text-sm md:text-base mb-8 md:mb-12" style={{ color: '#717171' }}>
-              {activities.length > 0 
-                ? `Ajoutez jusqu'à ${10 - activities.length} activités` 
+              {activities.length > 0
+                ? `Ajoutez jusqu'à ${10 - activities.length} activités`
                 : 'Ajoutez jusqu\'à 10 activités à votre expérience afin que les voyageurs sachent à quoi s\'attendre.'}
             </p>
 
@@ -2670,21 +2671,21 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                     <div key={index} className="p-3 md:p-4 border border-gray-300 rounded-xl flex gap-3 md:gap-4 items-start hover:border-gray-400 transition-colors text-left">
                       {activity.photo && (
                         <div className="flex-shrink-0">
-                          <img 
-                            src={activity.photo} 
+                          <img
+                            src={activity.photo}
                             alt={activity.title}
                             className="w-12 h-12 md:w-14 md:h-14 rounded-lg object-cover"
                           />
                         </div>
                       )}
-                      
+
                       <div className="flex-1 min-w-0">
                         <h3 className="text-sm md:text-base mb-1" style={{ fontWeight: 600, color: '#222222' }}>
                           {activity.title || `Activité ${index + 1}`} • {
-                            activity.duration < 60 
-                              ? `${activity.duration} min` 
-                              : activity.duration % 60 === 0 
-                                ? `${Math.floor(activity.duration / 60)}h` 
+                            activity.duration < 60
+                              ? `${activity.duration} min`
+                              : activity.duration % 60 === 0
+                                ? `${Math.floor(activity.duration / 60)}h`
                                 : `${Math.floor(activity.duration / 60)}h${activity.duration % 60}`
                           }
                         </h3>
@@ -2713,8 +2714,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
               className="w-full p-4 md:p-5 border border-gray-300 rounded-xl hover:border-gray-900 transition-colors flex items-center justify-center gap-2"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                <line x1="12" y1="5" x2="12" y2="19"/>
-                <line x1="5" y1="12" x2="19" y2="12"/>
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
               </svg>
               <span className="text-sm md:text-base" style={{ fontWeight: 400, color: '#222222' }}>
                 Ajouter une activité
@@ -3066,10 +3067,10 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                       className="w-12 h-12 rounded-full border-2 border-gray-300 hover:border-gray-900 transition-colors flex items-center justify-center"
                     >
                       <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                        <line x1="5" y1="12" x2="19" y2="12"/>
+                        <line x1="5" y1="12" x2="19" y2="12" />
                       </svg>
                     </button>
-                    
+
                     <div className="text-center">
                       <div className="text-7xl mb-2" style={{ fontWeight: 300, color: '#222222' }}>
                         {activityDuration}
@@ -3078,14 +3079,14 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                         Minutes
                       </div>
                     </div>
-                    
+
                     <button
                       onClick={() => setActivityDuration(activityDuration + 15)}
                       className="w-12 h-12 rounded-full border-2 border-gray-300 hover:border-gray-900 transition-colors flex items-center justify-center"
                     >
                       <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                        <line x1="12" y1="5" x2="12" y2="19"/>
-                        <line x1="5" y1="12" x2="19" y2="12"/>
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
                       </svg>
                     </button>
                   </div>
@@ -3133,9 +3134,9 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                   {/* "Learn Basics" Button */}
                   <button className="w-full p-4 border border-gray-300 rounded-xl hover:border-gray-900 transition-colors flex items-center justify-center gap-3 mb-8">
                     <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                      <circle cx="8.5" cy="8.5" r="1.5"/>
-                      <polyline points="21 15 16 10 5 21"/>
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                      <circle cx="8.5" cy="8.5" r="1.5" />
+                      <polyline points="21 15 16 10 5 21" />
                     </svg>
                     <span className="text-base" style={{ fontWeight: 400, color: '#222222' }}>
                       Apprenez les bases
@@ -3149,14 +3150,13 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                         <button
                           key={index}
                           onClick={() => setActivityPhoto(photo)}
-                          className={`aspect-square rounded-xl overflow-hidden border-2 transition-all ${
-                            activityPhoto === photo 
-                              ? 'border-gray-900 shadow-lg' 
-                              : 'border-gray-200 hover:border-gray-400'
-                          }`}
+                          className={`aspect-square rounded-xl overflow-hidden border-2 transition-all ${activityPhoto === photo
+                            ? 'border-gray-900 shadow-lg'
+                            : 'border-gray-200 hover:border-gray-400'
+                            }`}
                         >
-                          <img 
-                            src={photo} 
+                          <img
+                            src={photo}
                             alt={`Photo ${index + 1}`}
                             className="w-full h-full object-cover"
                           />
@@ -3170,27 +3170,26 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                           'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?w=400&h=400&fit=crop',
                           'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=400&fit=crop',
                           'https://images.unsplash.com/photo-1615529182904-14819c35db37?w=400&h=400&fit=crop'].map((photoUrl, index) => (
-                          <button
-                            key={index}
-                            onClick={() => setActivityPhoto(photoUrl)}
-                            className={`aspect-square rounded-xl overflow-hidden border-2 transition-all ${
-                              activityPhoto === photoUrl 
-                                ? 'border-gray-900 shadow-lg' 
+                            <button
+                              key={index}
+                              onClick={() => setActivityPhoto(photoUrl)}
+                              className={`aspect-square rounded-xl overflow-hidden border-2 transition-all ${activityPhoto === photoUrl
+                                ? 'border-gray-900 shadow-lg'
                                 : 'border-gray-200 hover:border-gray-400'
-                            }`}
-                          >
-                            <img 
-                              src={photoUrl} 
-                              alt={`Photo ${index + 1}`}
-                              className="w-full h-full object-cover"
-                            />
-                          </button>
-                        ))}
+                                }`}
+                            >
+                              <img
+                                src={photoUrl}
+                                alt={`Photo ${index + 1}`}
+                                className="w-full h-full object-cover"
+                              />
+                            </button>
+                          ))}
                         {/* Add Photo Button */}
                         <button className="aspect-square rounded-xl border-2 border-dashed border-gray-300 hover:border-gray-900 transition-colors flex items-center justify-center">
                           <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="#717171" strokeWidth="2">
-                            <line x1="12" y1="5" x2="12" y2="19"/>
-                            <line x1="5" y1="12" x2="19" y2="12"/>
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
                           </svg>
                         </button>
                       </>
@@ -3298,21 +3297,21 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                   className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-gray-300 hover:border-gray-900 transition-colors flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   <svg className="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <line x1="5" y1="12" x2="19" y2="12" />
                   </svg>
                 </button>
-                
+
                 <div className="text-7xl md:text-9xl" style={{ fontWeight: 300, color: '#222222' }}>
                   {maxParticipants}
                 </div>
-                
+
                 <button
                   onClick={() => setMaxParticipants(maxParticipants + 1)}
                   className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-gray-300 hover:border-gray-900 transition-colors flex items-center justify-center"
                 >
                   <svg className="w-5 h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-                    <line x1="12" y1="5" x2="12" y2="19"/>
-                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
                   </svg>
                 </button>
               </div>
@@ -3356,11 +3355,11 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                     style={{ color: '#222222', fontWeight: 400 }}
                   >
                     Vous gagnez {youEarn.toFixed(0)}$
-                    <svg 
-                      className={`w-3 h-3 transition-transform ${showPricingBreakdown ? 'rotate-180' : ''}`} 
-                      viewBox="0 0 24 24" 
-                      fill="none" 
-                      stroke="currentColor" 
+                    <svg
+                      className={`w-3 h-3 transition-transform ${showPricingBreakdown ? 'rotate-180' : ''}`}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
                       strokeWidth="2"
                     >
                       <polyline points="6 9 12 15 18 9" />

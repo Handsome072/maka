@@ -53,6 +53,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
   const [addressPostalCode, setAddressPostalCode] = useState('');
   const [legalEntity, setLegalEntity] = useState<'yes' | 'no' | null>(null);
   const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   // Sync currentStep with initialStep when it changes (for URL-based navigation)
   useEffect(() => {
@@ -69,6 +70,22 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
       document.body.classList.remove('scrollbar-hide');
       document.documentElement.style.overflow = '';
       document.body.style.overflow = '';
+    };
+  }, []);
+
+  // Track scroll position to show/hide header border
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      setIsScrolled(scrollTop > 0);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    // Check initial scroll position
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
@@ -252,7 +269,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-4 sm:px-6 md:px-8 py-2 sm:py-3 flex items-center justify-between z-20">
+        <div className={`fixed top-0 left-0 right-0 bg-white border-t-0 transition-all duration-200 px-4 sm:px-6 md:px-8 py-2 sm:py-3 flex items-center justify-between z-20 ${isScrolled ? 'border-b border-gray-200' : ''}`}>
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
             <Logo className="h-8 sm:h-10 md:h-12" />
           </div>
@@ -347,7 +364,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-4 sm:px-6 md:px-8 py-2 sm:py-3 flex items-center justify-between z-20">
+        <div className={`fixed top-0 left-0 right-0 bg-white border-t-0 transition-all duration-200 px-4 sm:px-6 md:px-8 py-2 sm:py-3 flex items-center justify-between z-20 ${isScrolled ? 'border-b border-gray-200' : ''}`}>
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
             <Logo className="h-8 sm:h-10 md:h-12" />
           </div>
@@ -421,7 +438,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-4 sm:px-6 md:px-8 py-2 sm:py-3 flex items-center justify-between z-20">
+        <div className={`fixed top-0 left-0 right-0 bg-white border-t-0 transition-all duration-200 px-4 sm:px-6 md:px-8 py-2 sm:py-3 flex items-center justify-between z-20 ${isScrolled ? 'border-b border-gray-200' : ''}`}>
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
             <Logo className="h-8 sm:h-10 md:h-12" />
           </div>
@@ -552,7 +569,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className={`fixed top-0 left-0 right-0 bg-white border-t-0 transition-all duration-200 px-8 py-3 flex items-center justify-between z-20 ${isScrolled ? 'border-b border-gray-200' : ''}`}>
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
             <Logo className="h-12" />
           </div>
@@ -641,7 +658,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className={`fixed top-0 left-0 right-0 bg-white border-t-0 transition-all duration-200 px-8 py-3 flex items-center justify-between z-20 ${isScrolled ? 'border-b border-gray-200' : ''}`}>
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
             <Logo className="h-12" />
           </div>
@@ -825,7 +842,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className="fixed top-0 left-0 right-0 bg-white border-t-0 border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
             <Logo className="h-12" />
           </div>
@@ -907,7 +924,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className="fixed top-0 left-0 right-0 bg-white border-t-0 border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
             <Logo className="h-12" />
           </div>
@@ -1048,7 +1065,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className="fixed top-0 left-0 right-0 bg-white border-t-0 border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
             <Logo className="h-12" />
           </div>
@@ -1138,7 +1155,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className="fixed top-0 left-0 right-0 bg-white border-t-0 border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
             <Logo className="h-12" />
           </div>
@@ -1248,7 +1265,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className="fixed top-0 left-0 right-0 bg-white border-t-0 border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
             <Logo className="h-12" />
           </div>
@@ -1451,7 +1468,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className="fixed top-0 left-0 right-0 bg-white border-t-0 border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
             <Logo className="h-12" />
           </div>
@@ -1577,7 +1594,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className="fixed top-0 left-0 right-0 bg-white border-t-0 border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
             <Logo className="h-12" />
           </div>
@@ -1672,7 +1689,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className="fixed top-0 left-0 right-0 bg-white border-t-0 border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
             <Logo className="h-12" />
           </div>
@@ -1749,7 +1766,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className="fixed top-0 left-0 right-0 bg-white border-t-0 border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
             <Logo className="h-12" />
           </div>
@@ -1835,7 +1852,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white flex flex-col overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className="fixed top-0 left-0 right-0 bg-white border-t-0 border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
             <Logo className="h-12" />
           </div>
@@ -1906,7 +1923,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className="fixed top-0 left-0 right-0 bg-white border-t-0 border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
             <Logo className="h-12" />
           </div>
@@ -2016,7 +2033,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className="fixed top-0 left-0 right-0 bg-white border-t-0 border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
             <Logo className="h-12" />
           </div>
@@ -2121,7 +2138,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className="fixed top-0 left-0 right-0 bg-white border-t-0 border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
             <Logo className="h-12" />
           </div>
@@ -2258,7 +2275,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className="fixed top-0 left-0 right-0 bg-white border-t-0 border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
             <Logo className="h-12" />
           </div>
@@ -2364,7 +2381,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className="fixed top-0 left-0 right-0 bg-white border-t-0 border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
             <Logo className="h-12" />
           </div>
@@ -2470,7 +2487,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white flex flex-col overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className="fixed top-0 left-0 right-0 bg-white border-t-0 border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
             <Logo className="h-12" />
           </div>
@@ -2657,7 +2674,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white flex flex-col overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
+        <div className="fixed top-0 left-0 right-0 bg-white border-t-0 border-b border-gray-200 px-8 py-6 flex items-center justify-between z-20">
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
             <Logo className="h-12" />
           </div>
