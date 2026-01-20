@@ -89,6 +89,43 @@ jobs:
                     fs.writeFileSync('deploy/package.json', JSON.stringify(pkg, null, 2));
                   "
 
+                  # Create app.js wrapper for cPanel Passenger
+                  cat > deploy/app.js << 'APPEOF'
+                  const { createServer } = require('http');
+                  const { parse } = require('url');
+                  const next = require('next');
+                  const path = require('path');
+
+                  const dev = false;
+                  const hostname = '0.0.0.0';
+                  const port = process.env.PORT || 3000;
+
+                  const app = next({ dev, hostname, port, dir: __dirname });
+                  const handle = app.getRequestHandler();
+
+                  app.prepare().then(() => {
+                    createServer(async (req, res) => {
+                      try {
+                        const parsedUrl = parse(req.url, true);
+                        await handle(req, res, parsedUrl);
+                      } catch (err) {
+                        console.error('Error:', err);
+                        res.statusCode = 500;
+                        res.end('Internal Server Error');
+                      }
+                    }).listen(port, () => {
+                      console.log(`> Ready on http://${hostname}:${port}`);
+                    });
+                  });
+                  APPEOF
+                  echo "Created app.js wrapper"
+
+                  # Set proper permissions for all files
+                  chmod -R 755 deploy/
+                  find deploy -type f -exec chmod 644 {} \;
+                  chmod 755 deploy/server.js deploy/app.js
+                  echo "Set file permissions"
+
                   # Final verification
                   echo ""
                   echo "=== Final deploy folder structure ==="
