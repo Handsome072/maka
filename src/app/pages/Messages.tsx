@@ -402,7 +402,7 @@ export function Messages({ onNavigate }: { onNavigate?: (page: string) => void }
 
       {/* Modal Paramètres de messagerie */}
       {showSettingsModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full relative">
             {/* Bouton X pour fermer */}
             <button
@@ -447,7 +447,7 @@ export function Messages({ onNavigate }: { onNavigate?: (page: string) => void }
 
       {/* Modal Envoyer des remarques */}
       {showFeedbackModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-2xl p-8 max-w-lg w-full relative">
             {/* Bouton X pour fermer */}
             <button
