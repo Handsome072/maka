@@ -61,38 +61,27 @@ jobs:
 
                   mkdir -p deploy
 
-                  # Copy standalone build (includes server.js and .next with BUILD_ID)
+                  # Copy entire standalone folder (already has correct .next structure)
                   cp -r .next/standalone/* deploy/
 
-                  # Debug: Check what's in standalone .next
-                  echo "Standalone .next contents:"
-                  ls -la deploy/.next/ || echo "No .next folder in standalone!"
-
-                  # Copy static files into the standalone .next folder
+                  # Copy static files (not included in standalone by default)
                   cp -r .next/static deploy/.next/
 
-                  # Verify critical files exist
-                  echo "Verifying .next structure:"
+                  # Copy public folder
+                  cp -r public deploy/ 2>/dev/null || true
+
+                  # Verify the structure
+                  echo "=== Deploy .next structure ==="
                   ls -la deploy/.next/
                   echo ""
-                  echo "BUILD_ID content:"
-                  cat deploy/.next/BUILD_ID || echo "ERROR: BUILD_ID missing!"
+                  echo "=== Static folder ==="
+                  ls -la deploy/.next/static/ | head -10
                   echo ""
-                  echo "build-manifest.json exists:"
-                  ls -la deploy/.next/build-manifest.json || echo "ERROR: build-manifest.json missing!"
-
-                  # Copy public folder
-                  if [ -d "public" ]; then
-                    cp -r public deploy/
-                  fi
+                  echo "BUILD_ID: $(cat deploy/.next/BUILD_ID)"
 
                   # Remove ALL node_modules from deploy (cPanel manages this via symlink)
                   find deploy -type d -name "node_modules" -exec rm -rf {} + 2>/dev/null || true
                   echo "Removed all node_modules folders"
-
-                  # Verify BUILD_ID exists
-                  echo "Checking BUILD_ID..."
-                  cat deploy/.next/BUILD_ID || echo "WARNING: BUILD_ID not found"
 
                   # Ensure package.json has correct start script
                   node -e "
