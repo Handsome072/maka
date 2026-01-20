@@ -186,7 +186,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
-      setIsScrolled(scrollTop > 0);
+      setIsScrolled(scrollTop > 20);
     };
 
     window.addEventListener('scroll', handleScroll);
