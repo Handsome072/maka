@@ -8,10 +8,10 @@
     "start": "next start",
     "lint": "next lint",
     "export": "next build",
-    "deploy:prepare": "pnpm run export && cp public/.htaccess out/.htaccess 2>/dev/null || true",
+    "deploy:prepare": "npm run export && cp public/.htaccess out/.htaccess",
     "deploy:verify": "./verify-build.sh",
     "deploy:zip": "cd out && zip -r ../homiqio-deploy.zip . && cd ..",
-    "deploy:full": "pnpm run deploy:prepare && pnpm run deploy:zip && pnpm run deploy:verify"
+    "deploy:full": "npm run deploy:prepare && npm run deploy:zip && npm run deploy:verify"
   },
   "dependencies": {
     "@emotion/react": "11.14.0",
