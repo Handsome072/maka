@@ -5,18 +5,33 @@ import Link from 'next/link';
 
 interface FooterProps {
   onNavigate?: (page: string) => void;
+  hideCards?: boolean;
 }
 
 /**
  * Footer principal - Version Next.js
  * UI 100% identique à src/app/components/Footer.tsx
  */
-export function Footer({ onNavigate }: FooterProps) {
+export function Footer({ onNavigate, hideCards = false }: FooterProps) {
   return (
-    <footer className="bg-[#FCFCFC] border-t border-gray-100">
+    <footer className="bg-[#F7F7F7] border-t border-gray-200">
       <div className="px-4 sm:px-6 lg:px-20 py-12">
+        {/* Dark Cards Section */}
+        {!hideCards && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 max-w-[1200px] mx-auto">
+            <Link href="#" className="bg-[#222222] rounded-xl p-6 hover:opacity-90 transition-opacity">
+              <h3 className="font-semibold text-lg mb-2 text-white">Les politiques de la communauté</h3>
+              <p className="text-sm text-white opacity-90">Nos actions pour établir un climat de confiance.</p>
+            </Link>
+            <Link href="#" className="bg-[#222222] rounded-xl p-6 hover:opacity-90 transition-opacity">
+              <h3 className="font-semibold text-lg mb-2 text-white">Conseils et consignes de sécurité</h3>
+              <p className="text-sm text-white opacity-90">Conseils de sécurité pour les voyageurs.</p>
+            </Link>
+          </div>
+        )}
+
         {/* Footer Links Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16 mb-12 max-w-[1200px] mx-auto">
           {/* Assistance */}
           <div>
             <h3
@@ -27,8 +42,13 @@ export function Footer({ onNavigate }: FooterProps) {
             </h3>
             <ul className="space-y-3">
               <li>
-                <a href="#" className="text-sm text-[#222222] hover:underline">
+                <Link href="/help-center" className="text-sm text-[#222222] hover:underline">
                   Centre d'aide
+                </Link>
+              </li>
+              <li>
+                <a href="#" className="text-sm text-[#222222] hover:underline">
+                  Assistance sécurité
                 </a>
               </li>
               <li>
@@ -53,7 +73,7 @@ export function Footer({ onNavigate }: FooterProps) {
               </li>
               <li>
                 <a href="#" className="text-sm text-[#222222] hover:underline">
-                  Signaler un problème de voisinage
+                  J'ai un problème de voisinage
                 </a>
               </li>
             </ul>
@@ -75,6 +95,16 @@ export function Footer({ onNavigate }: FooterProps) {
               </li>
               <li>
                 <a href="#" className="text-sm text-[#222222] hover:underline">
+                  Proposez votre expérience sur HOMIQIO
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-sm text-[#222222] hover:underline">
+                  Proposez votre service sur HOMIQIO
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-sm text-[#222222] hover:underline">
                   AirCover pour les hôtes
                 </a>
               </li>
@@ -90,12 +120,22 @@ export function Footer({ onNavigate }: FooterProps) {
               </li>
               <li>
                 <a href="#" className="text-sm text-[#222222] hover:underline">
-                  Accueil responsable
+                  Hébergement responsable
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-sm text-[#222222] hover:underline">
+                  Participez à un cours gratuit pour les hôtes
                 </a>
               </li>
               <li>
                 <a href="#" className="text-sm text-[#222222] hover:underline">
                   Trouver un co-hôte
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-sm text-[#222222] hover:underline">
+                  Parrainer un hôte
                 </a>
               </li>
             </ul>
@@ -112,12 +152,12 @@ export function Footer({ onNavigate }: FooterProps) {
             <ul className="space-y-3">
               <li>
                 <a href="#" className="text-sm text-[#222222] hover:underline">
-                  Newsroom
+                  Édition été 2025
                 </a>
               </li>
               <li>
                 <a href="#" className="text-sm text-[#222222] hover:underline">
-                  Nouvelles fonctionnalités
+                  Newsroom
                 </a>
               </li>
               <li>
@@ -135,13 +175,18 @@ export function Footer({ onNavigate }: FooterProps) {
                   Cartes cadeaux
                 </a>
               </li>
+              <li>
+                <a href="#" className="text-sm text-[#222222] hover:underline">
+                  Séjours d'urgence HOMIQIO.org
+                </a>
+              </li>
             </ul>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-6 border-t border-gray-200">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="pt-6 border-t border-gray-300 bg-[#EBEBEB] -mx-4 sm:-mx-6 lg:-mx-20 px-4 sm:px-6 lg:px-20 py-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 max-w-[1200px] mx-auto">
             {/* Left - Copyright & Links */}
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 text-sm text-[#222222]">
               <span>© 2026 HOMIQIO, Inc.</span>

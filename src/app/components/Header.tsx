@@ -20,10 +20,11 @@ interface HeaderProps {
   onSearch: (params: any) => void;
   onClientSpaceClick?: () => void;
   isHost?: boolean;
+  variant?: 'default' | 'help-center';
 }
 
 export const Header = forwardRef<HTMLElement, HeaderProps>(
-  ({ currentPage, onNavigate, isScrolled, onSearch, onClientSpaceClick, isHost }, ref) => {
+  ({ currentPage, onNavigate, isScrolled, onSearch, onClientSpaceClick, isHost, variant = 'default' }, ref) => {
     const [showSearchOverlay, setShowSearchOverlay] =
       useState(false);
     const [showLanguageModal, setShowLanguageModal] =
@@ -46,59 +47,72 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
       <>
         <header
           ref={headerRef}
-          className="z-50 bg-[#FCFCFC]"
+          className={`z-50 bg-[#F7F7F7] ${variant === 'help-center' ? 'border-b border-gray-200' : ''}`}
         >
-          <div className="px-4 sm:px-6 lg:px-12 py-4">
+          <div className={`px-4 sm:px-6 py-4 ${variant === 'help-center' ? 'lg:px-20' : 'lg:px-12'}`}>
             <div className="flex items-center justify-between relative">
-              {/* Logo - Responsive: texte masqué pour S < 950 */}
-              <Link
-                href={ROUTES.HOME}
-                className="flex items-center gap-1 flex-shrink-0 relative z-10 border-0"
-              >
-                {/* Logo complet visible pour S >= 950 */}
-                <img
-                  src="/logo.png"
-                  alt="HOMIQIO Logo"
-                  className="hidden min-[950px]:block w-[150px] h-auto border-0"
-                />
-                {/* Icône seule visible pour S < 950 */}
-                <img
-                  src="/logoIcon.png"
-                  alt="HOMIQIO"
-                  className="block min-[950px]:hidden w-[40px] h-auto border-0"
-                />
-              </Link>
+              {/* Logo Section */}
+              <div className="flex items-center gap-4">
+                <Link
+                  href={ROUTES.HOME}
+                  className="flex items-center gap-1 flex-shrink-0 relative z-10 border-0"
+                >
+                  {/* Logo complet visible pour S >= 950 ou mode standard */}
+                  <img
+                    src="/logo.png"
+                    alt="HOMIQIO Logo"
+                    className={`${variant === 'help-center' ? 'hidden' : 'hidden min-[950px]:block'} w-[150px] h-auto border-0`}
+                  />
+                  {/* Icône seule */}
+                  <img
+                    src="/logoIcon.png"
+                    alt="HOMIQIO"
+                    className={`${variant === 'help-center' ? 'block' : 'block min-[950px]:hidden'} w-[40px] h-auto border-0`}
+                  />
+                </Link>
+
+                {variant === 'help-center' && (
+                  <>
+                    <div className="h-8 w-px bg-gray-300"></div>
+                    <Link href="/help-center" className="text-base font-medium hover:underline text-[#222222]">
+                      Centre d'aide
+                    </Link>
+                  </>
+                )}
+              </div>
 
               {/* Center Section - Both components always mounted, visibility controlled by CSS */}
-              <div className="flex-1 relative">
-                {/* HeaderContent - Normal mode (visible when NOT scrolled) */}
-                <div
-                  className={`transition-opacity duration-300 ease-in-out ${isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100'
-                    }`}
-                >
-                  <HeaderContent
-                    currentPage={currentPage}
-                    onNavigate={onNavigate}
-                    onGlobeClick={() => setShowLanguageModal(true)}
-                    onMenuClick={() => setShowMenuDropdown(!showMenuDropdown)}
-                    onBecomeHostClick={() => setShowBecomeHostModal(true)}
-                    MenuDropdownComponent={null}
-                  />
-                </div>
-
-                {/* CompactSearchBar - Compact mode (visible when scrolled) */}
-                <div
-                  className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ease-in-out ${isScrolled ? 'opacity-100' : 'opacity-0 pointer-events-none'
-                    }`}
-                >
-                  <div className="flex-1 mx-2 sm:mx-4 md:mx-8">
-                    <CompactSearchBar
+              {variant !== 'help-center' && (
+                <div className="flex-1 relative">
+                  {/* HeaderContent - Normal mode (visible when NOT scrolled) */}
+                  <div
+                    className={`transition-opacity duration-300 ease-in-out ${isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100'
+                      }`}
+                  >
+                    <HeaderContent
                       currentPage={currentPage}
-                      onOpen={() => setShowSearchOverlay(true)}
+                      onNavigate={onNavigate}
+                      onGlobeClick={() => setShowLanguageModal(true)}
+                      onMenuClick={() => setShowMenuDropdown(!showMenuDropdown)}
+                      onBecomeHostClick={() => setShowBecomeHostModal(true)}
+                      MenuDropdownComponent={null}
                     />
                   </div>
+
+                  {/* CompactSearchBar - Compact mode (visible when scrolled) */}
+                  <div
+                    className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ease-in-out ${isScrolled ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                      }`}
+                  >
+                    <div className="flex-1 mx-2 sm:mx-4 md:mx-8">
+                      <CompactSearchBar
+                        currentPage={currentPage}
+                        onOpen={() => setShowSearchOverlay(true)}
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Right Menu - Always rendered, never destroyed */}
               <HeaderRightMenu
