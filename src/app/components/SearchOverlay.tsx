@@ -69,7 +69,7 @@ export function SearchOverlay({
 
         {/* Content Container - Matches main header exactly */}
         <div
-          className="relative bg-[#F7F7F7]"
+          className="relative bg-[#FCFCFC]"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header - Exact replica of main Header component */}
@@ -115,7 +115,7 @@ export function SearchOverlay({
           </div>
 
           {/* Search Bar - Matches main page layout */}
-          <div className="bg-[#F7F7F7]">
+          <div className="bg-[#FCFCFC]">
             <SearchBar type={currentPage} onSearch={onSearch} />
           </div>
         </div>

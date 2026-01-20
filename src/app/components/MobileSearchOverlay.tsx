@@ -301,7 +301,7 @@ export function MobileSearchOverlay({
         <AnimatePresence>
             {isOpen && (
                 <motion.div
-                    className="fixed inset-0 z-[100] bg-[#F7F7F7] flex flex-col"
+                    className="fixed inset-0 z-[100] bg-[#FAFAFA] flex flex-col"
                     initial={{ opacity: 0, y: '100%' }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: '100%' }}
@@ -342,7 +342,7 @@ export function MobileSearchOverlay({
                                                     <path d="M12 6V12L16 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                                                 </svg>
                                             </div>
-                                            <span className="absolute -top-1 -right-2 w-2 h-2 rounded-full bg-[#E91E63] border-2 border-white"></span>
+                                            <span className="absolute -top-2 -right-3 text-white text-[8px] px-1.5 py-0.5 rounded-full z-10 font-bold tracking-wide" style={{ background: 'linear-gradient(135deg, #4A6FA5 0%, #2D4C7B 100%)', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>NOUVEAU</span>
                                         </div>
                                         <span className={`text-[11px] font-medium leading-none ${currentPage === 'experiences' ? 'text-black' : 'text-gray-600'}`}>Expériences</span>
                                     </button>
@@ -358,7 +358,7 @@ export function MobileSearchOverlay({
                                                     <path d="M9 3V21M15 3V21M3 9H21M3 15H21" stroke="currentColor" strokeWidth="2" />
                                                 </svg>
                                             </div>
-                                            <span className="absolute -top-1 -right-2 w-2 h-2 rounded-full bg-[#E91E63] border-2 border-white"></span>
+                                            <span className="absolute -top-2 -right-3 text-white text-[8px] px-1.5 py-0.5 rounded-full z-10 font-bold tracking-wide" style={{ background: 'linear-gradient(135deg, #4A6FA5 0%, #2D4C7B 100%)', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>NOUVEAU</span>
                                         </div>
                                         <span className={`text-[11px] font-medium leading-none ${currentPage === 'services' ? 'text-black' : 'text-gray-600'}`}>Services</span>
                                     </button>
@@ -375,7 +375,7 @@ export function MobileSearchOverlay({
                     </AnimatePresence>
 
                     {/* Contenu scrollable */}
-                    <div className="flex-1 overflow-y-auto bg-[#F7F7F7]">
+                    <div className="flex-1 overflow-y-auto bg-[#FAFAFA]">
                         {/* Section Où */}
                         <div
                             className={`mx-4 mt-4 bg-white rounded-2xl overflow-hidden transition-all ${expandedSection === 'destination' ? 'shadow-xl border-2 border-gray-200' : 'shadow-sm border border-gray-100'}`}

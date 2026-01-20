@@ -50,7 +50,7 @@ export function PhoneVerification({ onNavigate }: PhoneVerificationProps) {
     return (
       <div className="min-h-screen bg-white">
         {/* Header */}
-        <header className="sticky top-0 bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between z-20">
+        <header className="sticky top-0 bg-white border-b border-gray-100 px-8 py-4 flex items-center justify-between z-20">
           <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
             <img
               src="/logo.png"
@@ -148,7 +148,7 @@ export function PhoneVerification({ onNavigate }: PhoneVerificationProps) {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="sticky top-0 bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between z-20">
+      <header className="sticky top-0 bg-white border-b border-gray-100 px-8 py-4 flex items-center justify-between z-20">
         <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
           <img
             src="/logo.png"
