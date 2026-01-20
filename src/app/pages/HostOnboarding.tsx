@@ -271,7 +271,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Header */}
         <div className={`fixed top-0 left-0 right-0 bg-white border-t-0 transition-all duration-200 px-4 sm:px-6 md:px-8 py-2 sm:py-3 flex items-center justify-between z-20 ${isScrolled ? 'border-b border-gray-200' : ''}`}>
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
-            <Logo className="h-8 sm:h-10 md:h-12" />
+            <Logo className="hidden sm:block h-8 sm:h-10 md:h-12" />
+            <img src="/logoIcon.png" alt="HOMIQIO" className="block sm:hidden h-8 w-8 object-contain" />
           </div>
           <div className="flex gap-2 sm:gap-3">
             <button className="hidden sm:block px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
@@ -296,7 +297,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
               <p className="text-sm mb-4" style={{ fontWeight: 600, color: '#222222' }}>
                 Étape 1
               </p>
-              <h1 className="text-5xl mb-6" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.1' }}>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl mb-6" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.1' }}>
                 Parlez-nous de votre logement
               </h1>
               <p className="text-lg" style={{ color: '#222222', lineHeight: '1.6' }}>
@@ -366,7 +367,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Header */}
         <div className={`fixed top-0 left-0 right-0 bg-white border-t-0 transition-all duration-200 px-4 sm:px-6 md:px-8 py-2 sm:py-3 flex items-center justify-between z-20 ${isScrolled ? 'border-b border-gray-200' : ''}`}>
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
-            <Logo className="h-8 sm:h-10 md:h-12" />
+            <Logo className="hidden sm:block h-8 sm:h-10 md:h-12" />
+            <img src="/logoIcon.png" alt="HOMIQIO" className="block sm:hidden h-8 w-8 object-contain" />
           </div>
           <div className="flex gap-2 sm:gap-3">
             <button className="hidden sm:block px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
@@ -384,8 +386,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 md:px-8 pt-20 sm:pt-24 md:pt-32 pb-20 sm:pb-24 md:pb-32">
-          <h1 className="text-xl sm:text-2xl md:text-3xl mb-6 sm:mb-8 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 md:px-8 pt-16 sm:pt-20 md:pt-24 pb-20 sm:pb-24 md:pb-32">
+          <h1 className="text-lg sm:text-2xl md:text-3xl mb-6 sm:mb-8 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             Parmi les propositions suivantes, laquelle décrit le mieux votre logement ?
           </h1>
 
@@ -438,7 +440,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Header */}
         <div className={`fixed top-0 left-0 right-0 bg-white border-t-0 transition-all duration-200 px-4 sm:px-6 md:px-8 py-2 sm:py-3 flex items-center justify-between z-20 ${isScrolled ? 'border-b border-gray-200' : ''}`}>
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
-            <Logo className="h-8 sm:h-10 md:h-12" />
+            <Logo className="hidden sm:block h-8 sm:h-10 md:h-12" />
+            <img src="/logoIcon.png" alt="HOMIQIO" className="block sm:hidden h-8 w-8 object-contain" />
           </div>
           <div className="flex gap-2 sm:gap-3">
             <button className="hidden sm:block px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
@@ -456,8 +459,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 md:px-8 pt-14 sm:pt-16 md:pt-20 pb-20 sm:pb-24 md:pb-32">
-          <h1 className="text-xl sm:text-2xl md:text-3xl mb-2 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 md:px-8 pt-16 sm:pt-20 md:pt-24 pb-20 sm:pb-24 md:pb-32">
+          <h1 className="text-lg sm:text-2xl md:text-3xl mb-2 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             Quel type de logement sera à la disposition des voyageurs ?
           </h1>
 
@@ -565,7 +568,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Header */}
         <div className={`fixed top-0 left-0 right-0 bg-white border-t-0 transition-all duration-200 px-8 py-3 flex items-center justify-between z-20 ${isScrolled ? 'border-b border-gray-200' : ''}`}>
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
-            <Logo className="h-12" />
+            <Logo className="hidden sm:block h-12" />
+            <img src="/logoIcon.png" alt="HOMIQIO" className="block sm:hidden h-8 w-8 object-contain" />
           </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
@@ -582,8 +586,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="max-w-2xl mx-auto px-8 pt-32 pb-32">
-          <h1 className="text-3xl mb-2 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
+        <div className="max-w-2xl mx-auto px-8 pt-24 pb-32">
+          <h1 className="text-xl sm:text-3xl mb-2 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             Où est situé votre logement ?
           </h1>
           <p className="text-base text-center mb-8" style={{ color: '#717171' }}>
@@ -653,7 +657,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Header */}
         <div className={`fixed top-0 left-0 right-0 bg-white border-t-0 transition-all duration-200 px-8 py-3 flex items-center justify-between z-20 ${isScrolled ? 'border-b border-gray-200' : ''}`}>
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
-            <Logo className="h-12" />
+            <Logo className="hidden sm:block h-12" />
+            <img src="/logoIcon.png" alt="HOMIQIO" className="block sm:hidden h-8 w-8 object-contain" />
           </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
@@ -670,8 +675,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         </div>
 
         {/* Content */}
-        <div className="max-w-2xl mx-auto px-8 pt-32 pb-32">
-          <h1 className="text-3xl mb-2 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
+        <div className="max-w-2xl mx-auto px-8 pt-24 pb-32">
+          <h1 className="text-xl sm:text-3xl mb-2 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             Confirmez votre adresse
           </h1>
           <p className="text-base text-center mb-8" style={{ color: '#717171' }}>
@@ -833,9 +838,10 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
     return (
       <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide">
         {/* Header */}
-        <div className="fixed top-0 left-0 right-0 bg-white border-t-0 border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
+        <div className={`fixed top-0 left-0 right-0 bg-white border-t-0 transition-all duration-200 px-8 py-3 flex items-center justify-between z-20 ${isScrolled ? 'border-b border-gray-200' : ''}`}>
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
-            <Logo className="h-12" />
+            <Logo className="hidden sm:block h-12" />
+            <img src="/logoIcon.png" alt="HOMIQIO" className="block sm:hidden h-8 w-8 object-contain" />
           </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
@@ -853,7 +859,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
 
         {/* Content */}
         <div className="max-w-4xl mx-auto px-8 pt-32 pb-32">
-          <h1 className="text-3xl mb-2 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
+          <h1 className="text-xl sm:text-3xl mb-2 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             Le repère est-il au bon endroit ?
           </h1>
           <p className="text-base text-center mb-8" style={{ color: '#717171' }}>
@@ -917,7 +923,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
         {/* Header */}
         <div className="fixed top-0 left-0 right-0 bg-white border-t-0 border-b border-gray-200 px-8 py-3 flex items-center justify-between z-20">
           <div onClick={() => onNavigate('logements')} className="cursor-pointer">
-            <Logo className="h-12" />
+            <Logo className="hidden sm:block h-12" />
+            <img src="/logoIcon.png" alt="HOMIQIO" className="block sm:hidden h-8 w-8 object-contain" />
           </div>
           <div className="flex gap-3">
             <button className="px-4 py-2 text-sm hover:bg-gray-50 rounded-full transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
@@ -935,7 +942,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'intro', onCompleteOn
 
         {/* Content */}
         <div className="max-w-2xl mx-auto px-8 pt-32 pb-32">
-          <h1 className="text-3xl mb-2 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
+          <h1 className="text-xl sm:text-3xl mb-2 text-center" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
             Donnez les informations principales concernant votre logement
           </h1>
           <p className="text-base text-center mb-12" style={{ color: '#717171' }}>

@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Search, Settings, Send, Archive, PlaneTakeoff, X } from 'lucide-react';
+import { Search, Settings, Send, Archive, PlaneTakeoff, X, ArrowLeft } from 'lucide-react';
 import { Logo } from '@/app/components/Logo';
 
 interface Conversation {
@@ -27,7 +27,7 @@ export function Messages({ onNavigate }: { onNavigate?: (page: string) => void }
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [feedbackText, setFeedbackText] = useState('');
   const [reportProblem, setReportProblem] = useState(false);
-  
+
   // State pour gérer les messages dynamiquement
   const [dynamicMessages, setDynamicMessages] = useState<{ [conversationId: string]: Message[] }>({});
 
@@ -132,7 +132,7 @@ export function Messages({ onNavigate }: { onNavigate?: (page: string) => void }
         <div className="px-4 sm:px-6 lg:px-12 py-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-8">
-              <button 
+              <button
                 onClick={() => onNavigate?.('home')}
                 className="cursor-pointer"
               >
@@ -162,243 +162,241 @@ export function Messages({ onNavigate }: { onNavigate?: (page: string) => void }
         /* Empty State */
         <div className="px-4 sm:px-6 lg:px-12 pt-8">
           <div className="max-w-3xl mx-auto">
-          <div className="flex items-center justify-between mb-6">
-            <h1 className="text-3xl" style={{ fontWeight: 600, color: '#222222' }}>Messages</h1>
-            <div className="flex items-center gap-3">
-              <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <Search className="w-5 h-5" style={{ color: '#222222' }} />
-              </button>
-              <button 
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                onClick={() => setShowSettingsModal(true)}
+            <div className="flex items-center justify-between mb-6">
+              <h1 className="text-3xl" style={{ fontWeight: 600, color: '#222222' }}>Messages</h1>
+              <div className="flex items-center gap-3">
+                <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                  <Search className="w-5 h-5" style={{ color: '#222222' }} />
+                </button>
+                <button
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  onClick={() => setShowSettingsModal(true)}
+                >
+                  <Settings className="w-5 h-5" style={{ color: '#222222' }} />
+                </button>
+              </div>
+            </div>
+
+            {/* Tabs */}
+            <div className="flex gap-3 mb-12">
+              <button
+                onClick={() => setActiveTab('all')}
+                className={`px-5 py-2 rounded-full text-sm transition-colors ${activeTab === 'all'
+                  ? 'bg-gray-900 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                style={{ fontWeight: 600 }}
               >
-                <Settings className="w-5 h-5" style={{ color: '#222222' }} />
+                Tout
+              </button>
+              <button
+                onClick={() => setActiveTab('unread')}
+                className={`px-5 py-2 rounded-full text-sm transition-colors ${activeTab === 'unread'
+                  ? 'bg-gray-900 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                style={{ fontWeight: 600 }}
+              >
+                Non lus
               </button>
             </div>
-          </div>
 
-          {/* Tabs */}
-          <div className="flex gap-3 mb-12">
-            <button 
-              onClick={() => setActiveTab('all')}
-              className={`px-5 py-2 rounded-full text-sm transition-colors ${
-                activeTab === 'all' 
-                  ? 'bg-gray-900 text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-              style={{ fontWeight: 600 }}
-            >
-              Tout
-            </button>
-            <button 
-              onClick={() => setActiveTab('unread')}
-              className={`px-5 py-2 rounded-full text-sm transition-colors ${
-                activeTab === 'unread' 
-                  ? 'bg-gray-900 text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-              style={{ fontWeight: 600 }}
-            >
-              Non lus
-            </button>
-          </div>
-
-          {/* Empty State Icon and Text */}
-          <div className="flex flex-col items-center justify-center py-20">
-            <div className="w-24 h-24 border-2 border-gray-300 rounded-full flex items-center justify-center mb-6">
-              <svg className="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-              </svg>
+            {/* Empty State Icon and Text */}
+            <div className="flex flex-col items-center justify-center py-20">
+              <div className="w-24 h-24 border-2 border-gray-300 rounded-full flex items-center justify-center mb-6">
+                <svg className="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                </svg>
+              </div>
+              <h3 className="text-xl mb-2" style={{ fontWeight: 600, color: '#222222' }}>
+                Vous n'avez aucun message
+              </h3>
+              <p className="text-sm text-center max-w-xs" style={{ color: '#717171' }}>
+                Lorsque vous recevrez un nouveau message, il apparaîtra ici.
+              </p>
             </div>
-            <h3 className="text-xl mb-2" style={{ fontWeight: 600, color: '#222222' }}>
-              Vous n'avez aucun message
-            </h3>
-            <p className="text-sm text-center max-w-xs" style={{ color: '#717171' }}>
-              Lorsque vous recevrez un nouveau message, il apparaîtra ici.
-            </p>
-          </div>
           </div>
         </div>
       ) : (
         /* Messages List and Chat */
         <div className="px-4 sm:px-6 lg:px-12">
           <div className="flex h-[calc(100vh-73px)]">
-          {/* Left Sidebar - Conversations List */}
-          <div className="w-[380px] border-r border-gray-200 flex flex-col bg-white">
-            <div className="px-6 pt-6 pb-4 border-b border-gray-200">
-              <div className="flex items-center justify-between mb-4">
-                <h1 className="text-2xl" style={{ fontWeight: 600, color: '#222222' }}>Messages</h1>
-                <div className="flex items-center gap-2">
-                  <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                    <Search className="w-5 h-5" style={{ color: '#222222' }} />
-                  </button>
-                  <button 
-                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                    onClick={() => setShowSettingsModal(true)}
-                  >
-                    <Settings className="w-5 h-5" style={{ color: '#222222' }} />
-                  </button>
-                </div>
-              </div>
-
-              {/* Tabs */}
-              <div className="flex gap-3">
-                <button 
-                  onClick={() => setActiveTab('all')}
-                  className={`px-5 py-2 rounded-full text-sm transition-colors ${
-                    activeTab === 'all' 
-                      ? 'bg-gray-900 text-white' 
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                  style={{ fontWeight: 600 }}
-                >
-                  Tout
-                </button>
-                <button 
-                  onClick={() => setActiveTab('unread')}
-                  className={`px-5 py-2 rounded-full text-sm transition-colors ${
-                    activeTab === 'unread' 
-                      ? 'bg-gray-900 text-white' 
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                  style={{ fontWeight: 600 }}
-                >
-                  Non lus
-                </button>
-              </div>
-            </div>
-
-            {/* Conversations List */}
-            <div className="flex-1 overflow-y-auto">
-              {conversations.map((conv) => (
-                <button
-                  key={conv.id}
-                  onClick={() => setSelectedConversation(conv.id)}
-                  className={`w-full px-6 py-4 flex items-center gap-4 hover:bg-gray-50 transition-colors border-b border-gray-100 ${
-                    selectedConversation === conv.id ? 'bg-gray-100' : ''
-                  }`}
-                >
-                  <img 
-                    src={conv.avatar} 
-                    alt={conv.name}
-                    className="w-14 h-14 rounded-full object-cover flex-shrink-0"
-                  />
-                  <div className="flex-1 text-left overflow-hidden">
-                    <div className="flex items-start justify-between mb-1">
-                      <h3 className="text-base truncate" style={{ fontWeight: 600, color: '#222222' }}>
-                        {conv.name}
-                      </h3>
-                      <span className="text-xs ml-2 flex-shrink-0" style={{ color: '#717171' }}>
-                        {conv.date}
-                      </span>
-                    </div>
-                    <p className="text-sm flex items-center gap-2 mb-1" style={{ color: '#717171' }}>
-                      {conv.phone}
-                      <span className="text-xs">📱</span>
-                      {conv.unread && <span className="text-xs">✅</span>}
-                      <span className="text-xs">{conv.date.split('/')[0]}/{conv.date.split('/')[1]}</span>
-                    </p>
-                    <p className="text-sm truncate" style={{ color: '#717171' }}>
-                      {conv.lastMessage}
-                    </p>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Right Side - Chat Area */}
-          <div className="flex-1 flex flex-col bg-white">
-            {selectedConversation ? (
-              <>
-                {/* Chat Header */}
-                <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <img 
-                      src={conversations.find(c => c.id === selectedConversation)?.avatar} 
-                      alt=""
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
-                    <div>
-                      <h3 className="text-lg" style={{ fontWeight: 600, color: '#222222' }}>
-                        {conversations.find(c => c.id === selectedConversation)?.name}
-                      </h3>
-                      <p className="text-sm" style={{ color: '#717171' }}>
-                        {conversations.find(c => c.id === selectedConversation)?.phone}
-                      </p>
-                    </div>
-                  </div>
-                  <span className="text-sm" style={{ color: '#717171' }}>13/11/2025</span>
-                </div>
-
-                {/* Messages Area */}
-                <div className="flex-1 overflow-y-auto px-6 py-4 bg-white">
-                  <div className="space-y-3">
-                    {messages.map((msg) => (
-                      <div 
-                        key={msg.id} 
-                        className={`flex ${msg.sender === 'me' ? 'justify-end' : 'justify-start'}`}
-                      >
-                        <div 
-                          className={`max-w-[70%] px-4 py-2 rounded-lg ${
-                            msg.sender === 'me' 
-                              ? 'bg-black text-white' 
-                              : 'bg-gray-100 text-gray-900'
-                          }`}
-                        >
-                          <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
-                          <span className={`text-xs mt-1 block ${
-                            msg.sender === 'me' ? 'text-gray-300' : 'text-gray-500'
-                          }`}>
-                            {msg.time}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Message Input */}
-                <div className="px-6 py-4 border-t border-gray-200">
-                  <div className="flex items-center gap-3">
-                    <input 
-                      type="text"
-                      value={messageText}
-                      onChange={(e) => setMessageText(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                      placeholder="Écrire un message..."
-                      className="flex-1 px-4 py-3 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
-                    />
-                    <button 
-                      onClick={handleSendMessage}
-                      disabled={!messageText.trim()}
-                      className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
-                        messageText.trim() 
-                          ? 'bg-black hover:bg-gray-800' 
-                          : 'bg-gray-300 cursor-not-allowed'
-                      }`}
+            {/* Left Sidebar - Conversations List */}
+            <div className={`w-full md:w-[380px] border-r border-gray-200 flex-col bg-white ${selectedConversation ? 'hidden md:flex' : 'flex'}`}>
+              <div className="px-6 pt-6 pb-4 border-b border-gray-200">
+                <div className="flex items-center justify-between mb-4">
+                  <h1 className="text-2xl" style={{ fontWeight: 600, color: '#222222' }}>Messages</h1>
+                  <div className="flex items-center gap-2">
+                    <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                      <Search className="w-5 h-5" style={{ color: '#222222' }} />
+                    </button>
+                    <button
+                      className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                      onClick={() => setShowSettingsModal(true)}
                     >
-                      <Send className="w-5 h-5 text-white" />
+                      <Settings className="w-5 h-5" style={{ color: '#222222' }} />
                     </button>
                   </div>
                 </div>
-              </>
-            ) : (
-              <div className="flex-1 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-24 h-24 border-2 border-gray-300 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                    </svg>
-                  </div>
-                  <p className="text-base" style={{ color: '#717171' }}>
-                    Sélectionnez une conversation
-                  </p>
+
+                {/* Tabs */}
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setActiveTab('all')}
+                    className={`px-5 py-2 rounded-full text-sm transition-colors ${activeTab === 'all'
+                      ? 'bg-gray-900 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    style={{ fontWeight: 600 }}
+                  >
+                    Tout
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('unread')}
+                    className={`px-5 py-2 rounded-full text-sm transition-colors ${activeTab === 'unread'
+                      ? 'bg-gray-900 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    style={{ fontWeight: 600 }}
+                  >
+                    Non lus
+                  </button>
                 </div>
               </div>
-            )}
+
+              {/* Conversations List */}
+              <div className="flex-1 overflow-y-auto">
+                {conversations.map((conv) => (
+                  <button
+                    key={conv.id}
+                    onClick={() => setSelectedConversation(conv.id)}
+                    className={`w-full px-6 py-4 flex items-center gap-4 hover:bg-gray-50 transition-colors border-b border-gray-100 ${selectedConversation === conv.id ? 'bg-gray-100' : ''
+                      }`}
+                  >
+                    <img
+                      src={conv.avatar}
+                      alt={conv.name}
+                      className="w-14 h-14 rounded-full object-cover flex-shrink-0"
+                    />
+                    <div className="flex-1 text-left overflow-hidden">
+                      <div className="flex items-start justify-between mb-1">
+                        <h3 className="text-base truncate" style={{ fontWeight: 600, color: '#222222' }}>
+                          {conv.name}
+                        </h3>
+                        <span className="text-xs ml-2 flex-shrink-0" style={{ color: '#717171' }}>
+                          {conv.date}
+                        </span>
+                      </div>
+                      <p className="text-sm flex items-center gap-2 mb-1" style={{ color: '#717171' }}>
+                        {conv.phone}
+                        <span className="text-xs">📱</span>
+                        {conv.unread && <span className="text-xs">✅</span>}
+                        <span className="text-xs">{conv.date.split('/')[0]}/{conv.date.split('/')[1]}</span>
+                      </p>
+                      <p className="text-sm truncate" style={{ color: '#717171' }}>
+                        {conv.lastMessage}
+                      </p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Right Side - Chat Area */}
+            <div className={`flex-1 flex-col bg-white ${!selectedConversation ? 'hidden md:flex' : 'flex'}`}>
+              {selectedConversation ? (
+                <>
+                  {/* Chat Header */}
+                  <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => setSelectedConversation(null)}
+                        className="md:hidden p-1 mr-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors"
+                      >
+                        <ArrowLeft className="w-6 h-6" style={{ color: '#222222' }} />
+                      </button>
+                      <img
+                        src={conversations.find(c => c.id === selectedConversation)?.avatar}
+                        alt=""
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                      <div>
+                        <h3 className="text-lg" style={{ fontWeight: 600, color: '#222222' }}>
+                          {conversations.find(c => c.id === selectedConversation)?.name}
+                        </h3>
+                        <p className="text-sm" style={{ color: '#717171' }}>
+                          {conversations.find(c => c.id === selectedConversation)?.phone}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-sm" style={{ color: '#717171' }}>13/11/2025</span>
+                  </div>
+
+                  {/* Messages Area */}
+                  <div className="flex-1 overflow-y-auto px-6 py-4 bg-white">
+                    <div className="space-y-3">
+                      {messages.map((msg) => (
+                        <div
+                          key={msg.id}
+                          className={`flex ${msg.sender === 'me' ? 'justify-end' : 'justify-start'}`}
+                        >
+                          <div
+                            className={`max-w-[70%] px-4 py-2 rounded-lg ${msg.sender === 'me'
+                              ? 'bg-black text-white'
+                              : 'bg-gray-100 text-gray-900'
+                              }`}
+                          >
+                            <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                            <span className={`text-xs mt-1 block ${msg.sender === 'me' ? 'text-gray-300' : 'text-gray-500'
+                              }`}>
+                              {msg.time}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Message Input */}
+                  <div className="px-6 py-4 border-t border-gray-200">
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="text"
+                        value={messageText}
+                        onChange={(e) => setMessageText(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                        placeholder="Écrire un message..."
+                        className="flex-1 px-4 py-3 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                      />
+                      <button
+                        onClick={handleSendMessage}
+                        disabled={!messageText.trim()}
+                        className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${messageText.trim()
+                          ? 'bg-black hover:bg-gray-800'
+                          : 'bg-gray-300 cursor-not-allowed'
+                          }`}
+                      >
+                        <Send className="w-5 h-5 text-white" />
+                      </button>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="flex-1 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="w-24 h-24 border-2 border-gray-300 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <svg className="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                      </svg>
+                    </div>
+                    <p className="text-base" style={{ color: '#717171' }}>
+                      Sélectionnez une conversation
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
         </div>
       )}
 
@@ -407,7 +405,7 @@ export function Messages({ onNavigate }: { onNavigate?: (page: string) => void }
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full relative">
             {/* Bouton X pour fermer */}
-            <button 
+            <button
               onClick={() => setShowSettingsModal(false)}
               className="absolute top-6 right-6"
             >
@@ -430,7 +428,7 @@ export function Messages({ onNavigate }: { onNavigate?: (page: string) => void }
               </button>
 
               {/* Envoyer des remarques */}
-              <button 
+              <button
                 className="w-full px-4 py-4 flex items-center gap-4 hover:bg-gray-50 rounded-lg transition-colors text-left"
                 onClick={() => {
                   setShowSettingsModal(false);
@@ -452,7 +450,7 @@ export function Messages({ onNavigate }: { onNavigate?: (page: string) => void }
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-2xl p-8 max-w-lg w-full relative">
             {/* Bouton X pour fermer */}
-            <button 
+            <button
               onClick={() => {
                 setShowFeedbackModal(false);
                 setFeedbackText('');
@@ -483,7 +481,7 @@ export function Messages({ onNavigate }: { onNavigate?: (page: string) => void }
 
             {/* Checkbox */}
             <label className="flex items-center gap-3 mb-6 cursor-pointer">
-              <input 
+              <input
                 type="checkbox"
                 checked={reportProblem}
                 onChange={(e) => setReportProblem(e.target.checked)}
@@ -495,10 +493,10 @@ export function Messages({ onNavigate }: { onNavigate?: (page: string) => void }
             </label>
 
             {/* Bouton Envoyer */}
-            <button 
-              className="w-full px-6 py-3 rounded-lg text-base cursor-not-allowed" 
-              style={{ 
-                fontWeight: 600, 
+            <button
+              className="w-full px-6 py-3 rounded-lg text-base cursor-not-allowed"
+              style={{
+                fontWeight: 600,
                 backgroundColor: '#EBEBEB',
                 color: '#B0B0B0'
               }}
