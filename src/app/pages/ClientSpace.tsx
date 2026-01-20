@@ -635,7 +635,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
         <div className="flex">
           {/* Sidebar - Hidden on mobile (< 745px), visible on desktop */}
           <aside className="hidden md:block w-[360px] border-r border-gray-200 min-h-[calc(100vh-73px)] px-16 py-12">
-            <h1 className="text-[32px] mb-10" style={{ fontWeight: 600, color: '#222222' }}>
+            <h1 className="text-xl md:text-2xl mb-8" style={{ fontWeight: 600, color: '#222222' }}>
               Espace client
             </h1>
 
@@ -650,7 +650,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                 <svg className="w-9 h-9 text-gray-700 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                 </svg>
-                <span className="text-[17px]" style={{ fontWeight: activeSection === 'reservations' ? 600 : 400, color: '#222222' }}>
+                <span className="text-sm" style={{ fontWeight: activeSection === 'reservations' ? 600 : 400, color: '#222222' }}>
                   Mes réservations
                 </span>
               </button>
@@ -665,7 +665,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                 <div className="w-9 h-9 rounded-full bg-gray-900 flex items-center justify-center text-white text-base flex-shrink-0" style={{ fontWeight: 600 }}>
                   {user?.name.charAt(0).toUpperCase() || 'A'}
                 </div>
-                <span className="text-[17px]" style={{ fontWeight: activeSection === 'profile' ? 600 : 400, color: '#222222' }}>
+                <span className="text-sm" style={{ fontWeight: activeSection === 'profile' ? 600 : 400, color: '#222222' }}>
                   Informations personnelles
                 </span>
               </button>
@@ -680,7 +680,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                 <svg className="w-9 h-9 text-gray-700 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
-                <span className="text-[17px]" style={{ fontWeight: activeSection === 'security' ? 600 : 400, color: '#222222' }}>
+                <span className="text-sm" style={{ fontWeight: activeSection === 'security' ? 600 : 400, color: '#222222' }}>
                   Connexion et sécurité
                 </span>
               </button>
@@ -695,7 +695,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                 <svg className="w-9 h-9 text-gray-700 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
-                <span className="text-[17px]" style={{ fontWeight: activeSection === 'notifications' ? 600 : 400, color: '#222222' }}>
+                <span className="text-sm" style={{ fontWeight: activeSection === 'notifications' ? 600 : 400, color: '#222222' }}>
                   Notifications
                 </span>
               </button>
@@ -710,7 +710,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                 <svg className="w-9 h-9 text-gray-700 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                 </svg>
-                <span className="text-[17px]" style={{ fontWeight: activeSection === 'payments' ? 600 : 400, color: '#222222' }}>
+                <span className="text-sm" style={{ fontWeight: activeSection === 'payments' ? 600 : 400, color: '#222222' }}>
                   Paiements
                 </span>
               </button>
@@ -725,7 +725,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                 <svg className="w-9 h-9 text-gray-700 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="text-[17px]" style={{ fontWeight: activeSection === 'languages' ? 600 : 400, color: '#222222' }}>
+                <span className="text-sm" style={{ fontWeight: activeSection === 'languages' ? 600 : 400, color: '#222222' }}>
                   Langues et devise
                 </span>
               </button>
@@ -737,74 +737,74 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
             {activeSection === 'reservations' && (
               <>
                 <div className="flex items-center justify-between mb-8">
-                  <h2 className="text-[32px]" style={{ fontWeight: 600, color: '#222222' }}>
+                  <h2 className="text-xl md:text-2xl" style={{ fontWeight: 600, color: '#222222' }}>
                     Mes réservations
                   </h2>
                 </div>
 
                 {/* RÉSERVATION(S) FUTURE(S) */}
                 <div className="mb-8">
-                  <h3 className="text-sm mb-4" style={{ fontWeight: 700, color: '#4A5B8C', letterSpacing: '0.5px' }}>
+                  <h3 className="text-xs mb-4" style={{ fontWeight: 700, color: '#4A5B8C', letterSpacing: '0.5px' }}>
                     RÉSERVATION(S) FUTURE(S)
                   </h3>
 
                   <div
-                    className="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-gray-200 flex flex-col md:flex-row gap-4 md:gap-6 cursor-pointer hover:shadow-md transition-shadow"
+                    className="bg-white rounded-xl p-4 shadow-sm border border-gray-200 flex flex-col md:flex-row gap-4 cursor-pointer hover:shadow-md transition-shadow"
                     onClick={() => setShowReservationDetail(true)}
                   >
                     <img
                       src={PROPERTY_IMAGES[4]}
                       alt="Appartement"
-                      className="w-full md:w-56 h-48 md:h-40 object-cover rounded-xl flex-shrink-0"
+                      className="w-full md:w-48 h-40 md:h-32 object-cover rounded-lg flex-shrink-0"
                     />
 
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-xl md:text-2xl mb-2" style={{ fontWeight: 500, color: '#4A5B8C', fontStyle: 'italic' }}>
+                    <div className="flex-1 min-w-0 py-1">
+                      <h4 className="text-base font-medium mb-1.5" style={{ color: '#4A5B8C', fontStyle: 'italic' }}>
                         Appartement T2
                       </h4>
-                      <p className="text-sm text-gray-500 mb-3 md:mb-4">
-                        Date d'arrivée : <span style={{ fontWeight: 600 }}>03/09/2024</span> | <span style={{ fontWeight: 600 }}>1 occupant</span>
+                      <p className="text-xs text-gray-500 mb-2">
+                        Date d'arrivée : <span className="font-semibold">03/09/2024</span> | <span className="font-semibold">1 occupant</span>
                       </p>
 
-                      <div className="flex items-center gap-3 md:gap-4 flex-wrap">
-                        <div className="flex items-center gap-1.5 text-xs md:text-sm text-gray-600">
-                          <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <div className="flex items-center gap-3 md:gap-4 flex-wrap mt-auto">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-600">
+                          <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                           </svg>
                           <span>Croix Verte</span>
                         </div>
 
-                        <div className="flex items-center gap-1.5 text-xs md:text-sm text-gray-600">
-                          <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-600">
+                          <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12h18M3 6h18M3 18h18" />
                           </svg>
                           <span>2</span>
                         </div>
 
-                        <div className="flex items-center gap-1.5 text-xs md:text-sm text-gray-600">
-                          <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-600">
+                          <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
                           </svg>
                           <span>1</span>
                         </div>
 
-                        <div className="flex items-center gap-1.5 text-xs md:text-sm text-gray-600">
-                          <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-600">
+                          <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V6a2 2 0 012-2h12a2 2 0 012 2v2m-16 0h16m-16 0v10a2 2 0 002 2h12a2 2 0 002-2V8m-16 0h16" />
                           </svg>
                           <span>42m2</span>
                         </div>
 
-                        <div className="flex items-center gap-1.5 text-xs md:text-sm text-gray-600">
-                          <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-600">
+                          <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                           </svg>
                           <span>T2</span>
                         </div>
 
-                        <div className="flex items-center gap-1.5 text-xs md:text-sm text-gray-600">
-                          <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-600">
+                          <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                           </svg>
                           <span>3 à 4</span>
@@ -812,27 +812,23 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                       </div>
                     </div>
 
-                    <div className="flex md:flex-col items-stretch md:items-end gap-3 mt-2 md:mt-0">
+                    <div className="flex md:flex-col items-center md:items-end justify-between md:justify-end gap-3 min-w-[140px]">
                       <div
-                        className="rounded-lg px-4 md:px-6 py-3 md:py-4 flex flex-col items-center justify-center flex-1 md:flex-initial md:min-w-[180px]"
+                        className="rounded-md px-3 py-2 flex flex-col items-center justify-center w-full"
                         style={{ backgroundColor: '#222222' }}
                       >
-                        <div className="flex items-center gap-2 mb-1">
-                          <svg className="w-4 md:w-5 h-4 md:h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <div className="flex items-center gap-1.5 mb-0.5">
+                          <svg className="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
                           </svg>
-                          <span className="text-[10px] md:text-xs text-white opacity-90 whitespace-nowrap">PRIX TOTAL / MOIS</span>
+                          <span className="text-[10px] text-white opacity-90 whitespace-nowrap font-medium">TOTAL / MOIS</span>
                         </div>
-                        <span className="text-2xl md:text-3xl text-white" style={{ fontWeight: 700 }}>700 €</span>
+                        <span className="text-lg text-white font-bold">700 €</span>
                       </div>
 
                       <button
-                        className="px-4 md:px-6 py-2.5 border-2 rounded-lg text-xs md:text-sm hover:bg-gray-50 transition-colors bg-white flex-1 md:flex-initial md:w-full"
-                        style={{
-                          fontWeight: 600,
-                          color: '#222222',
-                          borderColor: '#222222'
-                        }}
+                        className="px-4 py-2 border border-gray-300 rounded-md text-xs font-semibold hover:bg-gray-50 transition-colors bg-white w-full"
+                        style={{ color: '#222222' }}
                       >
                         ANNULER
                       </button>
@@ -842,66 +838,66 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
 
                 {/* DERNIÈRES RÉSERVATIONS */}
                 <div className="mb-8">
-                  <h3 className="text-sm mb-4" style={{ fontWeight: 700, color: '#9CA3AF', letterSpacing: '0.5px' }}>
+                  <h3 className="text-xs mb-4" style={{ fontWeight: 700, color: '#9CA3AF', letterSpacing: '0.5px' }}>
                     DERNIÈRES RÉSERVATIONS
                   </h3>
 
                   <div className="space-y-4">
                     {[0, 1, 2].map((index) => (
-                      <div key={index} className="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-gray-200 flex flex-col md:flex-row gap-4 md:gap-6">
+                      <div key={index} className="bg-white rounded-xl p-4 shadow-sm border border-gray-200 flex flex-col md:flex-row gap-4 cursor-pointer hover:shadow-md transition-shadow">
                         <img
                           src={PROPERTY_IMAGES[index % PROPERTY_IMAGES.length]}
                           alt="Appartement"
-                          className="w-full md:w-56 h-48 md:h-40 object-cover rounded-xl flex-shrink-0"
+                          className="w-full md:w-48 h-40 md:h-32 object-cover rounded-lg flex-shrink-0"
                         />
 
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-xl md:text-2xl mb-2" style={{ fontWeight: 500, color: '#9CA3AF', fontStyle: 'italic' }}>
+                        <div className="flex-1 min-w-0 py-1">
+                          <h4 className="text-base font-medium mb-1.5" style={{ color: '#9CA3AF', fontStyle: 'italic' }}>
                             Appartement T2
                           </h4>
-                          <p className="text-sm text-gray-400 mb-3 md:mb-4">
-                            Date d'arrivée : <span style={{ fontWeight: 600 }}>03/09/2024</span> | <span style={{ fontWeight: 600 }}>1 occupant</span>
+                          <p className="text-xs text-gray-400 mb-2">
+                            Date d'arrivée : <span className="font-semibold">03/09/2024</span> | <span className="font-semibold">1 occupant</span>
                           </p>
 
-                          <div className="flex items-center gap-3 md:gap-4 flex-wrap">
-                            <div className="flex items-center gap-1.5 text-xs md:text-sm text-gray-400">
-                              <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <div className="flex items-center gap-3 md:gap-4 flex-wrap mt-auto">
+                            <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                              <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                               </svg>
                               <span>Croix Verte</span>
                             </div>
 
-                            <div className="flex items-center gap-1.5 text-xs md:text-sm text-gray-400">
-                              <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                              <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12h18M3 6h18M3 18h18" />
                               </svg>
                               <span>2</span>
                             </div>
 
-                            <div className="flex items-center gap-1.5 text-xs md:text-sm text-gray-400">
-                              <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                              <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
                               </svg>
                               <span>1</span>
                             </div>
 
-                            <div className="flex items-center gap-1.5 text-xs md:text-sm text-gray-400">
-                              <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                              <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V6a2 2 0 012-2h12a2 2 0 012 2v2m-16 0h16m-16 0v10a2 2 0 002 2h12a2 2 0 002-2V8m-16 0h16" />
                               </svg>
                               <span>42m2</span>
                             </div>
 
-                            <div className="flex items-center gap-1.5 text-xs md:text-sm text-gray-400">
-                              <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                              <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                               </svg>
                               <span>T2</span>
                             </div>
 
-                            <div className="flex items-center gap-1.5 text-xs md:text-sm text-gray-400">
-                              <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                              <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                               </svg>
                               <span>3 à 4</span>
@@ -909,18 +905,18 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                           </div>
                         </div>
 
-                        <div className="flex md:flex-col items-end justify-end">
+                        <div className="flex md:flex-col items-center md:items-end justify-between md:justify-end gap-3 min-w-[140px]">
                           <div
-                            className="rounded-lg px-4 md:px-6 py-3 md:py-4 flex flex-col items-center justify-center w-full md:min-w-[180px]"
+                            className="rounded-md px-3 py-2 flex flex-col items-center justify-center w-full"
                             style={{ backgroundColor: '#9CA3AF' }}
                           >
-                            <div className="flex items-center gap-2 mb-1">
-                              <svg className="w-4 md:w-5 h-4 md:h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <div className="flex items-center gap-1.5 mb-0.5">
+                              <svg className="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
                               </svg>
-                              <span className="text-[10px] md:text-xs text-white opacity-90 whitespace-nowrap">PRIX TOTAL / MOIS</span>
+                              <span className="text-[10px] text-white opacity-90 whitespace-nowrap font-medium">TOTAL / MOIS</span>
                             </div>
-                            <span className="text-2xl md:text-3xl text-white" style={{ fontWeight: 700 }}>700 €</span>
+                            <span className="text-lg text-white font-bold">700 €</span>
                           </div>
                         </div>
                       </div>
@@ -930,64 +926,64 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
 
                 {/* RÉSERVATIONS ANNULÉES */}
                 <div>
-                  <h3 className="text-sm mb-4" style={{ fontWeight: 700, color: '#9CA3AF', letterSpacing: '0.5px' }}>
+                  <h3 className="text-xs mb-4" style={{ fontWeight: 700, color: '#9CA3AF', letterSpacing: '0.5px' }}>
                     RÉSERVATIONS ANNULÉES
                   </h3>
 
-                  <div className="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-gray-200 flex flex-col md:flex-row gap-4 md:gap-6">
+                  <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200 flex flex-col md:flex-row gap-4">
                     <img
                       src={PROPERTY_IMAGES[3]}
                       alt="Appartement"
-                      className="w-full md:w-56 h-48 md:h-40 object-cover rounded-xl flex-shrink-0"
+                      className="w-full md:w-48 h-40 md:h-32 object-cover rounded-lg flex-shrink-0"
                     />
 
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-xl md:text-2xl mb-2" style={{ fontWeight: 500, color: '#9CA3AF', fontStyle: 'italic' }}>
+                    <div className="flex-1 min-w-0 py-1">
+                      <h4 className="text-base font-medium mb-1.5" style={{ color: '#9CA3AF', fontStyle: 'italic' }}>
                         Appartement T2
                       </h4>
-                      <p className="text-sm text-gray-400 mb-3 md:mb-4">
-                        Date d'arrivée : <span style={{ fontWeight: 600 }}>03/09/2024</span> | <span style={{ fontWeight: 600 }}>1 occupant</span>
+                      <p className="text-xs text-gray-400 mb-2">
+                        Date d'arrivée : <span className="font-semibold">03/09/2024</span> | <span className="font-semibold">1 occupant</span>
                       </p>
 
-                      <div className="flex items-center gap-3 md:gap-4 flex-wrap">
-                        <div className="flex items-center gap-1.5 text-xs md:text-sm text-gray-400">
-                          <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <div className="flex items-center gap-3 md:gap-4 flex-wrap mt-auto">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                          <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                           </svg>
                           <span>Croix Verte</span>
                         </div>
 
-                        <div className="flex items-center gap-1.5 text-xs md:text-sm text-gray-400">
-                          <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                          <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12h18M3 6h18M3 18h18" />
                           </svg>
                           <span>2</span>
                         </div>
 
-                        <div className="flex items-center gap-1.5 text-xs md:text-sm text-gray-400">
-                          <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                          <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
                           </svg>
                           <span>1</span>
                         </div>
 
-                        <div className="flex items-center gap-1.5 text-xs md:text-sm text-gray-400">
-                          <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                          <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V6a2 2 0 012-2h12a2 2 0 012 2v2m-16 0h16m-16 0v10a2 2 0 002 2h12a2 2 0 002-2V8m-16 0h16" />
                           </svg>
                           <span>42m2</span>
                         </div>
 
-                        <div className="flex items-center gap-1.5 text-xs md:text-sm text-gray-400">
-                          <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                          <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                           </svg>
                           <span>T2</span>
                         </div>
 
-                        <div className="flex items-center gap-1.5 text-xs md:text-sm text-gray-400">
-                          <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                          <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                           </svg>
                           <span>3 à 4</span>
@@ -995,18 +991,18 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                       </div>
                     </div>
 
-                    <div className="flex md:flex-col items-end justify-end">
+                    <div className="flex md:flex-col items-center md:items-end justify-between md:justify-end gap-3 min-w-[140px]">
                       <div
-                        className="rounded-lg px-4 md:px-6 py-3 md:py-4 flex flex-col items-center justify-center w-full md:min-w-[180px]"
+                        className="rounded-md px-3 py-2 flex flex-col items-center justify-center w-full"
                         style={{ backgroundColor: '#9CA3AF' }}
                       >
-                        <div className="flex items-center gap-2 mb-1">
-                          <svg className="w-4 md:w-5 h-4 md:h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <div className="flex items-center gap-1.5 mb-0.5">
+                          <svg className="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
                           </svg>
-                          <span className="text-[10px] md:text-xs text-white opacity-90 whitespace-nowrap">PRIX TOTAL / MOIS</span>
+                          <span className="text-[10px] text-white opacity-90 whitespace-nowrap font-medium">TOTAL / MOIS</span>
                         </div>
-                        <span className="text-2xl md:text-3xl text-white" style={{ fontWeight: 700 }}>700 €</span>
+                        <span className="text-lg text-white font-bold">700 €</span>
                       </div>
                     </div>
                   </div>
@@ -1016,7 +1012,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
 
             {activeSection === 'profile' && (
               <div className="max-w-xl mx-auto">
-                <h2 className="text-3xl mb-8" style={{ fontWeight: 600, color: '#222222' }}>
+                <h2 className="text-2xl md:text-3xl mb-8" style={{ fontWeight: 600, color: '#222222' }}>
                   Informations personnelles
                 </h2>
 
@@ -1030,7 +1026,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                   <div className="border-b border-gray-200 py-6">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
-                        <h4 className={`text-base mb-1 ${editingPreferredName || editingEmail || addingResidentialAddress || addingPostalAddress || addingEmergencyContact ? 'text-gray-400' : ''}`} style={{ fontWeight: 600, color: editingPreferredName || editingEmail || addingResidentialAddress || addingPostalAddress || addingEmergencyContact ? '#D3D3D3' : '#222222' }}>
+                        <h4 className={`text-sm md:text-base mb-1 ${editingPreferredName || editingEmail || addingResidentialAddress || addingPostalAddress || addingEmergencyContact ? 'text-gray-400' : ''}`} style={{ fontWeight: 600, color: editingPreferredName || editingEmail || addingResidentialAddress || addingPostalAddress || addingEmergencyContact ? '#D3D3D3' : '#222222' }}>
                           Nom officiel
                         </h4>
                         <p className={`text-sm ${editingPreferredName || editingEmail || addingResidentialAddress || addingPostalAddress || addingEmergencyContact ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -1104,7 +1100,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                   <div className="border-b border-gray-200 py-6">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
-                        <h4 className={`text-base mb-1 ${editingOfficialName || editingEmail || addingResidentialAddress || addingPostalAddress || addingEmergencyContact ? 'text-gray-400' : ''}`} style={{ fontWeight: 600, color: editingOfficialName || editingEmail || addingResidentialAddress || addingPostalAddress || addingEmergencyContact ? '#D3D3D3' : '#222222' }}>
+                        <h4 className={`text-sm md:text-base mb-1 ${editingOfficialName || editingEmail || addingResidentialAddress || addingPostalAddress || addingEmergencyContact ? 'text-gray-400' : ''}`} style={{ fontWeight: 600, color: editingOfficialName || editingEmail || addingResidentialAddress || addingPostalAddress || addingEmergencyContact ? '#D3D3D3' : '#222222' }}>
                           Prénom d'usage
                         </h4>
                         {!editingPreferredName ? (
@@ -1172,7 +1168,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                   <div className="border-b border-gray-200 py-6">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
-                        <h4 className={`text-base mb-1 ${editingOfficialName || editingPreferredName || addingResidentialAddress || addingPostalAddress || addingEmergencyContact ? 'text-gray-400' : ''}`} style={{ fontWeight: 600, color: editingOfficialName || editingPreferredName || addingResidentialAddress || addingPostalAddress || addingEmergencyContact ? '#D3D3D3' : '#222222' }}>
+                        <h4 className={`text-sm md:text-base mb-1 ${editingOfficialName || editingPreferredName || addingResidentialAddress || addingPostalAddress || addingEmergencyContact ? 'text-gray-400' : ''}`} style={{ fontWeight: 600, color: editingOfficialName || editingPreferredName || addingResidentialAddress || addingPostalAddress || addingEmergencyContact ? '#D3D3D3' : '#222222' }}>
                           Adresse e-mail
                         </h4>
                         <p className={`text-sm ${editingOfficialName || editingPreferredName || addingResidentialAddress || addingPostalAddress || addingEmergencyContact ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -1237,7 +1233,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                   <div className="border-b border-gray-200 py-6">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
-                        <h4 className={`text-base mb-1 ${editingOfficialName || editingPreferredName || editingEmail ? 'text-gray-400' : ''}`} style={{ fontWeight: 600, color: editingOfficialName || editingPreferredName || editingEmail ? '#D3D3D3' : '#222222' }}>
+                        <h4 className={`text-sm md:text-base mb-1 ${editingOfficialName || editingPreferredName || editingEmail ? 'text-gray-400' : ''}`} style={{ fontWeight: 600, color: editingOfficialName || editingPreferredName || editingEmail ? '#D3D3D3' : '#222222' }}>
                           Numéro de téléphone
                         </h4>
                         <p className={`text-sm ${editingOfficialName || editingPreferredName || editingEmail ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -1258,7 +1254,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                   <div className="border-b border-gray-200 py-6">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
-                        <h4 className={`text-base mb-1 ${editingOfficialName || editingPreferredName || editingEmail ? 'text-gray-400' : ''}`} style={{ fontWeight: 600, color: editingOfficialName || editingPreferredName || editingEmail ? '#D3D3D3' : '#222222' }}>
+                        <h4 className={`text-sm md:text-base mb-1 ${editingOfficialName || editingPreferredName || editingEmail ? 'text-gray-400' : ''}`} style={{ fontWeight: 600, color: editingOfficialName || editingPreferredName || editingEmail ? '#D3D3D3' : '#222222' }}>
                           Vérification d'identité
                         </h4>
                         <p className={`text-sm ${editingOfficialName || editingPreferredName || editingEmail ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -1280,7 +1276,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                   <div className="border-b border-gray-200 py-6">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
-                        <h4 className={`text-base mb-1 ${editingOfficialName || editingPreferredName || editingEmail || addingPostalAddress || addingEmergencyContact ? 'text-gray-400' : ''}`} style={{ fontWeight: 600, color: editingOfficialName || editingPreferredName || editingEmail || addingPostalAddress || addingEmergencyContact ? '#D3D3D3' : '#222222' }}>
+                        <h4 className={`text-sm md:text-base mb-1 ${editingOfficialName || editingPreferredName || editingEmail || addingPostalAddress || addingEmergencyContact ? 'text-gray-400' : ''}`} style={{ fontWeight: 600, color: editingOfficialName || editingPreferredName || editingEmail || addingPostalAddress || addingEmergencyContact ? '#D3D3D3' : '#222222' }}>
                           Adresse résidentielle
                         </h4>
                         <p className={`text-sm ${editingOfficialName || editingPreferredName || editingEmail || addingPostalAddress || addingEmergencyContact ? 'text-gray-400' : ''}`} style={{ color: editingOfficialName || editingPreferredName || editingEmail || addingPostalAddress || addingEmergencyContact ? '#D3D3D3' : '#0071E3' }}>
@@ -1379,7 +1375,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                   <div className="border-b border-gray-200 py-6">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
-                        <h4 className={`text-base mb-1 ${editingOfficialName || editingPreferredName || editingEmail || addingResidentialAddress || addingEmergencyContact ? 'text-gray-400' : ''}`} style={{ fontWeight: 600, color: editingOfficialName || editingPreferredName || editingEmail || addingResidentialAddress || addingEmergencyContact ? '#D3D3D3' : '#222222' }}>
+                        <h4 className={`text-sm md:text-base mb-1 ${editingOfficialName || editingPreferredName || editingEmail || addingResidentialAddress || addingEmergencyContact ? 'text-gray-400' : ''}`} style={{ fontWeight: 600, color: editingOfficialName || editingPreferredName || editingEmail || addingResidentialAddress || addingEmergencyContact ? '#D3D3D3' : '#222222' }}>
                           Adresse postale
                         </h4>
                         <p className={`text-sm ${editingOfficialName || editingPreferredName || editingEmail || addingResidentialAddress || addingEmergencyContact ? 'text-gray-400' : ''}`} style={{ color: editingOfficialName || editingPreferredName || editingEmail || addingResidentialAddress || addingEmergencyContact ? '#D3D3D3' : '#0071E3' }}>
@@ -1471,7 +1467,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                   <div className="py-6">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
-                        <h4 className={`text-base mb-1 ${editingOfficialName || editingPreferredName || editingEmail || addingResidentialAddress || addingPostalAddress ? 'text-gray-400' : ''}`} style={{ fontWeight: 600, color: editingOfficialName || editingPreferredName || editingEmail || addingResidentialAddress || addingPostalAddress ? '#D3D3D3' : '#222222' }}>
+                        <h4 className={`text-sm md:text-base mb-1 ${editingOfficialName || editingPreferredName || editingEmail || addingResidentialAddress || addingPostalAddress ? 'text-gray-400' : ''}`} style={{ fontWeight: 600, color: editingOfficialName || editingPreferredName || editingEmail || addingResidentialAddress || addingPostalAddress ? '#D3D3D3' : '#222222' }}>
                           Numéros d'urgence
                         </h4>
                         {!addingEmergencyContact ? (
@@ -1579,13 +1575,13 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
 
             {activeSection === 'security' && (
               <div className="max-w-xl mx-auto">
-                <h2 className="text-3xl mb-8" style={{ fontWeight: 600, color: '#222222' }}>
+                <h2 className="text-2xl md:text-3xl mb-8" style={{ fontWeight: 600, color: '#222222' }}>
                   Connexion et sécurité
                 </h2>
 
                 {/* Connexion Section */}
                 <div className="mb-12">
-                  <h3 className="text-[22px] mb-6" style={{ fontWeight: 600, color: '#222222' }}>
+                  <h3 className="text-lg md:text-xl mb-6" style={{ fontWeight: 600, color: '#222222' }}>
                     Connexion
                   </h3>
 
@@ -1660,7 +1656,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
 
                 {/* Compte Section */}
                 <div className="mb-12">
-                  <h3 className="text-[22px] mb-6" style={{ fontWeight: 600, color: '#222222' }}>
+                  <h3 className="text-lg md:text-xl mb-6" style={{ fontWeight: 600, color: '#222222' }}>
                     Compte
                   </h3>
 
@@ -1689,7 +1685,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
 
             {activeSection === 'notifications' && (
               <div className="max-w-xl mx-auto">
-                <h2 className="text-3xl mb-8" style={{ fontWeight: 600, color: '#222222' }}>
+                <h2 className="text-2xl md:text-3xl mb-8" style={{ fontWeight: 600, color: '#222222' }}>
                   Notifications
                 </h2>
 
@@ -1716,7 +1712,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                   <>
                     {/* Activité du compte et politiques */}
                     <div className="mb-10">
-                      <h3 className="text-[22px] mb-2" style={{ fontWeight: 600, color: '#222222' }}>
+                      <h3 className="text-lg md:text-xl mb-2" style={{ fontWeight: 600, color: '#222222' }}>
                         Activité du compte et politiques
                       </h3>
                       <p className="text-sm mb-6" style={{ color: '#C13515' }}>
@@ -1752,7 +1748,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
 
                     {/* Rappels */}
                     <div className="mb-10">
-                      <h3 className="text-[22px] mb-2" style={{ fontWeight: 600, color: '#222222' }}>
+                      <h3 className="text-lg md:text-xl mb-2" style={{ fontWeight: 600, color: '#222222' }}>
                         Rappels
                       </h3>
                       <p className="text-sm mb-6" style={{ color: '#717171' }}>
@@ -1774,7 +1770,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
 
                     {/* Messages entre les hôtes et les voyageurs */}
                     <div className="mb-10">
-                      <h3 className="text-[22px] mb-2" style={{ fontWeight: 600, color: '#222222' }}>
+                      <h3 className="text-lg md:text-xl mb-2" style={{ fontWeight: 600, color: '#222222' }}>
                         Messages entre les hôtes et les voyageurs
                       </h3>
                       <p className="text-sm mb-6" style={{ color: '#717171' }}>
@@ -1801,7 +1797,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                   <>
                     {/* Conseils et offres de voyage */}
                     <div className="mb-12">
-                      <h3 className="text-[22px] mb-4" style={{ fontWeight: 600, color: '#222222' }}>
+                      <h3 className="text-lg md:text-xl mb-4" style={{ fontWeight: 600, color: '#222222' }}>
                         Conseils et offres de voyage
                       </h3>
                       <p className="text-sm text-gray-600 mb-8 leading-relaxed">
@@ -1837,7 +1833,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
 
                     {/* Actualités de HOMIQIO */}
                     <div className="mb-12">
-                      <h3 className="text-[22px] mb-4" style={{ fontWeight: 600, color: '#222222' }}>
+                      <h3 className="text-lg md:text-xl mb-4" style={{ fontWeight: 600, color: '#222222' }}>
                         Actualités de HOMIQIO
                       </h3>
                       <p className="text-sm text-gray-600 mb-8 leading-relaxed">
@@ -1901,7 +1897,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
 
             {activeSection === 'payments' && (
               <div className="max-w-xl mx-auto">
-                <h2 className="text-3xl mb-8" style={{ fontWeight: 600, color: '#222222' }}>
+                <h2 className="text-2xl md:text-3xl mb-8" style={{ fontWeight: 600, color: '#222222' }}>
                   Paiements
                 </h2>
 
@@ -1935,7 +1931,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                   <>
                     {/* Vos paiements */}
                     <div className="mb-12">
-                      <h3 className="text-[22px] mb-4" style={{ fontWeight: 600, color: '#222222' }}>
+                      <h3 className="text-lg md:text-xl mb-4" style={{ fontWeight: 600, color: '#222222' }}>
                         Vos paiements
                       </h3>
                       <p className="text-sm text-gray-600 mb-6">
@@ -1948,7 +1944,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
 
                     {/* Modes de paiement */}
                     <div className="mb-12">
-                      <h3 className="text-[22px] mb-4" style={{ fontWeight: 600, color: '#222222' }}>
+                      <h3 className="text-lg md:text-xl mb-4" style={{ fontWeight: 600, color: '#222222' }}>
                         Modes de paiement
                       </h3>
                       <p className="text-sm text-gray-600 mb-6">
@@ -1965,7 +1961,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
 
                     {/* Crédit cadeau HOMIQIO */}
                     <div>
-                      <h3 className="text-[22px] mb-6" style={{ fontWeight: 600, color: '#222222' }}>
+                      <h3 className="text-lg md:text-xl mb-6" style={{ fontWeight: 600, color: '#222222' }}>
                         Crédit cadeau HOMIQIO
                       </h3>
                       <button className="px-6 py-3 bg-gray-900 text-white rounded-lg text-base transition-colors hover:bg-gray-800" style={{ fontWeight: 600 }}>
@@ -1980,7 +1976,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                   <>
                     {/* Votre mode de versement */}
                     <div className="mb-12">
-                      <h3 className="text-[22px] mb-4" style={{ fontWeight: 600, color: '#222222' }}>
+                      <h3 className="text-lg md:text-xl mb-4" style={{ fontWeight: 600, color: '#222222' }}>
                         Votre mode de versement
                       </h3>
                       <p className="text-sm text-gray-600 mb-6">
@@ -1997,7 +1993,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
 
                     {/* Besoin d'aide ? */}
                     <div className="border border-gray-300 rounded-xl p-6">
-                      <h3 className="text-[18px] mb-6" style={{ fontWeight: 600, color: '#222222' }}>
+                      <h3 className="text-lg mb-6" style={{ fontWeight: 600, color: '#222222' }}>
                         Besoin d'aide ?
                       </h3>
 
@@ -2038,7 +2034,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                   <>
                     {/* Paramètres des frais de service */}
                     <div className="mb-8">
-                      <h3 className="text-[22px] mb-2" style={{ fontWeight: 600, color: '#222222' }}>
+                      <h3 className="text-lg md:text-xl mb-2" style={{ fontWeight: 600, color: '#222222' }}>
                         Paramètres des frais de service
                       </h3>
                       <p className="text-sm mb-6" style={{ color: '#C13515' }}>
@@ -2152,7 +2148,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
 
             {activeSection === 'languages' && (
               <div className="max-w-xl mx-auto">
-                <h2 className="text-3xl mb-8" style={{ fontWeight: 600, color: '#222222' }}>
+                <h2 className="text-2xl md:text-3xl mb-8" style={{ fontWeight: 600, color: '#222222' }}>
                   Langues et devise
                 </h2>
 
