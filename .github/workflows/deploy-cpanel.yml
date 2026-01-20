@@ -31,7 +31,6 @@ jobs:
 
                   const nextConfig: NextConfig = {
                     output: 'standalone',
-                    distDir: 'dist',
                     images: {
                       unoptimized: true,
                     },
@@ -49,7 +48,7 @@ jobs:
                   export default nextConfig;
                   EOF
 
-                  echo "Next.js configured with distDir: dist"
+                  echo "Next.js configured for standalone"
 
             - name: Build Next.js (standalone)
               run: npm run build
@@ -62,23 +61,20 @@ jobs:
 
                   mkdir -p deploy
 
-                  # Copy entire standalone folder (now uses 'dist' instead of '.next')
-                  cp -r dist/standalone/* deploy/
+                  # Copy entire standalone folder
+                  cp -r .next/standalone/* deploy/
 
                   # Copy static files
-                  cp -r dist/static deploy/dist/
+                  cp -r .next/static deploy/.next/
 
                   # Copy public folder
                   cp -r public deploy/ 2>/dev/null || true
 
                   # Verify the structure
-                  echo "=== Deploy dist structure ==="
-                  ls -la deploy/dist/
+                  echo "=== Deploy .next structure ==="
+                  ls -la deploy/.next/
                   echo ""
-                  echo "=== Static folder ==="
-                  ls -la deploy/dist/static/ | head -10
-                  echo ""
-                  echo "BUILD_ID: $(cat deploy/dist/BUILD_ID)"
+                  echo "BUILD_ID: $(cat deploy/.next/BUILD_ID)"
 
                   # Remove ALL node_modules from deploy (cPanel manages this via symlink)
                   find deploy -type d -name "node_modules" -exec rm -rf {} + 2>/dev/null || true
@@ -108,22 +104,25 @@ jobs:
                   echo "Build size (without node_modules):"
                   du -sh deploy/
 
-            - name: Deploy to cPanel via FTP
-              uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-              with:
-                  server: ${{ secrets.FTP_SERVER }}
-                  username: ${{ secrets.FTP_USERNAME }}
-                  password: ${{ secrets.FTP_PASSWORD }}
-                  port: 21
-                  protocol: ftp
-                  local-dir: ./deploy/
-                  server-dir: ${{ secrets.REMOTE_DIR }}
-                  dangerous-clean-slate: false
-                  exclude: |
-                      **/.git/**
-                      **/.gitignore
-                      **/node_modules/**
-                      **/.DS_Store
+            - name: Install lftp
+              run: sudo apt-get update && sudo apt-get install -y lftp
+
+            - name: Deploy to cPanel via lftp
+              env:
+                  FTP_USER: ${{ secrets.FTP_USERNAME }}
+                  FTP_PASS: ${{ secrets.FTP_PASSWORD }}
+                  FTP_HOST: ${{ secrets.FTP_SERVER }}
+                  REMOTE_DIR: ${{ secrets.REMOTE_DIR }}
+              run: |
+                  echo "Deploying via lftp (handles dotted folders)..."
+                  lftp -u "$FTP_USER","$FTP_PASS" "$FTP_HOST" << EOF
+                  set ftp:ssl-allow no
+                  set net:timeout 60
+                  set net:max-retries 3
+                  mirror -R --verbose --delete --exclude node_modules/ ./deploy/ $REMOTE_DIR
+                  quit
+                  EOF
+                  echo "FTP upload complete"
 
             - name: Deployment complete
               run: |
