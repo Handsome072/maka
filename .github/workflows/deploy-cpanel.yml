@@ -88,9 +88,17 @@ jobs:
                     const fs = require('fs');
                     const pkg = JSON.parse(fs.readFileSync('deploy/package.json', 'utf8'));
                     pkg.scripts = pkg.scripts || {};
-                    pkg.scripts.start = 'node server.js';
+                    pkg.scripts.start = 'NODE_ENV=production node server.js';
                     fs.writeFileSync('deploy/package.json', JSON.stringify(pkg, null, 2));
                   "
+
+                  # Final verification
+                  echo ""
+                  echo "=== Final deploy folder structure ==="
+                  find deploy -type f -name "BUILD_ID" -o -name "build-manifest.json" | head -10
+                  echo ""
+                  echo "Total files to deploy:"
+                  find deploy -type f | wc -l
 
                   echo ""
                   echo "Deployment structure:"
@@ -111,8 +119,8 @@ jobs:
                   server-dir: ${{ secrets.REMOTE_DIR }}
                   dangerous-clean-slate: false
                   exclude: |
-                      **/.git*
-                      **/.git*/**
+                      **/.git/**
+                      **/.gitignore
                       **/node_modules/**
                       **/.DS_Store
 
