@@ -1,6 +1,10 @@
 import { useState, useCallback } from 'react';
 import { Search, Settings, Send, Archive, PlaneTakeoff, X, ArrowLeft } from 'lucide-react';
 import { Logo } from '@/app/components/Logo';
+import { HeaderRightMenu } from '../components/HeaderRightMenu';
+import { LanguageModal } from '../components/LanguageModal';
+import { BecomeHostModal } from '../components/BecomeHostModal';
+import { AuthModal } from '../components/AuthModal';
 
 interface Conversation {
   id: string;
@@ -19,7 +23,7 @@ interface Message {
   time: string;
 }
 
-export function Messages({ onNavigate }: { onNavigate?: (page: string) => void }) {
+export function Messages({ onNavigate, isHost }: { onNavigate?: (page: any) => void; isHost?: boolean }) {
   const [activeTab, setActiveTab] = useState<'all' | 'unread'>('all');
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [messageText, setMessageText] = useState('');
@@ -27,6 +31,12 @@ export function Messages({ onNavigate }: { onNavigate?: (page: string) => void }
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [feedbackText, setFeedbackText] = useState('');
   const [reportProblem, setReportProblem] = useState(false);
+
+  // Header menu state
+  const [showMenuDropdown, setShowMenuDropdown] = useState(false);
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
+  const [showBecomeHostModal, setShowBecomeHostModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   // State pour gérer les messages dynamiquement
   const [dynamicMessages, setDynamicMessages] = useState<{ [conversationId: string]: Message[] }>({});
@@ -140,19 +150,17 @@ export function Messages({ onNavigate }: { onNavigate?: (page: string) => void }
               </button>
             </div>
 
-            <div className="flex items-center gap-4">
-              <span className="text-sm" style={{ fontWeight: 500, color: '#222222' }}>Devenir hôte</span>
-              <button className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-white">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              </button>
-              <button className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
-            </div>
+            <HeaderRightMenu
+              showMenuDropdown={showMenuDropdown}
+              setShowMenuDropdown={setShowMenuDropdown}
+              setShowLanguageModal={setShowLanguageModal}
+              setShowBecomeHostModal={setShowBecomeHostModal}
+              setShowAuthModal={setShowAuthModal}
+              onClientSpaceClick={() => onNavigate?.('client-space')}
+              onMessagesClick={() => { }} // Déjà sur la page messages
+              isHost={isHost}
+              onAnnoncesClick={() => onNavigate?.('annonces')}
+            />
           </div>
         </div>
       </header>
@@ -506,6 +514,37 @@ export function Messages({ onNavigate }: { onNavigate?: (page: string) => void }
             </button>
           </div>
         </div>
+      )}
+      {/* Language Modal */}
+      {showLanguageModal && (
+        <LanguageModal
+          isOpen={showLanguageModal}
+          onClose={() => setShowLanguageModal(false)}
+        />
+      )}
+
+      {/* Become Host Modal */}
+      {showBecomeHostModal && (
+        <BecomeHostModal
+          isOpen={showBecomeHostModal}
+          onClose={() => setShowBecomeHostModal(false)}
+          onSelectOption={(option) => {
+            if (option === 'logement') {
+              onNavigate?.('host-onboarding');
+            } else if (option === 'experience') {
+              onNavigate?.('experience-onboarding');
+            }
+            setShowBecomeHostModal(false);
+          }}
+        />
+      )}
+
+      {/* Auth Modal */}
+      {showAuthModal && (
+        <AuthModal
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+        />
       )}
     </div>
   );
