@@ -217,8 +217,7 @@ export default function App() {
                         <path d="M12 6V12L16 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                       </svg>
                     </div>
-                    {/* Badge plus discret */}
-                    <span className="absolute -top-1 -right-2 w-2 h-2 rounded-full bg-[#E91E63] border-2 border-white"></span>
+                    <span className="absolute -top-2 -right-3 text-white text-[8px] px-1.5 py-0.5 rounded-full z-10 font-bold tracking-wide" style={{ background: 'linear-gradient(135deg, #4A6FA5 0%, #2D4C7B 100%)', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>NOUVEAU</span>
                   </div>
                   <span className={`text-[11px] font-medium leading-none ${currentPage === 'experiences' ? 'text-black' : 'text-gray-600'}`}>Expériences</span>
                 </button>
@@ -234,7 +233,7 @@ export default function App() {
                         <path d="M9 3V21M15 3V21M3 9H21M3 15H21" stroke="currentColor" strokeWidth="2" />
                       </svg>
                     </div>
-                    <span className="absolute -top-1 -right-2 w-2 h-2 rounded-full bg-[#E91E63] border-2 border-white"></span>
+                    <span className="absolute -top-2 -right-3 text-white text-[8px] px-1.5 py-0.5 rounded-full z-10 font-bold tracking-wide" style={{ background: 'linear-gradient(135deg, #4A6FA5 0%, #2D4C7B 100%)', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>NOUVEAU</span>
                   </div>
                   <span className={`text-[11px] font-medium leading-none ${currentPage === 'services' ? 'text-black' : 'text-gray-600'}`}>Services</span>
                 </button>
