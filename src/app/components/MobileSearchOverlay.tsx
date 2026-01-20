@@ -317,46 +317,58 @@ export function MobileSearchOverlay({
                                 exit={{ opacity: 0, height: 0 }}
                                 transition={{ duration: 0.2 }}
                             >
-                                <div className="flex items-center justify-around flex-1">
+                                <div className="flex items-center justify-between flex-1 px-4">
                                     <button
                                         onClick={() => handleTabClick('logements')}
-                                        className={`flex flex-col items-center gap-1 px-4 ${currentPage === 'logements' ? 'text-black' : 'text-gray-400'}`}
+                                        className={`flex flex-col items-center gap-1.5 py-2 px-2 transition-opacity ${currentPage === 'logements' ? 'opacity-100' : 'opacity-60 hover:opacity-100'}`}
                                     >
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                            <path d="M9 22V12H15V22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                        </svg>
-                                        <span className={`text-xs font-medium ${currentPage === 'logements' ? 'border-b-2 border-black pb-1' : ''}`}>Logements</span>
+                                        <div className={`p-1 rounded-full ${currentPage === 'logements' ? 'bg-gray-100' : 'bg-transparent'}`}>
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                <path d="M9 22V12H15V22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                            </svg>
+                                        </div>
+                                        <span className={`text-[11px] font-medium leading-none ${currentPage === 'logements' ? 'text-black' : 'text-gray-600'}`}>Logements</span>
                                     </button>
 
                                     <button
                                         onClick={() => handleTabClick('experiences')}
-                                        className={`flex flex-col items-center gap-1 px-4 ${currentPage === 'experiences' ? 'text-black' : 'text-gray-400'}`}
+                                        className={`flex flex-col items-center gap-1.5 py-2 px-2 relative transition-opacity ${currentPage === 'experiences' ? 'opacity-100' : 'opacity-60 hover:opacity-100'}`}
                                     >
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
-                                            <path d="M12 6V12L16 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                                        </svg>
-                                        <span className={`text-xs font-medium ${currentPage === 'experiences' ? 'border-b-2 border-black pb-1' : ''}`}>Expériences</span>
+                                        <div className="relative">
+                                            <div className={`p-1 rounded-full ${currentPage === 'experiences' ? 'bg-gray-100' : 'bg-transparent'}`}>
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+                                                    <path d="M12 6V12L16 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                                                </svg>
+                                            </div>
+                                            <span className="absolute -top-1 -right-2 w-2 h-2 rounded-full bg-[#E91E63] border-2 border-white"></span>
+                                        </div>
+                                        <span className={`text-[11px] font-medium leading-none ${currentPage === 'experiences' ? 'text-black' : 'text-gray-600'}`}>Expériences</span>
                                     </button>
 
                                     <button
                                         onClick={() => handleTabClick('services')}
-                                        className={`flex flex-col items-center gap-1 px-4 ${currentPage === 'services' ? 'text-black' : 'text-gray-400'}`}
+                                        className={`flex flex-col items-center gap-1.5 py-2 px-2 relative transition-opacity ${currentPage === 'services' ? 'opacity-100' : 'opacity-60 hover:opacity-100'}`}
                                     >
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
-                                            <path d="M9 3V21M15 3V21M3 9H21M3 15H21" stroke="currentColor" strokeWidth="2" />
-                                        </svg>
-                                        <span className={`text-xs font-medium ${currentPage === 'services' ? 'border-b-2 border-black pb-1' : ''}`}>Services</span>
+                                        <div className="relative">
+                                            <div className={`p-1 rounded-full ${currentPage === 'services' ? 'bg-gray-100' : 'bg-transparent'}`}>
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
+                                                    <path d="M9 3V21M15 3V21M3 9H21M3 15H21" stroke="currentColor" strokeWidth="2" />
+                                                </svg>
+                                            </div>
+                                            <span className="absolute -top-1 -right-2 w-2 h-2 rounded-full bg-[#E91E63] border-2 border-white"></span>
+                                        </div>
+                                        <span className={`text-[11px] font-medium leading-none ${currentPage === 'services' ? 'text-black' : 'text-gray-600'}`}>Services</span>
                                     </button>
                                 </div>
 
                                 <button
                                     onClick={onClose}
-                                    className="p-2 rounded-full border border-gray-300 hover:bg-gray-100 transition-colors ml-2"
+                                    className="p-2 rounded-full bg-white border border-gray-300 hover:bg-gray-100 transition-colors ml-2 shadow-md"
                                 >
-                                    <X className="w-4 h-4" />
+                                    <X className="w-6 h-6" />
                                 </button>
                             </motion.div>
                         )}
