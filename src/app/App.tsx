@@ -266,7 +266,7 @@ export default function App() {
         {currentPage === 'booking-request' && <BookingRequest onBack={handleBackToPropertyDetails} bookingData={bookingData} />}
         {currentPage === 'search-results' && searchParams && <SearchResults onBack={handleBackToHome} onNavigate={handleNavigate} searchParams={searchParams} />}
         {currentPage === 'client-space' && <ClientSpace onNavigate={handleNavigate} />}
-        {currentPage === 'messages' && <Messages onNavigate={handleNavigate} />}
+        {currentPage === 'messages' && <Messages onNavigate={handleNavigate} isHost={isHost} />}
         {currentPage === 'privacy' && <Privacy onNavigate={handleNavigate} />}
         {currentPage === 'terms' && <TermsOfService onNavigate={handleNavigate} />}
         {currentPage === 'how-it-works' && <HowItWorks onNavigate={handleNavigate} />}
