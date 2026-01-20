@@ -31,6 +31,7 @@ jobs:
 
                   const nextConfig: NextConfig = {
                     output: 'standalone',
+                    distDir: 'dist',
                     images: {
                       unoptimized: true,
                     },
@@ -48,7 +49,7 @@ jobs:
                   export default nextConfig;
                   EOF
 
-                  echo "Next.js configured for standalone output"
+                  echo "Next.js configured with distDir: dist"
 
             - name: Build Next.js (standalone)
               run: npm run build
@@ -61,23 +62,23 @@ jobs:
 
                   mkdir -p deploy
 
-                  # Copy entire standalone folder (already has correct .next structure)
-                  cp -r .next/standalone/* deploy/
+                  # Copy entire standalone folder (now uses 'dist' instead of '.next')
+                  cp -r dist/standalone/* deploy/
 
-                  # Copy static files (not included in standalone by default)
-                  cp -r .next/static deploy/.next/
+                  # Copy static files
+                  cp -r dist/static deploy/dist/
 
                   # Copy public folder
                   cp -r public deploy/ 2>/dev/null || true
 
                   # Verify the structure
-                  echo "=== Deploy .next structure ==="
-                  ls -la deploy/.next/
+                  echo "=== Deploy dist structure ==="
+                  ls -la deploy/dist/
                   echo ""
                   echo "=== Static folder ==="
-                  ls -la deploy/.next/static/ | head -10
+                  ls -la deploy/dist/static/ | head -10
                   echo ""
-                  echo "BUILD_ID: $(cat deploy/.next/BUILD_ID)"
+                  echo "BUILD_ID: $(cat deploy/dist/BUILD_ID)"
 
                   # Remove ALL node_modules from deploy (cPanel manages this via symlink)
                   find deploy -type d -name "node_modules" -exec rm -rf {} + 2>/dev/null || true
@@ -95,7 +96,7 @@ jobs:
                   # Final verification
                   echo ""
                   echo "=== Final deploy folder structure ==="
-                  find deploy -type f -name "BUILD_ID" -o -name "build-manifest.json" | head -10
+                  find deploy -name "BUILD_ID" -o -name "build-manifest.json" | head -10
                   echo ""
                   echo "Total files to deploy:"
                   find deploy -type f | wc -l
