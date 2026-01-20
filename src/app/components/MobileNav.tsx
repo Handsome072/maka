@@ -7,7 +7,6 @@ interface MobileNavProps {
     onLoginClick?: () => void;
     onProfileClick?: () => void;
     onMessagesClick?: () => void;
-    isScrolled?: boolean;
 }
 
 export function MobileNav({
@@ -15,8 +14,7 @@ export function MobileNav({
     onFavoritesClick,
     onLoginClick,
     onProfileClick,
-    onMessagesClick,
-    isScrolled = false
+    onMessagesClick
 }: MobileNavProps) {
     const { user } = useAuth();
 
@@ -33,7 +31,7 @@ export function MobileNav({
                     onClick={onSearchClick}
                     className="flex flex-col items-center gap-1 px-6 py-2 text-[#E91E63] transition-colors"
                 >
-                    <Search className={`w-6 h-6 transition-opacity duration-300 ${isScrolled ? 'opacity-0 h-0' : 'opacity-100'}`} />
+                    <Search className="w-6 h-6" />
                     <span className="text-xs font-medium">Explorer</span>
                 </button>
 
@@ -42,7 +40,7 @@ export function MobileNav({
                     onClick={onFavoritesClick}
                     className="flex flex-col items-center gap-1 px-6 py-2 text-gray-500 hover:text-gray-700 transition-colors"
                 >
-                    <Heart className={`w-6 h-6 transition-opacity duration-300 ${isScrolled ? 'opacity-0 h-0' : 'opacity-100'}`} />
+                    <Heart className="w-6 h-6" />
                     <span className="text-xs font-medium">Favoris</span>
                 </button>
 
@@ -53,7 +51,7 @@ export function MobileNav({
                             onClick={onMessagesClick}
                             className="flex flex-col items-center gap-1 px-6 py-2 text-gray-500 hover:text-gray-700 transition-colors"
                         >
-                            <MessageSquare className={`w-6 h-6 transition-opacity duration-300 ${isScrolled ? 'opacity-0 h-0' : 'opacity-100'}`} />
+                            <MessageSquare className="w-6 h-6" />
                             <span className="text-xs font-medium">Messages</span>
                         </button>
 
@@ -62,7 +60,7 @@ export function MobileNav({
                             onClick={onProfileClick}
                             className="flex flex-col items-center gap-1 px-6 py-2 text-gray-500 hover:text-gray-700 transition-colors"
                         >
-                            <span className={`w-6 h-6 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 transition-all duration-300 ${isScrolled ? 'opacity-0 h-0' : 'opacity-100'}`}>
+                            <span className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center bg-gray-200">
                                 {user.avatar ? (
                                     <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
                                 ) : (
@@ -80,7 +78,7 @@ export function MobileNav({
                         onClick={onLoginClick}
                         className="flex flex-col items-center gap-1 px-6 py-2 text-gray-500 hover:text-gray-700 transition-colors"
                     >
-                        <User className={`w-6 h-6 transition-opacity duration-300 ${isScrolled ? 'opacity-0 h-0' : 'opacity-100'}`} />
+                        <User className="w-6 h-6" />
                         <span className="text-xs font-medium">Connexion</span>
                     </button>
                 )}
