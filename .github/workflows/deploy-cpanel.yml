@@ -76,17 +76,20 @@ jobs:
                   # Create deployment directory
                   mkdir -p deploy
 
-                  # Copy standalone build
+                  # Copy standalone build (includes server.js and .next with BUILD_ID)
                   cp -r .next/standalone/* deploy/
 
-                  # Copy static files
-                  mkdir -p deploy/.next/static
-                  cp -r .next/static/* deploy/.next/static/
+                  # Copy static files into the standalone .next folder
+                  cp -r .next/static deploy/.next/
 
                   # Copy public folder
                   if [ -d "public" ]; then
                     cp -r public deploy/
                   fi
+
+                  # Verify BUILD_ID exists
+                  echo "Checking BUILD_ID..."
+                  cat deploy/.next/BUILD_ID || echo "WARNING: BUILD_ID not found"
 
                   # Ensure package.json has correct start script
                   node -e "
@@ -97,31 +100,72 @@ jobs:
                     fs.writeFileSync('deploy/package.json', JSON.stringify(pkg, null, 2));
                   "
 
+                  echo ""
                   echo "Deployment structure:"
                   ls -la deploy/
+                  echo ""
+                  echo ".next folder contents:"
+                  ls -la deploy/.next/
                   echo ""
                   echo "Build size:"
                   du -sh deploy/
 
-            - name: Debug FTP credentials
-              env:
-                  DEBUG_SERVER: ${{ secrets.FTP_SERVER }}
-                  DEBUG_USER: ${{ secrets.FTP_USERNAME }}
-                  DEBUG_PASS: ${{ secrets.FTP_PASSWORD }}
-                  DEBUG_DIR: ${{ secrets.REMOTE_DIR }}
+            - name: Create deployment zip
               run: |
-                  echo "FTP_SERVER (base64):"
-                  echo "$DEBUG_SERVER" | base64
-                  echo "FTP_USERNAME (base64):"
-                  echo "$DEBUG_USER" | base64
-                  echo "FTP_PASSWORD (base64):"
-                  echo "$DEBUG_PASS" | base64
-                  echo "REMOTE_DIR (base64):"
-                  echo "$DEBUG_DIR" | base64
-                  echo ""
-                  echo "Decode with: echo 'VALUE' | base64 -d"
+                  cd deploy
+                  zip -r ../deploy.zip .
+                  cd ..
+                  echo "Zip file size:"
+                  ls -lh deploy.zip
 
-            - name: Deploy to cPanel via FTP
+            - name: Create unzip PHP script
+              run: |
+                  cat > unzip.php << 'EOF'
+                  <?php
+                  // Security token - change this in your secrets
+                  $token = isset($_GET['token']) ? $_GET['token'] : '';
+                  $expected_token = getenv('DEPLOY_TOKEN') ?: '${{ secrets.DEPLOY_TOKEN }}';
+
+                  if ($token !== $expected_token) {
+                      http_response_code(403);
+                      die('Unauthorized');
+                  }
+
+                  $zip_file = __DIR__ . '/deploy.zip';
+                  $extract_to = __DIR__;
+
+                  if (!file_exists($zip_file)) {
+                      http_response_code(404);
+                      die('Zip file not found');
+                  }
+
+                  $zip = new ZipArchive;
+                  if ($zip->open($zip_file) === TRUE) {
+                      $zip->extractTo($extract_to);
+                      $zip->close();
+
+                      // Delete zip file after extraction
+                      unlink($zip_file);
+
+                      // Self-delete this script
+                      unlink(__FILE__);
+
+                      echo 'Deployment successful! Extracted and cleaned up.';
+                  } else {
+                      http_response_code(500);
+                      echo 'Failed to extract zip file';
+                  }
+                  ?>
+                  EOF
+
+            - name: Prepare upload folder
+              run: |
+                  mkdir -p upload
+                  mv deploy.zip upload/
+                  mv unzip.php upload/
+                  ls -la upload/
+
+            - name: Upload zip and unzip script via FTP
               uses: SamKirkland/FTP-Deploy-Action@v4.3.5
               with:
                   server: ${{ secrets.FTP_SERVER }}
@@ -129,13 +173,26 @@ jobs:
                   password: ${{ secrets.FTP_PASSWORD }}
                   port: 21
                   protocol: ftp
-                  local-dir: ./deploy/
+                  local-dir: ./upload/
                   server-dir: ${{ secrets.REMOTE_DIR }}
                   dangerous-clean-slate: false
-                  exclude: |
-                      **/.git*
-                      **/.git*/**
-                      **/.DS_Store
+
+            - name: Trigger unzip on server
+              run: |
+                  echo "Triggering unzip on server..."
+                  RESPONSE=$(curl -s -w "\n%{http_code}" "${{ secrets.SITE_URL }}/unzip.php?token=${{ secrets.DEPLOY_TOKEN }}")
+                  HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+                  BODY=$(echo "$RESPONSE" | head -n -1)
+
+                  echo "Response: $BODY"
+                  echo "HTTP Code: $HTTP_CODE"
+
+                  if [ "$HTTP_CODE" != "200" ]; then
+                    echo "Unzip failed!"
+                    exit 1
+                  fi
+
+                  echo "Unzip successful!"
 
             - name: Deployment complete
               run: |
