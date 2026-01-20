@@ -354,9 +354,9 @@ export function MobileSearchOverlay({
 
                                 <button
                                     onClick={onClose}
-                                    className="p-2 rounded-full border border-gray-300 hover:bg-gray-100 transition-colors ml-2"
+                                    className="p-2 rounded-full bg-white border border-gray-300 hover:bg-gray-100 transition-colors ml-2 shadow-md"
                                 >
-                                    <X className="w-4 h-4" />
+                                    <X className="w-6 h-6" />
                                 </button>
                             </motion.div>
                         )}
