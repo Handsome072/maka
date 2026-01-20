@@ -1,178 +1,199 @@
 name: Deploy to cPanel (Node.js App)
 
 on:
-    push:
-        branches:
-            - main
-    workflow_dispatch:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
-    deploy:
-        name: Build and Deploy to cPanel
-        runs-on: ubuntu-latest
+  deploy:
+    name: Build and Deploy to cPanel
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: "20"
-                  cache: "npm"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
 
-            - name: Install dependencies
-              run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-            - name: Configure Next.js for standalone build
-              run: |
-                  cat > next.config.ts << 'EOF'
-                  import type { NextConfig } from 'next';
+      - name: Configure Next.js for standalone build
+        run: |
+          cat > next.config.ts << 'EOF'
+          import type { NextConfig } from 'next';
 
-                  const nextConfig: NextConfig = {
-                    output: 'standalone',
-                    images: {
-                      unoptimized: true,
-                    },
-                    trailingSlash: true,
-                    reactStrictMode: true,
-                    typescript: {
-                      ignoreBuildErrors: true,
-                    },
-                    eslint: {
-                      ignoreDuringBuilds: true,
-                    },
-                    productionBrowserSourceMaps: false,
-                  };
+          const nextConfig: NextConfig = {
+            output: 'standalone',
+            images: {
+              unoptimized: true,
+            },
+            trailingSlash: true,
+            reactStrictMode: true,
+            typescript: {
+              ignoreBuildErrors: true,
+            },
+            eslint: {
+              ignoreDuringBuilds: true,
+            },
+            productionBrowserSourceMaps: false,
+          };
 
-                  export default nextConfig;
-                  EOF
+          export default nextConfig;
+          EOF
 
-                  echo "Next.js configured for standalone"
+          echo "Next.js configured for standalone"
 
-            - name: Build Next.js (standalone)
-              run: npm run build
-              env:
-                  NODE_ENV: production
+      - name: Build Next.js (standalone)
+        run: npm run build
+        env:
+          NODE_ENV: production
 
-            - name: Prepare standalone deployment
-              run: |
-                  echo "Preparing standalone Node.js app..."
+      - name: Prepare standalone deployment
+        run: |
+          echo "Preparing standalone Node.js app..."
 
-                  mkdir -p deploy
+          mkdir -p deploy
 
-                  # Copy entire standalone folder
-                  cp -r .next/standalone/* deploy/
+          # Copy entire standalone folder (includes server.js and .next folder)
+          cp -r .next/standalone/* deploy/
 
-                  # Copy static files
-                  cp -r .next/static deploy/.next/
+          # Ensure .next directory exists in deploy
+          mkdir -p deploy/.next
 
-                  # Copy public folder
-                  cp -r public deploy/ 2>/dev/null || true
+          # Copy static files to .next/static (merge with existing .next from standalone)
+          cp -r .next/static deploy/.next/static/
 
-                  # Verify the structure
-                  echo "=== Deploy .next structure ==="
-                  ls -la deploy/.next/
-                  echo ""
-                  echo "BUILD_ID: $(cat deploy/.next/BUILD_ID)"
+          # Copy BUILD_ID and other necessary files if they exist
+          if [ -f .next/BUILD_ID ] && [ ! -f deploy/.next/BUILD_ID ]; then
+            cp .next/BUILD_ID deploy/.next/BUILD_ID
+          fi
 
-                  # Remove ALL node_modules from deploy (cPanel manages this via symlink)
-                  find deploy -type d -name "node_modules" -exec rm -rf {} + 2>/dev/null || true
-                  echo "Removed all node_modules folders"
+          # Copy server build manifest if it exists
+          if [ -f .next/BUILD_MANIFEST.json ] && [ ! -f deploy/.next/BUILD_MANIFEST.json ]; then
+            cp .next/BUILD_MANIFEST.json deploy/.next/BUILD_MANIFEST.json
+          fi
 
-                  # Ensure package.json has correct start script
-                  node -e "
-                    const fs = require('fs');
-                    const pkg = JSON.parse(fs.readFileSync('deploy/package.json', 'utf8'));
-                    pkg.scripts = pkg.scripts || {};
-                    pkg.scripts.start = 'NODE_ENV=production node server.js';
-                    fs.writeFileSync('deploy/package.json', JSON.stringify(pkg, null, 2));
-                  "
+          # Ensure all .next subdirectories from standalone are preserved
+          if [ -d .next/standalone/.next ]; then
+            echo "Copying .next from standalone build..."
+            cp -r .next/standalone/.next/* deploy/.next/ 2>/dev/null || true
+          fi
 
-                  # Create app.js wrapper for cPanel Passenger
-                  cat > deploy/app.js << 'APPEOF'
-                  const { createServer } = require('http');
-                  const { parse } = require('url');
-                  const next = require('next');
-                  const path = require('path');
+          # Copy public folder
+          cp -r public deploy/ 2>/dev/null || true
 
-                  const dev = false;
-                  const hostname = '0.0.0.0';
-                  const port = process.env.PORT || 3000;
+          # Verify the structure
+          echo "=== Deploy .next structure ==="
+          ls -la deploy/.next/ 2>/dev/null || echo "Warning: .next directory not found"
+          echo ""
+          if [ -f deploy/.next/BUILD_ID ]; then
+            echo "BUILD_ID: $(cat deploy/.next/BUILD_ID)"
+          else
+            echo "Warning: BUILD_ID not found"
+          fi
+          echo ""
+          echo "=== Checking for .next in deploy ==="
+          find deploy -type d -name ".next" | head -5
+          echo ""
+          echo "=== Checking server.js location ==="
+          ls -la deploy/server.js 2>/dev/null || echo "Warning: server.js not found in deploy root"
 
-                  const app = next({ dev, hostname, port, dir: __dirname });
-                  const handle = app.getRequestHandler();
+          # Remove ALL node_modules from deploy (cPanel manages this via symlink)
+          find deploy -type d -name "node_modules" -exec rm -rf {} + 2>/dev/null || true
+          echo "Removed all node_modules folders"
 
-                  app.prepare().then(() => {
-                    createServer(async (req, res) => {
-                      try {
-                        const parsedUrl = parse(req.url, true);
-                        await handle(req, res, parsedUrl);
-                      } catch (err) {
-                        console.error('Error:', err);
-                        res.statusCode = 500;
-                        res.end('Internal Server Error');
-                      }
-                    }).listen(port, () => {
-                      console.log(`> Ready on http://${hostname}:${port}`);
-                    });
-                  });
-                  APPEOF
-                  echo "Created app.js wrapper"
+          # Ensure package.json has correct start script
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('deploy/package.json', 'utf8'));
+            pkg.scripts = pkg.scripts || {};
+            pkg.scripts.start = 'NODE_ENV=production node server.js';
+            fs.writeFileSync('deploy/package.json', JSON.stringify(pkg, null, 2));
+          "
+          echo "Updated package.json start script to use server.js"
 
-                  # Set proper permissions for all files
-                  chmod -R 755 deploy/
-                  find deploy -type f -exec chmod 644 {} \;
-                  chmod 755 deploy/server.js deploy/app.js
-                  echo "Set file permissions"
+          # Set proper permissions for all files
+          chmod -R 755 deploy/
+          find deploy -type f -exec chmod 644 {} \;
+          chmod 755 deploy/server.js 2>/dev/null || true
 
-                  # Final verification
-                  echo ""
-                  echo "=== Final deploy folder structure ==="
-                  find deploy -name "BUILD_ID" -o -name "build-manifest.json" | head -10
-                  echo ""
-                  echo "Total files to deploy:"
-                  find deploy -type f | wc -l
+          # Ensure .next folder has proper permissions (important for access)
+          chmod -R 755 deploy/.next/ 2>/dev/null || true
+          find deploy/.next -type f -exec chmod 644 {} \; 2>/dev/null || true
 
-                  echo ""
-                  echo "Deployment structure:"
-                  ls -la deploy/
-                  echo ""
-                  echo "Build size (without node_modules):"
-                  du -sh deploy/
+          echo "Set file permissions"
 
-            - name: Install lftp
-              run: sudo apt-get update && sudo apt-get install -y lftp
+          # Final verification
+          echo ""
+          echo "=== Final deploy folder structure ==="
+          find deploy -name "BUILD_ID" -o -name "build-manifest.json" | head -10
+          echo ""
+          echo "Total files to deploy:"
+          find deploy -type f | wc -l
 
-            - name: Deploy to cPanel via lftp
-              env:
-                  FTP_USER: ${{ secrets.FTP_USERNAME }}
-                  FTP_PASS: ${{ secrets.FTP_PASSWORD }}
-                  FTP_HOST: ${{ secrets.FTP_SERVER }}
-                  REMOTE_DIR: ${{ secrets.REMOTE_DIR }}
-              run: |
-                  echo "Deploying via lftp (handles dotted folders)..."
-                  lftp -u "$FTP_USER","$FTP_PASS" "$FTP_HOST" << EOF
-                  set ftp:ssl-allow no
-                  set net:timeout 60
-                  set net:max-retries 3
-                  mirror -R --verbose --delete --exclude node_modules/ ./deploy/ $REMOTE_DIR
-                  quit
-                  EOF
-                  echo "FTP upload complete"
+          echo ""
+          echo "Deployment structure:"
+          ls -la deploy/
+          echo ""
+          echo "Build size (without node_modules):"
+          du -sh deploy/
 
-            - name: Deployment complete
-              run: |
-                  echo "Deployment completed!"
-                  echo ""
-                  echo "IMPORTANT: Run these commands in cPanel Terminal or SSH:"
-                  echo "  cd ${{ secrets.REMOTE_DIR }}"
-                  echo "  source /home/\$(whoami)/nodevenv/frontend/22/bin/activate"
-                  echo "  npm install --production"
-                  echo "  npm start"
-                  echo ""
-                  echo "Or use cPanel Node.js App to:"
-                  echo "  1. Set startup file: server.js"
-                  echo "  2. Click 'Run NPM Install'"
-                  echo "  3. Click 'Restart App'"
-                  exit 0
+      - name: Install lftp
+        run: sudo apt-get update && sudo apt-get install -y lftp
+
+      - name: Deploy to cPanel via lftp
+        env:
+          FTP_USER: ${{ secrets.FTP_USERNAME }}
+          FTP_PASS: ${{ secrets.FTP_PASSWORD }}
+          FTP_HOST: ${{ secrets.FTP_SERVER }}
+          REMOTE_DIR: ${{ secrets.REMOTE_DIR }}
+        run: |
+          echo "Deploying via lftp (handles dotted folders)..."
+          lftp -u "$FTP_USER","$FTP_PASS" "$FTP_HOST" << EOF
+          set ftp:ssl-allow no
+          set net:timeout 60
+          set net:max-retries 3
+          mirror -R --verbose --delete --exclude node_modules/ ./deploy/ $REMOTE_DIR
+          quit
+          EOF
+          echo "FTP upload complete"
+
+      - name: Deployment complete
+        run: |
+          echo "Deployment completed!"
+          echo ""
+          echo "IMPORTANT: Run these commands in cPanel Terminal or SSH:"
+          echo "  cd ${{ secrets.REMOTE_DIR }}"
+          echo ""
+          echo "1. Verify .next folder exists:"
+          echo "   ls -la .next/"
+          echo ""
+          echo "2. Check .next permissions:"
+          echo "   chmod -R 755 .next/"
+          echo "   find .next -type f -exec chmod 644 {} \\;"
+          echo ""
+          echo "3. Install dependencies:"
+          echo "   source /home/\$(whoami)/nodevenv/frontend/22/bin/activate"
+          echo "   npm install --production"
+          echo ""
+          echo "4. Start the app:"
+          echo "   npm start"
+          echo ""
+          echo "Or use cPanel Node.js App to:"
+          echo "  1. Set startup file: server.js"
+          echo "  2. Verify Application root points to correct directory"
+          echo "  3. Click 'Run NPM Install'"
+          echo "  4. Click 'Restart App'"
+          echo ""
+          echo "If you get '.next folder not found' error:"
+          echo "  - Verify .next folder exists: ls -la .next/"
+          echo "  - Check permissions: chmod -R 755 .next/"
+          echo "  - Ensure app directory in cPanel matches deployment directory"
+          exit 0
