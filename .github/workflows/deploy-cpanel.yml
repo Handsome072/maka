@@ -26,36 +26,22 @@ jobs:
 
             - name: Configure Next.js for standalone build
               run: |
-                  # Modify next.config.ts to use standalone output instead of export
                   cat > next.config.ts << 'EOF'
                   import type { NextConfig } from 'next';
 
                   const nextConfig: NextConfig = {
-                    // Standalone output for Node.js server deployment
                     output: 'standalone',
-
-                    // Disable image optimization for cPanel compatibility
                     images: {
                       unoptimized: true,
                     },
-
-                    // Trailing slashes for routing compatibility
                     trailingSlash: true,
-
-                    // Enable React strict mode
                     reactStrictMode: true,
-
-                    // Skip type checking during build
                     typescript: {
                       ignoreBuildErrors: true,
                     },
-
-                    // Skip ESLint during build
                     eslint: {
                       ignoreDuringBuilds: true,
                     },
-
-                    // Disable source maps in production
                     productionBrowserSourceMaps: false,
                   };
 
@@ -73,7 +59,6 @@ jobs:
               run: |
                   echo "Preparing standalone Node.js app..."
 
-                  # Create deployment directory
                   mkdir -p deploy
 
                   # Copy standalone build (includes server.js and .next with BUILD_ID)
@@ -86,6 +71,9 @@ jobs:
                   if [ -d "public" ]; then
                     cp -r public deploy/
                   fi
+
+                  # Remove node_modules from deploy (will be installed on server)
+                  rm -rf deploy/node_modules
 
                   # Verify BUILD_ID exists
                   echo "Checking BUILD_ID..."
@@ -104,68 +92,10 @@ jobs:
                   echo "Deployment structure:"
                   ls -la deploy/
                   echo ""
-                  echo ".next folder contents:"
-                  ls -la deploy/.next/
-                  echo ""
-                  echo "Build size:"
+                  echo "Build size (without node_modules):"
                   du -sh deploy/
 
-            - name: Create deployment zip
-              run: |
-                  cd deploy
-                  zip -r ../deploy.zip .
-                  cd ..
-                  echo "Zip file size:"
-                  ls -lh deploy.zip
-
-            - name: Create unzip PHP script
-              run: |
-                  cat > unzip.php << 'EOF'
-                  <?php
-                  // Security token - change this in your secrets
-                  $token = isset($_GET['token']) ? $_GET['token'] : '';
-                  $expected_token = getenv('DEPLOY_TOKEN') ?: '${{ secrets.DEPLOY_TOKEN }}';
-
-                  if ($token !== $expected_token) {
-                      http_response_code(403);
-                      die('Unauthorized');
-                  }
-
-                  $zip_file = __DIR__ . '/deploy.zip';
-                  $extract_to = __DIR__;
-
-                  if (!file_exists($zip_file)) {
-                      http_response_code(404);
-                      die('Zip file not found');
-                  }
-
-                  $zip = new ZipArchive;
-                  if ($zip->open($zip_file) === TRUE) {
-                      $zip->extractTo($extract_to);
-                      $zip->close();
-
-                      // Delete zip file after extraction
-                      unlink($zip_file);
-
-                      // Self-delete this script
-                      unlink(__FILE__);
-
-                      echo 'Deployment successful! Extracted and cleaned up.';
-                  } else {
-                      http_response_code(500);
-                      echo 'Failed to extract zip file';
-                  }
-                  ?>
-                  EOF
-
-            - name: Prepare upload folder
-              run: |
-                  mkdir -p upload
-                  mv deploy.zip upload/
-                  mv unzip.php upload/
-                  ls -la upload/
-
-            - name: Upload zip and unzip script via FTP
+            - name: Deploy to cPanel via FTP
               uses: SamKirkland/FTP-Deploy-Action@v4.3.5
               with:
                   server: ${{ secrets.FTP_SERVER }}
@@ -173,50 +103,27 @@ jobs:
                   password: ${{ secrets.FTP_PASSWORD }}
                   port: 21
                   protocol: ftp
-                  local-dir: ./upload/
+                  local-dir: ./deploy/
                   server-dir: ${{ secrets.REMOTE_DIR }}
                   dangerous-clean-slate: false
-
-            - name: Trigger unzip on server
-              env:
-                  SITE_URL: ${{ secrets.SITE_URL }}
-                  DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
-              run: |
-                  echo "Triggering unzip on server..."
-                  echo "SITE_URL set: $([ -n "$SITE_URL" ] && echo 'yes' || echo 'NO - MISSING!')"
-                  echo "DEPLOY_TOKEN set: $([ -n "$DEPLOY_TOKEN" ] && echo 'yes' || echo 'NO - MISSING!')"
-
-                  if [ -z "$SITE_URL" ] || [ -z "$DEPLOY_TOKEN" ]; then
-                    echo "ERROR: Missing required secrets SITE_URL or DEPLOY_TOKEN"
-                    exit 1
-                  fi
-
-                  URL="${SITE_URL}/unzip.php?token=${DEPLOY_TOKEN}"
-                  echo "Calling unzip endpoint..."
-
-                  RESPONSE=$(curl -s -w "\n%{http_code}" "$URL" || true)
-                  HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
-                  BODY=$(echo "$RESPONSE" | head -n -1)
-
-                  echo "Response: $BODY"
-                  echo "HTTP Code: $HTTP_CODE"
-
-                  if [ "$HTTP_CODE" != "200" ]; then
-                    echo "Unzip failed!"
-                    exit 1
-                  fi
-
-                  echo "Unzip successful!"
+                  exclude: |
+                      **/.git*
+                      **/.git*/**
+                      **/node_modules/**
+                      **/.DS_Store
 
             - name: Deployment complete
               run: |
                   echo "Deployment completed!"
                   echo ""
-                  echo "cPanel Node.js App Setup:"
-                  echo "  1. Go to cPanel > Setup Node.js App"
-                  echo "  2. Create new application:"
-                  echo "     - Node.js version: 20.x"
-                  echo "     - Application root: your remote directory"
-                  echo "     - Application startup file: server.js"
-                  echo "  3. Click 'Create' then 'Restart App'"
+                  echo "IMPORTANT: Run these commands in cPanel Terminal or SSH:"
+                  echo "  cd ${{ secrets.REMOTE_DIR }}"
+                  echo "  source /home/\$(whoami)/nodevenv/frontend/22/bin/activate"
+                  echo "  npm install --production"
+                  echo "  npm start"
+                  echo ""
+                  echo "Or use cPanel Node.js App to:"
+                  echo "  1. Set startup file: server.js"
+                  echo "  2. Click 'Run NPM Install'"
+                  echo "  3. Click 'Restart App'"
                   exit 0
