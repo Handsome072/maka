@@ -3,18 +3,18 @@ name: Deploy to o2switch
 on:
   push:
     branches:
-      - main
+      - prod
   workflow_dispatch: # Permet de déclencher manuellement le déploiement
 
 jobs:
   deploy:
     name: Build and Deploy
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
-      
+
       - name: 🔧 Setup pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -23,17 +23,17 @@ jobs:
       - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'pnpm'
-      
+          node-version: "20"
+          cache: "pnpm"
+
       - name: 📦 Install dependencies
         run: pnpm install --frozen-lockfile
-      
+
       - name: 🏗️ Build Next.js project
         run: pnpm run deploy:prepare
         env:
           NODE_ENV: production
-      
+
       - name: 📋 Verify build output
         run: |
           echo "Build completed successfully!"
@@ -42,7 +42,7 @@ jobs:
           find out -type f | wc -l
           echo "Build size:"
           du -sh out/
-      
+
       - name: 🚀 Deploy to o2switch via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -59,9 +59,8 @@ jobs:
             **/.git*/**
             **/node_modules/**
             **/.DS_Store
-      
+
       - name: ✅ Deployment complete
         run: |
           echo "🎉 Deployment to https://homiqio.com/ completed successfully!"
           echo "Deployed at: $(date)"
-
