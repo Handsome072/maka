@@ -284,7 +284,6 @@ export default function App() {
         {/* Mobile Navigation - visible only for S < 745 on main pages */}
         {showMobileElements && (
           <MobileNav
-            isScrolled={isScrolled}
             onSearchClick={() => { }}
             onFavoritesClick={() => { }}
             onLoginClick={() => setShowAuthModal(true)}
