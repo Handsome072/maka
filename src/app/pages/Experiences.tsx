@@ -429,12 +429,13 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
         {/* Section: Populaires auprès d'autres voyageurs - with fade-in animation */}
         <motion.div
           ref={sectionRef}
-          className="px-4 sm:px-6 lg:px-20 mb-8"
+          ref={sectionRef}
+          className="px-4 sm:px-6 lg:px-20 mb-4 md:mb-8"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
-          <h2 className="text-2xl md:text-3xl" style={{ fontWeight: 600 }}>
+          <h2 className="text-lg md:text-3xl" style={{ fontWeight: 600 }}>
             Populaires auprès d'autres voyageurs
           </h2>
         </motion.div>
