@@ -120,7 +120,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
       {/* Modal */}
       <div
         ref={modalRef}
-        className="relative bg-white rounded-3xl w-full max-w-xl mx-4 shadow-2xl max-h-[90vh] overflow-hidden flex flex-col"
+        className="relative bg-white rounded-3xl w-full max-w-xl mx-4 shadow-lg max-h-[90vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}

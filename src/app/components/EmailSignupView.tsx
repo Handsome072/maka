@@ -49,33 +49,35 @@ export function EmailSignupView({
 
   return (
     <>
-      <div className="space-y-5 mb-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-900 mb-1.5">
-            Prénom
-          </label>
-          <input
-            type="text"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            className="w-full h-11 rounded-lg border border-gray-300 px-3.5 text-sm focus:outline-none focus:border-gray-400 focus:ring-0 transition-colors"
-          />
+      <div className="space-y-5 mb-8">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-2">
+              Prénom
+            </label>
+            <input
+              type="text"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              className="w-full h-12 rounded-xl border border-gray-200 px-4 text-base focus:outline-none focus:border-gray-900 focus:ring-0 transition-all placeholder:text-gray-400"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-2">
+              Nom
+            </label>
+            <input
+              type="text"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              className="w-full h-12 rounded-xl border border-gray-200 px-4 text-base focus:outline-none focus:border-gray-900 focus:ring-0 transition-all placeholder:text-gray-400"
+            />
+          </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-900 mb-1.5">
-            Nom
-          </label>
-          <input
-            type="text"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            className="w-full h-11 rounded-lg border border-gray-300 px-3.5 text-sm focus:outline-none focus:border-gray-400 focus:ring-0 transition-colors"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-900 mb-1.5">
+          <label className="block text-sm font-medium text-gray-900 mb-2">
             Date de naissance
           </label>
           <input
@@ -83,49 +85,49 @@ export function EmailSignupView({
             value={birthDate}
             onChange={(e) => setBirthDate(e.target.value)}
             placeholder="JJ/MM/AAAA"
-            className="w-full h-11 rounded-lg border border-gray-300 px-3.5 text-sm focus:outline-none focus:border-gray-400 focus:ring-0 transition-colors"
+            className="w-full h-12 rounded-xl border border-gray-200 px-4 text-base focus:outline-none focus:border-gray-900 focus:ring-0 transition-all placeholder:text-gray-400"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-900 mb-1.5">
+          <label className="block text-sm font-medium text-gray-900 mb-2">
             Adresse e-mail
           </label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full h-11 rounded-lg border border-gray-300 px-3.5 text-sm focus:outline-none focus:border-gray-400 focus:ring-0 transition-colors"
+            className="w-full h-12 rounded-xl border border-gray-200 px-4 text-base focus:outline-none focus:border-gray-900 focus:ring-0 transition-all placeholder:text-gray-400"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-900 mb-1.5">
+          <label className="block text-sm font-medium text-gray-900 mb-2">
             Mot de passe
           </label>
           <div className="relative">
             <input
-              type={showPassword ? "text" : "password"}
+              type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full h-11 rounded-lg border border-gray-300 px-3.5 pr-11 text-sm focus:outline-none focus:border-gray-400 focus:ring-0 transition-colors"
+              className="w-full h-12 rounded-xl border border-gray-200 px-4 pr-12 text-base focus:outline-none focus:border-gray-900 focus:ring-0 transition-all placeholder:text-gray-400"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
             >
-              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>
           </div>
         </div>
       </div>
 
       {password && passwordErrors.length > 0 && (
-        <div className="mb-6 space-y-1">
+        <div className="mb-6 space-y-2">
           {passwordErrors.map((error, index) => (
             <div key={index} className="flex items-center gap-2">
-              <span className={`text-xs ${error.valid ? 'text-green-600' : 'text-gray-400'}`}>
+              <span className={`text-xs ${error.valid ? 'text-green-600' : 'text-gray-300'}`}>
                 {error.valid ? '✓' : '○'}
               </span>
               <span className={`text-xs ${error.valid ? 'text-green-600' : 'text-gray-500'}`}>
@@ -136,25 +138,25 @@ export function EmailSignupView({
         </div>
       )}
 
-      <label className="flex items-start gap-2.5 cursor-pointer mb-6">
+      <label className="flex items-start gap-3 cursor-pointer mb-8">
         <input
           type="checkbox"
           checked={!receiveMarketing}
           onChange={(e) => setReceiveMarketing(!e.target.checked)}
-          className="mt-0.5 w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-0 focus:ring-offset-0"
+          className="mt-0.5 w-4 h-4 rounded border-gray-300 text-black focus:ring-0 focus:ring-offset-0"
         />
-        <span className="text-xs text-gray-600">
+        <span className="text-xs text-gray-600 leading-snug">
           Je ne souhaite pas recevoir d'e-mails promotionnels
         </span>
       </label>
 
-      <p className="text-xs text-gray-500 mb-6 leading-relaxed">
+      <p className="text-xs text-gray-500 mb-8 leading-relaxed">
         En cliquant sur Créer un compte, vous acceptez nos{' '}
-        <button className="text-gray-900 underline hover:text-gray-700 font-medium">
+        <button className="text-black underline hover:text-gray-700 font-medium">
           CGU
         </button>
         {' '}et notre{' '}
-        <button className="text-gray-900 underline hover:text-gray-700 font-medium">
+        <button className="text-black underline hover:text-gray-700 font-medium">
           Politique de confidentialité
         </button>
         .
@@ -163,7 +165,7 @@ export function EmailSignupView({
       <button
         onClick={onAccept}
         disabled={!isPasswordValid}
-        className="w-full bg-black text-white h-11 rounded-lg font-semibold text-sm hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:bg-gray-300 disabled:cursor-not-allowed"
+        className="w-full bg-black text-white h-12 rounded-xl font-medium text-base hover:bg-gray-800 transition-all transform active:scale-[0.98] disabled:opacity-50 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:transform-none"
       >
         Créer un compte
       </button>

@@ -28,27 +28,27 @@ export function StandardLoginView({
 
     return (
         <div className="flex flex-col">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                Bon retour
+            <h2 className="text-3xl font-bold text-gray-900 mb-3 tracking-tight">
+                Se connecter
             </h2>
-            <p className="text-gray-500 text-sm mb-8">
+            <p className="text-gray-500 text-base mb-8">
                 Veuillez entrer vos informations
             </p>
 
-            <div className="space-y-5 mb-4">
+            <div className="space-y-5 mb-6">
                 <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-1.5">
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
                         Adresse e-mail
                     </label>
                     <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full h-11 rounded-lg border border-gray-300 px-3.5 text-sm focus:outline-none focus:border-gray-400 focus:ring-0 transition-colors"
+                        className="w-full h-12 rounded-xl border border-gray-200 px-4 text-base focus:outline-none focus:border-gray-900 focus:ring-0 transition-all placeholder:text-gray-400"
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-1.5">
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
                         Mot de passe
                     </label>
                     <div className="relative">
@@ -56,34 +56,34 @@ export function StandardLoginView({
                             type={showPassword ? "text" : "password"}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full h-11 rounded-lg border border-gray-300 px-3.5 pr-11 text-sm focus:outline-none focus:border-gray-400 focus:ring-0 transition-colors"
+                            className="w-full h-12 rounded-xl border border-gray-200 px-4 pr-12 text-base focus:outline-none focus:border-gray-900 focus:ring-0 transition-all placeholder:text-gray-400"
                         />
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                         >
-                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                         </button>
                     </div>
                 </div>
             </div>
 
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-8">
                 <label className="flex items-center cursor-pointer group">
                     <input
                         type="checkbox"
                         checked={rememberMe}
                         onChange={(e) => setRememberMe(e.target.checked)}
-                        className="w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-0 focus:ring-offset-0"
+                        className="w-4 h-4 rounded border-gray-300 text-black focus:ring-0 focus:ring-offset-0"
                     />
-                    <span className="ml-2 text-sm text-gray-900 group-hover:text-gray-700">
-                        Se souvenir pendant 30 jours
+                    <span className="ml-2 text-sm text-gray-600 group-hover:text-gray-900 transition-colors">
+                        Se souvenir de moi
                     </span>
                 </label>
                 <button
                     onClick={onForgotPasswordClick}
-                    className="text-sm text-gray-900 font-medium hover:text-gray-700 transition-colors underline"
+                    className="text-sm text-gray-600 font-medium hover:text-black transition-colors underline decoration-gray-300 hover:decoration-black underline-offset-2"
                 >
                     Mot de passe oublié
                 </button>
@@ -91,14 +91,14 @@ export function StandardLoginView({
 
             <button
                 onClick={handleSubmit}
-                className="w-full bg-black text-white h-11 rounded-lg font-semibold text-sm hover:bg-gray-800 transition-colors mb-4"
+                className="w-full bg-black text-white h-12 rounded-xl font-medium text-base hover:bg-gray-800 transition-all transform active:scale-[0.98] mb-4"
             >
                 Se connecter
             </button>
 
             <button
                 onClick={onGoogleLogin}
-                className="w-full h-11 border border-gray-300 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors mb-8"
+                className="w-full h-12 border border-gray-200 rounded-xl flex items-center justify-center gap-3 hover:bg-gray-50 transition-all mb-8"
             >
                 <svg width="20" height="20" viewBox="0 0 24 24">
                     <path
@@ -118,15 +118,15 @@ export function StandardLoginView({
                         fill="#EA4335"
                     />
                 </svg>
-                <span className="text-sm text-gray-700 font-medium">Se connecter avec Google</span>
+                <span className="text-sm text-gray-700 font-medium">Continuer avec Google</span>
             </button>
 
             <div className="text-center">
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-gray-500">
                     Pas encore de compte ?{" "}
                     <button
                         onClick={onSignupClick}
-                        className="text-gray-900 font-semibold hover:underline transition-all"
+                        className="text-black font-semibold hover:underline decoration-2 underline-offset-2 transition-all"
                     >
                         S'inscrire
                     </button>

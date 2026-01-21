@@ -15,39 +15,39 @@ export function EmailEntryView({
 }: EmailEntryViewProps) {
   return (
     <>
-      <p className="text-gray-500 text-sm mb-8">
+      <p className="text-gray-500 text-base mb-8">
         Créez votre compte pour accéder à toutes nos fonctionnalités.
       </p>
 
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-900 mb-1.5">
+        <label className="block text-sm font-medium text-gray-900 mb-2">
           Adresse e-mail
         </label>
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full h-11 rounded-lg border border-gray-300 px-3.5 text-sm focus:outline-none focus:border-gray-400 focus:ring-0 transition-colors"
+          className="w-full h-12 rounded-xl border border-gray-200 px-4 text-base focus:outline-none focus:border-gray-900 focus:ring-0 transition-all placeholder:text-gray-400"
         />
       </div>
 
-      <p className="text-xs text-gray-500 mb-6">
+      <p className="text-xs text-gray-500 mb-8">
         Vous recevrez les confirmations par e-mail.{" "}
-        <button className="underline font-medium text-gray-700 hover:text-gray-900 transition-colors">
+        <button className="underline font-medium text-gray-700 hover:text-black transition-colors">
           Confidentialité
         </button>
       </p>
 
       <button
         onClick={onContinue}
-        className="w-full bg-black text-white h-11 rounded-lg font-semibold text-sm hover:bg-gray-800 transition-colors mb-4"
+        className="w-full bg-black text-white h-12 rounded-xl font-medium text-base hover:bg-gray-800 transition-all transform active:scale-[0.98] mb-4"
       >
         Continuer
       </button>
 
       <button 
         onClick={() => onSocialLogin('google')}
-        className="w-full h-11 border border-gray-300 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors"
+        className="w-full h-12 border border-gray-200 rounded-xl flex items-center justify-center gap-3 hover:bg-gray-50 transition-all"
       >
         <svg width="20" height="20" viewBox="0 0 24 24">
           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -55,7 +55,7 @@ export function EmailEntryView({
           <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.84z" fill="#FBBC05"/>
           <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
         </svg>
-        <span className="text-sm text-gray-700 font-medium">Se connecter avec Google</span>
+        <span className="text-sm text-gray-700 font-medium">Continuer avec Google</span>
       </button>
     </>
   );
