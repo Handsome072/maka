@@ -49,88 +49,112 @@ export function EmailSignupView({
 
   return (
     <>
-      <div className="space-y-5 mb-8">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              Prénom
-            </label>
-            <input
-              type="text"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              className="w-full h-12 rounded-xl border border-gray-200 px-4 text-base focus:outline-none focus:border-gray-900 focus:ring-0 transition-all placeholder:text-gray-400"
-            />
-          </div>
+      {/* Official Name Label */}
+      <div className="mb-8">
+        <p className="text-base mb-4" style={{ fontWeight: 600 }}>
+          Nom officiel
+        </p>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              Nom
-            </label>
-            <input
-              type="text"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              className="w-full h-12 rounded-xl border border-gray-200 px-4 text-base focus:outline-none focus:border-gray-900 focus:ring-0 transition-all placeholder:text-gray-400"
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-900 mb-2">
-            Date de naissance
-          </label>
+        {/* First Name Input */}
+        <div className="mb-3">
           <input
             type="text"
-            value={birthDate}
-            onChange={(e) => setBirthDate(e.target.value)}
-            placeholder="JJ/MM/AAAA"
-            className="w-full h-12 rounded-xl border border-gray-200 px-4 text-base focus:outline-none focus:border-gray-900 focus:ring-0 transition-all placeholder:text-gray-400"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            placeholder="Prénom sur la pièce d'identité"
+            className="w-full h-16 rounded-xl border border-gray-300 px-4 text-base focus:outline-none focus:border-gray-900 transition-colors"
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-900 mb-2">
-            Adresse e-mail
-          </label>
+        {/* Last Name Input */}
+        <div className="mb-3">
           <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full h-12 rounded-xl border border-gray-200 px-4 text-base focus:outline-none focus:border-gray-900 focus:ring-0 transition-all placeholder:text-gray-400"
+            type="text"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            placeholder="Nom sur la pièce d'identité"
+            className="w-full h-16 rounded-xl border border-gray-300 px-4 text-base focus:outline-none focus:border-gray-900 transition-colors"
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-900 mb-2">
-            Mot de passe
-          </label>
-          <div className="relative">
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full h-12 rounded-xl border border-gray-200 px-4 pr-12 text-base focus:outline-none focus:border-gray-900 focus:ring-0 transition-all placeholder:text-gray-400"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-            </button>
-          </div>
+        {/* Helper Text */}
+        <p className="text-sm text-gray-600 leading-relaxed">
+          Assurez-vous que le nom correspond à celui qui figure sur votre pièce d'identité. Si vous utilisez un autre nom, vous pouvez{' '}
+          <button className="underline text-gray-900" style={{ fontWeight: 600 }}>
+            ajouter un prénom d'usage
+          </button>
+          .
+        </p>
+      </div>
+
+      {/* Birth Date */}
+      <div className="mb-8">
+        <p className="text-base mb-4" style={{ fontWeight: 600 }}>
+          Date de naissance
+        </p>
+        <input
+          type="text"
+          value={birthDate}
+          onChange={(e) => setBirthDate(e.target.value)}
+          placeholder="Date de naissance"
+          className="w-full h-16 rounded-xl border border-gray-300 px-4 text-base focus:outline-none focus:border-gray-900 transition-colors"
+        />
+        <p className="text-sm text-gray-600 leading-relaxed mt-3">
+          Vous devez avoir au moins 18 ans pour vous inscrire. Nous n'indiquerons pas la date de votre anniversaire aux autres utilisateurs Airbnb.
+        </p>
+      </div>
+
+      {/* Email */}
+      <div className="mb-8">
+        <p className="text-base mb-4" style={{ fontWeight: 600 }}>
+          Coordonnées
+        </p>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Adresse e-mail"
+          className="w-full h-16 rounded-xl border border-gray-300 px-4 text-base focus:outline-none focus:border-gray-900 transition-colors"
+        />
+        <p className="text-sm text-gray-600 leading-relaxed mt-3">
+          Nous vous enverrons les confirmations et les reçus de voyage par e-mail.
+        </p>
+      </div>
+
+      {/* Password */}
+      <div className="mb-3">
+        <p className="text-base mb-4" style={{ fontWeight: 600 }}>
+          Mot de passe
+        </p>
+
+        <div className="relative">
+          <input
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Mot de passe"
+            className="w-full h-16 rounded-xl border border-gray-300 px-4 pr-24 text-base focus:outline-none focus:border-gray-900 transition-colors"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-900 hover:text-gray-600 text-sm underline"
+            style={{ fontWeight: 600 }}
+          >
+            {showPassword ? 'Masquer' : 'Afficher'}
+          </button>
         </div>
       </div>
 
+      {/* Password Validation Errors */}
       {password && passwordErrors.length > 0 && (
-        <div className="mb-6 space-y-2">
+        <div className="mb-8 space-y-2">
           {passwordErrors.map((error, index) => (
-            <div key={index} className="flex items-center gap-2">
-              <span className={`text-xs ${error.valid ? 'text-green-600' : 'text-gray-300'}`}>
-                {error.valid ? '✓' : '○'}
+            <div key={index} className="flex items-center gap-3">
+              <span className={`text-sm font-semibold ${error.valid ? 'text-green-600' : 'text-red-600'}`}>
+                {error.valid ? '✓' : '✕'}
               </span>
-              <span className={`text-xs ${error.valid ? 'text-green-600' : 'text-gray-500'}`}>
+              <span className={`text-sm ${error.valid ? 'text-green-600 line-through' : 'text-red-600'}`}>
                 {error.text}
               </span>
             </div>
@@ -138,37 +162,61 @@ export function EmailSignupView({
         </div>
       )}
 
-      <label className="flex items-start gap-3 cursor-pointer mb-8">
-        <input
-          type="checkbox"
-          checked={!receiveMarketing}
-          onChange={(e) => setReceiveMarketing(!e.target.checked)}
-          className="mt-0.5 w-4 h-4 rounded border-gray-300 text-black focus:ring-0 focus:ring-offset-0"
-        />
-        <span className="text-xs text-gray-600 leading-snug">
-          Je ne souhaite pas recevoir d'e-mails promotionnels
-        </span>
-      </label>
+      {/* Terms and Conditions */}
+      <div className="mb-6 p-4 bg-gray-50 rounded-xl">
+        <p className="text-sm text-gray-700 leading-relaxed">
+          En cliquant sur{' '}
+          <span style={{ fontWeight: 600 }}>Accepter et continuer</span>, j'accepte les{' '}
+          <button className="text-blue-600 underline hover:text-blue-700">
+            Conditions générales
+          </button>
+          , les{' '}
+          <button className="text-blue-600 underline hover:text-blue-700">
+            Conditions de service relatives aux paiements
+          </button>
+          , la{' '}
+          <button className="text-blue-600 underline hover:text-blue-700">
+            Politique de non-discrimination
+          </button>
+          {' '}et je reconnais avoir pris connaissance de la{' '}
+          <button className="text-blue-600 underline hover:text-blue-700">
+            Politique de confidentialité d'Airbnb
+          </button>
+          .
+        </p>
+      </div>
 
-      <p className="text-xs text-gray-500 mb-8 leading-relaxed">
-        En cliquant sur Créer un compte, vous acceptez nos{' '}
-        <button className="text-black underline hover:text-gray-700 font-medium">
-          CGU
-        </button>
-        {' '}et notre{' '}
-        <button className="text-black underline hover:text-gray-700 font-medium">
-          Politique de confidentialité
-        </button>
-        .
-      </p>
-
+      {/* Accept Button */}
       <button
         onClick={onAccept}
         disabled={!isPasswordValid}
-        className="w-full bg-black text-white h-12 rounded-xl font-medium text-base hover:bg-gray-800 transition-all transform active:scale-[0.98] disabled:opacity-50 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:transform-none"
+        className="w-full rounded-xl text-white text-base py-4 hover:opacity-90 transition-opacity mb-6 disabled:opacity-50 disabled:cursor-not-allowed"
+        style={{
+          backgroundColor: "#059669",
+          fontWeight: 600,
+        }}
       >
-        Créer un compte
+        Accepter et continuer
       </button>
+
+      {/* Marketing Checkbox */}
+      <div className="mb-6 p-4 bg-gray-50 rounded-xl">
+        <p className="text-sm text-gray-700 leading-relaxed mb-4">
+          Airbnb vous enverra des offres réservées aux membres, des idées de voyages, des e-mails promotionnels et des notifications push. Vous pouvez désactiver cette option à tout moment dans les paramètres de votre compte ou directement à partir de la notification promotionnelle.
+        </p>
+
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={!receiveMarketing}
+            onChange={(e) => setReceiveMarketing(!e.target.checked)}
+            className="mt-0.5 w-5 h-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
+          />
+          <span className="text-sm text-gray-700">
+            Je ne souhaite pas recevoir de messages promotionnels d'Airbnb.
+          </span>
+        </label>
+      </div>
     </>
   );
 }
