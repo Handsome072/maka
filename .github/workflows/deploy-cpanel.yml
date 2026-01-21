@@ -105,6 +105,14 @@ jobs:
           echo '  echo "PORT=$PORT"' >> deploy/start-server.sh
           echo 'fi' >> deploy/start-server.sh
           echo '' >> deploy/start-server.sh
+          echo '# Check if port is already in use and kill the process' >> deploy/start-server.sh
+          echo 'if [ -n "$PORT" ]; then' >> deploy/start-server.sh
+          echo '  echo "Checking if port $PORT is in use..."' >> deploy/start-server.sh
+          echo '  # Find and kill processes using this port' >> deploy/start-server.sh
+          echo '  ps aux | grep -E "node.*server\.js|node.*$PORT" | grep -v grep | awk "{print \$2}" | xargs kill -9 2>/dev/null || true' >> deploy/start-server.sh
+          echo '  sleep 2' >> deploy/start-server.sh
+          echo 'fi' >> deploy/start-server.sh
+          echo '' >> deploy/start-server.sh
           echo '# Start the server' >> deploy/start-server.sh
           echo 'exec node server.js' >> deploy/start-server.sh
           chmod +x deploy/start-server.sh
