@@ -8,7 +8,7 @@ interface HeaderRightMenuProps {
   setShowMenuDropdown: (show: boolean) => void;
   setShowLanguageModal: (show: boolean) => void;
   setShowBecomeHostModal: (show: boolean) => void;
-  setShowAuthModal: (show: boolean) => void;
+  onAuthClick?: () => void;
   onClientSpaceClick?: () => void;
   onMessagesClick?: () => void;
   isHost?: boolean;
@@ -20,7 +20,7 @@ export function HeaderRightMenu({
   setShowMenuDropdown,
   setShowLanguageModal,
   setShowBecomeHostModal,
-  setShowAuthModal,
+  onAuthClick,
   onClientSpaceClick,
   onMessagesClick,
   isHost,
@@ -98,7 +98,7 @@ export function HeaderRightMenu({
             onClose={() => setShowMenuDropdown(false)}
             onAuthClick={() => {
               setShowMenuDropdown(false);
-              setShowAuthModal(true);
+              onAuthClick?.();
             }}
             onBecomeHostClick={() => {
               setShowMenuDropdown(false);

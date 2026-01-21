@@ -36,7 +36,10 @@ export const ROUTES = {
   // Vérifications
   IDENTITY_VERIFICATION: '/identity-verification',
   PHONE_VERIFICATION: '/phone-verification',
-  
+
+  // Authentification
+  LOGIN: '/login',
+
   // Pages légales
   PRIVACY: '/privacy',
   TERMS: '/terms',
@@ -77,7 +80,7 @@ export function getCurrentPageFromPathname(pathname: string | null): MainPage {
  * Helper pour obtenir le path de navigation pour une page
  */
 export function getNavigationPath(
-  page: 'logements' | 'experiences' | 'services' | 'messages' | 'host-onboarding' | 'annonces' | 'client-space' | 'experience-onboarding'
+  page: 'logements' | 'experiences' | 'services' | 'messages' | 'host-onboarding' | 'annonces' | 'client-space' | 'experience-onboarding' | 'login'
 ): string {
   switch (page) {
     case 'logements':
@@ -96,6 +99,8 @@ export function getNavigationPath(
       return ROUTES.CLIENT_SPACE;
     case 'experience-onboarding':
       return ROUTES.EXPERIENCE_ONBOARDING;
+    case 'login':
+      return ROUTES.LOGIN;
     default:
       return ROUTES.HOME;
   }

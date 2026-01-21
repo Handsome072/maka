@@ -1,19 +1,17 @@
-import { X, ChevronLeft } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { useAuth } from "../context/AuthContext";
-import { EmailEntryView } from "./EmailEntryView";
-import { EmailSignupView } from "./EmailSignupView";
-import { StandardLoginView } from "./StandardLoginView";
+'use client';
 
-interface AuthModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { ChevronLeft } from "lucide-react";
+import { useAuth } from "@/app/context/AuthContext";
+import { EmailEntryView } from "@/app/components/EmailEntryView";
+import { EmailSignupView } from "@/app/components/EmailSignupView";
+import { StandardLoginView } from "@/app/components/StandardLoginView";
 
 type AuthView = "email-entry" | "signup" | "login" | "forgot-password";
 
-export function AuthModal({ isOpen, onClose }: AuthModalProps) {
-  const modalRef = useRef<HTMLDivElement>(null);
+export default function LoginPage() {
+  const router = useRouter();
   const { login } = useAuth();
   
   const [currentView, setCurrentView] = useState<AuthView>("login");
@@ -25,44 +23,13 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [receiveMarketing, setReceiveMarketing] = useState(true);
 
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    };
-
-    document.addEventListener("keydown", handleEscape);
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, [isOpen, onClose]);
-
-  // Reset state when modal closes
-  useEffect(() => {
-    if (!isOpen) {
-      setCurrentView("login");
-      setEmail("");
-      setFirstName("");
-      setLastName("");
-      setBirthDate("");
-      setPassword("");
-      setShowPassword(false);
-      setReceiveMarketing(true);
-    }
-  }, [isOpen]);
-
-  if (!isOpen) return null;
-
   const handleLogin = (userEmail: string) => {
     login({
       name: "User",
       email: userEmail,
       avatar: undefined,
     });
-    onClose();
+    router.push("/");
   };
 
   const handleGoogleLogin = () => {
@@ -71,7 +38,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
       email: "user@gmail.com",
       avatar: undefined,
     });
-    onClose();
+    router.push("/");
   };
 
   const handleSocialLogin = (provider: string) => {
@@ -80,7 +47,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
       email: `user@${provider}.com`,
       avatar: undefined,
     });
-    onClose();
+    router.push("/");
   };
 
   const handleSignupComplete = () => {
@@ -89,7 +56,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
       email: email,
       avatar: undefined,
     });
-    onClose();
+    router.push("/");
   };
 
   const getTitle = () => {
@@ -110,21 +77,10 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const showBackButton = currentView === "signup" || currentView === "email-entry";
 
   return (
-    <div
-      className="fixed inset-0 z-[70] flex items-center justify-center backdrop-blur-sm"
-      onClick={onClose}
-    >
-      {/* Overlay background */}
-      <div className="absolute inset-0 bg-black/60 transition-opacity" />
-
-      {/* Modal */}
-      <div
-        ref={modalRef}
-        className="relative bg-white rounded-3xl w-full max-w-xl mx-4 shadow-2xl max-h-[90vh] overflow-hidden flex flex-col"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <div className="min-h-screen bg-white flex items-center justify-center p-4">
+      <div className="w-full max-w-xl">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
+        <div className="flex items-center justify-between mb-8">
           {showBackButton ? (
             <button
               onClick={() => setCurrentView("login")}
@@ -134,22 +90,22 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
               <ChevronLeft className="w-5 h-5 text-gray-600" />
             </button>
           ) : (
-            <div className="w-10" />
+            <button
+              onClick={() => router.push("/")}
+              className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-full transition-all"
+              aria-label="Back to home"
+            >
+              <ChevronLeft className="w-5 h-5 text-gray-600" />
+            </button>
           )}
           
-          <h2 className="text-base font-semibold text-gray-900">{getTitle()}</h2>
+          <h1 className="text-xl font-semibold text-gray-900">{getTitle()}</h1>
           
-          <button
-            onClick={onClose}
-            className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-full transition-all"
-            aria-label="Close modal"
-          >
-            <X className="w-5 h-5 text-gray-600" />
-          </button>
+          <div className="w-10" />
         </div>
 
-        {/* Content - Scrollable */}
-        <div className="flex-1 overflow-y-auto px-6 py-6">
+        {/* Content */}
+        <div className="bg-white rounded-3xl shadow-lg p-8">
           {currentView === "login" && (
             <StandardLoginView
               onLogin={handleLogin}
@@ -194,7 +150,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
           )}
 
           {currentView === "forgot-password" && (
-            <div className="flex flex-col h-full">
+            <div className="flex flex-col">
               <div className="mb-8">
                 <h3 className="text-[22px] font-semibold text-gray-900 mb-2">
                   Réinitialiser votre mot de passe
@@ -225,7 +181,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 Envoyer le lien
               </button>
 
-              <div className="mt-auto pt-6 border-t border-gray-100 text-center">
+              <div className="pt-6 border-t border-gray-100 text-center">
                 <button
                   onClick={() => setCurrentView("login")}
                   className="text-black font-semibold hover:underline"

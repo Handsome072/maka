@@ -4,11 +4,10 @@ import { FiltersModal } from '../components/FiltersModal';
 import { HeaderRightMenu } from '../components/HeaderRightMenu';
 import { LanguageModal } from '../components/LanguageModal';
 import { BecomeHostModal } from '../components/BecomeHostModal';
-import { AuthModal } from '../components/AuthModal';
 
 interface SearchResultsProps {
   onBack: () => void;
-  onNavigate: (page: 'logements' | 'experiences' | 'services') => void;
+  onNavigate: (page: 'logements' | 'experiences' | 'services' | 'login') => void;
   searchParams: {
     destination: string;
     checkInDate: Date | null;
@@ -182,7 +181,7 @@ function PropertyCard({ property }: { property: Property }) {
   const nextImage = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setCurrentImageIndex((prev) => 
+    setCurrentImageIndex((prev) =>
       prev === property.images.length - 1 ? 0 : prev + 1
     );
   };
@@ -190,7 +189,7 @@ function PropertyCard({ property }: { property: Property }) {
   const prevImage = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setCurrentImageIndex((prev) => 
+    setCurrentImageIndex((prev) =>
       prev === 0 ? property.images.length - 1 : prev - 1
     );
   };
@@ -204,7 +203,7 @@ function PropertyCard({ property }: { property: Property }) {
           alt={property.title}
           className="w-full h-full object-cover"
         />
-        
+
         {/* Navigation buttons */}
         {property.images.length > 1 && (
           <>
@@ -229,11 +228,10 @@ function PropertyCard({ property }: { property: Property }) {
             {property.images.map((_, index) => (
               <div
                 key={index}
-                className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                  index === currentImageIndex
+                className={`w-1.5 h-1.5 rounded-full transition-colors ${index === currentImageIndex
                     ? 'bg-white'
                     : 'bg-white/60'
-                }`}
+                  }`}
               />
             ))}
           </div>
@@ -258,11 +256,10 @@ function PropertyCard({ property }: { property: Property }) {
           className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full hover:scale-110 transition-transform"
         >
           <Heart
-            className={`w-6 h-6 ${
-              isFavorite
+            className={`w-6 h-6 ${isFavorite
                 ? 'fill-red-500 stroke-red-500'
                 : 'fill-black/50 stroke-white'
-            }`}
+              }`}
             strokeWidth={2}
           />
         </button>
@@ -315,7 +312,6 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
   const [showMenuDropdown, setShowMenuDropdown] = useState(false);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [showBecomeHostModal, setShowBecomeHostModal] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const formatDateRange = () => {
     if (!searchParams.checkInDate) return 'Dates flexibles';
@@ -324,11 +320,11 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
       'janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin',
       'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.',
     ];
-    
+
     const checkInStr = `${searchParams.checkInDate.getDate()} ${monthNames[searchParams.checkInDate.getMonth()]}`;
-    
+
     if (!searchParams.checkOutDate) return checkInStr;
-    
+
     const checkOutStr = `${searchParams.checkOutDate.getDate()} ${monthNames[searchParams.checkOutDate.getMonth()]}`;
     return `${checkInStr} - ${checkOutStr}`;
   };
@@ -367,9 +363,7 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
               setShowMenuDropdown={setShowMenuDropdown}
               setShowLanguageModal={setShowLanguageModal}
               setShowBecomeHostModal={setShowBecomeHostModal}
-              setShowAuthModal={setShowAuthModal}
-              onClientSpaceClick={() => onNavigate('logements')}
-              onMessagesClick={() => onNavigate('logements')}
+              onAuthClick={() => onNavigate('login')}
             />
           </div>
         </div>
@@ -382,8 +376,8 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
               <button className="flex items-center border border-gray-200 rounded-full shadow-sm hover:shadow-md transition-shadow bg-white pl-6 pr-2 py-2">
                 <div className="flex items-center gap-3">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M13.5 6.5V14.5H10V11C10 10.4477 9.55228 10 9 10H7C6.44772 10 6 10.4477 6 11V14.5H2.5V6.5" stroke="#222222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M0.5 8L8 1.5L15.5 8" stroke="#222222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M13.5 6.5V14.5H10V11C10 10.4477 9.55228 10 9 10H7C6.44772 10 6 10.4477 6 11V14.5H2.5V6.5" stroke="#222222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M0.5 8L8 1.5L15.5 8" stroke="#222222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </div>
 
@@ -405,7 +399,7 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
 
                 <div className="bg-[#5EC6D8] text-white p-2.5 rounded-full">
                   <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M13 13L10.1 10.1M11.6667 6.33333C11.6667 9.27885 9.27885 11.6667 6.33333 11.6667C3.38781 11.6667 1 9.27885 1 6.33333C1 3.38781 3.38781 1 6.33333 1C9.27885 1 11.6667 3.38781 11.6667 6.33333Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M13 13L10.1 10.1M11.6667 6.33333C11.6667 9.27885 9.27885 11.6667 6.33333 11.6667C3.38781 11.6667 1 9.27885 1 6.33333C1 3.38781 3.38781 1 6.33333 1C9.27885 1 11.6667 3.38781 11.6667 6.33333Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </div>
               </button>
@@ -417,7 +411,7 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
               onClick={() => setShowFilterModal(true)}
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M1.5 4H14.5M3.5 8H12.5M6 12H10" stroke="#222222" strokeWidth="1.5" strokeLinecap="round"/>
+                <path d="M1.5 4H14.5M3.5 8H12.5M6 12H10" stroke="#222222" strokeWidth="1.5" strokeLinecap="round" />
               </svg>
               <span className="text-[12px]" style={{ fontWeight: 600, color: '#222222' }}>
                 Filtres
@@ -662,12 +656,12 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
                 <span>·</span>
                 <a href="#" className="hover:underline">Plan du site</a>
               </div>
-              
+
               <div className="flex items-center gap-4">
                 <button className="flex items-center gap-2 text-[14px] hover:underline" style={{ fontWeight: 600, color: '#222222' }}>
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <circle cx="8" cy="8" r="7" stroke="#222222" strokeWidth="1.5"/>
-                    <path d="M3 8H13M8 3C6.5 4.5 6 6 6 8C6 10 6.5 11.5 8 13M8 3C9.5 4.5 10 6 10 8C10 10 9.5 11.5 8 13" stroke="#222222" strokeWidth="1.5"/>
+                    <circle cx="8" cy="8" r="7" stroke="#222222" strokeWidth="1.5" />
+                    <path d="M3 8H13M8 3C6.5 4.5 6 6 6 8C6 10 6.5 11.5 8 13M8 3C9.5 4.5 10 6 10 8C10 10 9.5 11.5 8 13" stroke="#222222" strokeWidth="1.5" />
                   </svg>
                   Français (FR)
                 </button>
@@ -677,17 +671,17 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
                 <div className="flex items-center gap-3">
                   <a href="#" className="hover:opacity-70 transition-opacity">
                     <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                      <path d="M18 9C18 4.02943 13.9706 0 9 0C4.02943 0 0 4.02943 0 9C0 13.4921 3.29115 17.2155 7.59375 17.8907V11.6016H5.30859V9H7.59375V7.01719C7.59375 4.76156 8.93742 3.51562 10.9932 3.51562C11.9776 3.51562 13.0078 3.69141 13.0078 3.69141V5.90625H11.8729C10.755 5.90625 10.4062 6.60006 10.4062 7.3125V9H12.9023L12.5033 11.6016H10.4062V17.8907C14.7088 17.2155 18 13.4921 18 9Z" fill="#222222"/>
+                      <path d="M18 9C18 4.02943 13.9706 0 9 0C4.02943 0 0 4.02943 0 9C0 13.4921 3.29115 17.2155 7.59375 17.8907V11.6016H5.30859V9H7.59375V7.01719C7.59375 4.76156 8.93742 3.51562 10.9932 3.51562C11.9776 3.51562 13.0078 3.69141 13.0078 3.69141V5.90625H11.8729C10.755 5.90625 10.4062 6.60006 10.4062 7.3125V9H12.9023L12.5033 11.6016H10.4062V17.8907C14.7088 17.2155 18 13.4921 18 9Z" fill="#222222" />
                     </svg>
                   </a>
                   <a href="#" className="hover:opacity-70 transition-opacity">
                     <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                      <path d="M5.67 18C12.47 18 16.19 11.42 16.19 5.66C16.19 5.47 16.19 5.28 16.18 5.09C16.91 4.54 17.53 3.87 18 3.11C17.33 3.41 16.61 3.61 15.86 3.7C16.63 3.22 17.21 2.47 17.49 1.58C16.77 2.02 15.97 2.34 15.12 2.51C14.44 1.76 13.46 1.31 12.38 1.31C10.28 1.31 8.58 3.04 8.58 5.17C8.58 5.46 8.61 5.74 8.67 6.01C5.67 5.86 3.02 4.34 1.23 2.03C0.92 2.56 0.74 3.22 0.74 3.91C0.74 5.21 1.4 6.36 2.4 7.03C1.79 7.02 1.21 6.85 0.72 6.58C0.72 6.59 0.72 6.61 0.72 6.62C0.72 8.5 2.02 10.07 3.74 10.41C3.44 10.49 3.12 10.54 2.79 10.54C2.56 10.54 2.34 10.51 2.12 10.47C2.57 12.02 3.96 13.15 5.61 13.18C4.32 14.22 2.69 14.85 0.92 14.85C0.61 14.85 0.3 14.83 0 14.8C1.67 15.9 3.65 16.54 5.79 16.54" fill="#222222"/>
+                      <path d="M5.67 18C12.47 18 16.19 11.42 16.19 5.66C16.19 5.47 16.19 5.28 16.18 5.09C16.91 4.54 17.53 3.87 18 3.11C17.33 3.41 16.61 3.61 15.86 3.7C16.63 3.22 17.21 2.47 17.49 1.58C16.77 2.02 15.97 2.34 15.12 2.51C14.44 1.76 13.46 1.31 12.38 1.31C10.28 1.31 8.58 3.04 8.58 5.17C8.58 5.46 8.61 5.74 8.67 6.01C5.67 5.86 3.02 4.34 1.23 2.03C0.92 2.56 0.74 3.22 0.74 3.91C0.74 5.21 1.4 6.36 2.4 7.03C1.79 7.02 1.21 6.85 0.72 6.58C0.72 6.59 0.72 6.61 0.72 6.62C0.72 8.5 2.02 10.07 3.74 10.41C3.44 10.49 3.12 10.54 2.79 10.54C2.56 10.54 2.34 10.51 2.12 10.47C2.57 12.02 3.96 13.15 5.61 13.18C4.32 14.22 2.69 14.85 0.92 14.85C0.61 14.85 0.3 14.83 0 14.8C1.67 15.9 3.65 16.54 5.79 16.54" fill="#222222" />
                     </svg>
                   </a>
                   <a href="#" className="hover:opacity-70 transition-opacity">
                     <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                      <path d="M9 0C4.02943 0 0 4.02943 0 9C0 13.9706 4.02943 18 9 18C13.9706 18 18 13.9706 18 9C18 4.02943 13.9706 0 9 0ZM13.5 6.75C13.5071 6.87857 13.5071 7.00714 13.5071 7.13571C13.5071 10.5857 10.9286 14.5714 6.21429 14.5714C4.74643 14.5714 3.38571 14.1429 2.25 13.3929C2.45357 13.4143 2.65714 13.4286 2.87143 13.4286C4.07143 13.4286 5.17857 12.9857 6.05357 12.2357C4.92857 12.2143 3.97857 11.4571 3.66429 10.4143C3.81429 10.4357 3.96429 10.4571 4.11429 10.4571C4.32857 10.4571 4.54286 10.4286 4.74643 10.3714C3.65357 10.1357 2.82857 9.15 2.82857 7.97143V7.94286C3.16071 8.12143 3.53571 8.23929 3.93214 8.25C3.27857 7.80714 2.83929 7.05 2.83929 6.18214C2.83929 5.72143 2.96786 5.30357 3.19286 4.94786C4.34286 6.41571 6.07143 7.41429 8.03571 7.53214C7.99286 7.35357 7.97143 7.175 7.97143 6.98571C7.97143 5.64286 9.06429 4.53929 10.4286 4.53929C11.1214 4.53929 11.7536 4.83214 12.1929 5.30357C12.7393 5.19643 13.2643 4.98214 13.7321 4.69286C13.5536 5.27143 13.1643 5.72143 12.6536 5.99786C13.1429 5.94643 13.6179 5.81071 14.0571 5.61071C13.7321 6.07143 13.3214 6.46786 13.5 6.75Z" fill="#222222"/>
+                      <path d="M9 0C4.02943 0 0 4.02943 0 9C0 13.9706 4.02943 18 9 18C13.9706 18 18 13.9706 18 9C18 4.02943 13.9706 0 9 0ZM13.5 6.75C13.5071 6.87857 13.5071 7.00714 13.5071 7.13571C13.5071 10.5857 10.9286 14.5714 6.21429 14.5714C4.74643 14.5714 3.38571 14.1429 2.25 13.3929C2.45357 13.4143 2.65714 13.4286 2.87143 13.4286C4.07143 13.4286 5.17857 12.9857 6.05357 12.2357C4.92857 12.2143 3.97857 11.4571 3.66429 10.4143C3.81429 10.4357 3.96429 10.4571 4.11429 10.4571C4.32857 10.4571 4.54286 10.4286 4.74643 10.3714C3.65357 10.1357 2.82857 9.15 2.82857 7.97143V7.94286C3.16071 8.12143 3.53571 8.23929 3.93214 8.25C3.27857 7.80714 2.83929 7.05 2.83929 6.18214C2.83929 5.72143 2.96786 5.30357 3.19286 4.94786C4.34286 6.41571 6.07143 7.41429 8.03571 7.53214C7.99286 7.35357 7.97143 7.175 7.97143 6.98571C7.97143 5.64286 9.06429 4.53929 10.4286 4.53929C11.1214 4.53929 11.7536 4.83214 12.1929 5.30357C12.7393 5.19643 13.2643 4.98214 13.7321 4.69286C13.5536 5.27143 13.1643 5.72143 12.6536 5.99786C13.1429 5.94643 13.6179 5.81071 14.0571 5.61071C13.7321 6.07143 13.3214 6.46786 13.5 6.75Z" fill="#222222" />
                     </svg>
                   </a>
                 </div>
@@ -719,13 +713,6 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
         />
       )}
 
-      {/* Auth Modal */}
-      {showAuthModal && (
-        <AuthModal
-          isOpen={showAuthModal}
-          onClose={() => setShowAuthModal(false)}
-        />
-      )}
     </div>
   );
 }
