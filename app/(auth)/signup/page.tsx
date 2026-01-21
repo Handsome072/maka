@@ -41,14 +41,7 @@ export default function InscriptionPage() {
   };
 
   const getTitle = () => {
-    switch (currentView) {
-      case "email-entry":
-        return "Inscription";
-      case "signup":
-        return "Finaliser";
-      default:
-        return "";
-    }
+    return "Inscription";
   };
 
   return (

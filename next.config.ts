@@ -2,7 +2,7 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   // Configure as SPA - all routes will be handled by client-side routing
-  output: 'standalone',
+  output: 'export',
 
   // Disable image optimization for static export
   images: {

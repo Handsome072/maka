@@ -37,7 +37,7 @@ export default function LoginPage() {
       case "login":
         return "Connexion";
       case "forgot-password":
-        return "Récupération";
+        return "Mot de passe oublié";
       default:
         return "";
     }
