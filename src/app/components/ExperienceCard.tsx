@@ -92,7 +92,7 @@ export function ExperienceCard({
       </div>
 
       <div className="space-y-0">
-        <h3 className="text-[15px] line-clamp-2" style={{ fontWeight: 600 }}>{title}</h3>
+        <h3 className="text-sm line-clamp-2" style={{ fontWeight: 600 }}>{title}</h3>
         <p className="text-xs text-gray-600">{host}</p>
         <div>
           <span className="text-xs">{price}</span>

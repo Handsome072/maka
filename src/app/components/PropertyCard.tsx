@@ -72,7 +72,7 @@ export function PropertyCard({
       </div>
       <div className="space-y-1">
         <div className="flex items-start justify-between">
-          <h3 className="text-[15px] line-clamp-1" style={{ fontWeight: 600 }}>{title}</h3>
+          <h3 className="text-sm line-clamp-1" style={{ fontWeight: 600 }}>{title}</h3>
         </div>
         <p className="text-xs text-gray-600">{location}</p>
         {guests && <p className="text-xs text-gray-600">{guests}</p>}

@@ -87,8 +87,8 @@ export function PropertyCarousel({ title, subtitle, children, showMoreLink = tru
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
-      <div className="px-4 sm:px-6 lg:px-12">
-        <div className="flex items-center justify-between mb-4 md:mb-6">
+      <div className="flex flex-col">
+        <div className="flex items-center justify-between mb-4 md:mb-6 px-4 sm:px-6 lg:px-12">
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-lg md:text-2xl" style={{ fontWeight: 600 }}>{title}</h2>
@@ -136,7 +136,7 @@ export function PropertyCarousel({ title, subtitle, children, showMoreLink = tru
 
         <div
           ref={scrollContainerRef}
-          className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth"
+          className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth px-4 sm:px-6 lg:px-12"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {childArray.map((child, index) => (
