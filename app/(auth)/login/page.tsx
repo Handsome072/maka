@@ -2,13 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft } from "lucide-react";
 import { useAuth } from "@/app/context/AuthContext";
-import { EmailEntryView } from "@/app/components/EmailEntryView";
-import { EmailSignupView } from "@/app/components/EmailSignupView";
 import { StandardLoginView } from "@/app/components/StandardLoginView";
 
-type AuthView = "email-entry" | "signup" | "login" | "forgot-password";
+type AuthView = "login" | "forgot-password";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,12 +13,6 @@ export default function LoginPage() {
   
   const [currentView, setCurrentView] = useState<AuthView>("login");
   const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [birthDate, setBirthDate] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [receiveMarketing, setReceiveMarketing] = useState(true);
 
   const handleLogin = (userEmail: string) => {
     login({
@@ -41,30 +32,8 @@ export default function LoginPage() {
     router.push("/");
   };
 
-  const handleSocialLogin = (provider: string) => {
-    login({
-      name: `${provider} User`,
-      email: `user@${provider}.com`,
-      avatar: undefined,
-    });
-    router.push("/");
-  };
-
-  const handleSignupComplete = () => {
-    login({
-      name: `${firstName} ${lastName}`,
-      email: email,
-      avatar: undefined,
-    });
-    router.push("/");
-  };
-
   const getTitle = () => {
     switch (currentView) {
-      case "email-entry":
-        return "Inscription";
-      case "signup":
-        return "Finaliser";
       case "login":
         return "Connexion";
       case "forgot-password":
@@ -74,8 +43,6 @@ export default function LoginPage() {
     }
   };
 
-  const showBackButton = currentView === "signup" || currentView === "email-entry";
-
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
       <div className="w-full max-w-lg mx-auto">
@@ -84,63 +51,21 @@ export default function LoginPage() {
             <StandardLoginView
               onLogin={handleLogin}
               onGoogleLogin={handleGoogleLogin}
-              onSignupClick={() => setCurrentView("email-entry")}
+              onSignupClick={() => router.push("/signup")}
               onForgotPasswordClick={() => setCurrentView("forgot-password")}
             />
           ) : (
             <>
               <div className="flex items-center mb-8">
                 <button
-                  onClick={() => currentView === "signup" ? setCurrentView("email-entry") : setCurrentView("login")}
+                  onClick={() => setCurrentView("login")}
                   className="mr-4 p-1 hover:bg-gray-100 rounded-lg transition-colors"
                   aria-label="Retour"
                 >
-                  <ChevronLeft className="w-6 h-6 text-gray-900" />
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-gray-900"><path d="m15 18-6-6 6-6"/></svg>
                 </button>
                 <h1 className="text-2xl font-bold text-gray-900">{getTitle()}</h1>
               </div>
-
-              {currentView === "login" && (
-                <StandardLoginView
-                  onLogin={handleLogin}
-                  onGoogleLogin={handleGoogleLogin}
-                  onSignupClick={() => setCurrentView("email-entry")}
-                  onForgotPasswordClick={() => setCurrentView("forgot-password")}
-                />
-              )}
-
-              {currentView === "email-entry" && (
-                <EmailEntryView
-                  email={email}
-                  setEmail={setEmail}
-                  onContinue={() => setCurrentView("signup")}
-                  onSocialLogin={handleSocialLogin}
-                  onPhoneLogin={() => {
-                    console.log("Phone login clicked");
-                  }}
-                />
-              )}
-
-              {currentView === "signup" && (
-                <EmailSignupView
-                  firstName={firstName}
-                  setFirstName={setFirstName}
-                  lastName={lastName}
-                  setLastName={setLastName}
-                  birthDate={birthDate}
-                  setBirthDate={setBirthDate}
-                  email={email}
-                  setEmail={setEmail}
-                  password={password}
-                  setPassword={setPassword}
-                  showPassword={showPassword}
-                  setShowPassword={setShowPassword}
-                  receiveMarketing={receiveMarketing}
-                  setReceiveMarketing={setReceiveMarketing}
-                  onAccept={handleSignupComplete}
-                  onBack={() => setCurrentView("email-entry")}
-                />
-              )}
 
               {currentView === "forgot-password" && (
                 <div className="flex flex-col">
@@ -187,4 +112,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
