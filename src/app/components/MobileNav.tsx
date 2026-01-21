@@ -25,23 +25,23 @@ export function MobileNav({
                 paddingBottom: 'env(safe-area-inset-bottom, 0px)'
             }}
         >
-            <div className="flex items-center justify-around py-2">
+            <div className="flex items-center justify-center gap-8 py-2">
                 <button
                     type="button"
                     onClick={onSearchClick}
-                    className="flex flex-col items-center gap-1 px-6 py-2 text-[#E91E63] transition-colors"
+                    className="flex flex-col items-center gap-1 px-2 py-2 text-[#E91E63] transition-colors"
                 >
-                    <Search className="w-6 h-6" />
-                    <span className="text-xs font-medium">Explorer</span>
+                    <Search className="w-5 h-5" />
+                    <span className="text-[10px] font-medium">Explorer</span>
                 </button>
 
                 <button
                     type="button"
                     onClick={onFavoritesClick}
-                    className="flex flex-col items-center gap-1 px-6 py-2 text-gray-500 hover:text-gray-700 transition-colors"
+                    className="flex flex-col items-center gap-1 px-2 py-2 text-gray-500 hover:text-gray-700 transition-colors"
                 >
-                    <Heart className="w-6 h-6" />
-                    <span className="text-xs font-medium">Favoris</span>
+                    <Heart className="w-5 h-5" />
+                    <span className="text-[10px] font-medium">Favoris</span>
                 </button>
 
                 {user ? (
@@ -49,37 +49,37 @@ export function MobileNav({
                         <button
                             type="button"
                             onClick={onMessagesClick}
-                            className="flex flex-col items-center gap-1 px-6 py-2 text-gray-500 hover:text-gray-700 transition-colors"
+                            className="flex flex-col items-center gap-1 px-2 py-2 text-gray-500 hover:text-gray-700 transition-colors"
                         >
-                            <MessageSquare className="w-6 h-6" />
-                            <span className="text-xs font-medium">Messages</span>
+                            <MessageSquare className="w-5 h-5" />
+                            <span className="text-[10px] font-medium">Messages</span>
                         </button>
 
                         <button
                             type="button"
                             onClick={onProfileClick}
-                            className="flex flex-col items-center gap-1 px-6 py-2 text-gray-500 hover:text-gray-700 transition-colors"
+                            className="flex flex-col items-center gap-1 px-2 py-2 text-gray-500 hover:text-gray-700 transition-colors"
                         >
-                            <span className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center bg-gray-200">
+                            <span className="w-5 h-5 rounded-full overflow-hidden flex items-center justify-center bg-gray-200">
                                 {user.avatar ? (
                                     <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
                                 ) : (
-                                    <span className="text-[10px] font-bold text-gray-600">
+                                    <span className="text-[9px] font-bold text-gray-600">
                                         {user.name.charAt(0).toUpperCase()}
                                     </span>
                                 )}
                             </span>
-                            <span className="text-xs font-medium">Profil</span>
+                            <span className="text-[10px] font-medium">Profil</span>
                         </button>
                     </>
                 ) : (
                     <button
                         type="button"
                         onClick={onLoginClick}
-                        className="flex flex-col items-center gap-1 px-6 py-2 text-gray-500 hover:text-gray-700 transition-colors"
+                        className="flex flex-col items-center gap-1 px-2 py-2 text-gray-500 hover:text-gray-700 transition-colors"
                     >
-                        <User className="w-6 h-6" />
-                        <span className="text-xs font-medium">Connexion</span>
+                        <User className="w-5 h-5" />
+                        <span className="text-[10px] font-medium">Connexion</span>
                     </button>
                 )}
             </div>
