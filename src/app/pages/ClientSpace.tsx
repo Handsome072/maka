@@ -5,7 +5,6 @@ import { ReservationDetail } from '../components/ReservationDetail';
 import { HeaderRightMenu } from '../components/HeaderRightMenu';
 import { LanguageModal } from '../components/LanguageModal';
 import { BecomeHostModal } from '../components/BecomeHostModal';
-import { AuthModal } from '../components/AuthModal';
 import Link from 'next/link';
 
 // Property images from logements section for reservations
@@ -48,7 +47,6 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
   const [showMenuDropdown, setShowMenuDropdown] = useState(false);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [showBecomeHostModal, setShowBecomeHostModal] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
 
   // Si on affiche le détail de la réservation
   if (showReservationDetail) {
@@ -624,7 +622,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
             setShowMenuDropdown={setShowMenuDropdown}
             setShowLanguageModal={setShowLanguageModal}
             setShowBecomeHostModal={setShowBecomeHostModal}
-            setShowAuthModal={setShowAuthModal}
+            onAuthClick={() => onNavigate?.('login')}
             onClientSpaceClick={() => { }}
             onMessagesClick={() => onNavigate?.('messages')}
             isHost={false}
@@ -2411,14 +2409,6 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
             }
             setShowBecomeHostModal(false);
           }}
-        />
-      )}
-
-      {/* Auth Modal */}
-      {showAuthModal && (
-        <AuthModal
-          isOpen={showAuthModal}
-          onClose={() => setShowAuthModal(false)}
         />
       )}
 

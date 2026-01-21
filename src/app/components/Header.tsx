@@ -6,7 +6,6 @@ import { SearchOverlay } from "./SearchOverlay";
 import { LanguageModal } from "./LanguageModal";
 import { HeaderContent } from "./HeaderContent";
 import { BecomeHostModal } from "./BecomeHostModal";
-import { AuthModal } from "./AuthModal";
 import { HeaderRightMenu } from "./HeaderRightMenu";
 import { useAuth } from "../context/AuthContext";
 import { ROUTES } from "../config/routes";
@@ -14,7 +13,7 @@ import { ROUTES } from "../config/routes";
 interface HeaderProps {
   currentPage: "logements" | "experiences" | "services";
   onNavigate: (
-    page: "logements" | "experiences" | "services" | "messages" | "host-onboarding" | "annonces",
+    page: "logements" | "experiences" | "services" | "messages" | "host-onboarding" | "annonces" | "login" | "experience-onboarding",
   ) => void;
   isScrolled: boolean;
   onSearch: (params: any) => void;
@@ -32,7 +31,6 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
       useState(false);
     const [showBecomeHostModal, setShowBecomeHostModal] =
       useState(false);
-    const [showAuthModal, setShowAuthModal] = useState(false);
 
     const { user } = useAuth();
 
@@ -106,7 +104,7 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
                 setShowMenuDropdown={setShowMenuDropdown}
                 setShowLanguageModal={setShowLanguageModal}
                 setShowBecomeHostModal={setShowBecomeHostModal}
-                setShowAuthModal={setShowAuthModal}
+                onAuthClick={() => onNavigate('login')}
                 onClientSpaceClick={onClientSpaceClick}
                 onMessagesClick={() => onNavigate('messages')}
                 isHost={isHost}
@@ -155,13 +153,6 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
           />
         )}
 
-        {/* Auth Modal */}
-        {showAuthModal && (
-          <AuthModal
-            isOpen={showAuthModal}
-            onClose={() => setShowAuthModal(false)}
-          />
-        )}
       </>
     );
   },

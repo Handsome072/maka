@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { MobileNav } from './components/MobileNav';
-import { AuthModal } from './components/AuthModal';
 import { Home } from './pages/Home';
+import { Login } from './pages/Login';
 import { Experiences } from './pages/Experiences';
 import { Services } from './pages/Services';
 import { PropertyDetails } from './pages/PropertyDetails';
@@ -28,7 +28,7 @@ import { getListingData, saveListingData } from './utils/listingStorage';
 import { Search } from 'lucide-react';
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<'logements' | 'experiences' | 'services' | 'property-details' | 'experience-details' | 'service-details' | 'booking-request' | 'search-results' | 'client-space' | 'messages' | 'privacy' | 'terms' | 'how-it-works' | 'company-info' | 'host-onboarding' | 'annonces' | 'verification-points' | 'identity-verification' | 'edit-listing' | 'phone-verification' | 'experience-onboarding'>('logements');
+  const [currentPage, setCurrentPage] = useState<'logements' | 'experiences' | 'services' | 'property-details' | 'experience-details' | 'service-details' | 'booking-request' | 'search-results' | 'client-space' | 'messages' | 'privacy' | 'terms' | 'how-it-works' | 'company-info' | 'host-onboarding' | 'annonces' | 'verification-points' | 'identity-verification' | 'edit-listing' | 'phone-verification' | 'experience-onboarding' | 'login'>('logements');
   const [isScrolled, setIsScrolled] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const [bookingData, setBookingData] = useState<any>(null);
@@ -38,7 +38,6 @@ export default function App() {
   const [uploadedPhotos, setUploadedPhotos] = useState<string[]>([]);
   const [listingTitle, setListingTitle] = useState('Maison hôte calme');
   const [isHost, setIsHost] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
 
   // Load persisted data on mount
   useEffect(() => {
@@ -96,8 +95,8 @@ export default function App() {
     };
   }, []);
 
-  const handleNavigate = (page: 'logements' | 'experiences' | 'services' | 'property-details' | 'experience-details' | 'service-details' | 'booking-request' | 'search-results' | 'client-space' | 'messages' | 'privacy' | 'terms' | 'how-it-works' | 'company-info' | 'host-onboarding' | 'annonces' | 'verification-points' | 'identity-verification' | 'edit-listing' | 'phone-verification' | 'experience-onboarding', data?: any) => {
-    setCurrentPage(page);
+  const handleNavigate = (page: string, data?: any) => {
+    setCurrentPage(page as any);
     if (data) {
       setBookingData(data);
       if (data.showConfirmationPopup !== undefined) {
@@ -178,7 +177,7 @@ export default function App() {
   return (
     <AuthProvider>
       <div className="min-h-screen bg-white pb-16 md:pb-0">
-        {currentPage !== 'experience-details' && currentPage !== 'service-details' && currentPage !== 'booking-request' && currentPage !== 'search-results' && currentPage !== 'client-space' && currentPage !== 'messages' && currentPage !== 'privacy' && currentPage !== 'terms' && currentPage !== 'how-it-works' && currentPage !== 'company-info' && currentPage !== 'host-onboarding' && currentPage !== 'annonces' && currentPage !== 'verification-points' && currentPage !== 'identity-verification' && currentPage !== 'edit-listing' && currentPage !== 'phone-verification' && currentPage !== 'experience-onboarding' && (
+        {currentPage !== 'experience-details' && currentPage !== 'service-details' && currentPage !== 'booking-request' && currentPage !== 'search-results' && currentPage !== 'client-space' && currentPage !== 'messages' && currentPage !== 'privacy' && currentPage !== 'terms' && currentPage !== 'how-it-works' && currentPage !== 'company-info' && currentPage !== 'host-onboarding' && currentPage !== 'annonces' && currentPage !== 'verification-points' && currentPage !== 'identity-verification' && currentPage !== 'edit-listing' && currentPage !== 'phone-verification' && currentPage !== 'experience-onboarding' && currentPage !== 'login' && (
           <>
             {/* Mobile Header - visible only for S < 745 */}
             <div className="md:hidden sticky top-0 z-50 bg-[#FAFAFA]">
@@ -278,25 +277,21 @@ export default function App() {
         {currentPage === 'edit-listing' && <EditListing onNavigate={handleNavigate} uploadedPhotos={uploadedPhotos} listingTitle={listingTitle} />}
         {currentPage === 'phone-verification' && <PhoneVerification onNavigate={handleNavigate} />}
         {currentPage === 'experience-onboarding' && <ExperienceOnboarding onNavigate={handleNavigate} />}
+        {currentPage === 'login' && <Login onNavigate={handleNavigate} />}
 
-        {currentPage !== 'property-details' && currentPage !== 'experience-details' && currentPage !== 'service-details' && currentPage !== 'booking-request' && currentPage !== 'search-results' && currentPage !== 'client-space' && currentPage !== 'messages' && currentPage !== 'privacy' && currentPage !== 'terms' && currentPage !== 'how-it-works' && currentPage !== 'company-info' && currentPage !== 'host-onboarding' && currentPage !== 'annonces' && currentPage !== 'verification-points' && currentPage !== 'identity-verification' && currentPage !== 'edit-listing' && currentPage !== 'phone-verification' && currentPage !== 'experience-onboarding' && <Footer onNavigate={handleNavigate} />}
+        {currentPage !== 'property-details' && currentPage !== 'experience-details' && currentPage !== 'service-details' && currentPage !== 'booking-request' && currentPage !== 'search-results' && currentPage !== 'client-space' && currentPage !== 'messages' && currentPage !== 'privacy' && currentPage !== 'terms' && currentPage !== 'how-it-works' && currentPage !== 'company-info' && currentPage !== 'host-onboarding' && currentPage !== 'annonces' && currentPage !== 'verification-points' && currentPage !== 'identity-verification' && currentPage !== 'edit-listing' && currentPage !== 'phone-verification' && currentPage !== 'experience-onboarding' && currentPage !== 'login' && <Footer onNavigate={handleNavigate} />}
 
         {/* Mobile Navigation - visible only for S < 745 on main pages */}
         {showMobileElements && (
           <MobileNav
             onSearchClick={() => { }}
             onFavoritesClick={() => { }}
-            onLoginClick={() => setShowAuthModal(true)}
+            onLoginClick={() => handleNavigate('login')}
             onMessagesClick={() => handleNavigate('messages')}
             onProfileClick={() => handleNavigate('client-space')}
           />
         )}
 
-        {/* Auth Modal */}
-        <AuthModal
-          isOpen={showAuthModal}
-          onClose={() => setShowAuthModal(false)}
-        />
       </div>
     </AuthProvider>
   );

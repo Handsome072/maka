@@ -7,14 +7,12 @@ import { Search } from 'lucide-react';
 import { HeaderRightMenu } from './HeaderRightMenu';
 import { LanguageModal } from './LanguageModal';
 import { BecomeHostModal } from './BecomeHostModal';
-import { AuthModal } from './AuthModal';
 
 export function LegalHeader() {
   const router = useRouter();
   const [showMenuDropdown, setShowMenuDropdown] = useState(false);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [showBecomeHostModal, setShowBecomeHostModal] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
 
   // Handle navigation - same logic as main Header
   const handleNavigate = (page: 'host-onboarding' | 'experience-onboarding') => {
@@ -69,7 +67,7 @@ export function LegalHeader() {
               setShowMenuDropdown={setShowMenuDropdown}
               setShowLanguageModal={setShowLanguageModal}
               setShowBecomeHostModal={setShowBecomeHostModal}
-              setShowAuthModal={setShowAuthModal}
+              onAuthClick={() => router.push('/login')}
             />
           </div>
         </div>
@@ -97,14 +95,6 @@ export function LegalHeader() {
             // Service sera implémenté plus tard
             setShowBecomeHostModal(false);
           }}
-        />
-      )}
-
-      {/* Auth Modal */}
-      {showAuthModal && (
-        <AuthModal
-          isOpen={showAuthModal}
-          onClose={() => setShowAuthModal(false)}
         />
       )}
     </>
