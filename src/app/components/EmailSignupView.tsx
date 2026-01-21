@@ -1,4 +1,5 @@
 import { ChevronLeft, Eye, EyeOff } from 'lucide-react';
+import { useState } from "react";
 
 interface EmailSignupViewProps {
   firstName: string;
@@ -37,6 +38,22 @@ export function EmailSignupView({
   onAccept,
   onBack
 }: EmailSignupViewProps) {
+  const [emailError, setEmailError] = useState("");
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleAccept = () => {
+    if (!validateEmail(email)) {
+      setEmailError("Veuillez entrer une adresse e-mail valide.");
+      return;
+    }
+    setEmailError("");
+    onAccept();
+  };
+
   // Validate password
   const passwordErrors = password ? [
     { valid: password.length >= 8, text: "Au moins 8 caractères" },
@@ -79,11 +96,7 @@ export function EmailSignupView({
 
         {/* Helper Text */}
         <p className="text-sm text-gray-600 leading-relaxed">
-          Assurez-vous que le nom correspond à celui qui figure sur votre pièce d'identité. Si vous utilisez un autre nom, vous pouvez{' '}
-          <button className="underline text-gray-900" style={{ fontWeight: 600 }}>
-            ajouter un prénom d'usage
-          </button>
-          .
+          Assurez-vous que le nom correspond à celui qui figure sur votre pièce d'identité.
         </p>
       </div>
 
@@ -100,7 +113,7 @@ export function EmailSignupView({
           className="w-full h-16 rounded-xl border border-gray-300 px-4 text-base focus:outline-none focus:border-gray-900 transition-colors"
         />
         <p className="text-sm text-gray-600 leading-relaxed mt-3">
-          Vous devez avoir au moins 18 ans pour vous inscrire. Nous n'indiquerons pas la date de votre anniversaire aux autres utilisateurs Airbnb.
+          Vous devez avoir au moins 18 ans pour vous inscrire. Nous n'indiquerons pas la date de votre anniversaire aux autres utilisateurs Homiqio.
         </p>
       </div>
 
@@ -112,10 +125,23 @@ export function EmailSignupView({
         <input
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            if (emailError) setEmailError("");
+          }}
           placeholder="Adresse e-mail"
-          className="w-full h-16 rounded-xl border border-gray-300 px-4 text-base focus:outline-none focus:border-gray-900 transition-colors"
+          className={`w-full h-16 rounded-xl border px-4 text-base focus:outline-none focus:ring-0 transition-all ${
+            emailError 
+              ? "border-red-500 focus:border-red-500 bg-red-50" 
+              : "border-gray-300 focus:border-gray-900"
+          }`}
         />
+        {emailError && (
+          <div className="flex items-center gap-2 mt-2 text-red-600 text-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+            <span>{emailError}</span>
+          </div>
+        )}
         <p className="text-sm text-gray-600 leading-relaxed mt-3">
           Nous vous enverrons les confirmations et les reçus de voyage par e-mail.
         </p>
@@ -180,7 +206,7 @@ export function EmailSignupView({
           </button>
           {' '}et je reconnais avoir pris connaissance de la{' '}
           <button className="text-blue-600 underline hover:text-blue-700">
-            Politique de confidentialité d'Airbnb
+            Politique de confidentialité d'Homiqio
           </button>
           .
         </p>
@@ -188,11 +214,11 @@ export function EmailSignupView({
 
       {/* Accept Button */}
       <button
-        onClick={onAccept}
+        onClick={handleAccept}
         disabled={!isPasswordValid}
         className="w-full rounded-xl text-white text-base py-4 hover:opacity-90 transition-opacity mb-6 disabled:opacity-50 disabled:cursor-not-allowed"
         style={{
-          backgroundColor: "#059669",
+          backgroundColor: "#000000",
           fontWeight: 600,
         }}
       >
@@ -202,7 +228,7 @@ export function EmailSignupView({
       {/* Marketing Checkbox */}
       <div className="mb-6 p-4 bg-gray-50 rounded-xl">
         <p className="text-sm text-gray-700 leading-relaxed mb-4">
-          Airbnb vous enverra des offres réservées aux membres, des idées de voyages, des e-mails promotionnels et des notifications push. Vous pouvez désactiver cette option à tout moment dans les paramètres de votre compte ou directement à partir de la notification promotionnelle.
+          Homiqio vous enverra des offres réservées aux membres, des idées de voyages, des e-mails promotionnels et des notifications push. Vous pouvez désactiver cette option à tout moment dans les paramètres de votre compte ou directement à partir de la notification promotionnelle.
         </p>
 
         <label className="flex items-start gap-3 cursor-pointer">
@@ -213,7 +239,7 @@ export function EmailSignupView({
             className="mt-0.5 w-5 h-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
           />
           <span className="text-sm text-gray-700">
-            Je ne souhaite pas recevoir de messages promotionnels d'Airbnb.
+            Je ne souhaite pas recevoir de messages promotionnels d'Homiqio.
           </span>
         </label>
       </div>
