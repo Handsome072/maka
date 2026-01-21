@@ -1,8 +1,9 @@
 import { Heart, Share, Star, ChevronLeft, ChevronRight, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Header } from '../components/Header';
 import { ExperienceCard } from '../components/ExperienceCard';
 import { ImageCarouselModal } from '../components/ImageCarouselModal';
+import { useScroll } from '../hooks/ScrollContext';
 
 interface ExperienceDetailsProps {
   onBack: () => void;
@@ -12,6 +13,15 @@ export function ExperienceDetails({ onBack }: ExperienceDetailsProps) {
   const [showCarousel, setShowCarousel] = useState(false);
   const [carouselStartIndex, setCarouselStartIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
+  const { isScrolled } = useScroll();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const images = [
     'https://images.unsplash.com/photo-1705535541638-8805ba0f64aa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwYXJhbHltcGljJTIwYXRobGV0ZSUyMHRyYWluaW5nJTIwc25vd3xlbnwxfHx8fDE3Njc3NzYxNjZ8MA&ixlib=rb-4.1.0&q=80&w=1080',
@@ -76,25 +86,74 @@ export function ExperienceDetails({ onBack }: ExperienceDetailsProps) {
         onFavoriteToggle={() => setIsFavorite(!isFavorite)}
       />
 
-      {/* Header */}
-      <div className="bg-white">
-        <Header currentPage="experiences" onNavigate={onBack} isScrolled={true} />
+      {/* Mobile Header - Fixed White Bar */}
+      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 px-4 h-16 flex items-center justify-between">
+        <button 
+          onClick={onBack} 
+          className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors"
+        >
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+        
+        <div className="font-semibold text-sm">
+           Milan · Sports
+        </div>
 
+        <div className="flex gap-2 -mr-2">
+          <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+            <Share className="w-5 h-5" />
+          </button>
+          <button 
+            onClick={() => setIsFavorite(!isFavorite)}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          >
+            <Heart className={`w-5 h-5 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
+          </button>
+        </div>
+      </div>
+
+      {/* Desktop Header - Standard Airbnb Header with Scroll Behavior */}
+      <div className="hidden md:block bg-white sticky top-0 z-50">
+        <Header currentPage="experiences" onNavigate={onBack} isScrolled={isScrolled} />
+      </div>
+
+      <div className="bg-white pt-16 md:pt-0">
         {/* Hero Section - Photo Grid + Info */}
-        <div className="max-w-[1280px] mx-auto px-6 md:px-10 lg:px-20 pt-6">
+        <div className="max-w-[1280px] mx-auto px-4 md:px-10 lg:px-20 pt-6 md:pt-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left: Photo Grid (2x2) */}
-            <div className="grid grid-cols-2 gap-2 h-[600px] col-span-2">
-              <div className="cursor-pointer rounded-tl-3xl overflow-hidden" onClick={() => openCarousel(0)}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 h-auto md:h-[600px] col-span-2 relative">
+              {/* Mobile: 2x2 Grid */}
+              <div className="md:hidden grid grid-cols-2 gap-2 w-full rounded-2xl overflow-hidden aspect-square">
+                 {images.slice(0, 4).map((img, index) => (
+                   <div key={index} className="relative h-full w-full" onClick={() => openCarousel(index)}>
+                     <img src={img} alt={`Experience ${index + 1}`} className="w-full h-full object-cover" />
+                     {index === 3 && (
+                       <div className="absolute bottom-2 right-2">
+                         <button className="bg-white/80 backdrop-blur-sm p-2 rounded-lg shadow-sm">
+                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                              <polyline points="21 15 16 10 5 21"></polyline>
+                           </svg>
+                         </button>
+                       </div>
+                     )}
+                   </div>
+                 ))}
+              </div>
+
+              {/* Desktop: Grid */}
+              <div className="hidden md:block cursor-pointer rounded-tl-3xl overflow-hidden" onClick={() => openCarousel(0)}>
                 <img src={images[0]} alt="Experience 1" className="w-full h-full object-cover" />
               </div>
-              <div className="cursor-pointer rounded-tr-3xl overflow-hidden" onClick={() => openCarousel(1)}>
+              <div className="hidden md:block cursor-pointer rounded-tr-3xl overflow-hidden" onClick={() => openCarousel(1)}>
                 <img src={images[1]} alt="Experience 2" className="w-full h-full object-cover" />
               </div>
-              <div className="cursor-pointer rounded-bl-3xl overflow-hidden" onClick={() => openCarousel(2)}>
+              <div className="hidden md:block cursor-pointer rounded-bl-3xl overflow-hidden" onClick={() => openCarousel(2)}>
                 <img src={images[2]} alt="Experience 3" className="w-full h-full object-cover" />
               </div>
-              <div className="cursor-pointer rounded-br-3xl overflow-hidden relative group" onClick={() => openCarousel(3)}>
+              <div className="hidden md:block cursor-pointer rounded-br-3xl overflow-hidden relative group" onClick={() => openCarousel(3)}>
                 <img src={images[3]} alt="Experience 4" className="w-full h-full object-cover" />
                 {/* Show all photos overlay button */}
                 <button className="absolute bottom-3 right-3 bg-white px-3 py-1.5 rounded-lg shadow-sm flex items-center gap-1.5 text-xs opacity-0 group-hover:opacity-100 transition-opacity" style={{ fontWeight: 600 }}>
@@ -109,7 +168,7 @@ export function ExperienceDetails({ onBack }: ExperienceDetailsProps) {
             </div>
 
             {/* Right: Title and Info */}
-            <div className="flex flex-col items-center justify-center px-0 lg:px-8">
+            <div className="flex flex-col items-center justify-center px-4 md:px-0 lg:px-8 pt-4 md:pt-0">
               {/* Title */}
               <h1 className="text-2xl md:text-3xl text-center lg:text-center mb-4" style={{ fontWeight: 600, lineHeight: '1.2' }}>
                 Récupérez comme un athlète olympique avec Neville Wright
@@ -132,16 +191,16 @@ export function ExperienceDetails({ onBack }: ExperienceDetailsProps) {
 
               {/* Location buttons */}
               <div className="flex items-center gap-2 justify-center lg:justify-start mb-6">
-                <button className="px-3 py-1.5 text-xs hover:border-gray-600 transition-colors" style={{ fontWeight: 600 }}>
+                <button className="px-3 py-1.5 text-xs hover:border-gray-600 transition-colors border border-transparent hover:border-black rounded" style={{ fontWeight: 600 }}>
                   Milan
                 </button>
-                <button className="px-3 py-1.5 text-xs hover:border-gray-600 transition-colors" style={{ fontWeight: 600 }}>
+                <button className="px-3 py-1.5 text-xs hover:border-gray-600 transition-colors border border-transparent hover:border-black rounded" style={{ fontWeight: 600 }}>
                   Italie
                 </button>
               </div>
 
-              {/* Share and Save icons */}
-              <div className="flex items-center gap-4 justify-center lg:justify-start mb-4">
+              {/* Share and Save icons - Desktop Only */}
+              <div className="hidden md:flex items-center gap-4 justify-center lg:justify-start mb-4">
                 <button className="flex items-center gap-2 text-sm hover:bg-gray-100 p-2 rounded-lg transition-colors">
                   <Share className="w-4 h-4" />
                 </button>
