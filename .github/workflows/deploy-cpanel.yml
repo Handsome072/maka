@@ -89,6 +89,27 @@ jobs:
           # Copy public folder
           cp -r public deploy/ 2>/dev/null || true
 
+          # Create .env file with PORT=3001
+          echo "PORT=3001" > deploy/.env
+          echo "NODE_ENV=production" >> deploy/.env
+          echo "Created .env file with PORT=3001"
+
+          # Create a startup script that loads .env and starts server.js
+          echo '#!/bin/bash' > deploy/start-server.sh
+          echo '# Startup script that loads .env and starts server.js' >> deploy/start-server.sh
+          echo '' >> deploy/start-server.sh
+          echo '# Load .env file if it exists' >> deploy/start-server.sh
+          echo 'if [ -f .env ]; then' >> deploy/start-server.sh
+          echo '  export $(cat .env | grep -v "^#" | xargs)' >> deploy/start-server.sh
+          echo '  echo "Loaded .env file"' >> deploy/start-server.sh
+          echo '  echo "PORT=$PORT"' >> deploy/start-server.sh
+          echo 'fi' >> deploy/start-server.sh
+          echo '' >> deploy/start-server.sh
+          echo '# Start the server' >> deploy/start-server.sh
+          echo 'exec node server.js' >> deploy/start-server.sh
+          chmod +x deploy/start-server.sh
+          echo "Created start-server.sh script"
+
           # Verify the structure
           echo "=== Deploy .next structure ==="
           ls -la deploy/.next/ 2>/dev/null || echo "Warning: .next directory not found"
@@ -110,19 +131,23 @@ jobs:
           echo "Removed all node_modules folders"
 
           # Ensure package.json has correct start script
+          # Use the startup script that loads .env file
           node -e "
             const fs = require('fs');
             const pkg = JSON.parse(fs.readFileSync('deploy/package.json', 'utf8'));
             pkg.scripts = pkg.scripts || {};
-            pkg.scripts.start = 'NODE_ENV=production node server.js';
+            // Use start-server.sh which loads .env before starting
+            pkg.scripts.start = './start-server.sh';
             fs.writeFileSync('deploy/package.json', JSON.stringify(pkg, null, 2));
           "
-          echo "Updated package.json start script to use server.js"
+          echo "Updated package.json start script to use start-server.sh (loads .env)"
 
           # Set proper permissions for all files
           chmod -R 755 deploy/
           find deploy -type f -exec chmod 644 {} \;
-          chmod 755 deploy/server.js 2>/dev/null || true
+          chmod 755 deploy/server.js deploy/start-server.sh 2>/dev/null || true
+          # Keep .env readable but not executable
+          chmod 644 deploy/.env 2>/dev/null || true
 
           # Ensure .next folder has proper permissions (important for access)
           chmod -R 755 deploy/.next/ 2>/dev/null || true
@@ -187,10 +212,13 @@ jobs:
           echo "   npm start"
           echo ""
           echo "Or use cPanel Node.js App to:"
-          echo "  1. Set startup file: server.js"
+          echo "  1. Set startup file: server.js (or start-server.sh to load .env)"
           echo "  2. Verify Application root points to correct directory"
-          echo "  3. Click 'Run NPM Install'"
-          echo "  4. Click 'Restart App'"
+          echo "  3. Check that .env file exists with PORT=3001"
+          echo "  4. Click 'Run NPM Install'"
+          echo "  5. Click 'Restart App'"
+          echo ""
+          echo "Note: .env file with PORT=3001 has been created in deploy directory"
           echo ""
           echo "If you get '.next folder not found' error:"
           echo "  - Verify .next folder exists: ls -la .next/"
