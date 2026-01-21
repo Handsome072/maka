@@ -11,15 +11,19 @@ interface ServicesProps {
 }
 
 function useWindowWidth() {
-  const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+  const [width, setWidth] = useState(1200);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+    setWidth(window.innerWidth);
+
     const handleResize = () => setWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  return width;
+  return { width, mounted };
 }
 
 function getCardWidth(windowWidth: number): string {
@@ -31,8 +35,8 @@ function getCardWidth(windowWidth: number): string {
 }
 
 export function Services({ isScrolled, onServiceClick, onSearch }: ServicesProps) {
-  const windowWidth = useWindowWidth();
-  const cardWidth = getCardWidth(windowWidth);
+  const { width: windowWidth, mounted } = useWindowWidth();
+  const cardWidth = mounted ? getCardWidth(windowWidth) : undefined;
   // Données pour la section Chefs privés (nouvelle section horizontale)
   const chefsPrivesSection = [
     {

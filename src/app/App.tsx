@@ -178,7 +178,7 @@ export default function App() {
   return (
     <AuthProvider>
       <div className="min-h-screen bg-white pb-16 md:pb-0">
-        {currentPage !== 'property-details' && currentPage !== 'experience-details' && currentPage !== 'service-details' && currentPage !== 'booking-request' && currentPage !== 'search-results' && currentPage !== 'client-space' && currentPage !== 'messages' && currentPage !== 'privacy' && currentPage !== 'terms' && currentPage !== 'how-it-works' && currentPage !== 'company-info' && currentPage !== 'host-onboarding' && currentPage !== 'annonces' && currentPage !== 'verification-points' && currentPage !== 'identity-verification' && currentPage !== 'edit-listing' && currentPage !== 'phone-verification' && currentPage !== 'experience-onboarding' && (
+        {currentPage !== 'experience-details' && currentPage !== 'service-details' && currentPage !== 'booking-request' && currentPage !== 'search-results' && currentPage !== 'client-space' && currentPage !== 'messages' && currentPage !== 'privacy' && currentPage !== 'terms' && currentPage !== 'how-it-works' && currentPage !== 'company-info' && currentPage !== 'host-onboarding' && currentPage !== 'annonces' && currentPage !== 'verification-points' && currentPage !== 'identity-verification' && currentPage !== 'edit-listing' && currentPage !== 'phone-verification' && currentPage !== 'experience-onboarding' && (
           <>
             {/* Mobile Header - visible only for S < 745 */}
             <div className="md:hidden sticky top-0 z-50 bg-[#FAFAFA]">
@@ -197,15 +197,15 @@ export default function App() {
               <div className="flex items-center justify-between px-6 pb-2 border-b border-gray-100/50">
                 <button
                   onClick={() => handleNavigate('logements')}
-                  className={`flex flex-col items-center gap-1.5 py-2 px-2 transition-opacity ${currentPage === 'logements' ? 'opacity-100' : 'opacity-60 hover:opacity-100'}`}
+                  className={`flex flex-col items-center gap-1.5 py-2 px-2 transition-opacity ${currentPage === 'logements' || currentPage === 'property-details' ? 'opacity-100' : 'opacity-60 hover:opacity-100'}`}
                 >
-                  <div className={`p-1 rounded-full ${currentPage === 'logements' ? 'bg-gray-100' : 'bg-transparent'}`}>
+                  <div className={`p-1 rounded-full ${currentPage === 'logements' || currentPage === 'property-details' ? 'bg-gray-100' : 'bg-transparent'}`}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                       <path d="M9 22V12H15V22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </div>
-                  <span className={`text-[11px] font-medium leading-none ${currentPage === 'logements' ? 'text-black' : 'text-gray-600'}`}>Logements</span>
+                  <span className={`text-[11px] font-medium leading-none ${currentPage === 'logements' || currentPage === 'property-details' ? 'text-black' : 'text-gray-600'}`}>Logements</span>
                 </button>
 
                 <button
@@ -246,7 +246,7 @@ export default function App() {
             <div className="hidden md:block">
               <Header
                 ref={headerRef}
-                currentPage={currentPage}
+                currentPage={currentPage === 'property-details' ? 'logements' : (currentPage as any)}
                 onNavigate={handleNavigate}
                 isScrolled={isScrolled}
                 onSearch={handleSearch}
@@ -260,7 +260,7 @@ export default function App() {
         {currentPage === 'logements' && <Home isScrolled={isScrolled} onPropertyClick={() => handleNavigate('property-details')} onSearch={handleSearch} />}
         {currentPage === 'experiences' && <Experiences isScrolled={isScrolled} onExperienceClick={() => handleNavigate('experience-details')} />}
         {currentPage === 'services' && <Services isScrolled={isScrolled} onServiceClick={() => handleNavigate('service-details')} />}
-        {currentPage === 'property-details' && <PropertyDetails onBack={handleBackToHome} onBook={(data) => handleNavigate('booking-request', data)} />}
+        {currentPage === 'property-details' && <PropertyDetails isScrolled={isScrolled} onBack={handleBackToHome} onBook={(data) => handleNavigate('booking-request', data)} onSearch={handleSearch} />}
         {currentPage === 'experience-details' && <ExperienceDetails onBack={handleBackToExperiences} />}
         {currentPage === 'service-details' && <ServiceDetails onBack={handleBackToServices} />}
         {currentPage === 'booking-request' && <BookingRequest onBack={handleBackToPropertyDetails} bookingData={bookingData} />}

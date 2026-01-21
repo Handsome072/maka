@@ -23,6 +23,7 @@ const ROUTES_WITH_STANDARD_HEADER = [
   '/',
   '/experiences',
   '/services',
+  '/property',
 ];
 
 /**

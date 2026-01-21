@@ -125,14 +125,14 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
             <span className="text-sm" style={{ fontWeight: 600 }}>Retour</span>
           </button>
 
-          <div className="flex items-center gap-4">
-            <button className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors">
+          <div className="flex items-center gap-2 md:gap-4">
+            <button className="flex items-center gap-2 px-2 py-2 md:px-3 md:py-2 rounded-lg hover:bg-gray-100 transition-colors">
               <Share className="w-4 h-4" />
-              <span className="text-sm underline" style={{ fontWeight: 600 }}>Partager</span>
+              <span className="text-sm underline hidden md:inline" style={{ fontWeight: 600 }}>Partager</span>
             </button>
-            <button className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors">
+            <button className="flex items-center gap-2 px-2 py-2 md:px-3 md:py-2 rounded-lg hover:bg-gray-100 transition-colors">
               <Heart className="w-4 h-4" />
-              <span className="text-sm underline" style={{ fontWeight: 600 }}>Enregistrer</span>
+              <span className="text-sm underline hidden md:inline" style={{ fontWeight: 600 }}>Enregistrer</span>
             </button>
           </div>
         </div>
@@ -174,13 +174,13 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
             {/* Show all photos button */}
             <button
               onClick={() => openCarousel(0)}
-              className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg border border-gray-900 hover:bg-gray-50 transition-colors flex items-center gap-2"
-              style={{ fontWeight: 600, fontSize: '14px' }}
+              className="absolute bottom-4 right-4 md:bottom-4 md:right-4 lg:bottom-6 lg:right-6 bg-white px-4 py-2 rounded-lg border border-gray-900 hover:bg-gray-50 transition-colors flex items-center gap-2 shadow-sm z-10 text-sm whitespace-nowrap"
+              style={{ fontWeight: 600 }}
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className="flex-shrink-0">
                 <path d="M3 3h4v4H3V3zm6 0h4v4H9V3zM3 9h4v4H3V9zm6 0h4v4H9V9z" />
               </svg>
-              Afficher toutes les photos
+              <span>Afficher toutes les photos</span>
             </button>
           </div>
         </div>

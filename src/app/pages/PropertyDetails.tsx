@@ -1,7 +1,5 @@
 import { Heart, Share, Star, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
-import { Footer } from '../components/Footer';
-import { Header } from '../components/Header';
 import { ImageCarouselModal } from '../components/ImageCarouselModal';
 
 interface PropertyDetailsProps {
@@ -47,30 +45,27 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
         onFavoriteToggle={() => setIsFavorite(!isFavorite)}
       />
 
-      {/* Header */}
-      <Header currentPage="logements" onNavigate={onBack} isScrolled={true} />
-
       {/* Main Content */}
       <div className="bg-white min-h-screen">
         {/* Title and Actions Section */}
         <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-20 pt-6">
-          <div className="flex items-start justify-between mb-4">
-            <h1 className="text-2xl md:text-3xl" style={{ fontWeight: 600 }}>
+          <div className="flex flex-wrap items-start justify-between mb-4 gap-4">
+            <h1 className="text-xl md:text-3xl flex-1 min-w-[200px]" style={{ fontWeight: 600 }}>
               Studio aux Portes de Paris
             </h1>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-4 ml-auto">
               {/* Partager Button */}
-              <button className="flex items-center gap-2 px-3 py-2 rounded-lg transition-colors">
+              <button className="flex items-center gap-2 px-2 py-2 md:px-3 md:py-2 rounded-lg transition-colors hover:bg-gray-100">
                 <Share className="w-4 h-4" />
-                <span className="text-sm underline" style={{ fontWeight: 600 }}>Partager</span>
+                <span className="text-sm underline hidden md:inline" style={{ fontWeight: 600 }}>Partager</span>
               </button>
               {/* Enregistrer Button */}
-              <button 
+              <button
                 onClick={() => setIsFavorite(!isFavorite)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg transition-colors"
+                className="flex items-center gap-2 px-2 py-2 md:px-3 md:py-2 rounded-lg transition-colors hover:bg-gray-100"
               >
                 <Heart className={`w-4 h-4 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
-                <span className="text-sm underline" style={{ fontWeight: 600 }}>Enregistrer</span>
+                <span className="text-sm underline hidden md:inline" style={{ fontWeight: 600 }}>Enregistrer</span>
               </button>
             </div>
           </div>
@@ -106,13 +101,13 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
             {/* Show all photos button */}
             <button
               onClick={() => openCarousel(0)}
-              className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg border border-gray-900 hover:bg-gray-50 transition-colors flex items-center gap-2"
-              style={{ fontWeight: 600, fontSize: '14px' }}
+              className="absolute bottom-4 right-4 md:bottom-4 md:right-4 lg:bottom-6 lg:right-6 bg-white px-4 py-2 rounded-lg border border-gray-900 hover:bg-gray-50 transition-colors flex items-center gap-2 shadow-sm z-10 text-sm whitespace-nowrap"
+              style={{ fontWeight: 600 }}
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className="flex-shrink-0">
                 <path d="M3 3h4v4H3V3zm6 0h4v4H9V3zM3 9h4v4H3V9zm6 0h4v4H9V9z" />
               </svg>
-              Afficher toutes les photos
+              <span>Afficher toutes les photos</span>
             </button>
           </div>
 
@@ -143,16 +138,15 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
 
               {/* Tabs */}
               <div className="border-b border-gray-200 mt-8">
-                <div className="flex gap-8">
+                <div className="flex gap-8 overflow-x-auto no-scrollbar whitespace-nowrap scroll-smooth">
                   {['Photos', 'Équipements', 'Commentaires', 'Emplacement'].map((tab) => (
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab.toLowerCase())}
-                      className={`pb-4 text-sm transition-colors ${
-                        activeTab === tab.toLowerCase()
-                          ? 'border-b-2 border-gray-900'
-                          : 'text-gray-500 hover:text-gray-900'
-                      }`}
+                      className={`pb-4 text-sm transition-colors ${activeTab === tab.toLowerCase()
+                        ? 'border-b-2 border-gray-900'
+                        : 'text-gray-500 hover:text-gray-900'
+                        }`}
                       style={{ fontWeight: 600 }}
                     >
                       {tab}
@@ -285,7 +279,7 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
                   {!showFullDescription && (
                     <button
                       onClick={() => setShowFullDescription(true)}
-                      className="text-sm mt-2 underline" 
+                      className="text-sm mt-2 underline"
                       style={{ fontWeight: 600 }}
                     >
                       Lire la suite
@@ -451,15 +445,14 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
                         {[null, null, null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30].map((day, i) => (
                           <div
                             key={i}
-                            className={`aspect-square flex items-center justify-center text-sm ${
-                              day === 3 || day === 5
-                                ? 'bg-gray-900 text-white rounded-full'
-                                : day === 4
+                            className={`aspect-square flex items-center justify-center text-sm ${day === 3 || day === 5
+                              ? 'bg-gray-900 text-white rounded-full'
+                              : day === 4
                                 ? 'bg-gray-200'
                                 : day
-                                ? 'hover:bg-gray-100 rounded-full cursor-pointer'
-                                : ''
-                            }`}
+                                  ? 'hover:bg-gray-100 rounded-full cursor-pointer'
+                                  : ''
+                              }`}
                           >
                             {day || ''}
                           </div>
@@ -480,9 +473,8 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
                         {[null, null, null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31].map((day, i) => (
                           <div
                             key={i}
-                            className={`aspect-square flex items-center justify-center text-sm ${
-                              day ? 'hover:bg-gray-100 rounded-full cursor-pointer' : ''
-                            }`}
+                            className={`aspect-square flex items-center justify-center text-sm ${day ? 'hover:bg-gray-100 rounded-full cursor-pointer' : ''
+                              }`}
                           >
                             {day || ''}
                           </div>
@@ -616,18 +608,18 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
             {/* Evaluation globale */}
             <div>
               <p className="text-sm mb-3" style={{ fontWeight: 600 }}>Évaluation globale</p>
-                <div className="">
-                  {[5, 4, 3, 2, 1].map((rating) => (
-                    <div key={rating} className="flex items-center gap-2">
-                      <span className="text-xs text-gray-600 w-2">{rating}</span>
-                      <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-gray-900 rounded-full"
-                          style={{ width: rating === 5 ? '95%' : rating === 4 ? '5%' : '0%' }}
-                        />
-                      </div>
+              <div className="">
+                {[5, 4, 3, 2, 1].map((rating) => (
+                  <div key={rating} className="flex items-center gap-2">
+                    <span className="text-xs text-gray-600 w-2">{rating}</span>
+                    <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gray-900 rounded-full"
+                        style={{ width: rating === 5 ? '95%' : rating === 4 ? '5%' : '0%' }}
+                      />
                     </div>
-                  ))}
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -811,13 +803,13 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
         </div>
 
         {/* Host Information Section - Full Width */}
-        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-20 py-8 border-t border-gray-200">
-          <h3 className="text-[26px] mb-8" style={{ fontWeight: 600 }}>Faites connaissance avec votre hôte</h3>
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-20 py-6 lg:py-8 border-t border-gray-200">
+          <h3 className="text-xl lg:text-[26px] mb-6 lg:mb-8" style={{ fontWeight: 600 }}>Faites connaissance avec votre hôte</h3>
 
-          <div className="flex flex-row gap-16">
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-16">
             {/* Left - Host Card */}
-            <div>
-              <div className="grid grid-cols-3 items-center border border-gray-200 rounded-3xl pt-4 shadow-xl bg-white w-[520px] py-4">
+            <div className="w-full lg:w-auto">
+              <div className="grid grid-cols-1 md:grid-cols-3 items-center border border-gray-200 rounded-3xl pt-4 shadow-xl bg-white w-full lg:w-[520px] py-4">
                 <div className="flex flex-col items-center text-center mb-8 col-span-2 mt-4">
                   <div className="relative mb-2">
                     <img
@@ -836,21 +828,21 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
                   <p className="text-base text-gray-600">Hôte</p>
                 </div>
 
-                <div className="grid grid-rows-3 gap-4">
-                  <div className="text-start border-b border-gray-200">
-                    <p className="text-[22px] mb-1" style={{ fontWeight: 600 }}>26</p>
-                    <p className="text-sm font-bold leading-tight text-gray-600">évaluations</p>
+                <div className="grid grid-cols-3 md:grid-rows-3 md:grid-cols-1 gap-4 px-6 md:px-0">
+                  <div className="text-start border-b border-gray-200 pb-2 md:pb-0">
+                    <p className="text-[20px] lg:text-[22px] mb-1" style={{ fontWeight: 600 }}>26</p>
+                    <p className="text-xs lg:text-sm font-bold leading-tight text-gray-600">évaluations</p>
                   </div>
-                  <div className="flex flex-col items-start text-start border-b border-gray-200">
+                  <div className="flex flex-col items-start text-start border-b border-gray-200 pb-2 md:pb-0">
                     <div className="flex items-center justify-center gap-0.5 mb-1">
-                      <span className="text-[22px]" style={{ fontWeight: 600 }}>4,96</span>
+                      <span className="text-[20px] lg:text-[22px]" style={{ fontWeight: 600 }}>4,96</span>
                       <Star className="w-3.5 h-3.5 fill-current -mt-1" />
                     </div>
-                    <p className="text-sm font-bold leading-tight text-gray-600">en note globale</p>
+                    <p className="text-xs lg:text-sm font-bold leading-tight text-gray-600">en note globale</p>
                   </div>
-                  <div className="text-start">
-                    <p className="text-[22px] mb-1" style={{ fontWeight: 600 }}>4</p>
-                    <p className="text-sm font-bold leading-tight text-gray-600">mois d'expérience<br />en tant qu'hôte</p>
+                  <div className="text-start pb-2 md:pb-0">
+                    <p className="text-[20px] lg:text-[22px] mb-1" style={{ fontWeight: 600 }}>4</p>
+                    <p className="text-xs lg:text-sm font-bold leading-tight text-gray-600">mois d'expérience<br className="hidden md:block" />en tant qu'hôte</p>
                   </div>
                 </div>
               </div>
@@ -878,15 +870,15 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
             </div>
 
             {/* Right - Host Info */}
-            <div className="space-y-6 p-">
+            <div className="space-y-6 flex-1">
               <div>
-                <h4 className="text-[22px] mb-6" style={{ fontWeight: 600 }}>Informations sur l'hôte</h4>
+                <h4 className="text-xl lg:text-[22px] mb-4 lg:mb-6" style={{ fontWeight: 600 }}>Informations sur l'hôte</h4>
                 <div className="space-y-2 mb-8">
                   <p className="text-base">Taux de réponse : 92 %</p>
                   <p className="text-base">Répond dans l'heure</p>
                 </div>
 
-                <button 
+                <button
                   className="w-full md:w-auto py-3 px-6 bg-gray-100 rounded-lg text-base mb-6"
                   style={{ fontWeight: 600 }}
                 >
@@ -903,7 +895,7 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
               <div className="flex items-start gap-3 pt-4 border-t border-gray-200">
                 <div className="flex-shrink-0">
                   <svg className="w-6 h-6 text-[#10B981]" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 11c-.55 0-1-.45-1-1V8c0-.55.45-1 1-1s1 .45 1 1v4c0 .55-.45 1-1 1zm1 4h-2v-2h2v2z"/>
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 11c-.55 0-1-.45-1-1V8c0-.55.45-1 1-1s1 .45 1 1v4c0 .55-.45 1-1 1zm1 4h-2v-2h2v2z" />
                   </svg>
                 </div>
                 <div className="text-sm text-gray-700 leading-relaxed">
@@ -915,8 +907,8 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
         </div>
 
         {/* Things to Know Section - Full Width */}
-        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-20 mt-8 py-16 border-t border-gray-50">
-          <h3 className="text-2xl mb-8" style={{ fontWeight: 600 }}>À savoir</h3>
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-20 mt-4 lg:mt-8 py-8 lg:py-16 border-t border-gray-50">
+          <h3 className="text-xl lg:text-2xl mb-6 lg:mb-8" style={{ fontWeight: 600 }}>À savoir</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
             {/* Cancellation Policy */}
@@ -987,9 +979,6 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
           </div>
         </div>
       </div>
-
-      {/* Footer */}
-      <Footer />
     </>
   );
 }

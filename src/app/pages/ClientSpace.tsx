@@ -473,7 +473,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
 
             <button
               onClick={() => setPayoutStep('owner')}
-              className="w-full py-3 bg-gray-900 text-white rounded-lg text-base transition-colors hover:bg-gray-800"
+              className="w-full py-2.5 bg-gray-900 text-white rounded-lg text-sm transition-colors hover:bg-gray-800"
               style={{ fontWeight: 600 }}
             >
               Continuer
@@ -505,17 +505,17 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
               </p>
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-4">
               <button
                 onClick={() => setPayoutStep('method')}
-                className="px-6 py-3 border border-gray-900 rounded-lg text-base transition-colors hover:bg-gray-50"
+                className="flex-1 py-2.5 border border-gray-900 rounded-lg text-sm transition-colors hover:bg-gray-50"
                 style={{ fontWeight: 600, color: '#222222' }}
               >
                 Retour
               </button>
               <button
                 onClick={() => setPayoutStep('details')}
-                className="px-8 py-3 bg-gray-900 text-white rounded-lg text-base transition-colors hover:bg-gray-800"
+                className="flex-1 py-2.5 bg-gray-900 text-white rounded-lg text-sm transition-colors hover:bg-gray-800"
                 style={{ fontWeight: 600 }}
               >
                 Suivant
@@ -581,17 +581,17 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-4">
               <button
                 onClick={() => setPayoutStep('owner')}
-                className="px-6 py-3 border border-gray-900 rounded-lg text-base transition-colors hover:bg-gray-50"
+                className="flex-1 py-2.5 border border-gray-900 rounded-lg text-sm transition-colors hover:bg-gray-50"
                 style={{ fontWeight: 600, color: '#222222' }}
               >
                 Retour
               </button>
               <button
                 onClick={() => setPayoutStep('none')}
-                className="px-8 py-3 bg-gray-900 text-white rounded-lg text-base transition-colors hover:bg-gray-800"
+                className="flex-1 py-2.5 bg-gray-900 text-white rounded-lg text-sm transition-colors hover:bg-gray-800"
                 style={{ fontWeight: 600 }}
               >
                 Envoyer
@@ -634,7 +634,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
 
         <div className="flex">
           {/* Sidebar - Hidden on mobile (< 745px), visible on desktop */}
-          <aside className="hidden md:block w-[360px] border-r border-gray-200 min-h-[calc(100vh-73px)] px-16 py-12">
+          <aside className="hidden md:block w-[300px] lg:w-[360px] border-r border-gray-200 min-h-[calc(100vh-73px)] px-6 lg:px-16 py-12">
             <h1 className="text-xl md:text-2xl mb-8" style={{ fontWeight: 600, color: '#222222' }}>
               Espace client
             </h1>
@@ -733,7 +733,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
           </aside>
 
           {/* Main Content - Responsive padding */}
-          <main className="flex-1 px-4 md:px-16 py-6 md:py-12 bg-white">
+          <main className="flex-1 px-4 sm:px-8 md:px-12 lg:px-16 py-6 md:py-12 bg-white">
             {activeSection === 'reservations' && (
               <>
                 <div className="flex items-center justify-between mb-8">
@@ -759,7 +759,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                     />
 
                     <div className="flex-1 min-w-0 py-1">
-                      <h4 className="text-base font-medium mb-1.5" style={{ color: '#4A5B8C', fontStyle: 'italic' }}>
+                      <h4 className="text-base font-medium mb-1.5" style={{ color: '#4A5B8C' }}>
                         Appartement T2
                       </h4>
                       <p className="text-xs text-gray-500 mb-2">
@@ -827,10 +827,10 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                       </div>
 
                       <button
-                        className="px-4 py-2 border border-gray-300 rounded-md text-xs font-semibold hover:bg-gray-50 transition-colors bg-white w-full"
+                        className="px-4 py-2 border border-gray-300 rounded-md text-[11px] font-semibold hover:bg-gray-50 transition-colors bg-white w-full uppercase"
                         style={{ color: '#222222' }}
                       >
-                        ANNULER
+                        Annuler
                       </button>
                     </div>
                   </div>
@@ -852,7 +852,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                         />
 
                         <div className="flex-1 min-w-0 py-1">
-                          <h4 className="text-base font-medium mb-1.5" style={{ color: '#9CA3AF', fontStyle: 'italic' }}>
+                          <h4 className="text-base font-medium mb-1.5" style={{ color: '#9CA3AF' }}>
                             Appartement T2
                           </h4>
                           <p className="text-xs text-gray-400 mb-2">
@@ -938,7 +938,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                     />
 
                     <div className="flex-1 min-w-0 py-1">
-                      <h4 className="text-base font-medium mb-1.5" style={{ color: '#9CA3AF', fontStyle: 'italic' }}>
+                      <h4 className="text-base font-medium mb-1.5" style={{ color: '#9CA3AF' }}>
                         Appartement T2
                       </h4>
                       <p className="text-xs text-gray-400 mb-2">
@@ -1079,7 +1079,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                         <div className="flex items-center gap-4">
                           <button
                             onClick={() => setEditingOfficialName(false)}
-                            className="px-6 py-3 bg-gray-900 text-white rounded-lg text-base transition-colors hover:bg-gray-800"
+                            className="px-6 py-2.5 bg-gray-900 text-white rounded-lg text-sm transition-colors hover:bg-gray-800"
                             style={{ fontWeight: 600 }}
                           >
                             Enregistrer
@@ -1147,7 +1147,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                         <div className="flex items-center gap-4">
                           <button
                             onClick={() => setEditingPreferredName(false)}
-                            className="px-6 py-3 bg-gray-900 text-white rounded-lg text-base transition-colors hover:bg-gray-800"
+                            className="px-6 py-2.5 bg-gray-900 text-white rounded-lg text-sm transition-colors hover:bg-gray-800"
                             style={{ fontWeight: 600 }}
                           >
                             Enregistrer
@@ -1212,7 +1212,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                         <div className="flex items-center gap-4">
                           <button
                             onClick={() => setEditingEmail(false)}
-                            className="px-6 py-3 bg-gray-900 text-white rounded-lg text-base transition-colors hover:bg-gray-800"
+                            className="px-6 py-2.5 bg-gray-900 text-white rounded-lg text-sm transition-colors hover:bg-gray-800"
                             style={{ fontWeight: 600 }}
                           >
                             Enregistrer
@@ -1357,7 +1357,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                           />
                         </div>
                         <button
-                          className="px-6 py-3 rounded-lg text-base cursor-not-allowed"
+                          className="px-6 py-2.5 rounded-lg text-sm cursor-not-allowed"
                           style={{
                             fontWeight: 600,
                             backgroundColor: '#EBEBEB',
@@ -1453,7 +1453,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                           </div>
                         </div>
                         <button
-                          className="px-6 py-3 bg-gray-900 text-white rounded-lg text-base transition-colors hover:bg-gray-800"
+                          className="px-6 py-2.5 bg-gray-900 text-white rounded-lg text-sm transition-colors hover:bg-gray-800"
                           style={{ fontWeight: 600 }}
                           onClick={() => setAddingPostalAddress(false)}
                         >
@@ -1560,7 +1560,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                           </div>
                         </div>
                         <button
-                          className="px-6 py-3 bg-gray-900 text-white rounded-lg text-base transition-colors hover:bg-gray-800"
+                          className="px-6 py-2.5 bg-gray-900 text-white rounded-lg text-sm transition-colors hover:bg-gray-800"
                           style={{ fontWeight: 600 }}
                           onClick={() => setAddingEmergencyContact(false)}
                         >
@@ -1643,7 +1643,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                           </div>
                         </div>
                         <button
-                          className="px-6 py-3 bg-gray-900 text-white rounded-lg text-base transition-colors hover:bg-gray-800"
+                          className="px-6 py-2.5 bg-gray-900 text-white rounded-lg text-sm transition-colors hover:bg-gray-800"
                           style={{ fontWeight: 600 }}
                           onClick={() => setUpdatingPassword(false)}
                         >
