@@ -78,8 +78,8 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-      <div className="w-full max-w-xl">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+      <div className="w-full max-w-lg mx-auto">
+        <div className="bg-white rounded-3xl p-10 md:p-12 shadow-lg border border-gray-100">
           {currentView === "login" ? (
             <StandardLoginView
               onLogin={handleLogin}
@@ -144,19 +144,19 @@ export default function LoginPage() {
 
               {currentView === "forgot-password" && (
                 <div className="flex flex-col">
-                  <p className="text-gray-500 text-sm mb-6">
+                  <p className="text-gray-500 text-base mb-8">
                     Entrez votre adresse e-mail pour recevoir un lien de réinitialisation.
                   </p>
 
                   <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-900 mb-1.5">
+                    <label className="block text-sm font-medium text-gray-900 mb-2">
                       Adresse e-mail
                     </label>
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full h-11 rounded-lg border border-gray-300 px-3.5 text-sm focus:outline-none focus:border-gray-400 focus:ring-0 transition-colors"
+                      className="w-full h-12 rounded-xl border border-gray-200 px-4 text-base focus:outline-none focus:border-gray-900 focus:ring-0 transition-all placeholder:text-gray-400"
                     />
                   </div>
 
@@ -165,7 +165,7 @@ export default function LoginPage() {
                       console.log("Password reset for:", email);
                       setCurrentView("login");
                     }}
-                    className="w-full bg-black text-white h-11 rounded-lg font-semibold text-sm hover:bg-gray-800 transition-colors mb-6"
+                    className="w-full bg-black text-white h-12 rounded-xl font-medium text-base hover:bg-gray-800 transition-all transform active:scale-[0.98] mb-6"
                   >
                     Envoyer le lien
                   </button>
@@ -173,7 +173,7 @@ export default function LoginPage() {
                   <div className="text-center">
                     <button
                       onClick={() => setCurrentView("login")}
-                      className="text-sm text-gray-900 font-semibold hover:underline transition-all"
+                      className="text-sm text-black font-semibold hover:underline decoration-2 underline-offset-2 transition-all"
                     >
                       Retour à la connexion
                     </button>

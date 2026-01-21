@@ -59,8 +59,8 @@ export function Login({ onNavigate }: LoginProps) {
     };
 
     return (
-        <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
-            <div className="max-w-[568px] w-full flex flex-col">
+        <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+            <div className="max-w-[568px] w-full flex flex-col bg-white rounded-3xl shadow-lg border border-gray-100">
                 {/* Header */}
                 <div className="px-6 py-4 flex items-center justify-between min-h-[64px]">
                     <button
