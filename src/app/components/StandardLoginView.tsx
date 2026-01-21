@@ -24,81 +24,83 @@ export function StandardLoginView({
         }
     };
 
-    return (
-        <div className="flex flex-col h-full">
-            {/* Header Section */}
-            <div className="mb-8">
-                <h3 className="text-[22px] font-semibold text-gray-900 mb-2">
-                    Connexion
-                </h3>
-                <p className="text-gray-500 text-sm">
-                    Bon retour sur HOMIQIO.
-                </p>
-            </div>
+    const [rememberMe, setRememberMe] = useState(false);
 
-            {/* Form Section */}
-            <div className="space-y-4 mb-6">
+    return (
+        <div className="flex flex-col">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                Bon retour
+            </h2>
+            <p className="text-gray-500 text-sm mb-8">
+                Veuillez entrer vos informations
+            </p>
+
+            <div className="space-y-5 mb-4">
                 <div>
+                    <label className="block text-sm font-medium text-gray-900 mb-1.5">
+                        Adresse e-mail
+                    </label>
                     <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Adresse e-mail"
-                        className="w-full h-14 rounded-xl border border-gray-200 px-4 text-base focus:outline-none focus:border-black transition-colors bg-gray-50/50"
+                        className="w-full h-11 rounded-lg border border-gray-300 px-3.5 text-sm focus:outline-none focus:border-gray-400 focus:ring-0 transition-colors"
                     />
                 </div>
-                <div className="relative">
-                    <input
-                        type={showPassword ? "text" : "password"}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Mot de passe"
-                        className="w-full h-14 rounded-xl border border-gray-200 px-4 pr-12 text-base focus:outline-none focus:border-black transition-colors bg-gray-50/50"
-                    />
-                    <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                    >
-                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                    </button>
+                <div>
+                    <label className="block text-sm font-medium text-gray-900 mb-1.5">
+                        Mot de passe
+                    </label>
+                    <div className="relative">
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="w-full h-11 rounded-lg border border-gray-300 px-3.5 pr-11 text-sm focus:outline-none focus:border-gray-400 focus:ring-0 transition-colors"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                        >
+                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            {/* Forgot Password Link */}
-            <div className="flex justify-end mb-6">
+            <div className="flex items-center justify-between mb-6">
+                <label className="flex items-center cursor-pointer group">
+                    <input
+                        type="checkbox"
+                        checked={rememberMe}
+                        onChange={(e) => setRememberMe(e.target.checked)}
+                        className="w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-0 focus:ring-offset-0"
+                    />
+                    <span className="ml-2 text-sm text-gray-900 group-hover:text-gray-700">
+                        Se souvenir pendant 30 jours
+                    </span>
+                </label>
                 <button
                     onClick={onForgotPasswordClick}
-                    className="text-sm font-medium text-gray-500 hover:text-black hover:underline transition-colors"
+                    className="text-sm text-gray-900 font-medium hover:text-gray-700 transition-colors underline"
                 >
-                    Mot de passe oublié ?
+                    Mot de passe oublié
                 </button>
             </div>
 
-            {/* Actions */}
             <button
                 onClick={handleSubmit}
-                className="w-full bg-black text-white h-14 rounded-xl font-semibold text-base hover:bg-gray-800 transition-colors mb-6"
+                className="w-full bg-black text-white h-11 rounded-lg font-semibold text-sm hover:bg-gray-800 transition-colors mb-4"
             >
                 Se connecter
             </button>
 
-            {/* Divider */}
-            <div className="relative mb-6">
-                <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-200"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                    <span className="px-4 bg-white text-gray-500 bg-white">ou continuer avec</span>
-                </div>
-            </div>
-
-            {/* Social Login - Google Only (Prominent) */}
             <button
                 onClick={onGoogleLogin}
-                className="w-full h-14 border border-gray-200 rounded-xl flex items-center justify-center gap-3 hover:bg-gray-50 transition-colors mb-8 group"
+                className="w-full h-11 border border-gray-300 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors mb-8"
             >
-                <svg width="24" height="24" viewBox="0 0 24 24" className="transition-transform group-hover:scale-110">
+                <svg width="20" height="20" viewBox="0 0 24 24">
                     <path
                         d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                         fill="#4285F4"
@@ -116,20 +118,19 @@ export function StandardLoginView({
                         fill="#EA4335"
                     />
                 </svg>
-                <span className="text-gray-700 font-medium">Google</span>
+                <span className="text-sm text-gray-700 font-medium">Se connecter avec Google</span>
             </button>
 
-            {/* Footer - Sign Up */}
-            <div className="mt-auto pt-6 border-t border-gray-100 text-center">
-                <p className="text-gray-600 text-sm">
+            <div className="text-center">
+                <span className="text-sm text-gray-600">
                     Pas encore de compte ?{" "}
                     <button
                         onClick={onSignupClick}
-                        className="text-black font-semibold hover:underline"
+                        className="text-gray-900 font-semibold hover:underline transition-all"
                     >
                         S'inscrire
                     </button>
-                </p>
+                </span>
             </div>
         </div>
     );
