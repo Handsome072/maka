@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 interface EmailEntryViewProps {
   email: string;
   setEmail: (value: string) => void;
@@ -13,6 +15,22 @@ export function EmailEntryView({
   onSocialLogin,
   onPhoneLogin
 }: EmailEntryViewProps) {
+  const [error, setError] = useState("");
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleContinue = () => {
+    if (!validateEmail(email)) {
+      setError("Veuillez entrer une adresse e-mail valide.");
+      return;
+    }
+    setError("");
+    onContinue();
+  };
+
   return (
     <>
       <p className="text-gray-500 text-base mb-8">
@@ -26,9 +44,22 @@ export function EmailEntryView({
         <input
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full h-12 rounded-xl border border-gray-200 px-4 text-base focus:outline-none focus:border-gray-900 focus:ring-0 transition-all placeholder:text-gray-400"
+          onChange={(e) => {
+            setEmail(e.target.value);
+            if (error) setError("");
+          }}
+          className={`w-full h-12 rounded-xl border px-4 text-base focus:outline-none focus:ring-0 transition-all placeholder:text-gray-400 ${
+            error 
+              ? "border-red-500 focus:border-red-500 bg-red-50" 
+              : "border-gray-200 focus:border-gray-900"
+          }`}
         />
+        {error && (
+          <div className="flex items-center gap-2 mt-2 text-red-600 text-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+            <span>{error}</span>
+          </div>
+        )}
       </div>
 
       <p className="text-xs text-gray-500 mb-8">
@@ -39,7 +70,7 @@ export function EmailEntryView({
       </p>
 
       <button
-        onClick={onContinue}
+        onClick={handleContinue}
         className="w-full bg-black text-white h-12 rounded-xl font-medium text-base hover:bg-gray-800 transition-all transform active:scale-[0.98] mb-4"
       >
         Continuer
