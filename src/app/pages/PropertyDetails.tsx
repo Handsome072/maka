@@ -1,5 +1,5 @@
-import { Heart, Share, Star, ChevronRight } from 'lucide-react';
-import { useState } from 'react';
+import { Heart, Share, Star, ChevronRight, ChevronLeft } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { ImageCarouselModal } from '../components/ImageCarouselModal';
 
 interface PropertyDetailsProps {
@@ -13,6 +13,14 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [carouselStartIndex, setCarouselStartIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const images = [
     'https://images.unsplash.com/photo-1737305457496-dc7503cdde1e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBzdHVkaW8lMjBhcGFydG1lbnQlMjBpbnRlcmlvcnxlbnwxfHx8fDE3Njc3NjY1NTN8MA&ixlib=rb-4.1.0&q=80&w=1080',
@@ -46,9 +54,30 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
       />
 
       {/* Main Content */}
-      <div className="bg-white min-h-screen">
-        {/* Title and Actions Section */}
-        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-20 pt-6">
+      <div className="bg-white min-h-screen pb-24 md:pb-0">
+        {/* Mobile Header */}
+        <div className="md:hidden fixed top-0 left-0 right-0 z-50 flex justify-between items-center p-4 pointer-events-none">
+          <button 
+            onClick={onBack} 
+            className="bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-sm pointer-events-auto hover:bg-white transition-colors"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <div className="flex gap-3 pointer-events-auto">
+            <button className="bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-sm hover:bg-white transition-colors">
+              <Share className="w-5 h-5" />
+            </button>
+            <button 
+              onClick={() => setIsFavorite(!isFavorite)}
+              className="bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-sm hover:bg-white transition-colors"
+            >
+              <Heart className={`w-5 h-5 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
+            </button>
+          </div>
+        </div>
+
+        {/* Title and Actions Section - Desktop Only */}
+        <div className="hidden md:block max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-20 pt-6">
           <div className="flex flex-wrap items-start justify-between mb-4 gap-4">
             <h1 className="text-xl md:text-3xl flex-1 min-w-[200px]" style={{ fontWeight: 600 }}>
               Studio aux Portes de Paris
@@ -72,8 +101,8 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
         </div>
 
         {/* Gallery Grid */}
-        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-20">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-2 rounded-2xl overflow-hidden h-[300px] md:h-[400px] relative">
+        <div className="max-w-[1280px] mx-auto md:px-6 lg:px-20">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-2 md:rounded-2xl overflow-hidden h-[300px] md:h-[400px] relative">
             {/* Large image */}
             <div className="md:col-span-2 md:row-span-2 relative group overflow-hidden">
               <img
@@ -83,6 +112,11 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
                 onClick={() => openCarousel(0)}
               />
               <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none"></div>
+              
+              {/* Mobile Image Counter Badge */}
+              <div className="md:hidden absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded text-xs font-semibold">
+                1 / {images.length}
+              </div>
             </div>
 
             {/* Small images */}
@@ -101,7 +135,7 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
             {/* Show all photos button */}
             <button
               onClick={() => openCarousel(0)}
-              className="absolute bottom-4 right-4 md:bottom-4 md:right-4 lg:bottom-6 lg:right-6 bg-white px-4 py-2 rounded-lg border border-gray-900 hover:bg-gray-50 transition-colors flex items-center gap-2 shadow-sm z-10 text-sm whitespace-nowrap"
+              className="hidden md:flex absolute bottom-4 right-4 md:bottom-4 md:right-4 lg:bottom-6 lg:right-6 bg-white px-4 py-2 rounded-lg border border-gray-900 hover:bg-gray-50 transition-colors items-center gap-2 shadow-sm z-10 text-sm whitespace-nowrap"
               style={{ fontWeight: 600 }}
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className="flex-shrink-0">
@@ -111,8 +145,15 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
             </button>
           </div>
 
+          {/* Mobile Title Section */}
+          <div className="md:hidden px-4 pt-5 pb-2">
+             <h1 className="text-2xl font-semibold mb-1">
+               Studio aux Portes de Paris
+             </h1>
+          </div>
+
           {/* Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 mt-12 pb-16">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 mt-6 md:mt-12 pb-16 px-4 md:px-0">
             {/* Left Column - Main Content */}
             <div className="lg:col-span-2">
               {/* Property Info Section */}
@@ -496,7 +537,7 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
             </div>
 
             {/* Right Column - Reservation Card */}
-            <div className="lg:col-span-1">
+            <div className="hidden lg:block lg:col-span-1">
               <div className="sticky top-24">
                 <div className="border border-gray-200 rounded-2xl p-6 shadow-xl">
                   {/* Price */}
@@ -589,24 +630,24 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
         </div>
 
         {/* Reviews Section - Full Width */}
-        <div className="max-w-[1280px] border-t border-gray-200 py-16 mx-auto px-4 sm:px-6 lg:px-20">
+        <div className="max-w-[1280px] border-t border-gray-200 py-10 md:py-16 mx-auto px-4 sm:px-6 lg:px-20">
           {/* Hero Rating */}
-          <div className="text-center mb-12">
-            <div className="flex items-center justify-center gap-4 mb-4">
-              <span className="text-6xl">🏅</span>
-              <h2 className="text-7xl" style={{ fontWeight: 700, letterSpacing: '-0.02em' }}>4,96</h2>
-              <span className="text-6xl">🏅</span>
+          <div className="text-center mb-8 md:mb-12">
+            <div className="flex items-center justify-center gap-2 md:gap-4 mb-2 md:mb-4">
+              <span className="text-3xl md:text-6xl">🏅</span>
+              <h2 className="text-5xl md:text-7xl" style={{ fontWeight: 700, letterSpacing: '-0.02em' }}>4,96</h2>
+              <span className="text-3xl md:text-6xl">🏅</span>
             </div>
-            <h3 className="text-2xl mb-3" style={{ fontWeight: 600 }}>Coup de cœur voyageurs</h3>
-            <p className="text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            <h3 className="text-lg md:text-2xl mb-2 md:mb-3" style={{ fontWeight: 600 }}>Coup de cœur voyageurs</h3>
+            <p className="text-sm md:text-base text-gray-600 max-w-2xl mx-auto leading-relaxed px-4 md:px-0">
               Ce logement fait partie des <span style={{ fontWeight: 600 }}>10 % de logements préférés</span> sur HOMIQIO parmi les logements éligibles, à partir des évaluations, des commentaires et de la fiabilité des annonces selon les voyageurs.
             </p>
           </div>
 
           {/* Rating Breakdown */}
-          <div className="grid grid-cols-7 gap-4 pb-8 mb-12 border-b border-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-7 gap-8 md:gap-4 pb-8 mb-12 border-b border-gray-200">
             {/* Evaluation globale */}
-            <div>
+            <div className="md:col-span-2 lg:col-span-1">
               <p className="text-sm mb-3" style={{ fontWeight: 600 }}>Évaluation globale</p>
               <div className="">
                 {[5, 4, 3, 2, 1].map((rating) => (
@@ -624,6 +665,7 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
             </div>
 
             {/* Individual ratings */}
+            <div className="md:col-span-5 lg:col-span-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {[
               { label: 'Propreté', rating: 4.9 },
               { label: 'Précision', rating: 4.9 },
@@ -632,7 +674,7 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
               { label: 'Emplacement', rating: 4.7 },
               { label: 'Qualité-prix', rating: 4.9 }
             ].map((item, index) => (
-              <div key={index} className="flex flex-col justify-between border-l border-gray-200 pl-6 h-24">
+              <div key={index} className="flex flex-col justify-between md:border-l border-gray-200 md:pl-6 h-24">
                 <div>
                   <p className="text-sm mb-1" style={{ fontWeight: 600 }}>{item.label}</p>
                   <p className="text-lg" style={{ fontWeight: 600 }}>{item.rating}</p>
@@ -674,6 +716,7 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
                 </div>
               </div>
             ))}
+            </div>
           </div>
 
           {/* Reviews Grid */}
@@ -780,12 +823,12 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
         </div>
 
         {/* Location Section - Full Width */}
-        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-20 py-16 border-t border-gray-200">
-          <h3 className="text-2xl mb-6" style={{ fontWeight: 600 }}>Où se situe le logement</h3>
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-20 py-10 md:py-16 border-t border-gray-200">
+          <h3 className="text-xl md:text-2xl mb-4 md:mb-6" style={{ fontWeight: 600 }}>Où se situe le logement</h3>
           <p className="text-base text-gray-600 mb-6">Paris, Île-de-France, France</p>
 
           {/* Map */}
-          <div className="relative w-full h-[480px] rounded-xl overflow-hidden mb-6">
+          <div className="relative w-full h-[240px] md:h-[480px] rounded-xl overflow-hidden mb-6 bg-gray-100">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d83998.77824472027!2d2.2646349878843567!3d48.858938437928655!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e66e1f06e2b70f%3A0x40b82c3688c9460!2sParis%2C%20France!5e0!3m2!1sfr!2sfr!4v1234567890123!5m2!1sfr!2sfr"
               width="100%"
@@ -978,6 +1021,33 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Sticky Bottom Bar - Mobile Only */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 pb-6 z-40 md:hidden flex justify-between items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+        <div>
+          <div className="flex items-baseline gap-1">
+            <span className="font-bold text-lg">$199</span>
+            <span className="text-gray-600 text-sm"> / nuit</span>
+          </div>
+          <div className="text-xs underline font-semibold mt-0.5">3-5 avr.</div>
+        </div>
+        <button 
+          onClick={() => onBook?.({
+            title: "Superbe studio de 15m² au calme tout confort",
+            image: images[0],
+            rating: 4.96,
+            location: "Coup de cœur voyageurs",
+            checkIn: "3-4",
+            checkOut: "avr. 2026",
+            guests: 1,
+            nights: 2,
+            pricePerNight: 87.56
+          })}
+          className="bg-black text-white px-8 py-3 rounded-lg font-semibold text-base hover:opacity-90 transition-opacity"
+        >
+          Réserver
+        </button>
       </div>
     </>
   );

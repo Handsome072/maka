@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { X, Search, Navigation, Building, Landmark, MapPin, ChevronDown, ChevronRight, Minus, Plus } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 
 interface MobileSearchOverlayProps {
     isOpen: boolean;
