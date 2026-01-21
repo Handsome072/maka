@@ -28,11 +28,11 @@ function useWindowWidth() {
 }
 
 function getCardWidth(windowWidth: number): string {
-  if (windowWidth < 745) return 'calc(100vw - 32px - 80px)';
-  if (windowWidth < 950) return 'calc((100vw - 80px - 48px) / 4)';
-  if (windowWidth < 1127) return 'calc((100vw - 80px - 64px) / 5)';
-  if (windowWidth < 1285) return 'calc((100vw - 96px - 96px) / 6)';
-  return 'calc((100vw - 96px - 112px) / 7)';
+  if (windowWidth < 745) return '200px';
+  if (windowWidth < 950) return 'calc((100vw - 80px - 32px) / 3)';
+  if (windowWidth < 1127) return 'calc((100vw - 80px - 48px) / 4)';
+  if (windowWidth < 1285) return 'calc((100vw - 96px - 64px) / 5)';
+  return 'calc((100vw - 96px - 80px) / 6)';
 }
 
 export function Experiences({ isScrolled, onExperienceClick, onSearch }: ExperiencesProps) {
