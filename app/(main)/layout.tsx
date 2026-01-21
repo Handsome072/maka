@@ -8,7 +8,7 @@ import { MobileNav } from '@/app/components/MobileNav';
 import { MobileSearchOverlay } from '@/app/components/MobileSearchOverlay';
 import { AuthModal } from '@/app/components/AuthModal';
 import { ScrollProvider, useScroll } from '@/app/hooks/ScrollContext';
-import { AuthProvider, useAuth } from '@/app/context/AuthContext';
+import { useAuth } from '@/app/context/AuthContext';
 import { getCurrentPageFromPathname, getNavigationPath } from '@/app/config/routes';
 import { Search } from 'lucide-react';
 
@@ -221,7 +221,7 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
 }
 
 /**
- * Layout principal avec ScrollProvider et AuthProvider
+ * Layout principal avec ScrollProvider
  * Fournit le contexte de scroll à tous les composants enfants
  */
 export default function MainLayout({
@@ -230,11 +230,9 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <AuthProvider>
-      <ScrollProvider>
-        <MainLayoutContent>{children}</MainLayoutContent>
-      </ScrollProvider>
-    </AuthProvider>
+    <ScrollProvider>
+      <MainLayoutContent>{children}</MainLayoutContent>
+    </ScrollProvider>
   );
 }
 
