@@ -6,7 +6,6 @@ import { Header } from '@/app/components/Header';
 import { Footer } from '@/app/components/Footer';
 import { MobileNav } from '@/app/components/MobileNav';
 import { MobileSearchOverlay } from '@/app/components/MobileSearchOverlay';
-import { AuthModal } from '@/app/components/AuthModal';
 import { ScrollProvider, useScroll } from '@/app/hooks/ScrollContext';
 import { useAuth } from '@/app/context/AuthContext';
 import { getCurrentPageFromPathname, getNavigationPath } from '@/app/config/routes';
@@ -51,13 +50,12 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
   const { isScrolled, handleNavigateScroll } = useScroll();
   const { user } = useAuth();
   const [showMobileSearch, setShowMobileSearch] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
 
   // Determine current page from pathname
   const currentPage = getCurrentPageFromPathname(pathname);
 
   // Handle navigation with real routes
-  const handleNavigate = (page: 'logements' | 'experiences' | 'services' | 'messages' | 'host-onboarding' | 'annonces' | 'client-space' | 'experience-onboarding', data?: any) => {
+  const handleNavigate = (page: 'logements' | 'experiences' | 'services' | 'messages' | 'host-onboarding' | 'annonces' | 'client-space' | 'experience-onboarding' | 'login', data?: any) => {
     const path = getNavigationPath(page);
     handleNavigateScroll();
     router.push(path);
@@ -167,7 +165,7 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
       {children}
       {showHeaderFooter && <Footer onNavigate={handleNavigate} />}
 
-      {/* Mobile Navigation - visible only for S < 745 */}
+          {/* Mobile Navigation - visible only for S < 745 */}
       {showHeaderFooter && (
         <MobileNav
           isScrolled={isScrolled}
@@ -179,8 +177,9 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
               handleNavigateScroll();
               router.push('/client-space');
             } else {
-              // User is not logged in, show auth modal
-              setShowAuthModal(true);
+              // User is not logged in, navigate to login page
+              handleNavigateScroll();
+              router.push('/login');
             }
           }}
           onProfileClick={() => {
@@ -208,14 +207,6 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
           setShowMobileSearch(false);
         }}
       />
-
-      {/* Auth Modal */}
-      {showAuthModal && (
-        <AuthModal
-          isOpen={showAuthModal}
-          onClose={() => setShowAuthModal(false)}
-        />
-      )}
     </div>
   );
 }

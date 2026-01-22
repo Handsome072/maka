@@ -116,12 +116,13 @@ export default function TermsPage() {
                   <h3 className="text-base mb-3" style={{ fontWeight: 600, color: '#222222' }}>
                     Obtenez de l'aide pour vos réservations, votre compte et plus encore.
                   </h3>
-                  <button
-                    className="w-full px-6 py-3 text-white rounded-lg text-base hover:opacity-90 transition-opacity"
+                  <Link
+                    href="/login"
+                    className="block w-full text-center px-6 py-3 text-white rounded-lg text-base hover:opacity-90 transition-opacity"
                     style={{ fontWeight: 600, backgroundColor: '#000000' }}
                   >
                     Me connecter ou m'inscrire
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
