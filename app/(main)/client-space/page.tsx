@@ -3,10 +3,6 @@
 import { useRouter } from 'next/navigation';
 import { ClientSpace } from '@/app/pages/ClientSpace';
 
-/**
- * Client Space Page - Renders the full ClientSpace component
- * This component includes its own header, sidebar, and all client space functionality
- */
 export default function ClientSpacePage() {
   const router = useRouter();
 
@@ -27,6 +23,5 @@ export default function ClientSpacePage() {
     }
   };
 
-  return <ClientSpace onNavigate={handleNavigate} />;
+  return <ClientSpace onNavigate={handleNavigate} initialSection="reservations" />;
 }
-

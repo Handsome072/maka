@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Heart, Share, Star, ChevronRight } from 'lucide-react';
+import { Heart, Share, Star, ChevronRight, ArrowLeft } from 'lucide-react';
 import { ReservationDetail } from '../components/ReservationDetail';
 import { HeaderRightMenu } from '../components/HeaderRightMenu';
 import { LanguageModal } from '../components/LanguageModal';
 import { BecomeHostModal } from '../components/BecomeHostModal';
+import { Logo } from '../components/Logo';
 import Link from 'next/link';
 
 // Property images from logements section for reservations
@@ -21,11 +22,12 @@ const PROPERTY_IMAGES = [
 
 interface ClientSpaceProps {
   onNavigate?: (page: 'logements' | 'messages' | 'annonces' | 'host-onboarding') => void;
+  initialSection?: 'reservations' | 'profile' | 'security' | 'notifications' | 'payments' | 'languages';
 }
 
-export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
+export function ClientSpace({ onNavigate, initialSection = 'reservations' }: ClientSpaceProps = {}) {
   const { user } = useAuth();
-  const [activeSection, setActiveSection] = useState<'reservations' | 'profile' | 'security' | 'notifications' | 'payments' | 'languages'>('reservations');
+  const [activeSection, setActiveSection] = useState<'reservations' | 'profile' | 'security' | 'notifications' | 'payments' | 'languages'>(initialSection);
   const [showReservationDetail, setShowReservationDetail] = useState(false);
   const [paymentsTab, setPaymentsTab] = useState<'paiements' | 'versements' | 'frais'>('paiements');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -42,6 +44,9 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
   const [addingEmergencyContact, setAddingEmergencyContact] = useState(false);
   const [updatingPassword, setUpdatingPassword] = useState(false);
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
+
+  // Mobile view state - true shows content, false shows sidebar
+  const [showMobileContent, setShowMobileContent] = useState(false);
 
   // Header menu state
   const [showMenuDropdown, setShowMenuDropdown] = useState(false);
@@ -603,43 +608,49 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
 
   return (
     <>
-      <div className="min-h-screen bg-white pb-16 md:pb-0">
+      <div className="min-h-screen bg-white">
         {/* Header */}
-        <header className="border-b border-gray-200 px-6 lg:px-20 py-4 flex items-center justify-between">
-          <Link
-            href="/"
-            className="flex items-center gap-1 flex-shrink-0 border-0 hover:opacity-80 transition-opacity"
-          >
-            <img
-              src="/logo.png"
-              alt="HOMIQIO Logo"
-              className="w-[150px] h-auto border-0"
-            />
-          </Link>
+        <header className="border-b border-gray-200">
+          <div className="px-4 sm:px-6 lg:px-12 py-5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-8">
+                <Link
+                  href="/"
+                  className="cursor-pointer"
+                >
+                  <Logo className="h-10 md:h-12 w-auto" />
+                </Link>
+              </div>
 
-          <HeaderRightMenu
-            showMenuDropdown={showMenuDropdown}
-            setShowMenuDropdown={setShowMenuDropdown}
-            setShowLanguageModal={setShowLanguageModal}
-            setShowBecomeHostModal={setShowBecomeHostModal}
-            onAuthClick={() => onNavigate?.('login')}
-            onClientSpaceClick={() => { }}
-            onMessagesClick={() => onNavigate?.('messages')}
-            isHost={false}
-            onAnnoncesClick={() => onNavigate?.('annonces')}
-          />
+              <HeaderRightMenu
+                showMenuDropdown={showMenuDropdown}
+                setShowMenuDropdown={setShowMenuDropdown}
+                setShowLanguageModal={setShowLanguageModal}
+                setShowBecomeHostModal={setShowBecomeHostModal}
+                onAuthClick={() => onNavigate?.('login')}
+                onClientSpaceClick={() => { }}
+                onMessagesClick={() => onNavigate?.('messages')}
+                isHost={false}
+                onAnnoncesClick={() => onNavigate?.('annonces')}
+              />
+            </div>
+          </div>
         </header>
 
         <div className="flex">
-          {/* Sidebar - Hidden on mobile (< 745px), visible on desktop */}
-          <aside className="hidden md:block w-[300px] lg:w-[360px] border-r border-gray-200 min-h-[calc(100vh-73px)] px-6 lg:px-16 py-12">
-            <h1 className="text-xl md:text-2xl mb-8" style={{ fontWeight: 600, color: '#222222' }}>
-              Espace client
-            </h1>
+          {/* Sidebar - Conditionally visible on mobile, always visible on desktop */}
+          <aside className={`w-full md:w-[380px] border-r border-gray-200 min-h-[calc(100vh-73px)] ${showMobileContent ? 'hidden md:flex' : 'flex'} flex-col bg-white`}>
+            <div className="px-6 pt-6 pb-4">
+              <h1 className="text-xl md:text-2xl mb-8" style={{ fontWeight: 600, color: '#222222' }}>
+                Espace client
+              </h1>
 
             <nav className="space-y-5">
               <button
-                onClick={() => setActiveSection('reservations')}
+                onClick={() => {
+                  setActiveSection('reservations');
+                  setShowMobileContent(true);
+                }}
                 className={`w-full flex items-center gap-4 text-left transition-colors ${activeSection === 'reservations'
                   ? ''
                   : 'opacity-60 hover:opacity-100'
@@ -654,7 +665,10 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
               </button>
 
               <button
-                onClick={() => setActiveSection('profile')}
+                onClick={() => {
+                  setActiveSection('profile');
+                  setShowMobileContent(true);
+                }}
                 className={`w-full flex items-center gap-4 text-left transition-colors ${activeSection === 'profile'
                   ? ''
                   : 'opacity-60 hover:opacity-100'
@@ -669,7 +683,10 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
               </button>
 
               <button
-                onClick={() => setActiveSection('security')}
+                onClick={() => {
+                  setActiveSection('security');
+                  setShowMobileContent(true);
+                }}
                 className={`w-full flex items-center gap-4 text-left transition-colors ${activeSection === 'security'
                   ? ''
                   : 'opacity-60 hover:opacity-100'
@@ -684,7 +701,10 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
               </button>
 
               <button
-                onClick={() => setActiveSection('notifications')}
+                onClick={() => {
+                  setActiveSection('notifications');
+                  setShowMobileContent(true);
+                }}
                 className={`w-full flex items-center gap-4 text-left transition-colors ${activeSection === 'notifications'
                   ? ''
                   : 'opacity-60 hover:opacity-100'
@@ -699,7 +719,10 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
               </button>
 
               <button
-                onClick={() => setActiveSection('payments')}
+                onClick={() => {
+                  setActiveSection('payments');
+                  setShowMobileContent(true);
+                }}
                 className={`w-full flex items-center gap-4 text-left transition-colors ${activeSection === 'payments'
                   ? ''
                   : 'opacity-60 hover:opacity-100'
@@ -714,7 +737,10 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
               </button>
 
               <button
-                onClick={() => setActiveSection('languages')}
+                onClick={() => {
+                  setActiveSection('languages');
+                  setShowMobileContent(true);
+                }}
                 className={`w-full flex items-center gap-4 text-left transition-colors ${activeSection === 'languages'
                   ? ''
                   : 'opacity-60 hover:opacity-100'
@@ -728,13 +754,20 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                 </span>
               </button>
             </nav>
+            </div>
           </aside>
 
-          {/* Main Content - Responsive padding */}
-          <main className="flex-1 px-4 sm:px-8 md:px-12 lg:px-16 py-6 md:py-12 bg-white">
+          {/* Main Content - Conditionally visible on mobile, always visible on desktop */}
+          <main className={`flex-1 flex-col bg-white ${!showMobileContent ? 'hidden md:flex' : 'flex'}`}>
             {activeSection === 'reservations' && (
-              <>
-                <div className="flex items-center justify-between mb-8">
+              <div className="px-4 sm:px-6 lg:px-12 py-6 md:py-8">
+                <div className="flex items-center gap-3 mb-8">
+                  <button
+                    onClick={() => setShowMobileContent(false)}
+                    className="md:hidden p-1 -ml-2 hover:bg-gray-100 rounded-full transition-colors"
+                  >
+                    <ArrowLeft className="w-6 h-6" style={{ color: '#222222' }} />
+                  </button>
                   <h2 className="text-xl md:text-2xl" style={{ fontWeight: 600, color: '#222222' }}>
                     Mes réservations
                   </h2>
@@ -1005,14 +1038,23 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                     </div>
                   </div>
                 </div>
-              </>
+              </div>
             )}
 
             {activeSection === 'profile' && (
-              <div className="max-w-xl mx-auto">
-                <h2 className="text-2xl md:text-3xl mb-8" style={{ fontWeight: 600, color: '#222222' }}>
-                  Informations personnelles
-                </h2>
+              <div className="px-4 sm:px-6 lg:px-12 py-6 md:py-8">
+                <div className="max-w-xl mx-auto">
+                  <div className="flex items-center gap-3 mb-8">
+                    <button
+                      onClick={() => setShowMobileContent(false)}
+                      className="md:hidden p-1 -ml-2 hover:bg-gray-100 rounded-full transition-colors"
+                    >
+                      <ArrowLeft className="w-6 h-6" style={{ color: '#222222' }} />
+                    </button>
+                    <h2 className="text-2xl md:text-3xl" style={{ fontWeight: 600, color: '#222222' }}>
+                      Informations personnelles
+                    </h2>
+                  </div>
 
                 {/* Liste des informations */}
                 <div className="space-y-0">
@@ -1568,14 +1610,24 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                     )}
                   </div>
                 </div>
+                </div>
               </div>
             )}
 
             {activeSection === 'security' && (
-              <div className="max-w-xl mx-auto">
-                <h2 className="text-2xl md:text-3xl mb-8" style={{ fontWeight: 600, color: '#222222' }}>
-                  Connexion et sécurité
-                </h2>
+              <div className="px-4 sm:px-6 lg:px-12 py-6 md:py-8">
+                <div className="max-w-xl mx-auto">
+                  <div className="flex items-center gap-3 mb-8">
+                    <button
+                      onClick={() => setShowMobileContent(false)}
+                      className="md:hidden p-1 -ml-2 hover:bg-gray-100 rounded-full transition-colors"
+                    >
+                      <ArrowLeft className="w-6 h-6" style={{ color: '#222222' }} />
+                    </button>
+                    <h2 className="text-2xl md:text-3xl" style={{ fontWeight: 600, color: '#222222' }}>
+                      Connexion et sécurité
+                    </h2>
+                  </div>
 
                 {/* Connexion Section */}
                 <div className="mb-12">
@@ -1678,14 +1730,24 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                     </div>
                   </div>
                 </div>
+                </div>
               </div>
             )}
 
             {activeSection === 'notifications' && (
-              <div className="max-w-xl mx-auto">
-                <h2 className="text-2xl md:text-3xl mb-8" style={{ fontWeight: 600, color: '#222222' }}>
-                  Notifications
-                </h2>
+              <div className="px-4 sm:px-6 lg:px-12 py-6 md:py-8">
+                <div className="max-w-xl mx-auto">
+                  <div className="flex items-center gap-3 mb-8">
+                    <button
+                      onClick={() => setShowMobileContent(false)}
+                      className="md:hidden p-1 -ml-2 hover:bg-gray-100 rounded-full transition-colors"
+                    >
+                      <ArrowLeft className="w-6 h-6" style={{ color: '#222222' }} />
+                    </button>
+                    <h2 className="text-2xl md:text-3xl" style={{ fontWeight: 600, color: '#222222' }}>
+                      Notifications
+                    </h2>
+                  </div>
 
                 {/* Tabs */}
                 <div className="flex gap-8 mb-8 border-b border-gray-300">
@@ -1890,14 +1952,24 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                     </div>
                   </>
                 )}
+                </div>
               </div>
             )}
 
             {activeSection === 'payments' && (
-              <div className="max-w-xl mx-auto">
-                <h2 className="text-2xl md:text-3xl mb-8" style={{ fontWeight: 600, color: '#222222' }}>
-                  Paiements
-                </h2>
+              <div className="px-4 sm:px-6 lg:px-12 py-6 md:py-8">
+                <div className="max-w-xl mx-auto">
+                  <div className="flex items-center gap-3 mb-8">
+                    <button
+                      onClick={() => setShowMobileContent(false)}
+                      className="md:hidden p-1 -ml-2 hover:bg-gray-100 rounded-full transition-colors"
+                    >
+                      <ArrowLeft className="w-6 h-6" style={{ color: '#222222' }} />
+                    </button>
+                    <h2 className="text-2xl md:text-3xl" style={{ fontWeight: 600, color: '#222222' }}>
+                      Paiements
+                    </h2>
+                  </div>
 
                 {/* Tabs */}
                 <div className="flex gap-8 mb-8 border-b border-gray-300">
@@ -2141,14 +2213,24 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                     </div>
                   </>
                 )}
+                </div>
               </div>
             )}
 
             {activeSection === 'languages' && (
-              <div className="max-w-xl mx-auto">
-                <h2 className="text-2xl md:text-3xl mb-8" style={{ fontWeight: 600, color: '#222222' }}>
-                  Langues et devise
-                </h2>
+              <div className="px-4 sm:px-6 lg:px-12 py-6 md:py-8">
+                <div className="max-w-xl mx-auto">
+                  <div className="flex items-center gap-3 mb-8">
+                    <button
+                      onClick={() => setShowMobileContent(false)}
+                      className="md:hidden p-1 -ml-2 hover:bg-gray-100 rounded-full transition-colors"
+                    >
+                      <ArrowLeft className="w-6 h-6" style={{ color: '#222222' }} />
+                    </button>
+                    <h2 className="text-2xl md:text-3xl" style={{ fontWeight: 600, color: '#222222' }}>
+                      Langues et devise
+                    </h2>
+                  </div>
 
                 <div className="space-y-6">
                   {/* Langue préférée */}
@@ -2198,6 +2280,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
                       </button>
                     </div>
                   </div>
+                </div>
                 </div>
               </div>
             )}
@@ -2412,84 +2495,7 @@ export function ClientSpace({ onNavigate }: ClientSpaceProps = {}) {
         />
       )}
 
-      {/* Mobile Navigation - visible only for S < 745 */}
-      {/* Shows sidebar navigation items as bottom navigation on mobile */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 md:hidden">
-        <div className="flex items-center justify-around overflow-x-auto">
-          {/* Mes réservations */}
-          <button
-            onClick={() => setActiveSection('reservations')}
-            className={`flex flex-col items-center gap-1 px-3 py-2 min-w-[60px] transition-colors ${activeSection === 'reservations' ? 'text-black' : 'text-gray-500'
-              }`}
-          >
-            <svg className="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={activeSection === 'reservations' ? 2 : 1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-            </svg>
-            <span className="text-[10px] font-medium text-center leading-tight">Réservations</span>
-          </button>
 
-          {/* Informations personnelles */}
-          <button
-            onClick={() => setActiveSection('profile')}
-            className={`flex flex-col items-center gap-1 px-3 py-2 min-w-[60px] transition-colors ${activeSection === 'profile' ? 'text-black' : 'text-gray-500'
-              }`}
-          >
-            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-xs flex-shrink-0 ${activeSection === 'profile' ? 'bg-gray-900' : 'bg-gray-500'
-              }`} style={{ fontWeight: 600 }}>
-              {user?.name.charAt(0).toUpperCase() || 'A'}
-            </div>
-            <span className="text-[10px] font-medium text-center leading-tight">Profil</span>
-          </button>
-
-          {/* Connexion et sécurité */}
-          <button
-            onClick={() => setActiveSection('security')}
-            className={`flex flex-col items-center gap-1 px-3 py-2 min-w-[60px] transition-colors ${activeSection === 'security' ? 'text-black' : 'text-gray-500'
-              }`}
-          >
-            <svg className="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={activeSection === 'security' ? 2 : 1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
-            <span className="text-[10px] font-medium text-center leading-tight">Sécurité</span>
-          </button>
-
-          {/* Notifications */}
-          <button
-            onClick={() => setActiveSection('notifications')}
-            className={`flex flex-col items-center gap-1 px-3 py-2 min-w-[60px] transition-colors ${activeSection === 'notifications' ? 'text-black' : 'text-gray-500'
-              }`}
-          >
-            <svg className="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={activeSection === 'notifications' ? 2 : 1.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
-            <span className="text-[10px] font-medium text-center leading-tight">Notifications</span>
-          </button>
-
-          {/* Paiements */}
-          <button
-            onClick={() => setActiveSection('payments')}
-            className={`flex flex-col items-center gap-1 px-3 py-2 min-w-[60px] transition-colors ${activeSection === 'payments' ? 'text-black' : 'text-gray-500'
-              }`}
-          >
-            <svg className="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={activeSection === 'payments' ? 2 : 1.5} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-            </svg>
-            <span className="text-[10px] font-medium text-center leading-tight">Paiements</span>
-          </button>
-
-          {/* Langues et devise */}
-          <button
-            onClick={() => setActiveSection('languages')}
-            className={`flex flex-col items-center gap-1 px-3 py-2 min-w-[60px] transition-colors ${activeSection === 'languages' ? 'text-black' : 'text-gray-500'
-              }`}
-          >
-            <svg className="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={activeSection === 'languages' ? 2 : 1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span className="text-[10px] font-medium text-center leading-tight">Langues</span>
-          </button>
-        </div>
-      </nav>
     </>
   );
 }
