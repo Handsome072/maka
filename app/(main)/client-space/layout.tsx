@@ -3,13 +3,14 @@
 import { usePathname } from 'next/navigation';
 import { ClientSpaceHeader } from '@/app/components/client-space/ClientSpaceHeader';
 import { ClientSpaceSidebar } from '@/app/components/client-space/ClientSpaceSidebar';
+import { ClientSpaceMobileNav } from '@/app/components/client-space/ClientSpaceMobileNav';
 
 export default function ClientSpaceLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isIndex = pathname === '/client-space';
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white pb-16 md:pb-0">
       <ClientSpaceHeader />
       <div className="flex max-w-[1920px] mx-auto">
         {/* Sidebar */}
@@ -28,6 +29,9 @@ export default function ClientSpaceLayout({ children }: { children: React.ReactN
           {children}
         </main>
       </div>
+
+      {/* Mobile Navigation - visible only for S < 745px */}
+      <ClientSpaceMobileNav />
     </div>
   );
 }
