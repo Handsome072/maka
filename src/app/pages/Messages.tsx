@@ -146,7 +146,7 @@ export function Messages({ onNavigate, isHost }: { onNavigate?: (page: any) => v
                 onClick={() => onNavigate?.('home')}
                 className="cursor-pointer"
               >
-                <Logo />
+                <Logo className="h-10 md:h-12 w-auto" />
               </button>
             </div>
 
@@ -155,7 +155,7 @@ export function Messages({ onNavigate, isHost }: { onNavigate?: (page: any) => v
               setShowMenuDropdown={setShowMenuDropdown}
               setShowLanguageModal={setShowLanguageModal}
               setShowBecomeHostModal={setShowBecomeHostModal}
-              setShowAuthModal={setShowAuthModal}
+              onAuthClick={() => setShowAuthModal(true)}
               onClientSpaceClick={() => onNavigate?.('client-space')}
               onMessagesClick={() => { }} // Déjà sur la page messages
               isHost={isHost}
@@ -171,7 +171,7 @@ export function Messages({ onNavigate, isHost }: { onNavigate?: (page: any) => v
         <div className="px-4 sm:px-6 lg:px-12 pt-8">
           <div className="max-w-3xl mx-auto">
             <div className="flex items-center justify-between mb-6">
-              <h1 className="text-3xl" style={{ fontWeight: 600, color: '#222222' }}>Messages</h1>
+              <h1 className="text-xl md:text-3xl" style={{ fontWeight: 600, color: '#222222' }}>Messages</h1>
               <div className="flex items-center gap-3">
                 <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                   <Search className="w-5 h-5" style={{ color: '#222222' }} />
@@ -216,7 +216,7 @@ export function Messages({ onNavigate, isHost }: { onNavigate?: (page: any) => v
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                 </svg>
               </div>
-              <h3 className="text-xl mb-2" style={{ fontWeight: 600, color: '#222222' }}>
+              <h3 className="text-lg md:text-xl mb-2" style={{ fontWeight: 600, color: '#222222' }}>
                 Vous n'avez aucun message
               </h3>
               <p className="text-sm text-center max-w-xs" style={{ color: '#717171' }}>
@@ -233,7 +233,7 @@ export function Messages({ onNavigate, isHost }: { onNavigate?: (page: any) => v
             <div className={`w-full md:w-[380px] border-r border-gray-200 flex-col bg-white ${selectedConversation ? 'hidden md:flex' : 'flex'}`}>
               <div className="px-6 pt-6 pb-4 border-b border-gray-200">
                 <div className="flex items-center justify-between mb-4">
-                  <h1 className="text-2xl" style={{ fontWeight: 600, color: '#222222' }}>Messages</h1>
+                  <h1 className="text-xl md:text-2xl" style={{ fontWeight: 600, color: '#222222' }}>Messages</h1>
                   <div className="flex items-center gap-2">
                     <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                       <Search className="w-5 h-5" style={{ color: '#222222' }} />
@@ -288,20 +288,20 @@ export function Messages({ onNavigate, isHost }: { onNavigate?: (page: any) => v
                     />
                     <div className="flex-1 text-left overflow-hidden">
                       <div className="flex items-start justify-between mb-1">
-                        <h3 className="text-base truncate" style={{ fontWeight: 600, color: '#222222' }}>
+                        <h3 className="text-sm md:text-base truncate" style={{ fontWeight: 600, color: '#222222' }}>
                           {conv.name}
                         </h3>
                         <span className="text-xs ml-2 flex-shrink-0" style={{ color: '#717171' }}>
                           {conv.date}
                         </span>
                       </div>
-                      <p className="text-sm flex items-center gap-2 mb-1" style={{ color: '#717171' }}>
+                      <p className="text-xs md:text-sm flex items-center gap-2 mb-1" style={{ color: '#717171' }}>
                         {conv.phone}
                         <span className="text-xs">📱</span>
                         {conv.unread && <span className="text-xs">✅</span>}
                         <span className="text-xs">{conv.date.split('/')[0]}/{conv.date.split('/')[1]}</span>
                       </p>
-                      <p className="text-sm truncate" style={{ color: '#717171' }}>
+                      <p className="text-xs md:text-sm truncate" style={{ color: '#717171' }}>
                         {conv.lastMessage}
                       </p>
                     </div>
