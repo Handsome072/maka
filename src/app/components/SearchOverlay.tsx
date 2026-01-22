@@ -4,7 +4,6 @@ import { HeaderContent } from "./HeaderContent";
 import { HeaderRightMenu } from "./HeaderRightMenu";
 import { LanguageModal } from "./LanguageModal";
 import { BecomeHostModal } from "./BecomeHostModal";
-import { AuthModal } from "./AuthModal";
 import Link from "next/link";
 import { ROUTES } from "../config/routes";
 
@@ -13,7 +12,7 @@ interface SearchOverlayProps {
   onClose: () => void;
   currentPage: "logements" | "experiences" | "services";
   onNavigate: (
-    page: "logements" | "experiences" | "services" | "messages" | "host-onboarding" | "annonces",
+    page: "logements" | "experiences" | "services" | "messages" | "host-onboarding" | "annonces" | "login" | "experience-onboarding",
   ) => void;
   headerRef: RefObject<HTMLElement>;
   onSearch: (params: any) => void;
@@ -34,7 +33,6 @@ export function SearchOverlay({
   const [showMenuDropdown, setShowMenuDropdown] = useState(false);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [showBecomeHostModal, setShowBecomeHostModal] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
 
   // Fermer l'overlay quand on scroll vers le haut
   useEffect(() => {
@@ -105,7 +103,7 @@ export function SearchOverlay({
                 setShowMenuDropdown={setShowMenuDropdown}
                 setShowLanguageModal={setShowLanguageModal}
                 setShowBecomeHostModal={setShowBecomeHostModal}
-                setShowAuthModal={setShowAuthModal}
+                onAuthClick={() => onNavigate('login')}
                 onClientSpaceClick={onClientSpaceClick}
                 onMessagesClick={() => onNavigate('messages')}
                 isHost={isHost}
@@ -143,14 +141,6 @@ export function SearchOverlay({
             // Service sera implémenté plus tard
             setShowBecomeHostModal(false);
           }}
-        />
-      )}
-
-      {/* Auth Modal */}
-      {showAuthModal && (
-        <AuthModal
-          isOpen={showAuthModal}
-          onClose={() => setShowAuthModal(false)}
         />
       )}
     </>
