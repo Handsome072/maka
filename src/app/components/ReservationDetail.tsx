@@ -116,7 +116,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
       {/* Main Content */}
       <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
         {/* Header with Close Button */}
-        <div className="sticky top-0 bg-white z-10 border-b border-gray-200 px-6 lg:px-20 py-5 flex items-center justify-between">
+        <div className="sticky top-0 bg-white z-10 border-b border-gray-200 px-4 sm:px-6 lg:px-12 py-5 flex items-center justify-between">
           <button
             onClick={onClose}
             className="flex items-center gap-2 hover:opacity-80 transition-opacity"
@@ -138,14 +138,14 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
         </div>
 
         {/* Title Section */}
-        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-20 pt-6">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-12 pt-6">
           <h1 className="text-2xl md:text-3xl mb-4" style={{ fontWeight: 600 }}>
             Studio aux Portes de Paris
           </h1>
         </div>
 
         {/* Gallery Grid */}
-        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-20 mb-8">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-12 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-2 rounded-2xl overflow-hidden h-[300px] md:h-[400px] relative">
             {/* Large image */}
             <div className="md:col-span-2 md:row-span-2 relative group overflow-hidden">
@@ -187,7 +187,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
 
         {/* Content */}
         <div className="bg-white py-12">
-          <div className="max-w-[1200px] mx-auto px-6 lg:px-20">
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-12">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
               {/* Left Column - Main Content (No Card Background) */}
               <div className="lg:col-span-2 space-y-10">
