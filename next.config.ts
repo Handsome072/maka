@@ -1,7 +1,7 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  // Configure as SPA - all routes will be handled by client-side routing
+  // Configure for static export - generates static HTML files
   output: 'export',
 
   // Disable image optimization for static export
