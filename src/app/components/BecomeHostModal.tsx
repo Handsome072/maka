@@ -65,9 +65,9 @@ export function BecomeHostModal({
       {/* Modal */}
       <div
         ref={modalRef}
-        className="relative bg-white rounded-3xl w-full max-w-5xl mx-4 shadow-2xl"
+        className="relative bg-white rounded-3xl w-full max-w-5xl mx-4 shadow-2xl flex flex-col"
         onClick={(e) => e.stopPropagation()}
-        style={{ height: "85vh", maxHeight: "700px" }}
+        style={{ maxHeight: "85vh" }}
       >
         {/* Close button */}
         <button
@@ -79,19 +79,20 @@ export function BecomeHostModal({
         </button>
 
         {/* Content */}
-        <div className="px-8 py-12 w-full h-full flex flex-col">
-          {/* Title */}
-          <div className="text-center mb-16 mt-8">
-            <h2 className="text-3xl font-semibold text-gray-900 tracking-tight">
-              Que souhaitez-vous proposer ?
-            </h2>
-            <p className="text-gray-500 mt-3 text-sm">
-              Sélectionnez le type d'offre que vous souhaitez créer
-            </p>
-          </div>
+        <div className="overflow-y-auto flex-1">
+          <div className="px-6 py-12 md:px-8 md:py-12 w-full min-h-full flex flex-col">
+            {/* Title */}
+            <div className="text-center mb-8 md:mb-16 mt-8">
+              <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 tracking-tight">
+                Que souhaitez-vous proposer ?
+              </h2>
+              <p className="text-gray-500 mt-3 text-sm">
+                Sélectionnez le type d'offre que vous souhaitez créer
+              </p>
+            </div>
 
-          {/* Options Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl mx-auto flex-1 items-center">
+            {/* Options Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 w-full max-w-4xl mx-auto flex-1 items-center mb-8">
             {/* Logement */}
             <button
               onClick={() => handleOptionClick("logement")}
@@ -159,7 +160,7 @@ export function BecomeHostModal({
             {/* Service */}
             <button
               onClick={() => handleOptionClick("service")}
-              className={`group relative flex flex-col items-center justify-center p-8 rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden ${
+              className={`group relative flex flex-col items-center justify-center p-6 md:p-8 rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden ${
                 selectedOption === 'service'
                   ? 'bg-white shadow-2xl scale-105'
                   : 'bg-white hover:shadow-lg hover:scale-102 active:scale-98'
@@ -190,7 +191,7 @@ export function BecomeHostModal({
           </div>
 
           {/* Footer with Next button */}
-          <div className="border-t border-gray-100 mt-auto pt-6">
+          <div className="border-t border-gray-100 mt-auto pt-6 sticky bottom-0 bg-white pb-2">
             <div className="flex justify-between items-center">
               <p className="text-sm text-gray-500">
                 {selectedOption ? '1 option sélectionnée' : 'Aucune sélection'}
@@ -207,6 +208,7 @@ export function BecomeHostModal({
                 Suivant
               </button>
             </div>
+          </div>
           </div>
         </div>
       </div>

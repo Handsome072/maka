@@ -1,4 +1,4 @@
-import { Search, Heart, User, MessageSquare } from 'lucide-react';
+import { Search, Heart, User, MessageSquare, PlusCircle } from 'lucide-react';
 import { useAuth } from "../context/AuthContext";
 
 interface MobileNavProps {
@@ -7,6 +7,7 @@ interface MobileNavProps {
     onLoginClick?: () => void;
     onProfileClick?: () => void;
     onMessagesClick?: () => void;
+    onBecomeHostClick?: () => void;
 }
 
 export function MobileNav({
@@ -14,7 +15,8 @@ export function MobileNav({
     onFavoritesClick,
     onLoginClick,
     onProfileClick,
-    onMessagesClick
+    onMessagesClick,
+    onBecomeHostClick
 }: MobileNavProps) {
     const { user } = useAuth();
 
@@ -25,23 +27,32 @@ export function MobileNav({
                 paddingBottom: 'env(safe-area-inset-bottom, 0px)'
             }}
         >
-            <div className="flex items-center justify-center gap-8 py-2">
+            <div className="flex items-center justify-around py-2">
                 <button
                     type="button"
                     onClick={onSearchClick}
-                    className="flex flex-col items-center gap-1 px-2 py-2 text-[#E91E63] transition-colors"
+                    className="flex flex-col items-center gap-1 px-1 py-2 text-[#E91E63] transition-colors min-w-[60px]"
                 >
                     <Search className="w-5 h-5" />
-                    <span className="text-[10px] font-medium">Explorer</span>
+                    <span className="text-[10px] font-medium truncate w-full text-center">Explorer</span>
                 </button>
 
                 <button
                     type="button"
                     onClick={onFavoritesClick}
-                    className="flex flex-col items-center gap-1 px-2 py-2 text-gray-500 hover:text-gray-700 transition-colors"
+                    className="flex flex-col items-center gap-1 px-1 py-2 text-gray-500 hover:text-gray-700 transition-colors min-w-[60px]"
                 >
                     <Heart className="w-5 h-5" />
-                    <span className="text-[10px] font-medium">Favoris</span>
+                    <span className="text-[10px] font-medium truncate w-full text-center">Favoris</span>
+                </button>
+
+                <button
+                    type="button"
+                    onClick={onBecomeHostClick}
+                    className="flex flex-col items-center gap-1 px-1 py-2 text-gray-500 hover:text-gray-700 transition-colors min-w-[60px]"
+                >
+                    <PlusCircle className="w-5 h-5" />
+                    <span className="text-[10px] font-medium truncate w-full text-center">Devenir hôte</span>
                 </button>
 
                 {user ? (
@@ -49,37 +60,35 @@ export function MobileNav({
                         <button
                             type="button"
                             onClick={onMessagesClick}
-                            className="flex flex-col items-center gap-1 px-2 py-2 text-gray-500 hover:text-gray-700 transition-colors"
+                            className="flex flex-col items-center gap-1 px-1 py-2 text-gray-500 hover:text-gray-700 transition-colors min-w-[60px]"
                         >
                             <MessageSquare className="w-5 h-5" />
-                            <span className="text-[10px] font-medium">Messages</span>
+                            <span className="text-[10px] font-medium truncate w-full text-center">Messages</span>
                         </button>
 
                         <button
                             type="button"
                             onClick={onProfileClick}
-                            className="flex flex-col items-center gap-1 px-2 py-2 text-gray-500 hover:text-gray-700 transition-colors"
+                            className="flex flex-col items-center gap-1 px-1 py-2 text-gray-500 hover:text-gray-700 transition-colors min-w-[60px]"
                         >
-                            <span className="w-5 h-5 rounded-full overflow-hidden flex items-center justify-center bg-gray-200">
+                            <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center bg-gray-900 text-white text-xs flex-shrink-0" style={{ fontWeight: 600 }}>
                                 {user.avatar ? (
                                     <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
                                 ) : (
-                                    <span className="text-[9px] font-bold text-gray-600">
-                                        {user.name.charAt(0).toUpperCase()}
-                                    </span>
+                                    user.name.charAt(0).toUpperCase()
                                 )}
-                            </span>
-                            <span className="text-[10px] font-medium">Profil</span>
+                            </div>
+                            <span className="text-[10px] font-medium truncate w-full text-center">Profil</span>
                         </button>
                     </>
                 ) : (
                     <button
                         type="button"
                         onClick={onLoginClick}
-                        className="flex flex-col items-center gap-1 px-2 py-2 text-gray-500 hover:text-gray-700 transition-colors"
+                        className="flex flex-col items-center gap-1 px-1 py-2 text-gray-500 hover:text-gray-700 transition-colors min-w-[60px]"
                     >
                         <User className="w-5 h-5" />
-                        <span className="text-[10px] font-medium">Connexion</span>
+                        <span className="text-[10px] font-medium truncate w-full text-center">Connexion</span>
                     </button>
                 )}
             </div>

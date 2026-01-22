@@ -41,7 +41,7 @@ export function ClientReservations() {
     <div className="px-4 sm:px-6 lg:px-12 py-6 md:py-8 w-full">
       <div className="flex items-center gap-3 mb-8">
         <Link 
-          href="/client-space"
+          href="/"
           className="md:hidden p-1 -ml-2 hover:bg-gray-100 rounded-full transition-colors"
         >
           <ArrowLeft className="w-6 h-6" style={{ color: '#222222' }} />

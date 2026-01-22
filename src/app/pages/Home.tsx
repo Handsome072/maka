@@ -78,6 +78,24 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
       price: "210 € pour 2 nuits",
       rating: 4.92,
       badge: 'Coup de coeur' as const
+    },
+    {
+      image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcGFydG1lbnR8ZW58MXx8fHwxNzY3NjIxMDU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      title: "Appartement cosy · Bordeaux",
+      location: "Hôte particulier",
+      date: "",
+      price: "140 € pour 2 nuits",
+      rating: 4.85,
+      badge: undefined
+    },
+    {
+      image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcGFydG1lbnR8ZW58MXx8fHwxNzY3NjIxMDU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      title: "Duplex moderne · Lille",
+      location: "Hôte professionnel",
+      date: "",
+      price: "195 € pour 2 nuits",
+      rating: 4.90,
+      badge: 'Nouveau' as const
     }
   ];
 
