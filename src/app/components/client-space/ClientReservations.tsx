@@ -46,7 +46,7 @@ export function ClientReservations() {
         >
           <ArrowLeft className="w-6 h-6" style={{ color: '#222222' }} />
         </Link>
-        <h2 className="text-xl md:text-2xl" style={{ fontWeight: 600, color: '#222222' }}>
+        <h2 className="text-lg md:text-2xl" style={{ fontWeight: 600, color: '#222222' }}>
           Mes réservations
         </h2>
       </div>
