@@ -92,101 +92,107 @@ export function BecomeHostModal({
             </div>
 
             {/* Options Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 w-full max-w-4xl mx-auto flex-1 items-center mb-8">
+            <div className="flex flex-col md:grid md:grid-cols-3 gap-3 md:gap-6 w-full max-w-4xl mx-auto flex-1 items-stretch md:items-center mb-4 md:mb-8">
             {/* Logement */}
             <button
               onClick={() => handleOptionClick("logement")}
-              className={`group relative flex flex-col items-center justify-center p-8 rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden ${
+              className={`group relative flex flex-row md:flex-col items-center md:justify-center p-3 md:p-8 rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden ${
                 selectedOption === 'logement'
-                  ? 'bg-white shadow-2xl scale-105'
-                  : 'bg-white hover:shadow-lg hover:scale-102 active:scale-98'
+                  ? 'bg-white shadow-md md:shadow-2xl scale-[1.02] md:scale-105 border border-gray-200 md:border-0'
+                  : 'bg-white hover:shadow-lg hover:scale-[1.01] md:hover:scale-102 active:scale-98 border border-transparent'
               }`}
             >
-              <div className="mb-5 transition-transform duration-300 group-hover:scale-105 relative">
-                <div className={`w-32 h-32 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 ${
-                  selectedOption === 'logement' ? 'ring-4 ring-white/20' : ''
+              <div className="mr-4 md:mr-0 md:mb-5 transition-transform duration-300 md:group-hover:scale-105 relative flex-shrink-0">
+                <div className={`w-16 h-16 md:w-32 md:h-32 rounded-lg md:rounded-2xl overflow-hidden shadow-sm md:shadow-lg transition-all duration-300 ${
+                  selectedOption === 'logement' ? 'ring-2 md:ring-4 ring-black/10 md:ring-white/20' : ''
                 }`}>
                   <img
                     src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400"
                     alt="Modern house exterior"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    className="w-full h-full object-cover md:group-hover:scale-110 transition-transform duration-500"
                   />
                 </div>
               </div>
-              <span className={`text-lg font-semibold transition-colors ${
-                selectedOption === 'logement' ? 'text-gray-900' : 'text-gray-900'
-              }`}>
-                Logement
-              </span>
-              <span className={`text-xs mt-2 transition-colors ${
-                selectedOption === 'logement' ? 'text-gray-600' : 'text-gray-500'
-              }`}>
-                Maison, appartement...
-              </span>
+              <div className="text-left md:text-center">
+                <span className={`block text-base md:text-lg font-semibold transition-colors ${
+                  selectedOption === 'logement' ? 'text-gray-900' : 'text-gray-900'
+                }`}>
+                  Logement
+                </span>
+                <span className={`block text-xs mt-0.5 md:mt-2 transition-colors ${
+                  selectedOption === 'logement' ? 'text-gray-600' : 'text-gray-500'
+                }`}>
+                  Maison, appartement...
+                </span>
+              </div>
             </button>
 
             {/* Expérience */}
             <button
               onClick={() => handleOptionClick("experience")}
-              className={`group relative flex flex-col items-center justify-center p-8 rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden ${
+              className={`group relative flex flex-row md:flex-col items-center md:justify-center p-3 md:p-8 rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden ${
                 selectedOption === 'experience'
-                  ? 'bg-white shadow-2xl scale-105'
-                  : 'bg-white hover:shadow-lg hover:scale-102 active:scale-98'
+                  ? 'bg-white shadow-md md:shadow-2xl scale-[1.02] md:scale-105 border border-gray-200 md:border-0'
+                  : 'bg-white hover:shadow-lg hover:scale-[1.01] md:hover:scale-102 active:scale-98 border border-transparent'
               }`}
             >
-              <div className="mb-5 transition-transform duration-300 group-hover:scale-105 relative">
-                <div className={`w-32 h-32 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 ${
-                  selectedOption === 'experience' ? 'ring-4 ring-white/20' : ''
+              <div className="mr-4 md:mr-0 md:mb-5 transition-transform duration-300 md:group-hover:scale-105 relative flex-shrink-0">
+                <div className={`w-16 h-16 md:w-32 md:h-32 rounded-lg md:rounded-2xl overflow-hidden shadow-sm md:shadow-lg transition-all duration-300 ${
+                  selectedOption === 'experience' ? 'ring-2 md:ring-4 ring-black/10 md:ring-white/20' : ''
                 }`}>
                   <img
                     src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400"
                     alt="Adventure experience - mountain landscape"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    className="w-full h-full object-cover md:group-hover:scale-110 transition-transform duration-500"
                   />
                 </div>
               </div>
-              <span className={`text-lg font-semibold transition-colors ${
-                selectedOption === 'experience' ? 'text-gray-900' : 'text-gray-900'
-              }`}>
-                Expérience
-              </span>
-              <span className={`text-xs mt-2 transition-colors ${
-                selectedOption === 'experience' ? 'text-gray-600' : 'text-gray-500'
-              }`}>
-                Activité, visite guidée...
-              </span>
+              <div className="text-left md:text-center">
+                <span className={`block text-base md:text-lg font-semibold transition-colors ${
+                  selectedOption === 'experience' ? 'text-gray-900' : 'text-gray-900'
+                }`}>
+                  Expérience
+                </span>
+                <span className={`block text-xs mt-0.5 md:mt-2 transition-colors ${
+                  selectedOption === 'experience' ? 'text-gray-600' : 'text-gray-500'
+                }`}>
+                  Activité, visite guidée...
+                </span>
+              </div>
             </button>
 
             {/* Service */}
             <button
               onClick={() => handleOptionClick("service")}
-              className={`group relative flex flex-col items-center justify-center p-6 md:p-8 rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden ${
+              className={`group relative flex flex-row md:flex-col items-center md:justify-center p-3 md:p-8 rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden ${
                 selectedOption === 'service'
-                  ? 'bg-white shadow-2xl scale-105'
-                  : 'bg-white hover:shadow-lg hover:scale-102 active:scale-98'
+                  ? 'bg-white shadow-md md:shadow-2xl scale-[1.02] md:scale-105 border border-gray-200 md:border-0'
+                  : 'bg-white hover:shadow-lg hover:scale-[1.01] md:hover:scale-102 active:scale-98 border border-transparent'
               }`}
             >
-              <div className="mb-5 transition-transform duration-300 group-hover:scale-105 relative">
-                <div className={`w-32 h-32 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 ${
-                  selectedOption === 'service' ? 'ring-4 ring-white/20' : ''
+              <div className="mr-4 md:mr-0 md:mb-5 transition-transform duration-300 md:group-hover:scale-105 relative flex-shrink-0">
+                <div className={`w-16 h-16 md:w-32 md:h-32 rounded-lg md:rounded-2xl overflow-hidden shadow-sm md:shadow-lg transition-all duration-300 ${
+                  selectedOption === 'service' ? 'ring-2 md:ring-4 ring-black/10 md:ring-white/20' : ''
                 }`}>
                   <img
                     src="https://images.unsplash.com/photo-1556761175-b413da4baf72?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400"
                     alt="Professional service - team collaboration"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    className="w-full h-full object-cover md:group-hover:scale-110 transition-transform duration-500"
                   />
                 </div>
               </div>
-              <span className={`text-lg font-semibold transition-colors ${
-                selectedOption === 'service' ? 'text-gray-900' : 'text-gray-900'
-              }`}>
-                Service
-              </span>
-              <span className={`text-xs mt-2 transition-colors ${
-                selectedOption === 'service' ? 'text-gray-600' : 'text-gray-500'
-              }`}>
-                Prestation, assistance...
-              </span>
+              <div className="text-left md:text-center">
+                <span className={`block text-base md:text-lg font-semibold transition-colors ${
+                  selectedOption === 'service' ? 'text-gray-900' : 'text-gray-900'
+                }`}>
+                  Service
+                </span>
+                <span className={`block text-xs mt-0.5 md:mt-2 transition-colors ${
+                  selectedOption === 'service' ? 'text-gray-600' : 'text-gray-500'
+                }`}>
+                  Prestation, assistance...
+                </span>
+              </div>
             </button>
           </div>
 
