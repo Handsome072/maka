@@ -9,9 +9,9 @@ export function ClientSecurity() {
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
 
   return (
-    <div className="px-4 sm:px-6 lg:px-12 py-6 md:py-8 w-full">
+    <div className="px-4 sm:px-6 lg:px-12 py-4 md:py-8 w-full">
       <div className="max-w-xl mx-auto">
-        <div className="flex items-center gap-3 mb-8">
+        <div className="flex items-center gap-3 mb-5 md:mb-8">
           <Link
             href="/client-space"
             className="md:hidden p-1 -ml-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -24,14 +24,14 @@ export function ClientSecurity() {
         </div>
 
         {/* Connexion Section */}
-        <div className="mb-12">
-          <h3 className="text-lg md:text-xl mb-6" style={{ fontWeight: 600, color: '#222222' }}>
+        <div className="mb-6 md:mb-12">
+          <h3 className="text-lg md:text-xl mb-4 md:mb-6" style={{ fontWeight: 600, color: '#222222' }}>
             Connexion
           </h3>
 
-          <div className="border-b border-gray-200 py-6">
-            <div className="flex items-center justify-between">
-              <div>
+          <div className="border-b border-gray-200 py-4 md:py-6">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex-1 min-w-0">
                 <h4 className="text-sm md:text-base mb-1" style={{ fontWeight: 600, color: '#222222' }}>
                   Mot de passe
                 </h4>
@@ -44,7 +44,7 @@ export function ClientSecurity() {
               {!updatingPassword && (
                 <button
                   onClick={() => setUpdatingPassword(true)}
-                  className="text-sm underline"
+                  className="text-sm underline flex-shrink-0"
                   style={{ fontWeight: 600, color: '#222222' }}
                 >
                   Mettre à jour
@@ -53,7 +53,7 @@ export function ClientSecurity() {
               {updatingPassword && (
                 <button
                   onClick={() => setUpdatingPassword(false)}
-                  className="text-sm underline"
+                  className="text-sm underline flex-shrink-0"
                   style={{ fontWeight: 600, color: '#222222' }}
                 >
                   Annuler
@@ -63,31 +63,31 @@ export function ClientSecurity() {
 
             {/* Formulaire de mise à jour du mot de passe */}
             {updatingPassword && (
-              <div className="mt-6">
-                <div className="space-y-4 mb-6">
+              <div className="mt-4 md:mt-6">
+                <div className="space-y-3 md:space-y-4 mb-4 md:mb-6">
                   <div>
-                    <label className="block text-xs md:text-sm mb-2" style={{ color: '#222222' }}>
+                    <label className="block text-xs md:text-sm mb-1.5 md:mb-2" style={{ color: '#222222', fontWeight: 500 }}>
                       Nouveau mot de passe
                     </label>
                     <input
                       type="password"
                       placeholder=""
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                      className="w-full px-3 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs md:text-sm mb-2" style={{ color: '#222222' }}>
+                    <label className="block text-xs md:text-sm mb-1.5 md:mb-2" style={{ color: '#222222', fontWeight: 500 }}>
                       Confirmer le mot de passe
                     </label>
                     <input
                       type="password"
                       placeholder=""
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                      className="w-full px-3 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                     />
                   </div>
                 </div>
                 <button
-                  className="px-6 py-2.5 bg-gray-900 text-white rounded-lg text-sm transition-colors hover:bg-gray-800"
+                  className="w-full md:w-auto px-6 py-2.5 bg-gray-900 text-white rounded-lg text-sm transition-colors hover:bg-gray-800"
                   style={{ fontWeight: 600 }}
                   onClick={() => setUpdatingPassword(false)}
                 >
@@ -99,14 +99,14 @@ export function ClientSecurity() {
         </div>
 
         {/* Compte Section */}
-        <div className="mb-12">
-          <h3 className="text-lg md:text-xl mb-6" style={{ fontWeight: 600, color: '#222222' }}>
+        <div className="mb-6 md:mb-12">
+          <h3 className="text-lg md:text-xl mb-4 md:mb-6" style={{ fontWeight: 600, color: '#222222' }}>
             Compte
           </h3>
 
-          <div className="border-b border-gray-200 py-6">
-            <div className="flex items-center justify-between">
-              <div>
+          <div className="border-b border-gray-200 py-4 md:py-6">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex-1 min-w-0">
                 <h4 className="text-sm md:text-base mb-1" style={{ fontWeight: 600, color: '#222222' }}>
                   Désactivation de votre compte
                 </h4>
@@ -116,7 +116,7 @@ export function ClientSecurity() {
               </div>
               <button
                 onClick={() => setShowDeactivateModal(true)}
-                className="text-sm underline"
+                className="text-sm underline flex-shrink-0"
                 style={{ fontWeight: 600, color: '#222222' }}
               >
                 Désactiver
@@ -129,47 +129,47 @@ export function ClientSecurity() {
       {/* Modal de désactivation du compte */}
       {showDeactivateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full relative">
+          <div className="bg-white rounded-2xl p-5 md:p-8 max-w-md w-full relative">
             <button
               onClick={() => setShowDeactivateModal(false)}
-              className="absolute top-4 right-4 text-xs underline"
+              className="absolute top-3 md:top-4 right-3 md:right-4 text-xs underline"
               style={{ fontWeight: 600, color: '#222222' }}
             >
               Quitter
             </button>
 
-            <h3 className="text-xl mb-6 pr-16" style={{ fontWeight: 600, color: '#222222' }}>
+            <h3 className="text-lg md:text-xl mb-5 md:mb-6 pr-14 md:pr-16" style={{ fontWeight: 600, color: '#222222' }}>
               Pourquoi choisissez-vous de désactiver votre compte ?
             </h3>
 
-            <div className="space-y-4 mb-6">
-              <label className="flex items-center gap-3 p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+            <div className="space-y-3 md:space-y-4 mb-5 md:mb-6">
+              <label className="flex items-center gap-3 p-3 md:p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
                 <input
                   type="radio"
                   name="deactivation-reason"
-                  className="w-5 h-5 text-gray-900 focus:ring-2 focus:ring-gray-900"
+                  className="w-4 h-4 md:w-5 md:h-5 text-gray-900 focus:ring-2 focus:ring-gray-900 flex-shrink-0"
                 />
                 <span className="text-sm" style={{ color: '#222222' }}>
                   Je n'utilise plus HOMIQIO.
                 </span>
               </label>
 
-              <label className="flex items-center gap-3 p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+              <label className="flex items-center gap-3 p-3 md:p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
                 <input
                   type="radio"
                   name="deactivation-reason"
-                  className="w-5 h-5 text-gray-900 focus:ring-2 focus:ring-gray-900"
+                  className="w-4 h-4 md:w-5 md:h-5 text-gray-900 focus:ring-2 focus:ring-gray-900 flex-shrink-0"
                 />
                 <span className="text-sm" style={{ color: '#222222' }}>
                   J'utilise un autre compte HOMIQIO.
                 </span>
               </label>
 
-              <label className="flex items-center gap-3 p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+              <label className="flex items-center gap-3 p-3 md:p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
                 <input
                   type="radio"
                   name="deactivation-reason"
-                  className="w-5 h-5 text-gray-900 focus:ring-2 focus:ring-gray-900"
+                  className="w-4 h-4 md:w-5 md:h-5 text-gray-900 focus:ring-2 focus:ring-gray-900 flex-shrink-0"
                 />
                 <span className="text-sm" style={{ color: '#222222' }}>
                   Autre
@@ -178,7 +178,7 @@ export function ClientSecurity() {
             </div>
 
             <button
-              className="w-full px-6 py-3 rounded-lg text-sm cursor-not-allowed"
+              className="w-full px-6 py-2.5 md:py-3 rounded-lg text-sm cursor-not-allowed"
               style={{
                 fontWeight: 600,
                 backgroundColor: '#EBEBEB',

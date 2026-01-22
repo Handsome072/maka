@@ -6,6 +6,7 @@ import { Header } from '@/app/components/Header';
 import { Footer } from '@/app/components/Footer';
 import { MobileNav } from '@/app/components/MobileNav';
 import { MobileSearchOverlay } from '@/app/components/MobileSearchOverlay';
+import { BecomeHostModal } from '@/app/components/BecomeHostModal';
 import { ScrollProvider, useScroll } from '@/app/hooks/ScrollContext';
 import { useAuth } from '@/app/context/AuthContext';
 import { getCurrentPageFromPathname, getNavigationPath } from '@/app/config/routes';
@@ -50,6 +51,7 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
   const { isScrolled, handleNavigateScroll } = useScroll();
   const { user } = useAuth();
   const [showMobileSearch, setShowMobileSearch] = useState(false);
+  const [showBecomeHostModal, setShowBecomeHostModal] = useState(false);
 
   // Determine current page from pathname
   const currentPage = getCurrentPageFromPathname(pathname);
@@ -168,9 +170,9 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
           {/* Mobile Navigation - visible only for S < 745 */}
       {showHeaderFooter && (
         <MobileNav
-          isScrolled={isScrolled}
           onSearchClick={() => setShowMobileSearch(true)}
           onFavoritesClick={() => { }}
+          onBecomeHostClick={() => setShowBecomeHostModal(true)}
           onLoginClick={() => {
             if (user) {
               // User is logged in, navigate to client space
@@ -183,8 +185,11 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
             }
           }}
           onProfileClick={() => {
-            handleNavigateScroll();
-            router.push('/client-space');
+            // Only navigate to client-space if on homepage
+            if (pathname === '/') {
+              handleNavigateScroll();
+              router.push('/client-space');
+            }
           }}
           onMessagesClick={() => {
             handleNavigateScroll();
@@ -205,6 +210,21 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
         onSearch={(params) => {
           handleSearch(params);
           setShowMobileSearch(false);
+        }}
+      />
+
+      {/* Become Host Modal */}
+      <BecomeHostModal
+        isOpen={showBecomeHostModal}
+        onClose={() => setShowBecomeHostModal(false)}
+        onSelectOption={(option) => {
+          if (option === 'logement') {
+            handleNavigate('host-onboarding');
+          } else if (option === 'experience') {
+            handleNavigate('experience-onboarding');
+          }
+          // Service sera implémenté plus tard
+          setShowBecomeHostModal(false);
         }}
       />
     </div>

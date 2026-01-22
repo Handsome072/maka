@@ -24,7 +24,7 @@ export function ClientSpaceHeader() {
       <header className="border-b border-gray-200">
         <div className="px-4 sm:px-6 lg:px-12 py-5">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-8">
+            <div className="flex items-center gap-2 md:gap-8">
               <button
                 onClick={() => router.push('/')}
                 className="cursor-pointer"
@@ -72,4 +72,3 @@ export function ClientSpaceHeader() {
     </>
   );
 }
-
