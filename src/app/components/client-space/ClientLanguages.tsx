@@ -14,7 +14,7 @@ export function ClientLanguages() {
           >
             <ArrowLeft className="w-6 h-6" style={{ color: '#222222' }} />
           </Link>
-          <h2 className="text-2xl md:text-3xl" style={{ fontWeight: 600, color: '#222222' }}>
+          <h2 className="text-xl md:text-3xl" style={{ fontWeight: 600, color: '#222222' }}>
             Langues et devise
           </h2>
         </div>
@@ -24,14 +24,14 @@ export function ClientLanguages() {
           <div className="border-b border-gray-200 py-6">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-base mb-2" style={{ fontWeight: 600, color: '#222222' }}>
+                <h3 className="text-sm md:text-base mb-2" style={{ fontWeight: 600, color: '#222222' }}>
                   Langue préférée
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-xs md:text-sm text-gray-600">
                   Français
                 </p>
               </div>
-              <button className="text-base underline" style={{ fontWeight: 600, color: '#222222' }}>
+              <button className="text-sm underline" style={{ fontWeight: 600, color: '#222222' }}>
                 Modifier
               </button>
             </div>
@@ -41,14 +41,14 @@ export function ClientLanguages() {
           <div className="border-b border-gray-200 py-6">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-base mb-2" style={{ fontWeight: 600, color: '#222222' }}>
+                <h3 className="text-sm md:text-base mb-2" style={{ fontWeight: 600, color: '#222222' }}>
                   Devise préférée
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-xs md:text-sm text-gray-600">
                   Euro
                 </p>
               </div>
-              <button className="text-base underline" style={{ fontWeight: 600, color: '#222222' }}>
+              <button className="text-sm underline" style={{ fontWeight: 600, color: '#222222' }}>
                 Modifier
               </button>
             </div>
@@ -58,11 +58,11 @@ export function ClientLanguages() {
           <div className="border-b border-gray-200 py-6">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-base mb-2" style={{ fontWeight: 600, color: '#222222' }}>
+                <h3 className="text-sm md:text-base mb-2" style={{ fontWeight: 600, color: '#222222' }}>
                   Fuseau horaire
                 </h3>
               </div>
-              <button className="text-base underline" style={{ fontWeight: 600, color: '#222222' }}>
+              <button className="text-sm underline" style={{ fontWeight: 600, color: '#222222' }}>
                 Modifier
               </button>
             </div>
@@ -72,4 +72,3 @@ export function ClientLanguages() {
     </div>
   );
 }
-

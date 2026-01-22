@@ -18,7 +18,7 @@ export function ClientSecurity() {
           >
             <ArrowLeft className="w-6 h-6" style={{ color: '#222222' }} />
           </Link>
-          <h2 className="text-2xl md:text-3xl" style={{ fontWeight: 600, color: '#222222' }}>
+          <h2 className="text-xl md:text-3xl" style={{ fontWeight: 600, color: '#222222' }}>
             Connexion et sécurité
           </h2>
         </div>
@@ -32,11 +32,11 @@ export function ClientSecurity() {
           <div className="border-b border-gray-200 py-6">
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="text-base mb-1" style={{ fontWeight: 600, color: '#222222' }}>
+                <h4 className="text-sm md:text-base mb-1" style={{ fontWeight: 600, color: '#222222' }}>
                   Mot de passe
                 </h4>
                 {!updatingPassword && (
-                  <p className="text-sm" style={{ color: '#C13515' }}>
+                  <p className="text-xs md:text-sm" style={{ color: '#C13515' }}>
                     Dernière mise à jour le il y a 4 heures
                   </p>
                 )}
@@ -44,7 +44,7 @@ export function ClientSecurity() {
               {!updatingPassword && (
                 <button
                   onClick={() => setUpdatingPassword(true)}
-                  className="text-base underline"
+                  className="text-sm underline"
                   style={{ fontWeight: 600, color: '#222222' }}
                 >
                   Mettre à jour
@@ -53,7 +53,7 @@ export function ClientSecurity() {
               {updatingPassword && (
                 <button
                   onClick={() => setUpdatingPassword(false)}
-                  className="text-base underline"
+                  className="text-sm underline"
                   style={{ fontWeight: 600, color: '#222222' }}
                 >
                   Annuler
@@ -66,23 +66,23 @@ export function ClientSecurity() {
               <div className="mt-6">
                 <div className="space-y-4 mb-6">
                   <div>
-                    <label className="block text-sm mb-2" style={{ color: '#222222' }}>
+                    <label className="block text-xs md:text-sm mb-2" style={{ color: '#222222' }}>
                       Nouveau mot de passe
                     </label>
                     <input
                       type="password"
                       placeholder=""
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-gray-900"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm mb-2" style={{ color: '#222222' }}>
+                    <label className="block text-xs md:text-sm mb-2" style={{ color: '#222222' }}>
                       Confirmer le mot de passe
                     </label>
                     <input
                       type="password"
                       placeholder=""
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-gray-900"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                     />
                   </div>
                 </div>
@@ -107,16 +107,16 @@ export function ClientSecurity() {
           <div className="border-b border-gray-200 py-6">
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="text-base mb-1" style={{ fontWeight: 600, color: '#222222' }}>
+                <h4 className="text-sm md:text-base mb-1" style={{ fontWeight: 600, color: '#222222' }}>
                   Désactivation de votre compte
                 </h4>
-                <p className="text-sm text-gray-600">
+                <p className="text-xs md:text-sm text-gray-600">
                   Cette action est définitive
                 </p>
               </div>
               <button
                 onClick={() => setShowDeactivateModal(true)}
-                className="text-base underline"
+                className="text-sm underline"
                 style={{ fontWeight: 600, color: '#222222' }}
               >
                 Désactiver
@@ -132,13 +132,13 @@ export function ClientSecurity() {
           <div className="bg-white rounded-2xl p-8 max-w-md w-full relative">
             <button
               onClick={() => setShowDeactivateModal(false)}
-              className="absolute top-4 right-4 text-sm underline"
+              className="absolute top-4 right-4 text-xs underline"
               style={{ fontWeight: 600, color: '#222222' }}
             >
               Quitter
             </button>
 
-            <h3 className="text-2xl mb-6 pr-16" style={{ fontWeight: 600, color: '#222222' }}>
+            <h3 className="text-xl mb-6 pr-16" style={{ fontWeight: 600, color: '#222222' }}>
               Pourquoi choisissez-vous de désactiver votre compte ?
             </h3>
 
@@ -149,7 +149,7 @@ export function ClientSecurity() {
                   name="deactivation-reason"
                   className="w-5 h-5 text-gray-900 focus:ring-2 focus:ring-gray-900"
                 />
-                <span className="text-base" style={{ color: '#222222' }}>
+                <span className="text-sm" style={{ color: '#222222' }}>
                   Je n'utilise plus HOMIQIO.
                 </span>
               </label>
@@ -160,7 +160,7 @@ export function ClientSecurity() {
                   name="deactivation-reason"
                   className="w-5 h-5 text-gray-900 focus:ring-2 focus:ring-gray-900"
                 />
-                <span className="text-base" style={{ color: '#222222' }}>
+                <span className="text-sm" style={{ color: '#222222' }}>
                   J'utilise un autre compte HOMIQIO.
                 </span>
               </label>
@@ -171,14 +171,14 @@ export function ClientSecurity() {
                   name="deactivation-reason"
                   className="w-5 h-5 text-gray-900 focus:ring-2 focus:ring-gray-900"
                 />
-                <span className="text-base" style={{ color: '#222222' }}>
+                <span className="text-sm" style={{ color: '#222222' }}>
                   Autre
                 </span>
               </label>
             </div>
 
             <button
-              className="w-full px-6 py-3 rounded-lg text-base cursor-not-allowed"
+              className="w-full px-6 py-3 rounded-lg text-sm cursor-not-allowed"
               style={{
                 fontWeight: 600,
                 backgroundColor: '#EBEBEB',
@@ -194,4 +194,3 @@ export function ClientSecurity() {
     </div>
   );
 }
-

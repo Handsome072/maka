@@ -21,24 +21,29 @@ export function ClientSpaceHeader() {
 
   return (
     <>
-      <header className="h-[73px] border-b border-gray-200 bg-white sticky top-0 z-40 hidden md:block">
-        <div className="h-full px-4 md:px-12 flex items-center justify-between max-w-[1920px] mx-auto">
-          {/* Logo */}
-          <div className="flex-shrink-0 cursor-pointer" onClick={() => router.push('/')}>
-             <Logo />
-          </div>
+      <header className="border-b border-gray-200">
+        <div className="px-4 sm:px-6 lg:px-12 py-5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-8">
+              <button
+                onClick={() => router.push('/')}
+                className="cursor-pointer"
+              >
+                <Logo className="h-10 md:h-12 w-auto" />
+              </button>
+            </div>
 
-          {/* Right Menu */}
-          <div className="flex-shrink-0">
-             <HeaderRightMenu
-                isHost={false}
-                showMenuDropdown={showMenuDropdown}
-                setShowMenuDropdown={setShowMenuDropdown}
-                onNavigate={handleNavigate}
-                onLanguageClick={() => setShowLanguageModal(true)}
-                onHostClick={() => setShowBecomeHostModal(true)}
-                onHelpClick={() => router.push('/help-center')}
-             />
+            <HeaderRightMenu
+              showMenuDropdown={showMenuDropdown}
+              setShowMenuDropdown={setShowMenuDropdown}
+              setShowLanguageModal={setShowLanguageModal}
+              setShowBecomeHostModal={setShowBecomeHostModal}
+              onAuthClick={() => router.push('/login')}
+              isHost={false}
+              onAnnoncesClick={() => handleNavigate('annonces')}
+              onMessagesClick={() => handleNavigate('messages')}
+              onClientSpaceClick={() => {}} // Déjà sur l'espace client
+            />
           </div>
         </div>
       </header>
