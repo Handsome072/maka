@@ -11,8 +11,8 @@ type AuthView = "email-entry" | "signup";
 
 export default function InscriptionPage() {
   const router = useRouter();
-  const { login } = useAuth();
-  
+  const { register, loginWithUser, error, clearError, isLoading } = useAuth();
+
   const [currentView, setCurrentView] = useState<AuthView>("email-entry");
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -23,7 +23,9 @@ export default function InscriptionPage() {
   const [receiveMarketing, setReceiveMarketing] = useState(true);
 
   const handleSocialLogin = (provider: string) => {
-    login({
+    // For now, use mock data for social login
+    // TODO: Implement real OAuth flow
+    loginWithUser({
       name: `${provider} User`,
       email: `user@${provider}.com`,
       avatar: undefined,
@@ -31,13 +33,22 @@ export default function InscriptionPage() {
     router.push("/");
   };
 
-  const handleSignupComplete = () => {
-    login({
-      name: `${firstName} ${lastName}`,
-      email: email,
-      avatar: undefined,
-    });
-    router.push("/");
+  const handleSignupComplete = async () => {
+    try {
+      clearError();
+      await register({
+        first_name: firstName,
+        last_name: lastName,
+        email: email,
+        password: password,
+        birth_date: birthDate || undefined,
+        receive_marketing: receiveMarketing,
+      });
+      // Redirect to a verification pending page or home
+      router.push("/");
+    } catch {
+      // Error is handled by context
+    }
   };
 
   const getTitle = () => {
@@ -104,6 +115,8 @@ export default function InscriptionPage() {
               setReceiveMarketing={setReceiveMarketing}
               onAccept={handleSignupComplete}
               onBack={() => setCurrentView("email-entry")}
+              isLoading={isLoading}
+              error={error}
             />
           )}
         </div>

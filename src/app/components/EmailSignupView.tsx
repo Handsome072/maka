@@ -16,8 +16,10 @@ interface EmailSignupViewProps {
   setShowPassword: (value: boolean) => void;
   receiveMarketing: boolean;
   setReceiveMarketing: (value: boolean) => void;
-  onAccept: () => void;
+  onAccept: () => void | Promise<void>;
   onBack: () => void;
+  isLoading?: boolean;
+  error?: string | null;
 }
 
 export function EmailSignupView({
@@ -36,7 +38,9 @@ export function EmailSignupView({
   receiveMarketing,
   setReceiveMarketing,
   onAccept,
-  onBack
+  onBack,
+  isLoading = false,
+  error = null,
 }: EmailSignupViewProps) {
   const [emailError, setEmailError] = useState("");
 
@@ -45,13 +49,13 @@ export function EmailSignupView({
     return emailRegex.test(email);
   };
 
-  const handleAccept = () => {
+  const handleAccept = async () => {
     if (!validateEmail(email)) {
       setEmailError("Veuillez entrer une adresse e-mail valide.");
       return;
     }
     setEmailError("");
-    onAccept();
+    await onAccept();
   };
 
   // Validate password
@@ -63,9 +67,18 @@ export function EmailSignupView({
   ] : [];
 
   const isPasswordValid = password.length >= 8;
+  const isFormValid = isPasswordValid && firstName && lastName && email;
 
   return (
     <>
+      {/* Error Display */}
+      {error && (
+        <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-lg text-sm flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+          <span>{error}</span>
+        </div>
+      )}
+
       {/* Official Name Label */}
       <div className="mb-8">
         <p className="text-base mb-4" style={{ fontWeight: 600 }}>
@@ -215,14 +228,14 @@ export function EmailSignupView({
       {/* Accept Button */}
       <button
         onClick={handleAccept}
-        disabled={!isPasswordValid}
+        disabled={!isFormValid || isLoading}
         className="w-full rounded-xl text-white text-base py-4 hover:opacity-90 transition-opacity mb-6 disabled:opacity-50 disabled:cursor-not-allowed"
         style={{
           backgroundColor: "#000000",
           fontWeight: 600,
         }}
       >
-        Accepter et continuer
+        {isLoading ? "Inscription en cours..." : "Accepter et continuer"}
       </button>
 
       {/* Marketing Checkbox */}
