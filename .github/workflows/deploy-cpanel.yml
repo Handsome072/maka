@@ -1,4 +1,4 @@
-name: Deploy to cPanel (Standalone)
+name: Deploy to cPanel (Static Export)
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy:
-    name: Build and Deploy Standalone Node.js App to cPanel
+    name: Build and Deploy Static Files to cPanel
     runs-on: ubuntu-latest
 
     steps:
@@ -24,150 +24,101 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Configure Next.js for standalone build
-        run: |
-          cat > next.config.ts << 'EOF'
-          import type { NextConfig } from 'next';
-
-          const nextConfig: NextConfig = {
-            output: 'standalone',
-            images: {
-              unoptimized: true,
-            },
-            trailingSlash: true,
-            reactStrictMode: true,
-            typescript: {
-              ignoreBuildErrors: true,
-            },
-            eslint: {
-              ignoreDuringBuilds: true,
-            },
-            productionBrowserSourceMaps: false,
-          };
-
-          export default nextConfig;
-          EOF
-          echo "Next.js configured for standalone build"
-
-      - name: Build Next.js (standalone)
+      - name: Build Next.js (static export)
         run: npm run build
         env:
           NODE_ENV: production
 
-      - name: Prepare standalone deployment
+      - name: Prepare static files for deployment
         env:
           BACKEND_API_URL: ${{ secrets.BACKEND_API_URL || 'https://api.homiqio.com' }}
         run: |
-          echo "Preparing standalone Node.js app for deployment..."
+          echo "Preparing static files for deployment..."
 
-          mkdir -p deploy
-
-          # Copy entire standalone folder (includes server.js and .next folder)
-          cp -r .next/standalone/* deploy/
-
-          # Ensure .next directory exists in deploy
-          mkdir -p deploy/.next
-
-          # Copy static files to .next/static
-          cp -r .next/static deploy/.next/static/
-
-          # Copy BUILD_ID and other necessary files
-          if [ -f .next/BUILD_ID ]; then
-            cp .next/BUILD_ID deploy/.next/BUILD_ID
+          # Verify out directory exists (created by next build with output: 'export')
+          if [ ! -d "out" ]; then
+            echo "Error: 'out' directory not found. Build may have failed."
+            exit 1
           fi
 
-          # Ensure all .next subdirectories from standalone are preserved
-          if [ -d .next/standalone/.next ]; then
-            cp -r .next/standalone/.next/* deploy/.next/ 2>/dev/null || true
+          # Create .env file in out directory for reference
+          echo "Creating .env file for server reference..."
+          echo "NEXT_PUBLIC_API_URL=${BACKEND_API_URL:-https://api.homiqio.com}" > out/.env
+          echo "NODE_ENV=production" >> out/.env
+          echo "✓ Created .env file in out directory"
+          echo ""
+          echo ".env file contents:"
+          cat out/.env
+
+          # Copy .htaccess from public if it exists
+          if [ -f "public/.htaccess" ]; then
+            cp public/.htaccess out/.htaccess
+            echo "Copied .htaccess to out directory"
           fi
 
-          # Copy public folder
-          cp -r public deploy/ 2>/dev/null || true
-
-          # Create .env file for server
-          echo "Creating .env file for server deployment..."
-          echo "NEXT_PUBLIC_API_URL=${BACKEND_API_URL:-https://api.homiqio.com}" > deploy/.env
-          echo "NODE_ENV=production" >> deploy/.env
-          echo "HOSTNAME=0.0.0.0" >> deploy/.env
-          echo "PORT=3001" >> deploy/.env
-          echo "✓ Created .env file"
-
-          # Remove node_modules from deploy (cPanel manages this)
-          find deploy -type d -name "node_modules" -exec rm -rf {} + 2>/dev/null || true
-          echo "Removed node_modules folders"
-
-          # Update package.json start script
-          node -e "
-            const fs = require('fs');
-            const pkg = JSON.parse(fs.readFileSync('deploy/package.json', 'utf8'));
-            pkg.scripts = pkg.scripts || {};
-            pkg.scripts.start = 'node server.js';
-            fs.writeFileSync('deploy/package.json', JSON.stringify(pkg, null, 2));
-          "
-          echo "Updated package.json start script to use server.js"
-
-          # Set proper permissions
-          chmod -R 755 deploy/
-          find deploy -type f -exec chmod 644 {} \;
-          chmod 755 deploy/server.js 2>/dev/null || true
-          chmod 644 deploy/.env 2>/dev/null || true
-          chmod -R 755 deploy/.next/ 2>/dev/null || true
-          find deploy/.next -type f -exec chmod 644 {} \; 2>/dev/null || true
-
+          # Set proper permissions for all files
+          chmod -R 755 out/
+          find out -type f -exec chmod 644 {} \;
           echo "Set file permissions"
 
-          # Verification
+          # Final verification
           echo ""
-          echo "=== Standalone build verification ==="
+          echo "=== Static build verification ==="
           echo "Total files to deploy:"
-          find deploy -type f | wc -l
+          find out -type f | wc -l
           echo ""
           echo "Build size:"
-          du -sh deploy/
+          du -sh out/
           echo ""
           echo "Key files:"
-          ls -la deploy/ | head -20
+          ls -la out/ | head -20
           echo ""
-          if [ -f "deploy/server.js" ]; then
-            echo "✓ server.js found"
+          if [ -f "out/.htaccess" ]; then
+            echo "✓ .htaccess file found"
+          else
+            echo "⚠ Warning: .htaccess file not found"
           fi
-          if [ -f "deploy/.env" ]; then
-            echo "✓ .env file found"
+          if [ -f "out/.env" ]; then
+            echo "✓ .env file found (deployed to server)"
+          else
+            echo "⚠ Warning: .env file not found"
           fi
 
       - name: Install lftp
         run: sudo apt-get update && sudo apt-get install -y lftp
 
-      - name: Deploy standalone app to cPanel via lftp
+      - name: Deploy static files to cPanel via lftp
         env:
           FTP_USER: ${{ secrets.FTP_USERNAME }}
           FTP_PASS: ${{ secrets.FTP_PASSWORD }}
           FTP_HOST: ${{ secrets.FTP_SERVER }}
           REMOTE_DIR: ${{ secrets.REMOTE_DIR }}
         run: |
-          echo "Deploying standalone Node.js app via lftp..."
+          echo "Deploying static files via lftp..."
           lftp -u "$FTP_USER","$FTP_PASS" "$FTP_HOST" << EOF
           set ftp:ssl-allow no
           set net:timeout 60
           set net:max-retries 3
-          mirror -R --verbose --delete --exclude node_modules/ ./deploy/ $REMOTE_DIR
+          mirror -R --verbose --delete ./out/ $REMOTE_DIR
           quit
           EOF
           echo "FTP upload complete"
 
       - name: Deployment complete
         run: |
-          echo "✅ Standalone Node.js app deployment completed!"
+          echo "✅ Static files deployment completed!"
           echo ""
-          echo "The standalone app has been deployed to: ${{ secrets.REMOTE_DIR }}"
+          echo "The static files have been deployed to: ${{ secrets.REMOTE_DIR }}"
           echo ""
-          echo "IMPORTANT: Configure cPanel Node.js App:"
-          echo "  1. Go to cPanel → Node.js App"
-          echo "  2. Set startup file: server.js"
-          echo "  3. Verify Application root points to: ${{ secrets.REMOTE_DIR }}"
-          echo "  4. Check Environment Variables - PORT should be set by cPanel"
-          echo "  5. Click 'Run NPM Install'"
-          echo "  6. Click 'Start App'"
+          echo "No Node.js server needed - files are served directly by Apache/cPanel"
           echo ""
-          echo "Note: .env file with backend configuration has been created"
+          echo "To verify deployment:"
+          echo "  1. Check your website URL"
+          echo "  2. Verify .htaccess is working (check URL rewriting)"
+          echo ""
+          echo "If you need to check files on server:"
+          echo "  cd ${{ secrets.REMOTE_DIR }}"
+          echo "  ls -la"
+          echo ""
+          echo "Note: .env file with backend configuration has been deployed for reference"
           exit 0
