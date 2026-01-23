@@ -87,7 +87,10 @@ export default function InscriptionPage() {
                 <span className="text-sm text-gray-500">
                   Déjà un compte ?{" "}
                   <button
-                    onClick={() => router.push("/login")}
+                    onClick={() => {
+                      clearError();
+                      router.push("/login");
+                    }}
                     className="text-black font-semibold hover:underline decoration-2 underline-offset-2 transition-all"
                   >
                     Se connecter

@@ -119,10 +119,10 @@ export function EmailSignupView({
           Date de naissance
         </p>
         <input
-          type="text"
+          type="date"
           value={birthDate}
           onChange={(e) => setBirthDate(e.target.value)}
-          placeholder="Date de naissance"
+          max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}
           className="w-full h-16 rounded-xl border border-gray-300 px-4 text-base focus:outline-none focus:border-gray-900 transition-colors"
         />
         <p className="text-sm text-gray-600 leading-relaxed mt-3">
