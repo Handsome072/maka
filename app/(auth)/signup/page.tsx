@@ -18,8 +18,6 @@ export default function InscriptionPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [birthDate, setBirthDate] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [receiveMarketing, setReceiveMarketing] = useState(true);
 
   const handleSocialLogin = (provider: string) => {
@@ -36,16 +34,15 @@ export default function InscriptionPage() {
   const handleSignupComplete = async () => {
     try {
       clearError();
-      await register({
+      const userEmail = await register({
         first_name: firstName,
         last_name: lastName,
         email: email,
-        password: password,
         birth_date: birthDate || undefined,
         receive_marketing: receiveMarketing,
       });
-      // Redirect to a verification pending page or home
-      router.push("/");
+      // Redirect to check-email page with the email
+      router.push(`/check-email?email=${encodeURIComponent(userEmail)}`);
     } catch {
       // Error is handled by context
     }
@@ -110,10 +107,6 @@ export default function InscriptionPage() {
               setBirthDate={setBirthDate}
               email={email}
               setEmail={setEmail}
-              password={password}
-              setPassword={setPassword}
-              showPassword={showPassword}
-              setShowPassword={setShowPassword}
               receiveMarketing={receiveMarketing}
               setReceiveMarketing={setReceiveMarketing}
               onAccept={handleSignupComplete}

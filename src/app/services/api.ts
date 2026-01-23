@@ -87,6 +87,17 @@ export interface AuthResponse {
   token: string;
 }
 
+export interface RegisterResponse {
+  message: string;
+  email: string;
+}
+
+export interface VerifyEmailResponse {
+  message: string;
+  password_setup_token: string;
+  user: User;
+}
+
 export interface MessageResponse {
   message: string;
 }
@@ -98,22 +109,20 @@ export interface UserResponse {
 // Auth API functions
 export const authApi = {
   /**
-   * Register a new user
+   * Register a new user (email-first flow - no password)
    */
   register: async (data: {
     first_name: string;
     last_name: string;
     email: string;
-    password: string;
     birth_date?: string;
     receive_marketing?: boolean;
-  }): Promise<AuthResponse> => {
-    const response = await apiFetch<AuthResponse>('/auth/register', {
+  }): Promise<RegisterResponse> => {
+    return apiFetch<RegisterResponse>('/auth/register', {
       method: 'POST',
       body: JSON.stringify(data),
     });
-    setAuthToken(response.token);
-    return response;
+    // Note: No token is returned - user must verify email first
   },
 
   /**
@@ -147,10 +156,22 @@ export const authApi = {
   },
 
   /**
-   * Verify email with token
+   * Verify email with token - returns password setup token
    */
-  verifyEmail: async (token: string): Promise<{ message: string; user: User }> => {
-    return apiFetch<{ message: string; user: User }>(`/auth/verify-email/${token}`);
+  verifyEmail: async (token: string): Promise<VerifyEmailResponse> => {
+    return apiFetch<VerifyEmailResponse>(`/auth/verify-email/${token}`);
+  },
+
+  /**
+   * Set password after email verification
+   */
+  setPassword: async (token: string, password: string, password_confirmation: string): Promise<AuthResponse> => {
+    const response = await apiFetch<AuthResponse>('/auth/set-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, password, password_confirmation }),
+    });
+    setAuthToken(response.token);
+    return response;
   },
 
   /**
