@@ -4,32 +4,54 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/context/AuthContext";
 import { StandardLoginView } from "@/app/components/StandardLoginView";
+import { authApi } from "@/app/services/api";
 
 type AuthView = "login" | "forgot-password";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login } = useAuth();
-  
+  const { login, loginWithUser, error, clearError, isLoading } = useAuth();
+
   const [currentView, setCurrentView] = useState<AuthView>("login");
   const [email, setEmail] = useState("");
+  const [forgotPasswordMessage, setForgotPasswordMessage] = useState("");
+  const [forgotPasswordLoading, setForgotPasswordLoading] = useState(false);
 
-  const handleLogin = (userEmail: string) => {
-    login({
-      name: "User",
-      email: userEmail,
-      avatar: undefined,
-    });
-    router.push("/");
+  const handleLogin = async (userEmail: string, password: string) => {
+    try {
+      clearError();
+      await login(userEmail, password);
+      router.push("/");
+    } catch {
+      // Error is handled by context
+    }
   };
 
   const handleGoogleLogin = () => {
-    login({
+    // For now, use mock data for social login
+    // TODO: Implement real OAuth flow
+    loginWithUser({
       name: "Google User",
       email: "user@gmail.com",
       avatar: undefined,
     });
     router.push("/");
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) return;
+
+    setForgotPasswordLoading(true);
+    setForgotPasswordMessage("");
+
+    try {
+      const response = await authApi.forgotPassword(email);
+      setForgotPasswordMessage(response.message);
+    } catch (err: any) {
+      setForgotPasswordMessage(err.message || "Une erreur est survenue");
+    } finally {
+      setForgotPasswordLoading(false);
+    }
   };
 
   const getTitle = () => {
@@ -53,12 +75,17 @@ export default function LoginPage() {
               onGoogleLogin={handleGoogleLogin}
               onSignupClick={() => router.push("/signup")}
               onForgotPasswordClick={() => setCurrentView("forgot-password")}
+              isLoading={isLoading}
+              error={error}
             />
           ) : (
             <>
               <div className="flex items-center mb-8">
                 <button
-                  onClick={() => setCurrentView("login")}
+                  onClick={() => {
+                    setCurrentView("login");
+                    setForgotPasswordMessage("");
+                  }}
                   className="mr-4 p-1 hover:bg-gray-100 rounded-lg transition-colors"
                   aria-label="Retour"
                 >
@@ -85,19 +112,26 @@ export default function LoginPage() {
                     />
                   </div>
 
+                  {forgotPasswordMessage && (
+                    <div className="mb-4 p-3 bg-blue-50 text-blue-800 rounded-lg text-sm">
+                      {forgotPasswordMessage}
+                    </div>
+                  )}
+
                   <button
-                    onClick={() => {
-                      console.log("Password reset for:", email);
-                      setCurrentView("login");
-                    }}
-                    className="w-full bg-black text-white h-12 rounded-xl font-medium text-base hover:bg-gray-800 transition-all transform active:scale-[0.98] mb-6"
+                    onClick={handleForgotPassword}
+                    disabled={forgotPasswordLoading || !email}
+                    className="w-full bg-black text-white h-12 rounded-xl font-medium text-base hover:bg-gray-800 transition-all transform active:scale-[0.98] mb-6 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Envoyer le lien
+                    {forgotPasswordLoading ? "Envoi en cours..." : "Envoyer le lien"}
                   </button>
 
                   <div className="text-center">
                     <button
-                      onClick={() => setCurrentView("login")}
+                      onClick={() => {
+                        setCurrentView("login");
+                        setForgotPasswordMessage("");
+                      }}
                       className="text-sm text-black font-semibold hover:underline decoration-2 underline-offset-2 transition-all"
                     >
                       Retour à la connexion

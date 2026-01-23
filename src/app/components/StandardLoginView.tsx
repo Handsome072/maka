@@ -2,10 +2,12 @@ import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
 interface StandardLoginViewProps {
-    onLogin: (email: string) => void;
+    onLogin: (email: string, password: string) => void | Promise<void>;
     onGoogleLogin: () => void;
     onSignupClick: () => void;
     onForgotPasswordClick: () => void;
+    isLoading?: boolean;
+    error?: string | null;
 }
 
 export function StandardLoginView({
@@ -13,6 +15,8 @@ export function StandardLoginView({
     onGoogleLogin,
     onSignupClick,
     onForgotPasswordClick,
+    isLoading = false,
+    error = null,
 }: StandardLoginViewProps) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -24,15 +28,15 @@ export function StandardLoginView({
         return emailRegex.test(email);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!validateEmail(email)) {
             setEmailError("Veuillez entrer une adresse e-mail valide.");
             return;
         }
         setEmailError("");
-        
+
         if (email && password) {
-            onLogin(email);
+            await onLogin(email, password);
         }
     };
 
@@ -46,6 +50,13 @@ export function StandardLoginView({
             <p className="text-gray-500 text-base mb-8">
                 Veuillez entrer vos informations
             </p>
+
+            {error && (
+                <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-lg text-sm flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+                    <span>{error}</span>
+                </div>
+            )}
 
             <div className="space-y-5 mb-6">
                 <div>
@@ -116,9 +127,10 @@ export function StandardLoginView({
 
             <button
                 onClick={handleSubmit}
-                className="w-full bg-black text-white h-12 rounded-xl font-medium text-base hover:bg-gray-800 transition-all transform active:scale-[0.98] mb-4"
+                disabled={isLoading}
+                className="w-full bg-black text-white h-12 rounded-xl font-medium text-base hover:bg-gray-800 transition-all transform active:scale-[0.98] mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-                Se connecter
+                {isLoading ? "Connexion en cours..." : "Se connecter"}
             </button>
 
             <button
