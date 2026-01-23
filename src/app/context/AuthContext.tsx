@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
-import { authApi, User as ApiUser, getAuthToken, removeAuthToken } from '../services/api';
+import { authApi, User as ApiUser, getAuthToken, removeAuthToken, setAuthToken } from '../services/api';
 
 // User interface that includes both old format (for backward compatibility) and new API format
 export interface User {
@@ -24,10 +24,10 @@ interface AuthContextType {
     first_name: string;
     last_name: string;
     email: string;
-    password: string;
     birth_date?: string;
     receive_marketing?: boolean;
-  }) => Promise<void>;
+  }) => Promise<string>; // Returns email for redirect
+  setPassword: (token: string, password: string, passwordConfirmation: string) => Promise<void>;
   logout: () => Promise<void>;
   clearError: () => void;
   refreshUser: () => Promise<void>;
@@ -111,19 +111,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     first_name: string;
     last_name: string;
     email: string;
-    password: string;
     birth_date?: string;
     receive_marketing?: boolean;
-  }) => {
+  }): Promise<string> => {
     setIsLoading(true);
     setError(null);
     try {
       const response = await authApi.register(data);
+      // Do NOT log in the user - they need to verify email first
+      return response.email;
+    } catch (err: any) {
+      const message = err.data?.message || err.message || 'Erreur lors de l\'inscription';
+      setError(message);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const setPassword = useCallback(async (token: string, password: string, passwordConfirmation: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await authApi.setPassword(token, password, passwordConfirmation);
       const userData = apiUserToUser(response.user);
       setUser(userData);
       localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
     } catch (err: any) {
-      const message = err.data?.message || err.message || 'Erreur lors de l\'inscription';
+      const message = err.data?.message || err.message || 'Erreur lors de la définition du mot de passe';
       setError(message);
       throw err;
     } finally {
@@ -169,6 +184,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         loginWithUser,
         register,
+        setPassword,
         logout,
         clearError,
         refreshUser,

@@ -1,4 +1,3 @@
-import { ChevronLeft, Eye, EyeOff } from 'lucide-react';
 import { useState } from "react";
 
 interface EmailSignupViewProps {
@@ -10,10 +9,6 @@ interface EmailSignupViewProps {
   setBirthDate: (value: string) => void;
   email: string;
   setEmail: (value: string) => void;
-  password: string;
-  setPassword: (value: string) => void;
-  showPassword: boolean;
-  setShowPassword: (value: boolean) => void;
   receiveMarketing: boolean;
   setReceiveMarketing: (value: boolean) => void;
   onAccept: () => void | Promise<void>;
@@ -31,10 +26,6 @@ export function EmailSignupView({
   setBirthDate,
   email,
   setEmail,
-  password,
-  setPassword,
-  showPassword,
-  setShowPassword,
   receiveMarketing,
   setReceiveMarketing,
   onAccept,
@@ -58,16 +49,7 @@ export function EmailSignupView({
     await onAccept();
   };
 
-  // Validate password
-  const passwordErrors = password ? [
-    { valid: password.length >= 8, text: "Au moins 8 caractères" },
-    { valid: !/\s/.test(password), text: "Ne doit pas contenir votre nom ni votre adresse e-mail" },
-    { valid: /[A-Z]/.test(password) || /[0-9]/.test(password) || /[^a-zA-Z0-9]/.test(password), text: "Faiblesse du mot de passe : faible" },
-    { valid: /[0-9]/.test(password) || /[^a-zA-Z0-9]/.test(password), text: "Contient un chiffre ou un symbole" }
-  ] : [];
-
-  const isPasswordValid = password.length >= 8;
-  const isFormValid = isPasswordValid && firstName && lastName && email;
+  const isFormValid = firstName && lastName && email;
 
   return (
     <>
@@ -156,50 +138,9 @@ export function EmailSignupView({
           </div>
         )}
         <p className="text-sm text-gray-600 leading-relaxed mt-3">
-          Nous vous enverrons les confirmations et les reçus de voyage par e-mail.
+          Nous vous enverrons un e-mail de vérification pour confirmer votre adresse.
         </p>
       </div>
-
-      {/* Password */}
-      <div className="mb-3">
-        <p className="text-base mb-4" style={{ fontWeight: 600 }}>
-          Mot de passe
-        </p>
-
-        <div className="relative">
-          <input
-            type={showPassword ? "text" : "password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Mot de passe"
-            className="w-full h-16 rounded-xl border border-gray-300 px-4 pr-24 text-base focus:outline-none focus:border-gray-900 transition-colors"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-900 hover:text-gray-600 text-sm underline"
-            style={{ fontWeight: 600 }}
-          >
-            {showPassword ? 'Masquer' : 'Afficher'}
-          </button>
-        </div>
-      </div>
-
-      {/* Password Validation Errors */}
-      {password && passwordErrors.length > 0 && (
-        <div className="mb-8 space-y-2">
-          {passwordErrors.map((error, index) => (
-            <div key={index} className="flex items-center gap-3">
-              <span className={`text-sm font-semibold ${error.valid ? 'text-green-600' : 'text-red-600'}`}>
-                {error.valid ? '✓' : '✕'}
-              </span>
-              <span className={`text-sm ${error.valid ? 'text-green-600 line-through' : 'text-red-600'}`}>
-                {error.text}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
 
       {/* Terms and Conditions */}
       <div className="mb-6 p-4 bg-gray-50 rounded-xl">

@@ -1,19 +1,20 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { CheckCircle, XCircle, Loader2, ArrowRight } from "lucide-react";
 import { authApi } from "@/app/services/api";
 
 type VerificationState = "loading" | "success" | "error";
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
-  
+
   const [state, setState] = useState<VerificationState>("loading");
   const [message, setMessage] = useState("");
+  const [passwordSetupToken, setPasswordSetupToken] = useState<string | null>(null);
 
   useEffect(() => {
     const verifyEmail = async () => {
@@ -27,9 +28,13 @@ export default function VerifyEmailPage() {
         const response = await authApi.verifyEmail(token);
         setState("success");
         setMessage(response.message || "Votre e-mail a été vérifié avec succès !");
-      } catch (error) {
+        // Store the password setup token for redirect
+        setPasswordSetupToken(response.password_setup_token);
+      } catch (error: any) {
         setState("error");
-        if (error instanceof Error) {
+        if (error?.data?.message) {
+          setMessage(error.data.message);
+        } else if (error instanceof Error) {
           setMessage(error.message);
         } else {
           setMessage("Une erreur est survenue lors de la vérification de votre e-mail.");
@@ -39,6 +44,12 @@ export default function VerifyEmailPage() {
 
     verifyEmail();
   }, [token]);
+
+  const handleContinue = () => {
+    if (passwordSetupToken) {
+      router.push(`/set-password?token=${encodeURIComponent(passwordSetupToken)}`);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
@@ -65,11 +76,15 @@ export default function VerifyEmailPage() {
               <p className="text-gray-500 mb-8">
                 {message}
               </p>
+              <p className="text-gray-600 mb-6">
+                Il ne vous reste plus qu'à créer votre mot de passe pour terminer votre inscription.
+              </p>
               <button
-                onClick={() => router.push("/login")}
-                className="w-full bg-black text-white h-12 rounded-xl font-medium text-base hover:bg-gray-800 transition-all"
+                onClick={handleContinue}
+                className="w-full bg-black text-white h-12 rounded-xl font-medium text-base hover:bg-gray-800 transition-all flex items-center justify-center gap-2"
               >
-                Se connecter
+                Créer mon mot de passe
+                <ArrowRight className="w-5 h-5" />
               </button>
             </>
           )}
@@ -102,6 +117,18 @@ export default function VerifyEmailPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+      </div>
+    }>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }
 
