@@ -73,7 +73,10 @@ export default function LoginPage() {
             <StandardLoginView
               onLogin={handleLogin}
               onGoogleLogin={handleGoogleLogin}
-              onSignupClick={() => router.push("/signup")}
+              onSignupClick={() => {
+                clearError();
+                router.push("/signup");
+              }}
               onForgotPasswordClick={() => setCurrentView("forgot-password")}
               isLoading={isLoading}
               error={error}
