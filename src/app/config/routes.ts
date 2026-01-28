@@ -8,7 +8,7 @@ export const ROUTES = {
   HOME: '/',
   EXPERIENCES: '/experiences',
   SERVICES: '/services',
-  
+
   // Pages utilisateur
   MESSAGES: '/messages',
   CLIENT_SPACE: '/client-space',
@@ -18,21 +18,21 @@ export const ROUTES = {
   CLIENT_SPACE_SECURITY: '/client-space/security',
   CLIENT_SPACE_NOTIFICATIONS: '/client-space/notifications',
   CLIENT_SPACE_LANGUAGES: '/client-space/languages',
-  
+
   // Pages hôte
   HOST_ONBOARDING: '/host-onboarding',
   ANNONCES: '/annonces',
   EXPERIENCE_ONBOARDING: '/experience-onboarding',
-  
+
   // Pages détails (dynamiques)
   PROPERTY: (id: string = '1') => `/property/${id}`,
   EXPERIENCE: (id: string = '1') => `/experience/${id}`,
   SERVICE: (id: string = '1') => `/service/${id}`,
-  
+
   // Pages de réservation
   BOOKING: '/booking',
   SEARCH: '/search',
-  
+
   // Vérifications
   IDENTITY_VERIFICATION: '/identity-verification',
   PHONE_VERIFICATION: '/phone-verification',
@@ -45,6 +45,23 @@ export const ROUTES = {
   TERMS: '/terms',
   HOW_IT_WORKS: '/how-it-works',
   COMPANY_INFO: '/company-info',
+
+  // Pages Admin
+  ADMIN_DASHBOARD: '/admin',
+  ADMIN_CLIENTS: '/admin/clients',
+  ADMIN_HOSTS: '/admin/hosts',
+  ADMIN_PROPERTIES: '/admin/properties',
+  ADMIN_RESERVATIONS: '/admin/reservations',
+  ADMIN_PAYMENTS: '/admin/payments',
+  ADMIN_REFUNDS: '/admin/refunds',
+  ADMIN_DISPUTES: '/admin/disputes',
+  ADMIN_FRAUD: '/admin/fraud',
+  ADMIN_REVIEWS: '/admin/reviews',
+  ADMIN_CMS: '/admin/cms',
+  ADMIN_NOTIFICATIONS: '/admin/notifications',
+  ADMIN_COMMISSIONS: '/admin/commissions',
+  ADMIN_SECURITY: '/admin/security',
+  ADMIN_TEAMS: '/admin/teams',
 } as const;
 
 /**

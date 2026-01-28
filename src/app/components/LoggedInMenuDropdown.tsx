@@ -1,4 +1,4 @@
-import { Heart, Globe, MessageSquare, User, HelpCircle } from 'lucide-react';
+import { Heart, Globe, MessageSquare, User, HelpCircle, Shield } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
@@ -81,115 +81,125 @@ export function LoggedInMenuDropdown({ isOpen, onClose, onBecomeHostClick, onLan
         }
       `}</style>
       <div className="py-2">
-      {/* Favoris */}
-      <button className="w-full px-8 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3 text-left">
-        <Heart className="w-5 h-5 text-gray-700" />
-        <span className="text-sm" style={{ fontWeight: 600 }}>Favoris</span>
-      </button>
+        {/* Favoris */}
+        <button className="w-full px-8 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3 text-left">
+          <Heart className="w-5 h-5 text-gray-700" />
+          <span className="text-sm" style={{ fontWeight: 600 }}>Favoris</span>
+        </button>
 
-      {/* Voyages */}
-      <button className="w-full px-8 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3 text-left">
-        <svg className="w-5 h-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-        </svg>
-        <span className="text-sm" style={{ fontWeight: 600 }}>Voyages</span>
-      </button>
+        {/* Voyages */}
+        <button className="w-full px-8 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3 text-left">
+          <svg className="w-5 h-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          </svg>
+          <span className="text-sm" style={{ fontWeight: 600 }}>Voyages</span>
+        </button>
 
-      {/* Messages */}
-      <Link
-        href={ROUTES.MESSAGES}
-        className="w-full px-8 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3 text-left"
-        onClick={onClose}
-      >
-        <MessageSquare className="w-5 h-5 text-gray-700" />
-        <span className="text-sm" style={{ fontWeight: 600 }}>Messages</span>
-      </Link>
-
-      {/* Espace client */}
-      <Link
-        href={ROUTES.CLIENT_SPACE}
-        className="w-full px-8 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3 text-left"
-        onClick={onClose}
-      >
-        <User className="w-5 h-5 text-gray-700" />
-        <span className="text-sm" style={{ fontWeight: 600 }}>Espace client</span>
-      </Link>
-
-      {/* Divider */}
-      <div className="w-[240px] h-px bg-gray-200 my-2 mx-auto"></div>
-
-
-      {/* Langues et devise */}
-      <button className="w-full px-8 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3 text-left" onClick={onLanguageClick}>
-        <Globe className="w-5 h-5 text-gray-700" />
-        <span className="text-sm">Langues et devise</span>
-      </button>
-
-      {/* Centre d'aide */}
-      <button className="w-full px-8 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3 text-left">
-        <HelpCircle className="w-5 h-5 text-gray-700" />
-        <span className="text-sm">Centre d'aide</span>
-      </button>
-
-      {/* Divider */}
-      <div className="w-[240px] h-px bg-gray-200 my-2 mx-auto"></div>
-
-      {/* Devenir hôte / Gérer mes annonces */}
-      {isHost ? (
+        {/* Messages */}
         <Link
-          href={ROUTES.ANNONCES}
-          className="w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left block"
+          href={ROUTES.MESSAGES}
+          className="w-full px-8 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3 text-left"
           onClick={onClose}
         >
-          <div className="flex items-start justify-between gap-3 px-4">
-            <div className="flex-1">
-              <div className="text-sm mb-1" style={{ fontWeight: 600 }}>
-                Gérer mes annonces
-              </div>
-              <div className="text-xs text-gray-600 leading-relaxed">
-                Accédez à votre espace hôte pour gérer vos annonces.
-              </div>
-            </div>
-            <img
-              src={hostIllustration}
-              alt="Illustration hôte"
-              className="w-12 h-12 object-contain flex-shrink-0"
-            />
-          </div>
+          <MessageSquare className="w-5 h-5 text-gray-700" />
+          <span className="text-sm" style={{ fontWeight: 600 }}>Messages</span>
         </Link>
-      ) : (
-        <button
-          className="w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left"
-          onClick={onBecomeHostClick}
+
+        {/* Espace client */}
+        <Link
+          href={ROUTES.CLIENT_SPACE}
+          className="w-full px-8 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3 text-left"
+          onClick={onClose}
         >
-          <div className="flex items-start justify-between gap-3 px-4">
-            <div className="flex-1">
-              <div className="text-sm mb-1" style={{ fontWeight: 600 }}>
-                Devenir hôte
-              </div>
-              <div className="text-xs text-gray-600 leading-relaxed">
-                Devenir hôte et gagner des revenus supplémentaires, c'est facile.
-              </div>
-            </div>
-            <img
-              src={hostIllustration}
-              alt="Illustration hôte"
-              className="w-12 h-12 object-contain flex-shrink-0"
-            />
-          </div>
+          <User className="w-5 h-5 text-gray-700" />
+          <span className="text-sm" style={{ fontWeight: 600 }}>Espace client</span>
+        </Link>
+
+        {/* Admin */}
+        <Link
+          href={ROUTES.ADMIN_DASHBOARD}
+          className="w-full px-8 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3 text-left"
+          onClick={onClose}
+        >
+          <Shield className="w-5 h-5 text-gray-700" />
+          <span className="text-sm" style={{ fontWeight: 600 }}>Admin</span>
+        </Link>
+
+        {/* Divider */}
+        <div className="w-[240px] h-px bg-gray-200 my-2 mx-auto"></div>
+
+
+        {/* Langues et devise */}
+        <button className="w-full px-8 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3 text-left" onClick={onLanguageClick}>
+          <Globe className="w-5 h-5 text-gray-700" />
+          <span className="text-sm">Langues et devise</span>
         </button>
-      )}
 
-      {/* Divider */}
-      <div className="w-[240px] h-px bg-gray-200 my-2 mx-auto"></div>
+        {/* Centre d'aide */}
+        <button className="w-full px-8 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3 text-left">
+          <HelpCircle className="w-5 h-5 text-gray-700" />
+          <span className="text-sm">Centre d'aide</span>
+        </button>
 
-      {/* Déconnexion */}
-      <button
-        className="w-full px-8 py-3 hover:bg-gray-50 transition-colors text-left"
-        onClick={handleLogout}
-      >
-        <span className="text-sm">Déconnexion</span>
-      </button>
+        {/* Divider */}
+        <div className="w-[240px] h-px bg-gray-200 my-2 mx-auto"></div>
+
+        {/* Devenir hôte / Gérer mes annonces */}
+        {isHost ? (
+          <Link
+            href={ROUTES.ANNONCES}
+            className="w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left block"
+            onClick={onClose}
+          >
+            <div className="flex items-start justify-between gap-3 px-4">
+              <div className="flex-1">
+                <div className="text-sm mb-1" style={{ fontWeight: 600 }}>
+                  Gérer mes annonces
+                </div>
+                <div className="text-xs text-gray-600 leading-relaxed">
+                  Accédez à votre espace hôte pour gérer vos annonces.
+                </div>
+              </div>
+              <img
+                src={hostIllustration}
+                alt="Illustration hôte"
+                className="w-12 h-12 object-contain flex-shrink-0"
+              />
+            </div>
+          </Link>
+        ) : (
+          <button
+            className="w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left"
+            onClick={onBecomeHostClick}
+          >
+            <div className="flex items-start justify-between gap-3 px-4">
+              <div className="flex-1">
+                <div className="text-sm mb-1" style={{ fontWeight: 600 }}>
+                  Devenir hôte
+                </div>
+                <div className="text-xs text-gray-600 leading-relaxed">
+                  Devenir hôte et gagner des revenus supplémentaires, c'est facile.
+                </div>
+              </div>
+              <img
+                src={hostIllustration}
+                alt="Illustration hôte"
+                className="w-12 h-12 object-contain flex-shrink-0"
+              />
+            </div>
+          </button>
+        )}
+
+        {/* Divider */}
+        <div className="w-[240px] h-px bg-gray-200 my-2 mx-auto"></div>
+
+        {/* Déconnexion */}
+        <button
+          className="w-full px-8 py-3 hover:bg-gray-50 transition-colors text-left"
+          onClick={handleLogout}
+        >
+          <span className="text-sm">Déconnexion</span>
+        </button>
       </div>
     </div>
   );
