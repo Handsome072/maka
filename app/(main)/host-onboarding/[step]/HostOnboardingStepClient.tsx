@@ -12,38 +12,38 @@ export default function HostOnboardingStepClient() {
   const params = useParams();
   const step = params.step as string;
 
-  // Valid step types
+  // Valid step types (from Intégration site Airbnb)
   const validSteps = [
-    'intro',
-    'step1',
-    'property-type',
-    'space-type',
-    'location',
-    'confirm-address',
-    'pin-location',
-    'guest-info',
-    'step2-intro',
+    'acceptance-condition',
+    'reservation-type',
+    'address-location',
+    'capacity-details',
+    'client-expectations',
     'amenities',
-    'photos',
-    'photo-upload',
-    'photo-review',
-    'title',
-    'highlights',
-    'description',
-    'step3-intro',
-    'reservation-settings',
+    'summary-review-1',
+    'host-photo',
+    'chalet-photos',
+    'chalet-description',
+    'summary-review-2',
+    'permissions',
+    'reservation-mode',
     'pricing',
-    'weekend-pricing',
-    'discounts',
-    'security',
-    'final-details',
-    'verification-points'
+    'fees',
+    'calendar',
+    'cancellation-policy',
+    'laws-taxes',
+    'local-laws',
+    'guest-arrival',
+    'phone-number',
+    'summary-review-3',
+    'verification',
+    'signature'
   ];
 
-  // If step is not valid, redirect to intro
+  // If step is not valid, redirect to acceptance-condition
   const initialStep = validSteps.includes(step) 
     ? step as any
-    : 'intro';
+    : 'acceptance-condition';
 
   // Handle navigation
   const handleNavigate = (page: string, data?: any) => {
