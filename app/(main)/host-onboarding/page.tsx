@@ -12,7 +12,7 @@ export default function HostOnboardingPage() {
 
   useEffect(() => {
     // Redirect to the intro step
-    router.replace('/host-onboarding/intro');
+    router.replace('/host-onboarding/acceptance-condition');
   }, [router]);
 
   return null;
