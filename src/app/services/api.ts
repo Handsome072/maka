@@ -201,3 +201,88 @@ export const authApi = {
   },
 };
 
+// ─── Listing Types ────────────────────────────────────────────────────────────
+
+export interface ListingPhoto {
+  id: number;
+  url: string;
+  order: number;
+}
+
+export interface Listing {
+  id: number;
+  status: 'draft' | 'pending' | 'active' | 'rejected' | 'archived';
+  title: string | null;
+  subtitle: string | null;
+  city: string | null;
+  province: string;
+  country: string;
+  space_type: string | null;
+  capacity: number;
+  bathrooms: number;
+  base_price: string | null;
+  currency: string;
+  cancellation_policy: string | null;
+  reservation_mode: string;
+  host_photo_url: string | null;
+  photos: ListingPhoto[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ListingsResponse {
+  listings: Listing[];
+}
+
+export interface ListingResponse {
+  message: string;
+  listing: Listing;
+}
+
+// ─── Listings API ─────────────────────────────────────────────────────────────
+
+export const listingsApi = {
+  /**
+   * Create a new listing (full 24-step onboarding payload + base64 photos)
+   */
+  createListing: async (data: Record<string, unknown>): Promise<ListingResponse> => {
+    return apiFetch<ListingResponse>('/listings', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  /**
+   * Get all listings for the authenticated user
+   */
+  getMyListings: async (): Promise<ListingsResponse> => {
+    return apiFetch<ListingsResponse>('/listings');
+  },
+
+  /**
+   * Get a single listing by ID (must belong to authenticated user)
+   */
+  getListing: async (id: number): Promise<{ listing: Listing }> => {
+    return apiFetch<{ listing: Listing }>(`/listings/${id}`);
+  },
+
+  /**
+   * Update an existing listing
+   */
+  updateListing: async (id: number, data: Record<string, unknown>): Promise<ListingResponse> => {
+    return apiFetch<ListingResponse>(`/listings/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  },
+
+  /**
+   * Delete a listing (also deletes photos from storage)
+   */
+  deleteListing: async (id: number): Promise<MessageResponse> => {
+    return apiFetch<MessageResponse>(`/listings/${id}`, {
+      method: 'DELETE',
+    });
+  },
+};
+
