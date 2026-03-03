@@ -184,13 +184,30 @@ export const authApi = {
   },
 
   /**
-   * Request password reset
+   * Request password reset — sends email via Mailpit (local) or SMTP (production)
    */
   forgotPassword: async (email: string): Promise<MessageResponse> => {
     return apiFetch<MessageResponse>('/auth/forgot-password', {
       method: 'POST',
       body: JSON.stringify({ email }),
     });
+  },
+
+  /**
+   * Reset password using token from the reset email
+   */
+  resetPassword: async (
+    email: string,
+    token: string,
+    password: string,
+    password_confirmation: string
+  ): Promise<AuthResponse> => {
+    const response = await apiFetch<AuthResponse>('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ email, token, password, password_confirmation }),
+    });
+    setAuthToken(response.token);
+    return response;
   },
 
   /**
