@@ -23,9 +23,39 @@ import { IdentityVerification } from './pages/IdentityVerification';
 import { EditListing } from './pages/EditListing';
 import { PhoneVerification } from './pages/PhoneVerification';
 import { ExperienceOnboarding } from './pages/ExperienceOnboarding';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { getListingData, saveListingData } from './utils/listingStorage';
+import { listingsApi } from './services/api';
 import { Search } from 'lucide-react';
+
+/** Runs INSIDE <AuthProvider> — syncs isHost from the API once the user is authenticated */
+function HostStatusSync({ onHostDetected }: { onHostDetected: () => void }) {
+  const { isAuthenticated, isLoading } = useAuth();
+  const cbRef = useRef(onHostDetected);
+  cbRef.current = onHostDetected;
+
+  const fetchAndDetect = useRef(() => {
+    listingsApi.getMyListings()
+      .then(res => {
+        const hasPending = res.listings.some(l => l.status === 'pending');
+        if (hasPending) cbRef.current();
+      })
+      .catch(() => {});
+  });
+
+  // 1. Try immediately on mount if a token already exists in localStorage
+  useEffect(() => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('homiqio_auth_token') : null;
+    if (token) fetchAndDetect.current();
+  }, []);
+
+  // 2. Also try once AuthContext finishes loading and confirms authentication
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) fetchAndDetect.current();
+  }, [isAuthenticated, isLoading]);
+
+  return null;
+}
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<'logements' | 'experiences' | 'services' | 'property-details' | 'experience-details' | 'service-details' | 'booking-request' | 'search-results' | 'client-space' | 'messages' | 'privacy' | 'terms' | 'how-it-works' | 'company-info' | 'host-onboarding' | 'annonces' | 'verification-points' | 'identity-verification' | 'edit-listing' | 'phone-verification' | 'experience-onboarding' | 'login'>('logements');
@@ -50,6 +80,7 @@ export default function App() {
 
     loadPersistedData();
   }, []);
+
 
   // Persist data whenever it changes
   useEffect(() => {
@@ -176,6 +207,7 @@ export default function App() {
 
   return (
     <AuthProvider>
+      <HostStatusSync onHostDetected={() => setIsHost(true)} />
       <div className="min-h-screen bg-white pb-16 md:pb-0">
         {currentPage !== 'experience-details' && currentPage !== 'service-details' && currentPage !== 'booking-request' && currentPage !== 'search-results' && currentPage !== 'client-space' && currentPage !== 'messages' && currentPage !== 'privacy' && currentPage !== 'terms' && currentPage !== 'how-it-works' && currentPage !== 'company-info' && currentPage !== 'host-onboarding' && currentPage !== 'annonces' && currentPage !== 'verification-points' && currentPage !== 'identity-verification' && currentPage !== 'edit-listing' && currentPage !== 'phone-verification' && currentPage !== 'experience-onboarding' && currentPage !== 'login' && (
           <>
@@ -251,6 +283,7 @@ export default function App() {
                 onSearch={handleSearch}
                 onClientSpaceClick={() => handleNavigate('client-space')}
                 isHost={isHost}
+                onBecomeHostDirect={() => handleNavigate('host-onboarding')}
               />
             </div>
           </>

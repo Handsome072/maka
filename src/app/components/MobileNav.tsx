@@ -8,6 +8,7 @@ interface MobileNavProps {
     onProfileClick?: () => void;
     onMessagesClick?: () => void;
     onBecomeHostClick?: () => void;
+    isHost?: boolean;
 }
 
 export function MobileNav({
@@ -16,7 +17,8 @@ export function MobileNav({
     onLoginClick,
     onProfileClick,
     onMessagesClick,
-    onBecomeHostClick
+    onBecomeHostClick,
+    isHost,
 }: MobileNavProps) {
     const { user } = useAuth();
 
@@ -52,7 +54,7 @@ export function MobileNav({
                     className="flex flex-col items-center gap-1 px-1 py-2 text-gray-500 hover:text-gray-700 transition-colors min-w-[60px]"
                 >
                     <PlusCircle className="w-5 h-5" />
-                    <span className="text-[10px] font-medium truncate w-full text-center">Devenir hôte</span>
+                    <span className="text-[10px] font-medium truncate w-full text-center">{isHost ? 'Mode hôte' : 'Devenir hôte'}</span>
                 </button>
 
                 {user ? (
