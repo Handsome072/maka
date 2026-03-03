@@ -9,6 +9,7 @@ import { MobileSearchOverlay } from '@/app/components/MobileSearchOverlay';
 import { BecomeHostModal } from '@/app/components/BecomeHostModal';
 import { ScrollProvider, useScroll } from '@/app/hooks/ScrollContext';
 import { useAuth } from '@/app/context/AuthContext';
+import { useHostStatus } from '@/app/hooks/useHostStatus';
 import { getCurrentPageFromPathname, getNavigationPath } from '@/app/config/routes';
 import { Search } from 'lucide-react';
 
@@ -50,6 +51,7 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
   const headerRef = useRef<HTMLElement>(null);
   const { isScrolled, handleNavigateScroll } = useScroll();
   const { user } = useAuth();
+  const { isHost } = useHostStatus();
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [showBecomeHostModal, setShowBecomeHostModal] = useState(false);
 
@@ -160,6 +162,11 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
                 handleNavigateScroll();
                 router.push('/client-space');
               }}
+              isHost={isHost}
+              onBecomeHostDirect={() => {
+                handleNavigateScroll();
+                router.push('/host-onboarding/acceptance-condition');
+              }}
             />
           </div>
         </>
@@ -172,7 +179,15 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
         <MobileNav
           onSearchClick={() => setShowMobileSearch(true)}
           onFavoritesClick={() => { }}
-          onBecomeHostClick={() => setShowBecomeHostModal(true)}
+          isHost={isHost}
+          onBecomeHostClick={() => {
+            handleNavigateScroll();
+            if (isHost) {
+              router.push('/annonces');
+            } else {
+              router.push('/host-onboarding/acceptance-condition');
+            }
+          }}
           onLoginClick={() => {
             if (user) {
               // User is logged in, navigate to client space

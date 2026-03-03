@@ -13,6 +13,7 @@ interface HeaderRightMenuProps {
   onMessagesClick?: () => void;
   isHost?: boolean;
   onAnnoncesClick?: () => void;
+  onBecomeHostDirect?: () => void;
 }
 
 export function HeaderRightMenu({
@@ -25,6 +26,7 @@ export function HeaderRightMenu({
   onMessagesClick,
   isHost,
   onAnnoncesClick,
+  onBecomeHostDirect,
 }: HeaderRightMenuProps) {
   const { user } = useAuth();
 
@@ -37,6 +39,8 @@ export function HeaderRightMenu({
         onClick={() => {
           if (isHost && onAnnoncesClick) {
             onAnnoncesClick();
+          } else if (onBecomeHostDirect) {
+            onBecomeHostDirect();
           } else {
             setShowBecomeHostModal(true);
           }
@@ -83,6 +87,7 @@ export function HeaderRightMenu({
               setShowMenuDropdown(false);
               setShowBecomeHostModal(true);
             }}
+            onBecomeHostDirect={onBecomeHostDirect ? () => { setShowMenuDropdown(false); onBecomeHostDirect(); } : undefined}
             onLanguageClick={() => {
               setShowMenuDropdown(false);
               setShowLanguageModal(true);

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { Logo } from '@/app/components/Logo';
 import {
   Check, ChevronRight, Minus, Plus, Pencil, X, ChevronDown, ChevronUp, ChevronLeft,
@@ -6,7 +6,7 @@ import {
   Warehouse, Sunset, Flame, Ship, Fuel, Sparkles, Utensils, DoorOpen,
   Trees, Bed, Umbrella, Eye, CloudRain, Snowflake, Armchair,
   Wifi, Tv, Car, Bike, UtensilsCrossed, Coffee, Baby, Accessibility, Ban,
-  MapPin, Upload, Info, Circle, HelpCircle, Calendar as CalendarIcon, ExternalLink, Globe, Lock, User,
+  MapPin, Upload, Info, HelpCircle, Calendar as CalendarIcon, User,
   Loader2
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -511,7 +511,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
       setCurrentStep(stepsList[prevIndex]);
       window.scrollTo(0, 0);
     } else {
-      onNavigate('logements');
+      onNavigate('annonces');
     }
   };
 
@@ -662,15 +662,34 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
           ))}
         </div>
 
-        <div className="flex items-center gap-4">
-          <button 
-            className="px-4 py-2 text-sm font-medium text-[#222222] border border-gray-200 rounded-full hover:bg-gray-50 transition-colors hidden sm:block"
-            onClick={() => onNavigate('logements')}
+        <div className="flex items-center gap-3">
+          <nav className="hidden md:flex items-center gap-1">
+            <button
+              className="px-3 py-2 text-sm font-medium text-[#717171] hover:text-[#222222] hover:bg-gray-100 rounded-lg transition-colors"
+              onClick={() => onNavigate('annonces')}
+            >
+              Mes annonces
+            </button>
+            <button
+              className="px-3 py-2 text-sm font-medium text-[#717171] hover:text-[#222222] hover:bg-gray-100 rounded-lg transition-colors"
+              onClick={() => onNavigate('messages')}
+            >
+              Messages
+            </button>
+            <button
+              className="px-3 py-2 text-sm font-medium text-[#717171] hover:text-[#222222] hover:bg-gray-100 rounded-lg transition-colors"
+              onClick={() => onNavigate('client-space')}
+            >
+              Mon compte
+            </button>
+          </nav>
+          <button
+            className="px-4 py-2 text-sm font-medium text-[#222222] border border-gray-200 rounded-full hover:bg-gray-50 transition-colors"
+            onClick={() => onNavigate('annonces')}
           >
             <span className="mr-2">✓</span>
             Enregistrer et quitter
           </button>
-          <button className="text-sm font-medium text-[#222222]">En</button>
         </div>
 
         <div className="absolute bottom-0 left-0 h-[2px] bg-black transition-all duration-300 ease-out" style={{ width: `${progressPercentage}%` }} />

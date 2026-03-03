@@ -16,7 +16,10 @@ export default function AnnoncesPage() {
     if (page === 'home' || page === 'logements') {
       router.push('/');
     } else if (page === 'edit-listing') {
-      router.push('/annonces/edit');
+      const params = new URLSearchParams();
+      if (data?.listingId) params.set('id', data.listingId);
+      if (data?.listingTitle) params.set('title', data.listingTitle);
+      router.push(`/annonces/edit?${params.toString()}`);
     } else if (page === 'identity-verification') {
       router.push('/identity-verification');
     } else {

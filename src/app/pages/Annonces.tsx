@@ -3,7 +3,7 @@ import { BecomeHostModal } from '@/app/components/BecomeHostModal';
 import { listingsApi, Listing } from '@/app/services/api';
 
 interface AnnoncesProps {
-  onNavigate: (page: string) => void;
+  onNavigate: (page: string, data?: Record<string, any>) => void;
   showConfirmationPopup?: boolean;
   onConfirmationComplete?: () => void;
   uploadedPhotos?: string[];
@@ -92,8 +92,17 @@ export function Annonces({
             <button className="text-sm border-b-2 border-gray-900 pb-3" style={{ fontWeight: 600, color: '#222222' }}>
               Annonces
             </button>
-            <button className="text-sm hover:opacity-70 transition-opacity" style={{ fontWeight: 600, color: '#717171' }}>
+            <button className="text-sm hover:opacity-70 transition-opacity" style={{ fontWeight: 600, color: '#717171' }}
+              onClick={() => onNavigate('messages')}
+            >
               Messages
+            </button>
+            <button
+              className="text-sm hover:opacity-70 transition-opacity"
+              style={{ fontWeight: 600, color: '#717171' }}
+              onClick={() => onNavigate('host-onboarding')}
+            >
+              Publier une annonce
             </button>
           </nav>
           <button
@@ -253,7 +262,7 @@ export function Annonces({
               <button
                 onClick={() => {
                   setShowListingDetailsPopup(false);
-                  onNavigate('edit-listing');
+                  onNavigate('edit-listing', { listingId: selectedListing.id, listingTitle: selectedListing.title ?? '' });
                 }}
                 className="w-full px-6 py-3 rounded-lg text-white text-base mb-3 hover:opacity-90 transition-opacity"
                 style={{ fontWeight: 600, backgroundColor: '#222222' }}

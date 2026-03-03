@@ -19,10 +19,11 @@ interface HeaderProps {
   onSearch: (params: any) => void;
   onClientSpaceClick?: () => void;
   isHost?: boolean;
+  onBecomeHostDirect?: () => void;
 }
 
 export const Header = forwardRef<HTMLElement, HeaderProps>(
-  ({ currentPage, onNavigate, isScrolled, onSearch, onClientSpaceClick, isHost }, ref) => {
+  ({ currentPage, onNavigate, isScrolled, onSearch, onClientSpaceClick, isHost, onBecomeHostDirect }, ref) => {
     const [showSearchOverlay, setShowSearchOverlay] =
       useState(false);
     const [showLanguageModal, setShowLanguageModal] =
@@ -109,6 +110,7 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
                 onMessagesClick={() => onNavigate('messages')}
                 isHost={isHost}
                 onAnnoncesClick={() => onNavigate('annonces')}
+                onBecomeHostDirect={onBecomeHostDirect}
               />
             </div>
           </div>

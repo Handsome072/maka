@@ -16,9 +16,10 @@ interface LoggedInMenuDropdownProps {
   onMessagesClick?: () => void;
   isHost?: boolean;
   onAnnoncesClick?: () => void;
+  onBecomeHostDirect?: () => void;
 }
 
-export function LoggedInMenuDropdown({ isOpen, onClose, onBecomeHostClick, onLanguageClick, onClientSpaceClick, onMessagesClick, isHost, onAnnoncesClick }: LoggedInMenuDropdownProps) {
+export function LoggedInMenuDropdown({ isOpen, onClose, onBecomeHostClick, onLanguageClick, onClientSpaceClick, onMessagesClick, isHost, onAnnoncesClick, onBecomeHostDirect }: LoggedInMenuDropdownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { logout } = useAuth();
 
@@ -170,7 +171,7 @@ export function LoggedInMenuDropdown({ isOpen, onClose, onBecomeHostClick, onLan
         ) : (
           <button
             className="w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left"
-            onClick={onBecomeHostClick}
+            onClick={onBecomeHostDirect ?? onBecomeHostClick}
           >
             <div className="flex items-start justify-between gap-3 px-4">
               <div className="flex-1">
