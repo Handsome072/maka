@@ -1,16 +1,14 @@
 import { useState, useRef, useEffect } from 'react';
 import { Logo } from '@/app/components/Logo';
-import {
+import { 
   Check, ChevronRight, Minus, Plus, Pencil, X, ChevronDown, ChevronUp, ChevronLeft,
-  Waves, Anchor, LifeBuoy, Thermometer, Activity, Fish, Droplets,
-  Warehouse, Sunset, Flame, Ship, Fuel, Sparkles, Utensils, DoorOpen,
+  Waves, Anchor, LifeBuoy, Thermometer, Activity, Fish, Droplets, 
+  Warehouse, Sunset, Flame, Ship, Fuel, Sparkles, Utensils, DoorOpen, 
   Trees, Bed, Umbrella, Eye, CloudRain, Snowflake, Armchair,
   Wifi, Tv, Car, Bike, UtensilsCrossed, Coffee, Baby, Accessibility, Ban,
-  MapPin, Upload, Info, Circle, HelpCircle, Calendar as CalendarIcon, ExternalLink, Globe, Lock, User,
-  Loader2
+  MapPin, Upload, Info, Circle, HelpCircle, Calendar as CalendarIcon, ExternalLink, Globe, Lock, User
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { listingsApi } from '@/app/services/api';
 
 // Import images
 const summaryChaletImg = "https://images.unsplash.com/photo-1685475512320-eede8aea2b95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBsdXh1cnklMjBjaGFsZXQlMjBleHRlcmlvciUyMGdyZWVuJTIwbmF0dXJlfGVufDF8fHx8MTc3MDk5NTg1M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
@@ -380,10 +378,6 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
   const [signatureName, setSignatureName] = useState('');
   const [isSigned, setIsSigned] = useState(false);
 
-  // Submission state
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-
   // -- MODAL STATE --
   const [editingItem, setEditingItem] = useState<{ item: Bedroom, type: 'bedroom' | 'openArea' } | null>(null);
 
@@ -412,85 +406,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
     { number: 3, label: "Préparez l'accueil des invités" }
   ];
 
-  const buildListingPayload = () => ({
-    rental_frequency: rentalFrequency,
-    space_type:       spaceType,
-    full_address:     addressData.fullAddress,
-    street:           addressData.address,
-    city:             addressData.city,
-    postal_code:      addressData.postalCode,
-    mrc:              addressData.mrc,
-    county:           addressData.county,
-    province:         addressData.province,
-    country:          addressData.country,
-    capacity:         capacityData.capacity,
-    adults:           capacityData.adults,
-    bathrooms:        capacityData.bathrooms,
-    bedrooms_data:    bedrooms,
-    open_areas_data:  openAreas,
-    amenities:        selectedAmenities,
-    expectations:     expectations,
-    host_photo:       hostPhoto,
-    chalet_photos:    chaletPhotos,
-    title:            descriptionData.title,
-    subtitle:         descriptionData.subtitle,
-    description:      descriptionData.description,
-    about_chalet:     descriptionData.aboutChalet,
-    host_availability: descriptionData.hostAvailability,
-    neighborhood:     descriptionData.neighborhood,
-    transport:        descriptionData.transport,
-    other_info:       descriptionData.otherInfo,
-    permissions:      permissions,
-    reservation_mode: reservationMode,
-    arrival_time:     arrivalTime,
-    departure_time:   departureTime,
-    min_age:          parseInt(minAge) || 18,
-    min_stay:         minStay,
-    max_stay:         maxStay === 'Aucun maximum' ? null : maxStay,
-    arrival_days:     arrivalDays,
-    departure_days:   departureDays,
-    currency:         currency,
-    base_price:       parseFloat(pricing.base) || 0,
-    weekend_price:    pricing.weekend ? parseFloat(pricing.weekend) : null,
-    weekly_price:     pricing.weekly  ? parseFloat(pricing.weekly)  : null,
-    monthly_price:    pricing.monthly ? parseFloat(pricing.monthly) : null,
-    cleaning_fee:     parseFloat(fees.cleaning) || 0,
-    security_deposit: parseFloat(fees.security) || 0,
-    extra_guest_fee:  extraGuestFee ? parseFloat(extraGuestFee) : null,
-    pet_fee:          petFee        ? parseFloat(petFee)        : null,
-    cancellation_policy: cancellationPolicy,
-    tax_registration: taxRegistration,
-    accepted_local_laws: acceptedLocalLaws,
-    wifi_speed:       guestArrival.internetSpeed,
-    has_wifi:         guestArrival.hasWifi,
-    checkin_method:   guestArrival.checkinMethod,
-    checkin_instructions: guestArrival.instructions,
-    phone_number:     phoneNumber,
-    country_code:     countryCode,
-    signature_name:   signatureName,
-    signed:           true,
-  });
-
-  const submitListing = async () => {
-    setIsSubmitting(true);
-    setSubmitError(null);
-    try {
-      const payload = buildListingPayload();
-      await listingsApi.createListing(payload as Record<string, unknown>);
-      toast.success("Annonce soumise avec succès ! Elle sera examinée par notre équipe.");
-      if (onCompleteOnboarding) onCompleteOnboarding();
-    } catch (error: any) {
-      const message = error?.message || 'Une erreur est survenue. Veuillez réessayer.';
-      setSubmitError(message);
-      toast.error(message);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   const handleNext = () => {
     const nextIndex = currentStepIndex + 1;
-
+    
     // Handle Phone Step Modal Trigger
     if (currentStep === 'phone-number') {
       setIsSmsModalOpen(true);
@@ -501,7 +419,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
       setCurrentStep(stepsList[nextIndex]);
       window.scrollTo(0, 0);
     } else {
-      submitListing();
+      if (onCompleteOnboarding) onCompleteOnboarding();
+      else toast.success("Inscription terminée !");
     }
   };
 
@@ -2198,26 +2117,16 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
                 >
                   Retour
                 </button>
-                <button
+                <button 
                   onClick={handleNext}
-                  disabled={!isSigned || !signatureName || isSubmitting}
-                  className={`w-full py-4 rounded-full font-bold text-lg text-white transition-all flex items-center justify-center gap-2 ${
-                    !isSigned || !signatureName || isSubmitting ? 'bg-gray-300 cursor-not-allowed' : 'bg-black hover:opacity-90'
+                  disabled={!isSigned || !signatureName}
+                  className={`w-full py-4 rounded-full font-bold text-lg text-white transition-all ${
+                    !isSigned || !signatureName ? 'bg-gray-300 cursor-not-allowed' : 'bg-black hover:opacity-90'
                   }`}
                 >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      Envoi en cours...
-                    </>
-                  ) : (
-                    'Soumettre votre annonce'
-                  )}
+                  Soumettre votre annonce
                 </button>
              </div>
-             {submitError && (
-               <p className="text-red-500 text-sm text-center mt-3">{submitError}</p>
-             )}
           </div>
         )}
 

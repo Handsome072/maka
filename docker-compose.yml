@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # ─────────────────────────────────────
+  # MODE DÉVELOPPEMENT  (npm run dev)
+  # Accès : http://localhost:3000
+  # Commande : docker compose --profile dev up
+  # ─────────────────────────────────────
+  app-dev:
+    image: node:20-alpine
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - node_modules_cache:/app/node_modules
+    command: sh -c "npm install && npm run dev"
+    environment:
+      - NEXT_PUBLIC_API_URL=https://api.homiqio.com/api
+      - WATCHPACK_POLLING=true   # hot-reload dans Docker
+    profiles:
+      - dev
+
+  # ─────────────────────────────────────
+  # MODE PRODUCTION  (build + Nginx)
+  # Accès : http://localhost:8080
+  # Commande : docker compose --profile prod up --build
+  # ─────────────────────────────────────
+  app-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    profiles:
+      - prod
+
+volumes:
+  node_modules_cache:

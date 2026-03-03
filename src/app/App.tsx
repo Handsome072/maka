@@ -259,7 +259,7 @@ export default function App() {
         {currentPage === 'logements' && <Home isScrolled={isScrolled} onPropertyClick={() => handleNavigate('property-details')} onSearch={handleSearch} />}
         {currentPage === 'experiences' && <Experiences isScrolled={isScrolled} onExperienceClick={() => handleNavigate('experience-details')} />}
         {currentPage === 'services' && <Services isScrolled={isScrolled} onServiceClick={() => handleNavigate('service-details')} />}
-        {currentPage === 'property-details' && <PropertyDetails isScrolled={isScrolled} onBack={handleBackToHome} onBook={(data) => handleNavigate('booking-request', data)} onSearch={handleSearch} />}
+        {currentPage === 'property-details' && <PropertyDetails onBack={handleBackToHome} onBook={(data) => handleNavigate('booking-request', data)} />}
         {currentPage === 'experience-details' && <ExperienceDetails onBack={handleBackToExperiences} />}
         {currentPage === 'service-details' && <ServiceDetails onBack={handleBackToServices} />}
         {currentPage === 'booking-request' && <BookingRequest onBack={handleBackToPropertyDetails} bookingData={bookingData} />}
@@ -272,7 +272,7 @@ export default function App() {
         {currentPage === 'company-info' && <CompanyInfo onNavigate={handleNavigate} />}
         {currentPage === 'host-onboarding' && <HostOnboarding onNavigate={handleNavigate} onCompleteOnboarding={() => setIsHost(true)} />}
         {currentPage === 'annonces' && <Annonces onNavigate={handleNavigate} showConfirmationPopup={showConfirmationPopup} onConfirmationComplete={() => setShowConfirmationPopup(false)} uploadedPhotos={uploadedPhotos} listingTitle={listingTitle} />}
-        {currentPage === 'verification-points' && <HostOnboarding onNavigate={handleNavigate} initialStep="verification-points" />}
+        {currentPage === 'verification-points' && <HostOnboarding onNavigate={handleNavigate} initialStep="verification" />}
         {currentPage === 'identity-verification' && <IdentityVerification onNavigate={handleNavigate} listingTitle={listingTitle} />}
         {currentPage === 'edit-listing' && <EditListing onNavigate={handleNavigate} uploadedPhotos={uploadedPhotos} listingTitle={listingTitle} />}
         {currentPage === 'phone-verification' && <PhoneVerification onNavigate={handleNavigate} />}
