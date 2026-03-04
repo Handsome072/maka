@@ -662,27 +662,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
           ))}
         </div>
 
-        <div className="flex items-center gap-3">
-          <nav className="hidden md:flex items-center gap-1">
-            <button
-              className="px-3 py-2 text-sm font-medium text-[#717171] hover:text-[#222222] hover:bg-gray-100 rounded-lg transition-colors"
-              onClick={() => onNavigate('annonces')}
-            >
-              Mes annonces
-            </button>
-            <button
-              className="px-3 py-2 text-sm font-medium text-[#717171] hover:text-[#222222] hover:bg-gray-100 rounded-lg transition-colors"
-              onClick={() => onNavigate('messages')}
-            >
-              Messages
-            </button>
-            <button
-              className="px-3 py-2 text-sm font-medium text-[#717171] hover:text-[#222222] hover:bg-gray-100 rounded-lg transition-colors"
-              onClick={() => onNavigate('client-space')}
-            >
-              Mon compte
-            </button>
-          </nav>
+        <div className="flex items-center">
           <button
             className="px-4 py-2 text-sm font-medium text-[#222222] border border-gray-200 rounded-full hover:bg-gray-50 transition-colors"
             onClick={() => onNavigate('annonces')}
@@ -696,7 +676,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 pt-32 pb-40 px-6 md:px-12 max-w-7xl mx-auto w-full animate-in fade-in duration-500">
+      <main className="flex-1 pt-32 pb-24 px-6 md:px-12 max-w-7xl mx-auto w-full animate-in fade-in duration-500">
         
         {currentStep === 'acceptance-condition' && (
           <div className="max-w-4xl mx-auto space-y-8">
@@ -2244,7 +2224,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
 
       {/* Footer Navigation */}
       {!currentStep.includes('summary-review') && currentStep !== 'signature' && (
-        <footer className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-6 md:px-12 z-50">
+        <footer className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 py-3 px-6 md:px-12 z-50">
            <div className="max-w-4xl mx-auto w-full flex items-center justify-between">
               {currentStep !== 'acceptance-condition' && (
                  <button 
@@ -2270,7 +2250,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
       )}
 
       {currentStep.includes('summary-review') && (
-         <footer className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-6 md:px-12 z-50">
+         <footer className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 py-3 px-6 md:px-12 z-50">
             <div className="max-w-4xl mx-auto w-full flex items-center justify-between">
                <button 
                 onClick={handleBack}
