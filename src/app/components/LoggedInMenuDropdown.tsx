@@ -1,4 +1,4 @@
-import { Heart, Globe, MessageSquare, User, HelpCircle, Shield } from 'lucide-react';
+import { Heart, Globe, MessageSquare, User, HelpCircle } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
@@ -114,16 +114,6 @@ export function LoggedInMenuDropdown({ isOpen, onClose, onBecomeHostClick, onLan
         >
           <User className="w-5 h-5 text-gray-700" />
           <span className="text-sm" style={{ fontWeight: 600 }}>Espace client</span>
-        </Link>
-
-        {/* Admin */}
-        <Link
-          href={ROUTES.ADMIN_DASHBOARD}
-          className="w-full px-8 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3 text-left"
-          onClick={onClose}
-        >
-          <Shield className="w-5 h-5 text-gray-700" />
-          <span className="text-sm" style={{ fontWeight: 600 }}>Admin</span>
         </Link>
 
         {/* Divider */}

@@ -76,6 +76,7 @@ export interface User {
   first_name: string;
   last_name: string;
   email: string;
+  role?: string;
   email_verified: boolean;
   birth_date?: string;
   receive_marketing?: boolean;

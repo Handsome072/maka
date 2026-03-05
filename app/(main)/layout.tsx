@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Header } from '@/app/components/Header';
 import { Footer } from '@/app/components/Footer';
@@ -50,10 +50,17 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const headerRef = useRef<HTMLElement>(null);
   const { isScrolled, handleNavigateScroll } = useScroll();
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { isHost } = useHostStatus();
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [showBecomeHostModal, setShowBecomeHostModal] = useState(false);
+
+  // Redirect admin users to /admin if they try to access non-admin pages
+  useEffect(() => {
+    if (isAdmin && pathname && !pathname.startsWith('/admin')) {
+      router.replace('/admin');
+    }
+  }, [isAdmin, pathname, router]);
 
   // Determine current page from pathname
   const currentPage = getCurrentPageFromPathname(pathname);

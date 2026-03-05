@@ -20,8 +20,8 @@ export default function LoginPage() {
   const handleLogin = async (userEmail: string, password: string) => {
     try {
       clearError();
-      await login(userEmail, password);
-      router.push("/");
+      const user = await login(userEmail, password);
+      router.push(user.role === 'admin' ? '/admin' : '/');
     } catch {
       // Error is handled by context
     }

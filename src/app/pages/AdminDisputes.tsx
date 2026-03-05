@@ -150,7 +150,7 @@ export function AdminDisputes() {
                 <input
                   type="text"
                   placeholder="Rechercher une réclamation..."
-                  className="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5EC6D8] text-sm"
+                  className="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111827] text-sm"
                 />
               </div>
             </div>
@@ -166,11 +166,11 @@ export function AdminDisputes() {
                   key={dispute.id}
                   onClick={() => setSelectedDispute(index)}
                   className={`w-full p-5 border-b border-gray-200 hover:bg-gray-50 transition-colors text-left ${
-                    selectedDispute === index ? 'bg-[#5EC6D8]/10 border-l-4 border-l-[#5EC6D8]' : 'border-l-4 border-l-transparent'
+                    selectedDispute === index ? 'bg-[#111827]/10 border-l-4 border-l-[#111827]' : 'border-l-4 border-l-transparent'
                   }`}
                 >
                   <div className="flex items-start gap-3 mb-3">
-                    <div className="w-10 h-10 bg-[#5EC6D8] rounded-full flex items-center justify-center text-white text-sm flex-shrink-0" style={{ fontWeight: 600 }}>
+                    <div className="w-10 h-10 bg-[#111827] rounded-full flex items-center justify-center text-white text-sm flex-shrink-0" style={{ fontWeight: 600 }}>
                       {dispute.clientAvatar}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -210,14 +210,14 @@ export function AdminDisputes() {
               
               <div className="flex items-center gap-6 text-sm text-gray-600 mb-2">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-[#5EC6D8] rounded-full flex items-center justify-center text-white text-xs" style={{ fontWeight: 600 }}>
+                  <div className="w-8 h-8 bg-[#111827] rounded-full flex items-center justify-center text-white text-xs" style={{ fontWeight: 600 }}>
                     {disputes[selectedDispute].clientAvatar}
                   </div>
                   <span className="text-xs text-gray-500" style={{ fontWeight: 500 }}>CLIENT</span>
                   <span className="text-sm" style={{ fontWeight: 600 }}>{disputes[selectedDispute].client}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-[#5EC6D8] rounded-full flex items-center justify-center text-white text-xs" style={{ fontWeight: 600 }}>
+                  <div className="w-8 h-8 bg-[#111827] rounded-full flex items-center justify-center text-white text-xs" style={{ fontWeight: 600 }}>
                     {disputes[selectedDispute].hostAvatar}
                   </div>
                   <span className="text-xs text-gray-500" style={{ fontWeight: 500 }}>HÔTE</span>
@@ -235,18 +235,18 @@ export function AdminDisputes() {
                   {disputes[selectedDispute].messages.map((msg, idx) => (
                     <div key={idx} className={`flex gap-3 ${msg.isAdmin ? 'justify-end' : ''}`}>
                       {!msg.isAdmin && (
-                        <div className="w-10 h-10 bg-[#5EC6D8] rounded-full flex items-center justify-center text-white text-sm flex-shrink-0" style={{ fontWeight: 600 }}>
+                        <div className="w-10 h-10 bg-[#111827] rounded-full flex items-center justify-center text-white text-sm flex-shrink-0" style={{ fontWeight: 600 }}>
                           {msg.avatar}
                         </div>
                       )}
                       <div className={`flex-1 max-w-2xl ${msg.isAdmin ? 'text-right' : ''}`}>
-                        <div className={`inline-block p-4 rounded-xl ${msg.isAdmin ? 'bg-[#5EC6D8] text-white' : 'bg-white text-gray-900 shadow-sm border border-gray-100'}`}>
+                        <div className={`inline-block p-4 rounded-xl ${msg.isAdmin ? 'bg-[#111827] text-white' : 'bg-white text-gray-900 shadow-sm border border-gray-100'}`}>
                           <div className="text-sm leading-relaxed">{msg.text}</div>
                         </div>
                         <div className="text-xs text-gray-400 mt-1.5 px-1">{msg.time}</div>
                       </div>
                       {msg.isAdmin && (
-                        <div className="w-10 h-10 bg-[#5EC6D8] rounded-full flex items-center justify-center text-white text-sm flex-shrink-0" style={{ fontWeight: 600 }}>
+                        <div className="w-10 h-10 bg-[#111827] rounded-full flex items-center justify-center text-white text-sm flex-shrink-0" style={{ fontWeight: 600 }}>
                           {msg.avatar}
                         </div>
                       )}
@@ -268,9 +268,9 @@ export function AdminDisputes() {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Tapez votre message..."
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5EC6D8] text-sm"
+                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111827] text-sm"
                 />
-                <button className="px-6 py-3 bg-[#5EC6D8] text-white rounded-lg hover:bg-[#4db5c7] transition-colors flex items-center gap-2">
+                <button className="px-6 py-3 bg-[#111827] text-white rounded-lg hover:bg-[#1f2937] transition-colors flex items-center gap-2">
                   <Send className="w-4 h-4" />
                   <span className="text-sm" style={{ fontWeight: 600 }}>Envoyer</span>
                 </button>

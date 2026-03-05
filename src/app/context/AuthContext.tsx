@@ -10,6 +10,7 @@ export interface User {
   first_name?: string;
   last_name?: string;
   email: string;
+  role?: string;
   email_verified?: boolean;
   avatar?: string;
 }
@@ -18,7 +19,7 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   error: string | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<User>;
   loginWithUser: (user: User) => void; // For social login backward compatibility
   register: (data: {
     first_name: string;
@@ -32,6 +33,7 @@ interface AuthContextType {
   clearError: () => void;
   refreshUser: () => Promise<void>;
   isAuthenticated: boolean;
+  isAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -51,6 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     first_name: apiUser.first_name,
     last_name: apiUser.last_name,
     email: apiUser.email,
+    role: apiUser.role,
     email_verified: apiUser.email_verified,
   });
 
@@ -84,7 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     initAuth();
   }, []);
 
-  const login = useCallback(async (email: string, password: string) => {
+  const login = useCallback(async (email: string, password: string): Promise<User> => {
     setIsLoading(true);
     setError(null);
     try {
@@ -92,6 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const userData = apiUserToUser(response.user);
       setUser(userData);
       localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
+      return userData;
     } catch (err: any) {
       const message = err.message || 'Erreur de connexion';
       setError(message);
@@ -189,6 +193,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         clearError,
         refreshUser,
         isAuthenticated: !!user,
+        isAdmin: user?.role === 'admin',
       }}
     >
       {children}

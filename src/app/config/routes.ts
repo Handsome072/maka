@@ -65,6 +65,7 @@ export const ROUTES = {
   ADMIN_COMMISSIONS: '/admin/commissions',
   ADMIN_SECURITY: '/admin/security',
   ADMIN_TEAMS: '/admin/teams',
+  ADMIN_SUPPORT: '/admin/support',
 } as const;
 
 /**
