@@ -23,7 +23,7 @@ export default function AnnoncesPage() {
     } else if (page === 'identity-verification') {
       router.push('/identity-verification');
     } else {
-      const path = getNavigationPath(page as any);
+      const path = getNavigationPath(page as Parameters<typeof getNavigationPath>[0]);
       router.push(path);
     }
   };
