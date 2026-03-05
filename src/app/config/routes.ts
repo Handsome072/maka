@@ -59,6 +59,7 @@ export const ROUTES = {
   ADMIN_PROPERTY_DETAIL: (id: string = '1') => `/admin/properties/${id}`,
   ADMIN_RESERVATIONS: '/admin/reservations',
   ADMIN_PAYMENTS: '/admin/payments',
+  ADMIN_PAYMENT_DETAIL: (id: string = 'PAY-10001') => `/admin/payments/${id}`,
   ADMIN_REFUNDS: '/admin/refunds',
   ADMIN_DISPUTES: '/admin/disputes',
   ADMIN_FRAUD: '/admin/fraud',
