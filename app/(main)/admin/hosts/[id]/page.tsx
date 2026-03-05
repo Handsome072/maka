@@ -2,16 +2,18 @@ import { AdminHostProfile } from '@/app/pages/AdminHostProfile';
 
 export function generateStaticParams() {
   return [
-    { id: '1' },
-    { id: '2' },
-    { id: '3' },
-    { id: '4' },
-    { id: '5' },
-    { id: '6' },
-    { id: '7' },
-    { id: '8' },
-    { id: '9' },
-    { id: '10' },
+    { id: '1001' },
+    { id: '1002' },
+    { id: '1003' },
+    { id: '1004' },
+    { id: '1005' },
+    { id: '1006' },
+    { id: '1007' },
+    { id: '1008' },
+    { id: '1009' },
+    { id: '1010' },
+    { id: '1011' },
+    { id: '1012' },
   ];
 }
 
