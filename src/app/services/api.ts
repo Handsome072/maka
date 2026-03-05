@@ -245,6 +245,47 @@ export interface Listing {
   photos: ListingPhoto[];
   created_at: string;
   updated_at: string;
+  // Detail fields (available from GET /listings/:id)
+  rental_frequency?: string | null;
+  full_address?: string | null;
+  street?: string | null;
+  postal_code?: string | null;
+  mrc?: string | null;
+  county?: string | null;
+  adults?: number | null;
+  bedrooms_data?: any[] | null;
+  open_areas_data?: any[] | null;
+  amenities?: string[] | null;
+  expectations?: Record<string, string> | null;
+  description?: string | null;
+  about_chalet?: string | null;
+  host_availability?: string | null;
+  neighborhood?: string | null;
+  transport?: string | null;
+  other_info?: string | null;
+  permissions?: Record<string, string> | null;
+  arrival_time?: string | null;
+  departure_time?: string | null;
+  min_age?: number | null;
+  min_stay?: string | null;
+  max_stay?: string | null;
+  arrival_days?: Record<string, boolean> | null;
+  departure_days?: Record<string, boolean> | null;
+  weekend_price?: string | null;
+  weekly_price?: string | null;
+  monthly_price?: string | null;
+  cleaning_fee?: string | null;
+  security_deposit?: string | null;
+  extra_guest_fee?: string | null;
+  pet_fee?: string | null;
+  tax_registration?: any | null;
+  accepted_local_laws?: boolean | null;
+  wifi_speed?: string | null;
+  has_wifi?: boolean | null;
+  checkin_method?: string | null;
+  checkin_instructions?: string | null;
+  phone_number?: string | null;
+  country_code?: string | null;
 }
 
 export interface ListingsResponse {

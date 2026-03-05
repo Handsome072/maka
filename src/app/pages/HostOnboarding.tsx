@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Logo } from '@/app/components/Logo';
 import {
   Check, ChevronRight, Minus, Plus, Pencil, X, ChevronDown, ChevronUp, ChevronLeft,
@@ -10,7 +10,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { listingsApi } from '@/app/services/api';
+import { listingsApi, Listing } from '@/app/services/api';
 
 // Import images
 const summaryChaletImg = "https://images.unsplash.com/photo-1685475512320-eede8aea2b95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBsdXh1cnklMjBjaGFsZXQlMjBleHRlcmlvciUyMGdyZWVuJTIwbmF0dXJlfGVufDF8fHx8MTc3MDk5NTg1M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
@@ -19,6 +19,7 @@ interface HostOnboardingProps {
   onNavigate: (page: string, data?: any) => void;
   initialStep?: Step;
   onCompleteOnboarding?: () => void;
+  listingId?: number;
 }
 
 type Step = 
@@ -194,7 +195,9 @@ function MockMap() {
 
 // --- MAIN COMPONENT ---
 
-export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition', onCompleteOnboarding }: HostOnboardingProps) {
+export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition', onCompleteOnboarding, listingId }: HostOnboardingProps) {
+  const isEditMode = !!listingId;
+
   // Linearize steps
   const stepsList: Step[] = [
     'acceptance-condition',
@@ -224,6 +227,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
   ];
 
   const [currentStep, setCurrentStep] = useState<Step>(initialStep);
+  const [isLoadingListing, setIsLoadingListing] = useState(isEditMode);
   
   // -- STATE --
 
@@ -387,6 +391,108 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
   // -- MODAL STATE --
   const [editingItem, setEditingItem] = useState<{ item: Bedroom, type: 'bedroom' | 'openArea' } | null>(null);
 
+  // -- FETCH EXISTING LISTING FOR EDIT MODE --
+  useEffect(() => {
+    if (!listingId) return;
+    setIsLoadingListing(true);
+    listingsApi.getListing(listingId)
+      .then(({ listing }) => {
+        // Map API response to form state
+        if (listing.rental_frequency) setRentalFrequency(listing.rental_frequency as 'occasional' | 'dedicated');
+        if (listing.space_type) setSpaceType(listing.space_type as 'entire' | 'private' | 'shared');
+
+        setAddressData({
+          fullAddress: listing.full_address || '',
+          city: listing.city || '',
+          address: listing.street || '',
+          postalCode: listing.postal_code || '',
+          mrc: listing.mrc || '',
+          county: listing.county || '',
+          province: listing.province || 'QC',
+          country: listing.country || 'CA',
+        });
+
+        setCapacityData({
+          capacity: listing.capacity ?? 4,
+          adults: listing.adults ?? listing.capacity ?? 4,
+          bathrooms: listing.bathrooms ?? 1,
+        });
+
+        if (listing.bedrooms_data && listing.bedrooms_data.length > 0) {
+          setBedrooms(listing.bedrooms_data);
+        }
+        if (listing.open_areas_data && listing.open_areas_data.length > 0) {
+          setOpenAreas(listing.open_areas_data);
+        }
+
+        if (listing.amenities) setSelectedAmenities(listing.amenities);
+        if (listing.expectations) setExpectations(listing.expectations as Record<string, 'yes' | 'no' | null>);
+
+        if (listing.host_photo_url) setHostPhoto(listing.host_photo_url);
+        if (listing.photos && listing.photos.length > 0) {
+          setChaletPhotos(listing.photos.map(p => p.url));
+        }
+
+        setDescriptionData({
+          title: listing.title || 'Chalet Calme',
+          subtitle: listing.subtitle || '',
+          description: listing.description || '',
+          aboutChalet: listing.about_chalet || '',
+          hostAvailability: listing.host_availability || '',
+          neighborhood: listing.neighborhood || '',
+          transport: listing.transport || '',
+          otherInfo: listing.other_info || '',
+        });
+
+        if (listing.permissions) setPermissions(listing.permissions as Record<string, 'yes' | 'no' | null>);
+        if (listing.reservation_mode) setReservationMode(listing.reservation_mode as 'request' | 'instant');
+        if (listing.arrival_time) setArrivalTime(listing.arrival_time);
+        if (listing.departure_time) setDepartureTime(listing.departure_time);
+        if (listing.min_age) setMinAge(String(listing.min_age));
+        if (listing.min_stay) setMinStay(listing.min_stay);
+        if (listing.max_stay) setMaxStay(listing.max_stay);
+        else setMaxStay('Aucun maximum');
+        if (listing.arrival_days) setArrivalDays(listing.arrival_days);
+        if (listing.departure_days) setDepartureDays(listing.departure_days);
+
+        if (listing.currency) setCurrency(listing.currency);
+        setPricing({
+          base: listing.base_price || '120',
+          weekend: listing.weekend_price || '',
+          weekly: listing.weekly_price || '',
+          monthly: listing.monthly_price || '',
+        });
+
+        setFees({
+          cleaning: listing.cleaning_fee || '50',
+          security: listing.security_deposit || '40',
+        });
+        if (listing.extra_guest_fee) { setExtraGuestFee(listing.extra_guest_fee); setExtraGuestFeeOpen(true); }
+        if (listing.pet_fee) { setPetFee(listing.pet_fee); setPetFeeOpen(true); }
+
+        if (listing.cancellation_policy) setCancellationPolicy(listing.cancellation_policy);
+        if (listing.tax_registration) setTaxRegistration(listing.tax_registration);
+        if (listing.accepted_local_laws) setAcceptedLocalLaws(listing.accepted_local_laws);
+
+        setGuestArrival({
+          internetSpeed: listing.wifi_speed || '',
+          hasWifi: listing.has_wifi ?? null,
+          guideFile: null,
+          instructions: listing.checkin_instructions || '',
+          checkinMethod: listing.checkin_method || '',
+        });
+
+        if (listing.phone_number) setPhoneNumber(listing.phone_number);
+        if (listing.country_code) setCountryCode(listing.country_code);
+
+        setAcceptedConditions(true);
+      })
+      .catch((err) => {
+        toast.error(err.message || 'Impossible de charger les données de l\'annonce.');
+      })
+      .finally(() => setIsLoadingListing(false));
+  }, [listingId]);
+
   // -- HELPERS --
   const currentStepIndex = stepsList.indexOf(currentStep);
   const progressPercentage = ((currentStepIndex + 1) / stepsList.length) * 100;
@@ -476,8 +582,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
     setSubmitError(null);
     try {
       const payload = buildListingPayload();
-      await listingsApi.createListing(payload as Record<string, unknown>);
-      toast.success("Annonce soumise avec succès ! Elle sera examinée par notre équipe.");
+      if (isEditMode && listingId) {
+        await listingsApi.updateListing(listingId, payload as Record<string, unknown>);
+        toast.success("Annonce mise à jour avec succès !");
+      } else {
+        await listingsApi.createListing(payload as Record<string, unknown>);
+        toast.success("Annonce soumise avec succès ! Elle sera examinée par notre équipe.");
+      }
       if (onCompleteOnboarding) onCompleteOnboarding();
     } catch (error: any) {
       const message = error?.message || 'Une erreur est survenue. Veuillez réessayer.';
@@ -629,6 +740,20 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
     if (currentStep === 'signature' && (!signatureName || !isSigned)) return true;
     return false;
   };
+
+  // Dynamic summary image: use first uploaded photo, fallback to default
+  const summaryImage = chaletPhotos.length > 0 ? chaletPhotos[0] : summaryChaletImg;
+
+  if (isLoadingListing) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto text-gray-400" />
+          <p className="text-sm text-gray-500">Chargement de l'annonce...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans">
@@ -1075,7 +1200,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
                  </div>
                </div>
                <div className="flex-1 w-full lg:h-[700px] rounded-2xl overflow-hidden shadow-lg hidden lg:block sticky top-32">
-                 <img src={summaryChaletImg} className="w-full h-full object-cover" />
+                 <img src={summaryImage} className="w-full h-full object-cover" />
                </div>
              </div>
           </div>
@@ -1355,7 +1480,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
                  </div>
                </div>
                <div className="flex-1 w-full lg:h-[700px] rounded-2xl overflow-hidden shadow-lg hidden lg:block sticky top-32">
-                 <img src={summaryChaletImg} className="w-full h-full object-cover" />
+                 <img src={summaryImage} className="w-full h-full object-cover" />
                </div>
              </div>
           </div>
@@ -2100,7 +2225,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
                  </div>
                </div>
                <div className="flex-1 w-full lg:h-[700px] rounded-2xl overflow-hidden shadow-lg hidden lg:block sticky top-32">
-                 <img src={summaryChaletImg} className="w-full h-full object-cover" />
+                 <img src={summaryImage} className="w-full h-full object-cover" />
                </div>
              </div>
           </div>

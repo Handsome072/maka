@@ -1,11 +1,14 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { HostOnboarding } from '@/app/pages/HostOnboarding';
 
 function EditListingContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const listingId = searchParams.get('id');
+
   const handleNavigate = (page: string) => {
     if (page === 'annonces') {
       router.push('/annonces');
@@ -25,6 +28,7 @@ function EditListingContent() {
       onNavigate={handleNavigate}
       onCompleteOnboarding={handleComplete}
       initialStep="acceptance-condition"
+      listingId={listingId ? parseInt(listingId, 10) : undefined}
     />
   );
 }
