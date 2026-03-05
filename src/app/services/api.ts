@@ -345,3 +345,155 @@ export const listingsApi = {
   },
 };
 
+// ─── Admin Payment Types ─────────────────────────────────────────────────────
+
+export type AdminPaymentStatus = 'Reussi' | 'En attente' | 'Echoue' | 'Rembourse' | 'Annule';
+export type AdminPayoutStatus = 'Verse' | 'En attente' | 'Suspendu' | 'Echoue';
+export type AdminPaymentMethod = 'Carte bancaire' | 'PayPal' | 'Stripe' | 'Virement';
+
+export interface AdminPayment {
+  id: string;
+  reservation_id: string;
+  property: { name: string; id: number };
+  client: { name: string; email: string; avatar: string; id: number };
+  host: { name: string; email: string; avatar: string; id: number };
+  total_amount: number;
+  commission: number;
+  payout_amount: number;
+  method: AdminPaymentMethod;
+  payment_status: AdminPaymentStatus;
+  payout_status: AdminPayoutStatus;
+  date: string;
+  is_flagged: boolean;
+}
+
+export interface AdminPaymentDetail extends AdminPayment {
+  property: { name: string; id: number; city: string; country: string };
+  client: { name: string; email: string; phone: string; avatar: string; id: number };
+  host: { name: string; email: string; phone: string; avatar: string; id: number; iban: string };
+  pricing: {
+    nightly_rate: number;
+    nights: number;
+    subtotal: number;
+    cleaning_fee: number;
+    service_fee: number;
+    taxes: number;
+    total_amount: number;
+    commission: number;
+    commission_rate: number;
+    payout_amount: number;
+  };
+  payout_date: string | null;
+  flag_reason: string | null;
+  stripe_payment_id: string;
+  history: { date: string; action: string; actor: string; details: string }[];
+}
+
+export interface AdminPaymentsListResponse {
+  payments: AdminPayment[];
+  total: number;
+  page: number;
+  per_page: number;
+}
+
+export interface AdminPaymentDetailResponse {
+  payment: AdminPaymentDetail;
+}
+
+export interface AdminPaymentStatsResponse {
+  total_revenue: number;
+  total_commissions: number;
+  total_payouts: number;
+  successful_count: number;
+  pending_count: number;
+  failed_count: number;
+  pending_payouts_count: number;
+}
+
+// ─── Admin Payments API ──────────────────────────────────────────────────────
+
+export const adminPaymentsApi = {
+  getPayments: async (params?: {
+    page?: number;
+    per_page?: number;
+    search?: string;
+    payment_status?: string;
+    payout_status?: string;
+    method?: string;
+    client?: string;
+    host?: string;
+    date_from?: string;
+    date_to?: string;
+    amount_min?: number;
+    amount_max?: number;
+  }): Promise<AdminPaymentsListResponse> => {
+    const query = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, val]) => {
+        if (val !== undefined && val !== '') query.append(key, String(val));
+      });
+    }
+    const qs = query.toString();
+    return apiFetch<AdminPaymentsListResponse>(`/admin/payments${qs ? `?${qs}` : ''}`);
+  },
+
+  getPayment: async (id: string): Promise<AdminPaymentDetailResponse> => {
+    return apiFetch<AdminPaymentDetailResponse>(`/admin/payments/${id}`);
+  },
+
+  getStats: async (): Promise<AdminPaymentStatsResponse> => {
+    return apiFetch<AdminPaymentStatsResponse>('/admin/payments/stats');
+  },
+
+  refund: async (id: string, data: { type: 'total' | 'partial'; amount?: number }): Promise<MessageResponse> => {
+    return apiFetch<MessageResponse>(`/admin/payments/${id}/refund`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  cancelPayment: async (id: string): Promise<MessageResponse> => {
+    return apiFetch<MessageResponse>(`/admin/payments/${id}/cancel`, {
+      method: 'POST',
+    });
+  },
+
+  suspendPayout: async (id: string): Promise<MessageResponse> => {
+    return apiFetch<MessageResponse>(`/admin/payments/${id}/suspend-payout`, {
+      method: 'POST',
+    });
+  },
+
+  releasePayout: async (id: string): Promise<MessageResponse> => {
+    return apiFetch<MessageResponse>(`/admin/payments/${id}/release-payout`, {
+      method: 'POST',
+    });
+  },
+
+  flagFraud: async (id: string, reason?: string): Promise<MessageResponse> => {
+    return apiFetch<MessageResponse>(`/admin/payments/${id}/flag-fraud`, {
+      method: 'POST',
+      body: JSON.stringify({ reason }),
+    });
+  },
+
+  blockTransaction: async (id: string): Promise<MessageResponse> => {
+    return apiFetch<MessageResponse>(`/admin/payments/${id}/block`, {
+      method: 'POST',
+    });
+  },
+
+  exportCSV: async (params?: Record<string, string>): Promise<Blob> => {
+    const token = getAuthToken();
+    const query = new URLSearchParams(params);
+    const qs = query.toString();
+    const response = await fetch(`${API_BASE_URL}/admin/payments/export${qs ? `?${qs}` : ''}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'text/csv',
+      },
+    });
+    return response.blob();
+  },
+};
+
