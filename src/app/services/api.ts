@@ -345,6 +345,18 @@ export const listingsApi = {
   },
 };
 
+// ─── Public Listings API (no auth required) ─────────────────────────────────
+
+export const publicListingsApi = {
+  getAll: async (): Promise<ListingsResponse> => {
+    return apiFetch<ListingsResponse>('/listings/public');
+  },
+
+  getOne: async (id: number): Promise<{ listing: Listing }> => {
+    return apiFetch<{ listing: Listing }>(`/listings/public/${id}`);
+  },
+};
+
 // ─── Admin Listings API ──────────────────────────────────────────────────────
 
 export interface AdminListing extends Listing {
