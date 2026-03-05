@@ -83,26 +83,36 @@ export function Annonces({
         </button>
         <div className="flex items-center gap-8">
           <nav className="flex gap-8">
-            <button className="text-sm hover:opacity-70 transition-opacity" style={{ fontWeight: 600, color: '#717171' }}>
-              Aujourd'hui
-            </button>
-            <button className="text-sm hover:opacity-70 transition-opacity" style={{ fontWeight: 600, color: '#717171' }}>
-              Calendrier
-            </button>
-            <button className="text-sm border-b-2 border-gray-900 pb-3" style={{ fontWeight: 600, color: '#222222' }}>
-              Annonces
-            </button>
-            <button className="text-sm hover:opacity-70 transition-opacity" style={{ fontWeight: 600, color: '#717171' }}
-              onClick={() => onNavigate('messages')}
+            <button
+              className="text-sm hover:opacity-70 transition-opacity"
+              style={{ fontWeight: 600, color: '#717171' }}
+              onClick={() => onNavigate('host-dashboard')}
             >
-              Messages
+              Aujourd'hui
             </button>
             <button
               className="text-sm hover:opacity-70 transition-opacity"
               style={{ fontWeight: 600, color: '#717171' }}
-              onClick={() => onNavigate('host-onboarding')}
+              onClick={() => onNavigate('host-reservations')}
             >
-              Publier une annonce
+              Réservations
+            </button>
+            <button className="text-sm border-b-2 border-gray-900 pb-3" style={{ fontWeight: 600, color: '#222222' }}>
+              Annonces
+            </button>
+            <button
+              className="text-sm hover:opacity-70 transition-opacity"
+              style={{ fontWeight: 600, color: '#717171' }}
+              onClick={() => onNavigate('messages')}
+            >
+              Boîte de réception
+            </button>
+            <button
+              className="text-sm hover:opacity-70 transition-opacity"
+              style={{ fontWeight: 600, color: '#717171' }}
+              onClick={() => onNavigate('host-calendar')}
+            >
+              Calendrier
             </button>
           </nav>
           <button

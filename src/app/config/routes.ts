@@ -21,6 +21,9 @@ export const ROUTES = {
 
   // Pages hôte
   HOST_ONBOARDING: '/host-onboarding',
+  HOST_DASHBOARD: '/annonces',
+  HOST_RESERVATIONS: '/annonces/reservations',
+  HOST_CALENDAR: '/annonces/calendar',
   ANNONCES: '/annonces',
   EXPERIENCE_ONBOARDING: '/experience-onboarding',
 
@@ -97,7 +100,7 @@ export function getCurrentPageFromPathname(pathname: string | null): MainPage {
  * Helper pour obtenir le path de navigation pour une page
  */
 export function getNavigationPath(
-  page: 'logements' | 'experiences' | 'services' | 'messages' | 'host-onboarding' | 'annonces' | 'client-space' | 'experience-onboarding' | 'login'
+  page: 'logements' | 'experiences' | 'services' | 'messages' | 'host-onboarding' | 'annonces' | 'client-space' | 'experience-onboarding' | 'login' | 'host-dashboard' | 'host-reservations' | 'host-calendar'
 ): string {
   switch (page) {
     case 'logements':
@@ -110,6 +113,12 @@ export function getNavigationPath(
       return ROUTES.MESSAGES;
     case 'host-onboarding':
       return ROUTES.HOST_ONBOARDING;
+    case 'host-dashboard':
+      return ROUTES.HOST_DASHBOARD;
+    case 'host-reservations':
+      return ROUTES.HOST_RESERVATIONS;
+    case 'host-calendar':
+      return ROUTES.HOST_CALENDAR;
     case 'annonces':
       return ROUTES.ANNONCES;
     case 'client-space':
