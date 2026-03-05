@@ -61,6 +61,7 @@ export const ROUTES = {
   ADMIN_PAYMENTS: '/admin/payments',
   ADMIN_PAYMENT_DETAIL: (id: string = 'PAY-10001') => `/admin/payments/${id}`,
   ADMIN_REFUNDS: '/admin/refunds',
+  ADMIN_REFUND_DETAIL: (id: string = 'REM-001') => `/admin/refunds/${id}`,
   ADMIN_DISPUTES: '/admin/disputes',
   ADMIN_FRAUD: '/admin/fraud',
   ADMIN_REVIEWS: '/admin/reviews',

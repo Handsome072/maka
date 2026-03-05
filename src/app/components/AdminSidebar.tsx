@@ -18,28 +18,48 @@ export function AdminSidebar() {
       ]
     },
     {
-      category: 'GESTION',
+      category: 'UTILISATEURS',
       items: [
         { id: 'admin-clients', label: 'Gestion des clients', icon: Users, href: ROUTES.ADMIN_CLIENTS },
         { id: 'admin-hosts', label: 'Gestion des hôtes', icon: Home, href: ROUTES.ADMIN_HOSTS },
+        { id: 'admin-teams', label: 'Gestion des équipes', icon: Users, href: ROUTES.ADMIN_TEAMS },
+      ]
+    },
+    {
+      category: 'LOGEMENTS',
+      items: [
         { id: 'admin-properties', label: 'Gestion des logements', icon: Home, href: ROUTES.ADMIN_PROPERTIES },
-        { id: 'admin-reservations', label: 'Gestion des réservations', icon: DollarSign, href: ROUTES.ADMIN_RESERVATIONS },
-        { id: 'admin-payments', label: 'Gestion des paiements', icon: DollarSign, href: ROUTES.ADMIN_PAYMENTS },
-        { id: 'admin-refunds', label: 'Gestion des remboursements', icon: Home, href: ROUTES.ADMIN_REFUNDS },
-        { id: 'admin-disputes', label: 'Gestion des litiges', icon: Home, href: ROUTES.ADMIN_DISPUTES },
-        { id: 'admin-fraud', label: 'Gestion de la fraude', icon: 'alert', href: ROUTES.ADMIN_FRAUD },
         { id: 'admin-reviews', label: 'Modération des avis', icon: Home, href: ROUTES.ADMIN_REVIEWS },
       ]
     },
     {
-      category: 'CONFIGURATION',
+      category: 'RÉSERVATIONS',
       items: [
-        { id: 'admin-cms', label: 'Gestion des pages (CMS)', icon: 'settings', href: ROUTES.ADMIN_CMS },
-        { id: 'admin-notifications', label: 'Gestion des notifications', icon: 'bell', href: ROUTES.ADMIN_NOTIFICATIONS },
+        { id: 'admin-reservations', label: 'Gestion des réservations', icon: DollarSign, href: ROUTES.ADMIN_RESERVATIONS },
+        { id: 'admin-disputes', label: 'Gestion des litiges', icon: Home, href: ROUTES.ADMIN_DISPUTES },
+      ]
+    },
+    {
+      category: 'FINANCES',
+      items: [
+        { id: 'admin-payments', label: 'Gestion des paiements', icon: DollarSign, href: ROUTES.ADMIN_PAYMENTS },
+        { id: 'admin-refunds', label: 'Gestion des remboursements', icon: Home, href: ROUTES.ADMIN_REFUNDS },
         { id: 'admin-commissions', label: 'Configuration des commissions', icon: 'percent', href: ROUTES.ADMIN_COMMISSIONS },
+      ]
+    },
+    {
+      category: 'SÉCURITÉ',
+      items: [
+        { id: 'admin-fraud', label: 'Gestion de la fraude', icon: 'alert', href: ROUTES.ADMIN_FRAUD },
         { id: 'admin-security', label: 'Logs et sécurité', icon: 'lock', href: ROUTES.ADMIN_SECURITY },
-        { id: 'admin-teams', label: 'Gestion des équipes', icon: Users, href: ROUTES.ADMIN_TEAMS },
+      ]
+    },
+    {
+      category: 'SUPPORT & CONTENU',
+      items: [
         { id: 'admin-support', label: 'Support utilisateurs', icon: 'support', href: ROUTES.ADMIN_SUPPORT },
+        { id: 'admin-notifications', label: 'Gestion des notifications', icon: 'bell', href: ROUTES.ADMIN_NOTIFICATIONS },
+        { id: 'admin-cms', label: 'Gestion des pages (CMS)', icon: 'settings', href: ROUTES.ADMIN_CMS },
       ]
     },
   ];
