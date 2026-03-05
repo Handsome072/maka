@@ -1,14 +1,34 @@
 'use client';
 
-import { Users, Home, DollarSign, Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { Users, Home, DollarSign, Menu, X, LogOut, Settings, ChevronUp } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { ROUTES } from '../config/routes';
+import { useAuth } from '../context/AuthContext';
 
 export function AdminSidebar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  const router = useRouter();
+  const { logout } = useAuth();
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setShowUserMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleLogout = async () => {
+    await logout();
+    router.push('/');
+  };
 
   const menuItems = [
     {
@@ -173,16 +193,41 @@ export function AdminSidebar() {
           ))}
         </nav>
 
-        <div className="p-4 border-t border-gray-200">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center text-white text-sm" style={{ fontWeight: 600 }}>
+        <div className="relative border-t border-gray-200" ref={userMenuRef}>
+          {showUserMenu && (
+            <div className="absolute bottom-full left-0 right-0 mb-1 mx-3 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50">
+              <Link
+                href="/admin/settings"
+                onClick={() => { setShowUserMenu(false); setIsMobileMenuOpen(false); }}
+                className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-sm text-gray-700"
+                style={{ fontWeight: 500 }}
+              >
+                <Settings className="w-4 h-4 text-gray-400" />
+                Parametres
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 transition-colors text-sm text-red-600 border-t border-gray-100"
+                style={{ fontWeight: 500 }}
+              >
+                <LogOut className="w-4 h-4" />
+                Deconnexion
+              </button>
+            </div>
+          )}
+          <button
+            onClick={() => setShowUserMenu(!showUserMenu)}
+            className="w-full p-4 flex items-center gap-3 hover:bg-gray-50 transition-colors"
+          >
+            <div className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center text-white text-sm flex-shrink-0" style={{ fontWeight: 600 }}>
               HA
             </div>
-            <div>
-              <div className="text-sm" style={{ fontWeight: 600 }}>HOMIQIO Admin</div>
-              <div className="text-xs text-gray-500">admin@homiqio.com</div>
+            <div className="flex-1 text-left min-w-0">
+              <div className="text-sm truncate" style={{ fontWeight: 600 }}>HOMIQIO Admin</div>
+              <div className="text-xs text-gray-500 truncate">admin@homiqio.com</div>
             </div>
-          </div>
+            <ChevronUp className={`w-4 h-4 text-gray-400 transition-transform flex-shrink-0 ${showUserMenu ? '' : 'rotate-180'}`} />
+          </button>
         </div>
       </aside>
     </>

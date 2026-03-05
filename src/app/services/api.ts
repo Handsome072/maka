@@ -345,6 +345,76 @@ export const listingsApi = {
   },
 };
 
+// ─── Admin Listings API ──────────────────────────────────────────────────────
+
+export interface AdminListing extends Listing {
+  host: {
+    id: number;
+    name: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+  } | null;
+  rejection_reason?: string | null;
+}
+
+export interface AdminListingsResponse {
+  listings: AdminListing[];
+}
+
+export interface AdminListingResponse {
+  message: string;
+  listing: AdminListing;
+}
+
+export const adminListingsApi = {
+  getAll: async (params?: {
+    status?: string;
+    search?: string;
+    city?: string;
+    host_id?: number;
+  }): Promise<AdminListingsResponse> => {
+    const query = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, val]) => {
+        if (val !== undefined && val !== '') query.append(key, String(val));
+      });
+    }
+    const qs = query.toString();
+    return apiFetch<AdminListingsResponse>(`/admin/listings${qs ? `?${qs}` : ''}`);
+  },
+
+  getOne: async (id: number): Promise<{ listing: AdminListing }> => {
+    return apiFetch<{ listing: AdminListing }>(`/admin/listings/${id}`);
+  },
+
+  approve: async (id: number): Promise<AdminListingResponse> => {
+    return apiFetch<AdminListingResponse>(`/admin/listings/${id}/approve`, {
+      method: 'POST',
+    });
+  },
+
+  reject: async (id: number, reason?: string): Promise<AdminListingResponse> => {
+    return apiFetch<AdminListingResponse>(`/admin/listings/${id}/reject`, {
+      method: 'POST',
+      body: JSON.stringify({ reason }),
+    });
+  },
+
+  suspend: async (id: number, reason?: string): Promise<AdminListingResponse> => {
+    return apiFetch<AdminListingResponse>(`/admin/listings/${id}/suspend`, {
+      method: 'POST',
+      body: JSON.stringify({ reason }),
+    });
+  },
+
+  delete: async (id: number): Promise<MessageResponse> => {
+    return apiFetch<MessageResponse>(`/admin/listings/${id}`, {
+      method: 'DELETE',
+    });
+  },
+};
+
 // ─── Admin Payment Types ─────────────────────────────────────────────────────
 
 export type AdminPaymentStatus = 'Reussi' | 'En attente' | 'Echoue' | 'Rembourse' | 'Annule';
