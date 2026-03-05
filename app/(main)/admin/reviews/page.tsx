@@ -1,7 +1,7 @@
 'use client';
 
-import { AdminPlaceholder } from '@/app/pages/AdminPlaceholder';
+import { AdminReviews } from '@/app/pages/AdminReviews';
 
 export default function AdminReviewsPage() {
-  return <AdminPlaceholder title="Modération des avis" />;
+  return <AdminReviews />;
 }

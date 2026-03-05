@@ -118,7 +118,7 @@ export function AdminFraud() {
               </svg>
               <span className="text-sm" style={{ fontWeight: 500 }}>Exporter</span>
             </button>
-            <button className="px-4 py-2 bg-[#5EC6D8] text-white rounded-lg hover:bg-[#4db5c7] transition-colors flex items-center gap-2">
+            <button className="px-4 py-2 bg-[#111827] text-white rounded-lg hover:bg-[#1f2937] transition-colors flex items-center gap-2">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
@@ -161,22 +161,22 @@ export function AdminFraud() {
                 <input
                   type="text"
                   placeholder="Rechercher une alerte..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5EC6D8]"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111827]"
                 />
               </div>
-              <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5EC6D8]">
+              <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111827]">
                 <option>Tous les types</option>
                 <option>Paiement suspect</option>
                 <option>Faux logement</option>
                 <option>Identité suspecte</option>
               </select>
-              <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5EC6D8]">
+              <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111827]">
                 <option>Tous les statuts</option>
                 <option>Enquête en cours</option>
                 <option>Résolu</option>
                 <option>En attente</option>
               </select>
-              <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5EC6D8]">
+              <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111827]">
                 <option>Tous les niveaux de risque</option>
                 <option>Critique</option>
                 <option>Élevé</option>
@@ -192,12 +192,12 @@ export function AdminFraud() {
                 onClick={() => setActiveTab('host')}
                 className={`py-4 px-2 border-b-2 transition-colors whitespace-nowrap ${
                   activeTab === 'host'
-                    ? 'border-[#5EC6D8] text-[#5EC6D8]'
+                    ? 'border-[#111827] text-[#111827]'
                     : 'border-transparent text-gray-600 hover:text-gray-900'
                 }`}
               >
                 <span className="text-sm mr-2" style={{ fontWeight: 600 }}>Incidents Hôte</span>
-                <span className="inline-block px-2 py-1 bg-[#5EC6D8]/20 text-[#5EC6D8] rounded text-xs" style={{ fontWeight: 600 }}>
+                <span className="inline-block px-2 py-1 bg-[#111827]/20 text-[#111827] rounded text-xs" style={{ fontWeight: 600 }}>
                   4
                 </span>
               </button>
@@ -205,7 +205,7 @@ export function AdminFraud() {
                 onClick={() => setActiveTab('client')}
                 className={`py-4 px-2 border-b-2 transition-colors whitespace-nowrap ${
                   activeTab === 'client'
-                    ? 'border-[#5EC6D8] text-[#5EC6D8]'
+                    ? 'border-[#111827] text-[#111827]'
                     : 'border-transparent text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -236,11 +236,11 @@ export function AdminFraud() {
                 {(activeTab === 'host' ? hostIncidents : clientIncidents).map((incident) => (
                   <tr key={incident.id} className="border-b border-gray-100 hover:bg-gray-50">
                     <td className="py-4 px-6">
-                      <span className="text-sm text-[#5EC6D8]" style={{ fontWeight: 600 }}>{incident.id}</span>
+                      <span className="text-sm text-[#111827]" style={{ fontWeight: 600 }}>{incident.id}</span>
                     </td>
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-[#5EC6D8] rounded-full flex items-center justify-center text-white text-xs" style={{ fontWeight: 600 }}>
+                        <div className="w-10 h-10 bg-[#111827] rounded-full flex items-center justify-center text-white text-xs" style={{ fontWeight: 600 }}>
                           {incident.avatar}
                         </div>
                         <div>
@@ -283,14 +283,14 @@ export function AdminFraud() {
             {(activeTab === 'host' ? hostIncidents : clientIncidents).map((incident) => (
               <div key={incident.id} className="p-4 hover:bg-gray-50 transition-colors">
                 <div className="flex items-start justify-between mb-3">
-                  <span className="text-sm text-[#5EC6D8]" style={{ fontWeight: 600 }}>{incident.id}</span>
+                  <span className="text-sm text-[#111827]" style={{ fontWeight: 600 }}>{incident.id}</span>
                   <span className={`inline-block px-2.5 py-1 rounded-full text-xs ${getStatusColor(incident.status)}`} style={{ fontWeight: 600 }}>
                     {incident.status}
                   </span>
                 </div>
                 
                 <div className="flex items-start gap-3 mb-3">
-                  <div className="w-12 h-12 bg-[#5EC6D8] rounded-full flex items-center justify-center text-white flex-shrink-0" style={{ fontWeight: 600 }}>
+                  <div className="w-12 h-12 bg-[#111827] rounded-full flex items-center justify-center text-white flex-shrink-0" style={{ fontWeight: 600 }}>
                     {incident.avatar}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -339,7 +339,7 @@ export function AdminFraud() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <button className="px-4 py-2 bg-[#5EC6D8] text-white rounded-lg" style={{ fontWeight: 600 }}>1</button>
+            <button className="px-4 py-2 bg-[#111827] text-white rounded-lg" style={{ fontWeight: 600 }}>1</button>
             <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">2</button>
             <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">3</button>
             <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">4</button>
