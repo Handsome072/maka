@@ -3,6 +3,7 @@ import { PropertyCarousel } from '../components/PropertyCarousel';
 import { SearchBar } from '../components/SearchBar';
 import { useAuth } from '../context/AuthContext';
 import { useState, useEffect } from 'react';
+import { publicListingsApi, type Listing } from '../services/api';
 
 interface HomeProps {
   isScrolled: boolean;
@@ -40,6 +41,17 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
   const { width: windowWidth, mounted } = useWindowWidth();
   // Use undefined during SSR to avoid inline styles, let CSS handle it
   const cardWidth = mounted ? getCardWidth(windowWidth) : undefined;
+
+  // Fetch real active listings from API
+  const [publicListings, setPublicListings] = useState<Listing[]>([]);
+  const [listingsLoaded, setListingsLoaded] = useState(false);
+
+  useEffect(() => {
+    publicListingsApi.getAll()
+      .then(res => setPublicListings(res.listings))
+      .catch(() => {})
+      .finally(() => setListingsLoaded(true));
+  }, []);
 
   // Données pour "Annonces consultées récemment" (Recently Viewed Properties)
   const recentlyViewedProperties = [
@@ -844,6 +856,31 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
       </div>
 
       <main className="pb-12">
+        {/* Annonces publiées (real data from API) */}
+        {listingsLoaded && publicListings.length > 0 && (
+          <PropertyCarousel
+            title="Nos annonces"
+            showMoreLink={true}
+          >
+            {publicListings.map((listing) => (
+              <div key={listing.id} style={{ width: cardWidth }} className="transition-all duration-300">
+                <PropertyCard
+                  id={String(listing.id)}
+                  image={listing.photos?.[0]?.url || 'https://images.unsplash.com/photo-1593696140826-c58b021acf8b?w=400'}
+                  title={`${listing.title || 'Logement'} · ${listing.city || ''}`}
+                  location={listing.space_type === 'entire' ? 'Logement entier' : listing.space_type === 'private' ? 'Chambre privée' : 'Logement'}
+                  date=""
+                  price={`${Number(listing.base_price || 0).toFixed(0)} ${listing.currency} / nuit`}
+                  rating={0}
+                  badge="Nouveau"
+                  guests={`${listing.capacity} voyageurs`}
+                  onClick={() => onPropertyClick(String(listing.id))}
+                />
+              </div>
+            ))}
+          </PropertyCarousel>
+        )}
+
         {/* Annonces consultées récemment - visible only when authenticated */}
         {isAuthenticated && (
           <PropertyCarousel
