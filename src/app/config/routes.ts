@@ -52,7 +52,9 @@ export const ROUTES = {
   // Pages Admin
   ADMIN_DASHBOARD: '/admin',
   ADMIN_CLIENTS: '/admin/clients',
+  ADMIN_CLIENT_PROFILE: (id: string = '1') => `/admin/clients/${id}`,
   ADMIN_HOSTS: '/admin/hosts',
+  ADMIN_HOST_PROFILE: (id: string = '1') => `/admin/hosts/${id}`,
   ADMIN_PROPERTIES: '/admin/properties',
   ADMIN_RESERVATIONS: '/admin/reservations',
   ADMIN_PAYMENTS: '/admin/payments',
