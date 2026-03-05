@@ -4,10 +4,10 @@ import { listingsApi } from '../services/api';
 
 /**
  * Detects whether the authenticated user has at least one listing
- * with status === 'pending'.
+ * (any status: pending, active, rejected, archived, draft).
  *
- * - isHost = true  → user has a pending listing  → show "Mode hôte"
- * - isHost = false → no pending listing           → show "Devenir hôte"
+ * - isHost = true  → user has at least one listing → show "Mode hôte"
+ * - isHost = false → no listing at all             → show "Devenir hôte"
  */
 export function useHostStatus() {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
@@ -26,8 +26,7 @@ export function useHostStatus() {
     setIsLoading(true);
     listingsApi.getMyListings()
       .then(res => {
-        const hasPending = res.listings.some(l => l.status === 'pending');
-        setIsHost(hasPending);
+        setIsHost(res.listings.length > 0);
       })
       .catch(() => {
         setIsHost(false);
