@@ -2291,7 +2291,7 @@ export function ClientSpace({ onNavigate, initialSection = 'reservations' }: Cli
 
         {/* Modal Ajouter un mode de paiement */}
         {showPaymentModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-2xl max-w-md w-full p-6 relative">
               {/* Bouton fermer */}
               <button
@@ -2407,7 +2407,7 @@ export function ClientSpace({ onNavigate, initialSection = 'reservations' }: Cli
 
         {/* Modal de désactivation du compte */}
         {showDeactivateModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
             <div className="bg-white rounded-2xl p-8 max-w-md w-full relative">
               {/* Bouton Quitter */}
               <button

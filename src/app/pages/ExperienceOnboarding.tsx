@@ -607,7 +607,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
     if (!showPresentationModal) return null;
 
     return (
-      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => setShowPresentationModal(false)}>
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowPresentationModal(false)}>
         <div className="bg-white rounded-2xl max-w-md w-full p-8 relative" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => setShowPresentationModal(false)}
@@ -668,7 +668,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
     if (!showTipsModal) return null;
 
     return (
-      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => setShowTipsModal(false)}>
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowTipsModal(false)}>
         <div className="bg-white rounded-2xl max-w-lg w-full p-8 relative" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => setShowTipsModal(false)}
@@ -752,7 +752,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
     if (!showExpertiseModal) return null;
 
     return (
-      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => setShowExpertiseModal(false)}>
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowExpertiseModal(false)}>
         <div className="bg-white rounded-2xl max-w-md w-full p-8 relative" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => setShowExpertiseModal(false)}
@@ -813,7 +813,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
     if (!showDistinctionModal) return null;
 
     return (
-      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => setShowDistinctionModal(false)}>
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowDistinctionModal(false)}>
         <div className="bg-white rounded-2xl max-w-md w-full p-8 relative" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => setShowDistinctionModal(false)}
@@ -882,7 +882,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
     };
 
     return (
-      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => { setShowAddLinkModal(false); setTempLinkInput(''); }}>
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => { setShowAddLinkModal(false); setTempLinkInput(''); }}>
         <div className="bg-white rounded-2xl max-w-md w-full p-8 relative" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => {
@@ -932,7 +932,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
     if (!showPhotoTipsModal) return null;
 
     return (
-      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => setShowPhotoTipsModal(false)}>
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowPhotoTipsModal(false)}>
         <div className="bg-white rounded-2xl max-w-xl w-full p-8 relative max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => setShowPhotoTipsModal(false)}
@@ -1053,7 +1053,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
     if (!showAddPhotoModal) return null;
 
     return (
-      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={handleCancelPhotoModal}>
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={handleCancelPhotoModal}>
         <div className="bg-white rounded-2xl max-w-lg w-full p-8 relative max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={handleCancelPhotoModal}
@@ -1220,7 +1220,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
     ];
 
     return (
-      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => setShowTitleTipsModal(false)}>
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowTitleTipsModal(false)}>
         <div className="bg-white rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
           {/* Header */}
           <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
@@ -2726,7 +2726,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
 
         {/* Activity Modal */}
         {showActivityModal && (
-          <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => setShowActivityModal(false)}>
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowActivityModal(false)}>
             <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative" onClick={(e) => e.stopPropagation()}>
               {/* Step 1: Title Input */}
               {activityModalStep === 'title' && (

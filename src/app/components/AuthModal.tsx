@@ -115,7 +115,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
       onClick={onClose}
     >
       {/* Overlay background */}
-      <div className="absolute inset-0 bg-black/60 transition-opacity" />
+      <div className="absolute inset-0 bg-black/50 transition-opacity" />
 
       {/* Modal */}
       <div

@@ -60,7 +60,7 @@ export function BecomeHostModal({
       onClick={onClose}
     >
       {/* Overlay background with subtle blur */}
-      <div className="absolute inset-0 bg-black/60 transition-opacity" />
+      <div className="absolute inset-0 bg-black/50 transition-opacity" />
 
       {/* Modal */}
       <div

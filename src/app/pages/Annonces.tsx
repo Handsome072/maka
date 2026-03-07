@@ -193,7 +193,7 @@ export function Annonces({
 
       {/* Listing Details Popup */}
       {showListingDetailsPopup && selectedListing && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 px-4">
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-2xl max-w-md w-full p-8 shadow-2xl relative">
             <button
               onClick={() => setShowListingDetailsPopup(false)}
@@ -253,7 +253,7 @@ export function Annonces({
 
       {/* Delete Confirmation Popup */}
       {showDeleteConfirm && selectedListing && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 px-4">
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-2xl max-w-md w-full p-8 shadow-2xl relative">
             <button
               onClick={() => setShowDeleteConfirm(false)}
@@ -310,7 +310,7 @@ export function Annonces({
 
       {/* Confirmation Popup (legacy – kept for backward compat) */}
       {showPopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 px-4">
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-2xl max-w-md w-full p-8 shadow-2xl relative">
             <button
               onClick={() => { setShowPopup(false); onConfirmationComplete?.(); }}
