@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BecomeHostModal } from '@/app/components/BecomeHostModal';
+import { HostSidebar } from '@/app/components/HostSidebar';
 import { listingsApi, Listing } from '@/app/services/api';
 
 interface AnnoncesProps {
@@ -75,61 +76,12 @@ export function Annonces({
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="sticky top-0 bg-white border-b border-gray-100 px-8 py-4 flex items-center justify-between z-20">
-        <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-          <img src="/logo.png" alt="HOMIQIO Logo" className="w-[120px] h-auto" />
-        </button>
-        <div className="flex items-center gap-8">
-          <nav className="flex gap-8">
-            <button
-              className="text-sm hover:opacity-70 transition-opacity"
-              style={{ fontWeight: 600, color: '#717171' }}
-              onClick={() => onNavigate('host-dashboard')}
-            >
-              Aujourd'hui
-            </button>
-            <button
-              className="text-sm hover:opacity-70 transition-opacity"
-              style={{ fontWeight: 600, color: '#717171' }}
-              onClick={() => onNavigate('host-reservations')}
-            >
-              Réservations
-            </button>
-            <button className="text-sm border-b-2 border-gray-900 pb-3" style={{ fontWeight: 600, color: '#222222' }}>
-              Annonces
-            </button>
-            <button
-              className="text-sm hover:opacity-70 transition-opacity"
-              style={{ fontWeight: 600, color: '#717171' }}
-              onClick={() => onNavigate('messages')}
-            >
-              Boîte de réception
-            </button>
-            <button
-              className="text-sm hover:opacity-70 transition-opacity"
-              style={{ fontWeight: 600, color: '#717171' }}
-              onClick={() => onNavigate('host-calendar')}
-            >
-              Calendrier
-            </button>
-          </nav>
-          <button
-            onClick={() => onNavigate('logements')}
-            className="text-sm hover:opacity-70 transition-opacity"
-            style={{ fontWeight: 600, color: '#222222' }}
-          >
-            Passer en mode voyageur
-          </button>
-          <button className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-white" style={{ fontWeight: 600 }}>
-            H
-          </button>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gray-50">
+      <HostSidebar activePage="annonces" />
 
-      {/* Content */}
-      <div className="max-w-6xl mx-auto px-8 py-12">
+      {/* Main Content */}
+      <main className="lg:ml-[280px] p-4 md:p-6 lg:p-8">
+        <div className="mt-16 lg:mt-0">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl" style={{ fontWeight: 600, color: '#222222' }}>
             Mes annonces
@@ -237,6 +189,7 @@ export function Annonces({
           </div>
         )}
       </div>
+      </main>
 
       {/* Listing Details Popup */}
       {showListingDetailsPopup && selectedListing && (

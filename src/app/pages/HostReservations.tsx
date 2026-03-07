@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { HostSidebar } from '@/app/components/HostSidebar';
 
 interface HostReservationsProps {
   onNavigate: (page: string, data?: Record<string, any>) => void;
@@ -106,62 +107,12 @@ export function HostReservations({ onNavigate }: HostReservationsProps) {
     : MOCK_RESERVATIONS.filter(r => r.status === activeFilter);
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="sticky top-0 bg-white border-b border-gray-100 px-8 py-4 flex items-center justify-between z-20">
-        <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-          <img src="/logo.png" alt="HOMIQIO Logo" className="w-[120px] h-auto" />
-        </button>
-        <div className="flex items-center gap-8">
-          <nav className="flex gap-8">
-            <button
-              className="text-sm hover:opacity-70 transition-opacity"
-              style={{ fontWeight: 600, color: '#717171' }}
-              onClick={() => onNavigate('host-dashboard')}
-            >
-              Aujourd&apos;hui
-            </button>
-            <button className="text-sm border-b-2 border-gray-900 pb-3" style={{ fontWeight: 600, color: '#222222' }}>
-              Réservations
-            </button>
-            <button
-              className="text-sm hover:opacity-70 transition-opacity"
-              style={{ fontWeight: 600, color: '#717171' }}
-              onClick={() => onNavigate('annonces')}
-            >
-              Annonces
-            </button>
-            <button
-              className="text-sm hover:opacity-70 transition-opacity"
-              style={{ fontWeight: 600, color: '#717171' }}
-              onClick={() => onNavigate('messages')}
-            >
-              Boîte de réception
-            </button>
-            <button
-              className="text-sm hover:opacity-70 transition-opacity"
-              style={{ fontWeight: 600, color: '#717171' }}
-              onClick={() => onNavigate('host-calendar')}
-            >
-              Calendrier
-            </button>
-          </nav>
-          <button
-            onClick={() => onNavigate('logements')}
-            className="text-sm hover:opacity-70 transition-opacity"
-            style={{ fontWeight: 600, color: '#222222' }}
-          >
-            Passer en mode voyageur
-          </button>
-          <button className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-white" style={{ fontWeight: 600 }}>
-            H
-          </button>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gray-50">
+      <HostSidebar activePage="host-reservations" />
 
-      {/* Content */}
-      <div className="max-w-6xl mx-auto px-8 py-12">
-        <h1 className="text-3xl mb-8" style={{ fontWeight: 600, color: '#222222' }}>
+      {/* Main Content */}
+      <main className="lg:ml-[280px] p-4 md:p-6 lg:p-8">
+        <h1 className="text-2xl md:text-3xl mb-6 md:mb-8 mt-16 lg:mt-0" style={{ fontWeight: 600, color: '#222222' }}>
           Vos réservations
         </h1>
 
@@ -285,7 +236,7 @@ export function HostReservations({ onNavigate }: HostReservationsProps) {
             })}
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }
