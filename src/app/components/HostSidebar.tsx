@@ -146,7 +146,7 @@ export function HostSidebar({ activePage }: HostSidebarProps) {
           {showUserMenu && (
             <div className="absolute bottom-full left-0 right-0 mb-1 mx-3 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50">
               <Link
-                href={ROUTES.CLIENT_SPACE}
+                href={ROUTES.HOST_SETTINGS}
                 onClick={() => { setShowUserMenu(false); setIsMobileMenuOpen(false); }}
                 className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-sm text-gray-700"
                 style={{ fontWeight: 500 }}
@@ -155,7 +155,7 @@ export function HostSidebar({ activePage }: HostSidebarProps) {
                 Paramètres
               </Link>
               <Link
-                href={ROUTES.CLIENT_SPACE_PROFILE}
+                href={ROUTES.HOST_PROFILE}
                 onClick={() => { setShowUserMenu(false); setIsMobileMenuOpen(false); }}
                 className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-sm text-gray-700 border-t border-gray-100"
                 style={{ fontWeight: 500 }}

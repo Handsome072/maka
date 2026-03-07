@@ -25,6 +25,8 @@ export const ROUTES = {
   HOST_RESERVATIONS: '/annonces/reservations',
   HOST_CALENDAR: '/annonces/calendar',
   HOST_REVENUES: '/annonces/revenues',
+  HOST_SETTINGS: '/annonces/settings',
+  HOST_PROFILE: '/annonces/profile',
   ANNONCES: '/annonces',
   EXPERIENCE_ONBOARDING: '/experience-onboarding',
 

@@ -71,6 +71,17 @@ async function apiFetch<T>(
 }
 
 // API Response types
+export interface NotificationPreferences {
+  reservations_email: boolean;
+  reservations_sms: boolean;
+  messages_email: boolean;
+  messages_sms: boolean;
+  reminders_email: boolean;
+  reminders_sms: boolean;
+  promotions_email: boolean;
+  promotions_sms: boolean;
+}
+
 export interface User {
   id: number;
   first_name: string;
@@ -80,6 +91,25 @@ export interface User {
   email_verified: boolean;
   birth_date?: string;
   receive_marketing?: boolean;
+  phone?: string;
+  phone_country_code?: string;
+  address_street?: string;
+  address_city?: string;
+  address_postal_code?: string;
+  address_country?: string;
+  bio?: string;
+  city?: string;
+  profession?: string;
+  languages_spoken?: string[];
+  interests?: string[];
+  profile_photo_url?: string;
+  preferred_language?: string;
+  preferred_currency?: string;
+  timezone?: string;
+  notification_preferences?: NotificationPreferences;
+  phone_verified?: boolean;
+  identity_verified?: boolean;
+  member_since?: string;
 }
 
 export interface AuthResponse {
@@ -579,3 +609,120 @@ export const adminPaymentsApi = {
   },
 };
 
+// ─── User Profile & Settings API ────────────────────────────────────────────
+
+export interface PublicProfile {
+  first_name: string;
+  profile_photo_url: string | null;
+  bio: string | null;
+  city: string | null;
+  profession: string | null;
+  languages_spoken: string[];
+  interests: string[];
+  email_verified: boolean;
+  phone_verified: boolean;
+  identity_verified: boolean;
+  member_since: string;
+  listings_count: number;
+}
+
+export const userProfileApi = {
+  getProfile: async (): Promise<{ user: User }> => {
+    return apiFetch<{ user: User }>('/user/profile');
+  },
+
+  updatePersonalInfo: async (data: {
+    first_name?: string;
+    last_name?: string;
+    email?: string;
+    phone?: string;
+    phone_country_code?: string;
+    birth_date?: string;
+    address_street?: string;
+    address_city?: string;
+    address_postal_code?: string;
+    address_country?: string;
+  }): Promise<{ message: string; user: User }> => {
+    return apiFetch<{ message: string; user: User }>('/user/profile', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  },
+
+  updatePassword: async (data: {
+    current_password: string;
+    password: string;
+    password_confirmation: string;
+  }): Promise<MessageResponse> => {
+    return apiFetch<MessageResponse>('/user/password', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  },
+
+  updateNotifications: async (prefs: NotificationPreferences): Promise<{
+    message: string;
+    notification_preferences: NotificationPreferences;
+  }> => {
+    return apiFetch('/user/notifications', {
+      method: 'PUT',
+      body: JSON.stringify({ notification_preferences: prefs }),
+    });
+  },
+
+  updatePreferences: async (data: {
+    preferred_language?: string;
+    preferred_currency?: string;
+    timezone?: string;
+  }): Promise<{ message: string; user: User }> => {
+    return apiFetch<{ message: string; user: User }>('/user/preferences', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  },
+
+  updateBioProfile: async (data: {
+    bio?: string;
+    city?: string;
+    profession?: string;
+    languages_spoken?: string[];
+    interests?: string[];
+  }): Promise<{ message: string; user: User }> => {
+    return apiFetch<{ message: string; user: User }>('/user/profile/bio', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  },
+
+  uploadPhoto: async (file: File): Promise<{ message: string; profile_photo_url: string }> => {
+    const token = getAuthToken();
+    const formData = new FormData();
+    formData.append('photo', file);
+
+    const response = await fetch(`${API_BASE_URL}/user/profile/photo`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Erreur lors de l\'upload');
+    }
+    return data;
+  },
+
+  getPublicProfile: async (): Promise<{ profile: PublicProfile }> => {
+    return apiFetch<{ profile: PublicProfile }>('/user/profile/public');
+  },
+
+  deactivateAccount: async (password: string, reason?: string): Promise<MessageResponse> => {
+    return apiFetch<MessageResponse>('/user/account/deactivate', {
+      method: 'POST',
+      body: JSON.stringify({ password, reason }),
+    });
+  },
+};
