@@ -9,7 +9,7 @@ interface HostReservationsProps {
   onNavigate: (page: string, data?: Record<string, any>) => void;
 }
 
-type ReservationStatus = 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
+type ReservationStatus = 'pending' | 'confirmed' | 'upcoming' | 'in_progress' | 'completed' | 'cancelled';
 type FilterTab = 'all' | ReservationStatus;
 
 interface HostReservation {
@@ -29,8 +29,9 @@ interface HostReservation {
 }
 
 const STATUS_CONFIG: Record<ReservationStatus, { label: string; color: string; bg: string }> = {
-  pending:     { label: 'En attente',  color: '#9333EA', bg: '#F3E8FF' },
+  pending:     { label: 'En attente',  color: '#7C3AED', bg: '#F3E8FF' },
   confirmed:   { label: 'Confirmée',   color: '#B45309', bg: '#FEF3C7' },
+  upcoming:    { label: 'À venir',     color: '#1E40AF', bg: '#DBEAFE' },
   in_progress: { label: 'En cours',    color: '#065F46', bg: '#D1FAE5' },
   completed:   { label: 'Terminée',    color: '#4B5563', bg: '#F3F4F6' },
   cancelled:   { label: 'Annulée',     color: '#991B1B', bg: '#FEE2E2' },
@@ -38,112 +39,186 @@ const STATUS_CONFIG: Record<ReservationStatus, { label: string; color: string; b
 
 const FILTER_TABS: { key: FilterTab; label: string }[] = [
   { key: 'all',         label: 'Toutes' },
-  { key: 'pending',     label: 'Demandes' },
+  { key: 'pending',     label: 'En attente' },
   { key: 'confirmed',   label: 'Confirmées' },
+  { key: 'upcoming',    label: 'À venir' },
   { key: 'in_progress', label: 'En cours' },
   { key: 'completed',   label: 'Terminées' },
   { key: 'cancelled',   label: 'Annulées' },
 ];
 
+// ─── Date helpers ────────────────────────────────────────────────────────────
+
+function formatDisplayDate(iso: string): string {
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString('fr-CA', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+/**
+ * Compute the effective display status based on the original status and dates.
+ * - pending, confirmed, cancelled → unchanged (not date-dependent)
+ * - upcoming / in_progress / completed → recalculated from dates:
+ *   - check-in in the future → upcoming
+ *   - today between check-in and check-out → in_progress
+ *   - after check-out → completed
+ *
+ * "confirmed" = paiement recemment valide (statut explicite de l'hote/systeme)
+ * "upcoming"  = sejour futur deja planifie (derive automatiquement des dates)
+ */
+function computeEffectiveStatus(status: ReservationStatus, checkIn: string, checkOut: string): ReservationStatus {
+  if (status === 'pending' || status === 'confirmed' || status === 'cancelled') return status;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const ciDate = new Date(checkIn + 'T00:00:00');
+  const coDate = new Date(checkOut + 'T00:00:00');
+
+  if (today > coDate) return 'completed';
+  if (today >= ciDate && today <= coDate) return 'in_progress';
+  return 'upcoming';
+}
+
+// ─── Mock Data ───────────────────────────────────────────────────────────────
+
+// Dates calibrées par rapport à aujourd'hui (7 mars 2026) pour que chaque statut soit visible.
 const MOCK_RESERVATIONS: HostReservation[] = [
-  {
-    id: 'RES-001',
-    guest: { name: 'Alexandre Leroy', avatar: 'AL' },
-    property: { id: 'P1', name: 'Chalet Mont-Tremblant', city: 'Mont-Tremblant' },
-    checkIn: '22 mars 2026',
-    checkOut: '29 mars 2026',
-    guests: 4,
-    amount: '2 450 $',
-    status: 'confirmed',
-    bookedAt: '5 mars 2026',
-  },
-  {
-    id: 'RES-002',
-    guest: { name: 'Camille Bernard', avatar: 'CB' },
-    property: { id: 'P2', name: 'Appartement Vieux-Montréal', city: 'Montréal' },
-    checkIn: '3 mars 2026',
-    checkOut: '8 mars 2026',
-    guests: 2,
-    amount: '980 $',
-    status: 'in_progress',
-    bookedAt: '20 fév. 2026',
-  },
+  // ── En attente (pending) — demande envoyée, pas encore acceptée ──
   {
     id: 'RES-008',
     guest: { name: 'Élodie Tremblay', avatar: 'ET' },
     property: { id: 'P1', name: 'Chalet Mont-Tremblant', city: 'Mont-Tremblant' },
-    checkIn: '10 avr. 2026',
-    checkOut: '15 avr. 2026',
+    checkIn: '2026-04-10',
+    checkOut: '2026-04-15',
     guests: 3,
     amount: '1 890 $',
     status: 'pending',
-    bookedAt: '6 mars 2026',
+    bookedAt: '2026-03-06',
   },
   {
     id: 'RES-009',
     guest: { name: 'Hugo Lavoie', avatar: 'HL' },
     property: { id: 'P2', name: 'Appartement Vieux-Montréal', city: 'Montréal' },
-    checkIn: '18 avr. 2026',
-    checkOut: '22 avr. 2026',
+    checkIn: '2026-04-18',
+    checkOut: '2026-04-22',
     guests: 2,
     amount: '760 $',
     status: 'pending',
-    bookedAt: '7 mars 2026',
+    bookedAt: '2026-03-07',
+  },
+  // ── Confirmée (confirmed) — paiement validé récemment ──
+  {
+    id: 'RES-001',
+    guest: { name: 'Alexandre Leroy', avatar: 'AL' },
+    property: { id: 'P1', name: 'Chalet Mont-Tremblant', city: 'Mont-Tremblant' },
+    checkIn: '2026-03-22',
+    checkOut: '2026-03-29',
+    guests: 4,
+    amount: '2 450 $',
+    status: 'confirmed',
+    bookedAt: '2026-03-05',
   },
   {
     id: 'RES-003',
     guest: { name: 'Lucas Bouchard', avatar: 'LB' },
     property: { id: 'P1', name: 'Chalet Mont-Tremblant', city: 'Mont-Tremblant' },
-    checkIn: '15 mars 2026',
-    checkOut: '20 mars 2026',
+    checkIn: '2026-03-15',
+    checkOut: '2026-03-20',
     guests: 6,
     amount: '1 750 $',
     status: 'confirmed',
-    bookedAt: '28 fév. 2026',
+    bookedAt: '2026-02-28',
   },
+  // ── À venir (upcoming) — confirmée, séjour futur planifié ──
+  {
+    id: 'RES-007',
+    guest: { name: 'Marc Rousseau', avatar: 'MR' },
+    property: { id: 'P1', name: 'Chalet Mont-Tremblant', city: 'Mont-Tremblant' },
+    checkIn: '2026-03-28',
+    checkOut: '2026-04-04',
+    guests: 4,
+    amount: '2 800 $',
+    status: 'upcoming',
+    bookedAt: '2026-03-01',
+  },
+  {
+    id: 'RES-010',
+    guest: { name: 'Nathalie Gagnon', avatar: 'NG' },
+    property: { id: 'P2', name: 'Appartement Vieux-Montréal', city: 'Montréal' },
+    checkIn: '2026-03-20',
+    checkOut: '2026-03-25',
+    guests: 2,
+    amount: '1 150 $',
+    status: 'upcoming',
+    bookedAt: '2026-02-15',
+  },
+  // ── En cours (in_progress) — voyageur dans le logement (7 mars entre 5 et 10 mars) ──
+  {
+    id: 'RES-002',
+    guest: { name: 'Camille Bernard', avatar: 'CB' },
+    property: { id: 'P2', name: 'Appartement Vieux-Montréal', city: 'Montréal' },
+    checkIn: '2026-03-05',
+    checkOut: '2026-03-10',
+    guests: 2,
+    amount: '980 $',
+    status: 'in_progress',
+    bookedAt: '2026-02-20',
+  },
+  {
+    id: 'RES-011',
+    guest: { name: 'Pierre Côté', avatar: 'PC' },
+    property: { id: 'P1', name: 'Chalet Mont-Tremblant', city: 'Mont-Tremblant' },
+    checkIn: '2026-03-04',
+    checkOut: '2026-03-11',
+    guests: 5,
+    amount: '3 200 $',
+    status: 'in_progress',
+    bookedAt: '2026-02-18',
+  },
+  // ── Terminée (completed) — séjour passé ──
   {
     id: 'RES-004',
     guest: { name: 'Sophie Moreau', avatar: 'SM' },
     property: { id: 'P2', name: 'Appartement Vieux-Montréal', city: 'Montréal' },
-    checkIn: '10 fév. 2026',
-    checkOut: '14 fév. 2026',
+    checkIn: '2026-02-10',
+    checkOut: '2026-02-14',
     guests: 2,
     amount: '720 $',
     status: 'completed',
-    bookedAt: '25 janv. 2026',
+    bookedAt: '2026-01-25',
   },
   {
     id: 'RES-005',
     guest: { name: 'Thomas Dubois', avatar: 'TD' },
     property: { id: 'P1', name: 'Chalet Mont-Tremblant', city: 'Mont-Tremblant' },
-    checkIn: '1 fév. 2026',
-    checkOut: '8 fév. 2026',
+    checkIn: '2026-02-01',
+    checkOut: '2026-02-08',
     guests: 5,
     amount: '3 150 $',
     status: 'completed',
-    bookedAt: '15 janv. 2026',
+    bookedAt: '2026-01-15',
   },
+  // ── Annulée (cancelled) ──
   {
     id: 'RES-006',
     guest: { name: 'Julie Martin', avatar: 'JM' },
     property: { id: 'P2', name: 'Appartement Vieux-Montréal', city: 'Montréal' },
-    checkIn: '20 fév. 2026',
-    checkOut: '25 fév. 2026',
+    checkIn: '2026-02-20',
+    checkOut: '2026-02-25',
     guests: 3,
     amount: '1 120 $',
     status: 'cancelled',
-    bookedAt: '5 fév. 2026',
+    bookedAt: '2026-02-05',
   },
   {
-    id: 'RES-007',
-    guest: { name: 'Marc Rousseau', avatar: 'MR' },
+    id: 'RES-012',
+    guest: { name: 'François Bélanger', avatar: 'FB' },
     property: { id: 'P1', name: 'Chalet Mont-Tremblant', city: 'Mont-Tremblant' },
-    checkIn: '28 mars 2026',
-    checkOut: '4 avr. 2026',
+    checkIn: '2026-03-01',
+    checkOut: '2026-03-05',
     guests: 4,
-    amount: '2 800 $',
-    status: 'confirmed',
-    bookedAt: '1 mars 2026',
+    amount: '1 400 $',
+    status: 'cancelled',
+    bookedAt: '2026-02-10',
   },
 ];
 
@@ -157,9 +232,17 @@ export function HostReservations({ onNavigate }: HostReservationsProps) {
   const [showPropertyDropdown, setShowPropertyDropdown] = useState(false);
   const [reservations] = useState(MOCK_RESERVATIONS);
 
+  // Compute effective statuses based on dates
+  const reservationsWithStatus = useMemo(() => {
+    return reservations.map(r => ({
+      ...r,
+      effectiveStatus: computeEffectiveStatus(r.status, r.checkIn, r.checkOut),
+    }));
+  }, [reservations]);
+
   const filtered = useMemo(() => {
-    return reservations.filter(r => {
-      if (activeFilter !== 'all' && r.status !== activeFilter) return false;
+    return reservationsWithStatus.filter(r => {
+      if (activeFilter !== 'all' && r.effectiveStatus !== activeFilter) return false;
       if (propertyFilter !== 'all' && r.property.id !== propertyFilter) return false;
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
@@ -171,15 +254,15 @@ export function HostReservations({ onNavigate }: HostReservationsProps) {
       }
       return true;
     });
-  }, [reservations, activeFilter, propertyFilter, searchQuery]);
+  }, [reservationsWithStatus, activeFilter, propertyFilter, searchQuery]);
 
   const tabCounts = useMemo(() => {
-    const counts: Record<string, number> = { all: reservations.length };
-    for (const r of reservations) {
-      counts[r.status] = (counts[r.status] || 0) + 1;
+    const counts: Record<string, number> = { all: reservationsWithStatus.length };
+    for (const r of reservationsWithStatus) {
+      counts[r.effectiveStatus] = (counts[r.effectiveStatus] || 0) + 1;
     }
     return counts;
-  }, [reservations]);
+  }, [reservationsWithStatus]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -307,7 +390,7 @@ export function HostReservations({ onNavigate }: HostReservationsProps) {
                 </thead>
                 <tbody>
                   {filtered.map(reservation => {
-                    const statusInfo = STATUS_CONFIG[reservation.status];
+                    const statusInfo = STATUS_CONFIG[reservation.effectiveStatus];
                     return (
                       <tr
                         key={reservation.id}
@@ -341,12 +424,12 @@ export function HostReservations({ onNavigate }: HostReservationsProps) {
 
                         {/* Check-in */}
                         <td className="px-5 py-4">
-                          <span className="text-sm" style={{ color: '#222222' }}>{reservation.checkIn}</span>
+                          <span className="text-sm" style={{ color: '#222222' }}>{formatDisplayDate(reservation.checkIn)}</span>
                         </td>
 
                         {/* Check-out */}
                         <td className="px-5 py-4">
-                          <span className="text-sm" style={{ color: '#222222' }}>{reservation.checkOut}</span>
+                          <span className="text-sm" style={{ color: '#222222' }}>{formatDisplayDate(reservation.checkOut)}</span>
                         </td>
 
                         {/* Guests count */}
@@ -374,7 +457,7 @@ export function HostReservations({ onNavigate }: HostReservationsProps) {
 
                         {/* Booked at */}
                         <td className="px-5 py-4">
-                          <span className="text-sm" style={{ color: '#717171' }}>{reservation.bookedAt}</span>
+                          <span className="text-sm" style={{ color: '#717171' }}>{formatDisplayDate(reservation.bookedAt)}</span>
                         </td>
 
                         {/* Détails */}
@@ -397,7 +480,7 @@ export function HostReservations({ onNavigate }: HostReservationsProps) {
             {/* Reservations cards - mobile */}
             <div className="md:hidden space-y-3">
               {filtered.map(reservation => {
-                const statusInfo = STATUS_CONFIG[reservation.status];
+                const statusInfo = STATUS_CONFIG[reservation.effectiveStatus];
                 return (
                   <div
                     key={reservation.id}
@@ -433,12 +516,12 @@ export function HostReservations({ onNavigate }: HostReservationsProps) {
                     {/* Dates & amount */}
                     <div className="flex items-center justify-between text-sm mb-3">
                       <span style={{ color: '#717171' }}>
-                        {reservation.checkIn} → {reservation.checkOut}
+                        {formatDisplayDate(reservation.checkIn)} → {formatDisplayDate(reservation.checkOut)}
                       </span>
                       <span style={{ fontWeight: 600, color: '#222222' }}>{reservation.amount}</span>
                     </div>
 
-                    <p className="text-xs mb-3" style={{ color: '#9CA3AF' }}>Réservé le {reservation.bookedAt}</p>
+                    <p className="text-xs mb-3" style={{ color: '#9CA3AF' }}>Réservé le {formatDisplayDate(reservation.bookedAt)}</p>
 
                     {/* Action */}
                     <button
