@@ -1,7 +1,7 @@
 import { Heart, Share, Star, ChevronRight, ChevronLeft } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { ImageCarouselModal } from '../components/ImageCarouselModal';
-import { ListingDetail } from '../services/api';
+import { ListingDetail, reviewsApi } from '../services/api';
 import { BED_TYPE_LABELS } from '../components/host-onboarding/constants';
 
 // ─── Helper functions ────────────────────────────────────────────────────────
@@ -206,9 +206,10 @@ interface PropertyDetailsProps {
   listing: ListingDetail;
   onBack: () => void;
   onBook?: (data: Record<string, unknown>) => void;
+  onReviewAdded?: () => void;
 }
 
-export function PropertyDetails({ listing, onBack, onBook }: PropertyDetailsProps) {
+export function PropertyDetails({ listing, onBack, onBook, onReviewAdded }: PropertyDetailsProps) {
   const [showCarousel, setShowCarousel] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -217,6 +218,8 @@ export function PropertyDetails({ listing, onBack, onBook }: PropertyDetailsProp
   const [commentText, setCommentText] = useState('');
   const [commentRating, setCommentRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [reviewError, setReviewError] = useState<string | null>(null);
   const sleepScrollRef = useRef<HTMLDivElement>(null);
   const [canScrollSleepLeft, setCanScrollSleepLeft] = useState(false);
   const [canScrollSleepRight, setCanScrollSleepRight] = useState(false);
@@ -966,25 +969,40 @@ export function PropertyDetails({ listing, onBack, onBook }: PropertyDetailsProp
                 {commentText.length}/500 caractères
               </p>
               <button
-                onClick={() => {
-                  if (commentText.trim() && commentRating > 0) {
+                onClick={async () => {
+                  if (!commentText.trim() || commentRating === 0 || isSubmittingReview) return;
+                  setIsSubmittingReview(true);
+                  setReviewError(null);
+                  try {
+                    await reviewsApi.create(listing.id, {
+                      rating: commentRating,
+                      text: commentText.trim(),
+                    });
                     setCommentText('');
                     setCommentRating(0);
-                    alert('Merci pour votre commentaire !');
+                    onReviewAdded?.();
+                  } catch (err: unknown) {
+                    const message = err instanceof Error ? err.message : 'Erreur lors de la publication';
+                    setReviewError(message);
+                  } finally {
+                    setIsSubmittingReview(false);
                   }
                 }}
-                disabled={!commentText.trim() || commentRating === 0}
+                disabled={!commentText.trim() || commentRating === 0 || isSubmittingReview}
                 className="px-6 py-2.5 rounded-lg text-sm text-white transition-opacity"
                 style={{
                   fontWeight: 600,
                   backgroundColor: '#000000',
-                  opacity: !commentText.trim() || commentRating === 0 ? 0.4 : 1,
-                  cursor: !commentText.trim() || commentRating === 0 ? 'not-allowed' : 'pointer',
+                  opacity: !commentText.trim() || commentRating === 0 || isSubmittingReview ? 0.4 : 1,
+                  cursor: !commentText.trim() || commentRating === 0 || isSubmittingReview ? 'not-allowed' : 'pointer',
                 }}
               >
-                Publier
+                {isSubmittingReview ? 'Publication...' : 'Publier'}
               </button>
             </div>
+            {reviewError && (
+              <p className="text-sm text-red-600 mt-2">{reviewError}</p>
+            )}
           </div>
         </div>
 

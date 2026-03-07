@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { PropertyDetails } from '@/app/pages/PropertyDetails';
 import { publicListingsApi, ListingDetail } from '@/app/services/api';
 
@@ -15,12 +15,16 @@ export function PropertyDetailsClient({ id }: Props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const fetchListing = useCallback(() => {
     publicListingsApi.getOne(Number(id))
       .then(res => setListing(res.listing))
       .catch(err => setError(err.message || 'Erreur lors du chargement'))
       .finally(() => setLoading(false));
   }, [id]);
+
+  useEffect(() => {
+    fetchListing();
+  }, [fetchListing]);
 
   const handleBack = () => {
     router.push('/');
@@ -75,6 +79,7 @@ export function PropertyDetailsClient({ id }: Props) {
       listing={listing}
       onBack={handleBack}
       onBook={handleBook}
+      onReviewAdded={fetchListing}
     />
   );
 }
