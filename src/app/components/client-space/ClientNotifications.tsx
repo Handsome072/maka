@@ -7,9 +7,9 @@ export function ClientNotifications() {
 
   return (
     <div className="px-4 sm:px-6 lg:px-12 py-6 md:py-8 w-full">
-      <div className="max-w-xl mx-auto">
+      <div>
         <div className="mb-8">
-          <h2 className="text-xl md:text-3xl" style={{ fontWeight: 600, color: '#222222' }}>
+          <h2 className="text-lg md:text-2xl" style={{ fontWeight: 600, color: '#222222' }}>
             Notifications
           </h2>
         </div>
@@ -37,7 +37,7 @@ export function ClientNotifications() {
           <>
             {/* Activité du compte et politiques */}
             <div className="mb-10">
-              <h3 className="text-lg md:text-xl mb-2" style={{ fontWeight: 600, color: '#222222' }}>
+              <h3 className="text-base md:text-lg mb-2" style={{ fontWeight: 600, color: '#222222' }}>
                 Activité du compte et politiques
               </h3>
               <p className="text-xs md:text-sm mb-6" style={{ color: '#C13515' }}>
@@ -73,7 +73,7 @@ export function ClientNotifications() {
 
             {/* Rappels */}
             <div className="mb-10">
-              <h3 className="text-lg md:text-xl mb-2" style={{ fontWeight: 600, color: '#222222' }}>
+              <h3 className="text-base md:text-lg mb-2" style={{ fontWeight: 600, color: '#222222' }}>
                 Rappels
               </h3>
               <p className="text-xs md:text-sm mb-6" style={{ color: '#717171' }}>
@@ -95,7 +95,7 @@ export function ClientNotifications() {
 
             {/* Messages entre les hôtes et les voyageurs */}
             <div className="mb-10">
-              <h3 className="text-lg md:text-xl mb-2" style={{ fontWeight: 600, color: '#222222' }}>
+              <h3 className="text-base md:text-lg mb-2" style={{ fontWeight: 600, color: '#222222' }}>
                 Messages entre les hôtes et les voyageurs
               </h3>
               <p className="text-xs md:text-sm mb-6" style={{ color: '#717171' }}>
@@ -122,7 +122,7 @@ export function ClientNotifications() {
           <>
             {/* Conseils et offres de voyage */}
             <div className="mb-12">
-              <h3 className="text-lg md:text-xl mb-4" style={{ fontWeight: 600, color: '#222222' }}>
+              <h3 className="text-base md:text-lg mb-4" style={{ fontWeight: 600, color: '#222222' }}>
                 Conseils et offres de voyage
               </h3>
               <p className="text-xs md:text-sm text-gray-600 mb-8 leading-relaxed">
@@ -158,7 +158,7 @@ export function ClientNotifications() {
 
             {/* Actualités de HOMIQIO */}
             <div className="mb-12">
-              <h3 className="text-lg md:text-xl mb-4" style={{ fontWeight: 600, color: '#222222' }}>
+              <h3 className="text-base md:text-lg mb-4" style={{ fontWeight: 600, color: '#222222' }}>
                 Actualités de HOMIQIO
               </h3>
               <p className="text-xs md:text-sm text-gray-600 mb-8 leading-relaxed">
