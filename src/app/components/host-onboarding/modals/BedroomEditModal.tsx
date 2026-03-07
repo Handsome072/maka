@@ -3,19 +3,12 @@
 import { Minus, Plus, X } from 'lucide-react';
 import type { Bedroom } from '../types';
 import { useHostOnboarding } from '../HostOnboardingContext';
+import { BED_TYPE_LABELS } from '../constants';
 
-const BED_TYPES: { key: keyof Bedroom['beds']; label: string }[] = [
-  { key: 'simple', label: 'Lit simple' },
-  { key: 'double', label: 'Lit double' },
-  { key: 'queen', label: 'Lit Queen' },
-  { key: 'king', label: 'Lit King' },
-  { key: 'simple_bunk', label: 'Lit simple superposé' },
-  { key: 'double_bunk', label: 'Lit double superposé' },
-  { key: 'queen_bunk', label: 'Lit queen superposé' },
-  { key: 'king_bunk', label: 'Lit king superposé' },
-  { key: 'sofa_bed', label: "Canapé-lit" },
-  { key: 'other', label: "Matériel d'appoint" },
-];
+const BED_TYPES = Object.entries(BED_TYPE_LABELS).map(([key, label]) => ({
+  key: key as keyof Bedroom['beds'],
+  label,
+}));
 
 export function BedroomEditModal() {
   const { editingItem, setEditingItem, handleBedCountChange, updateItem } = useHostOnboarding();

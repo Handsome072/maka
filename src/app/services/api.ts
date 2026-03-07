@@ -319,6 +319,59 @@ export interface Listing {
   country_code?: string | null;
 }
 
+// ─── Review & Host Types (for property detail page) ─────────────────────────
+
+export interface ReviewUser {
+  first_name: string;
+  profile_photo_url: string | null;
+  member_since: string;
+}
+
+export interface Review {
+  id: number;
+  rating: number;
+  text: string | null;
+  created_at: string;
+  user: ReviewUser;
+}
+
+export interface ReviewsSummary {
+  count: number;
+  average_rating: number | null;
+  cleanliness_avg: number | null;
+  accuracy_avg: number | null;
+  checkin_avg: number | null;
+  communication_avg: number | null;
+  location_avg: number | null;
+  value_avg: number | null;
+  rating_distribution: Record<number, number>;
+  is_guest_favorite: boolean;
+}
+
+export interface ListingHost {
+  id: number;
+  first_name: string;
+  profile_photo_url: string | null;
+  profession: string | null;
+  interests: string[] | null;
+  languages_spoken: string[] | null;
+  identity_verified: boolean;
+  phone_verified: boolean;
+  member_since: string;
+  reviews_count: number;
+  average_rating: number | null;
+  response_rate: number | null;
+  response_time: string | null;
+}
+
+export interface ListingDetail extends Listing {
+  latitude: number | null;
+  longitude: number | null;
+  host: ListingHost;
+  reviews_summary: ReviewsSummary;
+  reviews: Review[];
+}
+
 export interface ListingsResponse {
   listings: Listing[];
 }
@@ -382,8 +435,8 @@ export const publicListingsApi = {
     return apiFetch<ListingsResponse>('/listings/public');
   },
 
-  getOne: async (id: number): Promise<{ listing: Listing }> => {
-    return apiFetch<{ listing: Listing }>(`/listings/public/${id}`);
+  getOne: async (id: number): Promise<{ listing: ListingDetail }> => {
+    return apiFetch<{ listing: ListingDetail }>(`/listings/public/${id}`);
   },
 };
 
