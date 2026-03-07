@@ -440,6 +440,17 @@ export const publicListingsApi = {
   },
 };
 
+// ─── Reviews API ─────────────────────────────────────────────────────────────
+
+export const reviewsApi = {
+  create: async (listingId: number, data: { rating: number; text: string }) => {
+    return apiFetch<{ review: unknown }>(`/listings/${listingId}/reviews`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+};
+
 // ─── Admin Listings API ──────────────────────────────────────────────────────
 
 export interface AdminListing extends Listing {
