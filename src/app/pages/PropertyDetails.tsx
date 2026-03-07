@@ -9,11 +9,13 @@ interface PropertyDetailsProps {
 
 export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
   const [showCarousel, setShowCarousel] = useState(false);
-  const [activeTab, setActiveTab] = useState('photos');
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [carouselStartIndex, setCarouselStartIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [commentText, setCommentText] = useState('');
+  const [commentRating, setCommentRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -177,196 +179,8 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
                 </div>
               </div>
 
-              {/* Tabs */}
-              <div className="border-b border-gray-200 mt-8">
-                <div className="flex gap-8 overflow-x-auto no-scrollbar whitespace-nowrap scroll-smooth">
-                  {['Photos', 'Équipements', 'Commentaires', 'Emplacement'].map((tab) => (
-                    <button
-                      key={tab}
-                      onClick={() => setActiveTab(tab.toLowerCase())}
-                      className={`pb-4 text-sm transition-colors ${activeTab === tab.toLowerCase()
-                        ? 'border-b-2 border-gray-900'
-                        : 'text-gray-500 hover:text-gray-900'
-                        }`}
-                      style={{ fontWeight: 600 }}
-                    >
-                      {tab}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Badges Section */}
-              <div className="py-8 border-b border-gray-200">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Coup de coeur */}
-                  <div className="flex gap-4">
-                    <div className="flex-shrink-0">
-                      <div className="text-3xl">🏅</div>
-                    </div>
-                    <div>
-                      <h3 className="text-base mb-1" style={{ fontWeight: 600 }}>
-                        Coup de cœur voyageurs
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        Un des logements les plus appréciés sur HOMIQIO
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Un des logements préférés */}
-                  <div className="flex gap-4">
-                    <div className="flex-shrink-0">
-                      <div className="text-3xl">✨</div>
-                    </div>
-                    <div>
-                      <h3 className="text-base mb-1" style={{ fontWeight: 600 }}>
-                        Un des logements préférés des voyageurs sur HOMIQIO
-                      </h3>
-                      <div className="flex items-center gap-2 mt-1">
-                        <div className="flex items-center">
-                          <Star className="w-4 h-4 fill-current" />
-                          <Star className="w-4 h-4 fill-current" />
-                          <Star className="w-4 h-4 fill-current" />
-                          <Star className="w-4 h-4 fill-current" />
-                          <Star className="w-4 h-4 fill-current" />
-                        </div>
-                        <span className="text-sm" style={{ fontWeight: 600 }}>4,96</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Reviews */}
-                  <div className="flex gap-4">
-                    <div className="flex-shrink-0">
-                      <div className="text-3xl">💬</div>
-                    </div>
-                    <div>
-                      <h3 className="text-base mb-1" style={{ fontWeight: 600 }}>26</h3>
-                      <p className="text-sm text-gray-600">Commentaires</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Host Section */}
-              <div className="py-8 border-b border-gray-200">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center text-white text-xl" style={{ fontWeight: 600 }}>
-                    J
-                  </div>
-                  <div>
-                    <h3 className="text-base" style={{ fontWeight: 600 }}>Hôte : Jérémy</h3>
-                    <p className="text-sm text-gray-600">4 mois d'expérience en tant qu'hôte</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Property Highlights */}
-              <div className="py-8 border-b border-gray-200 space-y-6">
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 mt-1">
-                    <div className="text-2xl">🏆</div>
-                  </div>
-                  <div>
-                    <h3 className="text-base mb-1" style={{ fontWeight: 600 }}>
-                      Ce logement fait partie des 10 % de logements préférés sur HOMIQIO
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      Ce logement est très bien classé, d'après ses évaluations, ses commentaires et la fiabilité de l'hôte pour répondre aux questions des voyageurs.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 mt-1">
-                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-base mb-1" style={{ fontWeight: 600 }}>
-                      Procédure d'arrivée exceptionnelle
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      Les voyageurs récents ont attribué 5 étoiles à la procédure d'arrivée.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 mt-1">
-                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-base mb-1" style={{ fontWeight: 600 }}>
-                      Annulation gratuite avant le 2 avril
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      Obtenez un remboursement intégral si vous changez d'avis.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Description */}
-              <div className="py-8 border-b border-gray-200">
-                <div className="text-base leading-relaxed text-gray-900">
-                  <p className={showFullDescription ? '' : 'line-clamp-4'}>
-                    Bienvenue dans ce studio cosy de 15m², entièrement refait à neuf et pensé pour votre confort. Vous y trouverez une pièce lumineuse, une cuisine équipée donnant sur cour, double vitrage pour le calme, salle de bain pratique et toilettes privatives sur le palier. L'immeuble est paisible et agréable. Les photos montrent chaque détail pour préparer votre séjour. Je reste disponible avec plaisir pour répondre à vos questions et vous accompagner.
-                  </p>
-                  {!showFullDescription && (
-                    <button
-                      onClick={() => setShowFullDescription(true)}
-                      className="text-sm mt-2 underline"
-                      style={{ fontWeight: 600 }}
-                    >
-                      Lire la suite
-                    </button>
-                  )}
-                </div>
-
-                {showFullDescription && (
-                  <>
-                    <h3 className="text-xl mt-8 mb-4" style={{ fontWeight: 600 }}>Le logement...</h3>
-                    <p className="text-base leading-relaxed text-gray-900">
-                      Ce studio confortable dispose de tout le nécessaire pour passer un agréable séjour. La pièce principale est lumineuse et bien aménagée. La cuisine est entièrement équipée avec réfrigérateur, plaques de cuisson, micro-ondes et tous les ustensiles nécessaires. La salle de bain moderne comprend une douche, un lavabo et des rangements. Le logement est situé dans un quartier calme et bien desservi par les transports en commun.
-                    </p>
-                  </>
-                )}
-              </div>
-
-              {/* Where you'll sleep */}
-              <div className="py-8 border-gray-200">
-                <h3 className="text-xl mb-6" style={{ fontWeight: 600 }}>Où vous dormirez</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="rounded-xl">
-                    <img src={images[2]} alt="Bedroom 1" className="w-full h-64 object-cover rounded-lg mb-4" />
-                    <h4 className="text-base" style={{ fontWeight: 600 }}>Chambre</h4>
-                    <p className="text-sm text-gray-600 mt-1">1 lit double</p>
-                  </div>
-                  <div className="rounded-xl">
-                    <img src={images[1]} alt="Bedroom 2" className="w-full h-64 object-cover rounded-lg mb-4" />
-                    <h4 className="text-base" style={{ fontWeight: 600 }}>Espace commun</h4>
-                    <p className="text-sm text-gray-600 mt-1">1 canapé-lit</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Disclaimer */}
-              {/* <div className="py-8">
-                <p className="text-sm text-gray-600">
-                  Certaines informations ont été traduites automatiquement.
-                </p>
-                <button className="text-sm underline mt-2" style={{ fontWeight: 600 }}>
-                  Afficher le texte d'origine
-                </button>
-              </div> */}
-
               {/* Ce que propose ce logement */}
-              <div className="py-8 border-t border-gray-200">
+              <div className="py-8 border-b border-gray-200">
                 <h3 className="text-xl mb-6" style={{ fontWeight: 600 }}>Ce que propose ce logement</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Amenities list */}
@@ -446,6 +260,109 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
                 <button className="mt-6 px-6 py-3 bg-gray-100 rounded-lg hover:bg-gray-300 transition-colors text-base" style={{ fontWeight: 600 }}>
                   Afficher les 24 équipements
                 </button>
+              </div>
+
+              {/* Description */}
+              <div className="py-8 border-b border-gray-200">
+                <div className="text-base leading-relaxed text-gray-900">
+                  <p className={showFullDescription ? '' : 'line-clamp-4'}>
+                    Bienvenue dans ce studio cosy de 15m², entièrement refait à neuf et pensé pour votre confort. Vous y trouverez une pièce lumineuse, une cuisine équipée donnant sur cour, double vitrage pour le calme, salle de bain pratique et toilettes privatives sur le palier. L'immeuble est paisible et agréable. Les photos montrent chaque détail pour préparer votre séjour. Je reste disponible avec plaisir pour répondre à vos questions et vous accompagner.
+                  </p>
+                  {!showFullDescription && (
+                    <button
+                      onClick={() => setShowFullDescription(true)}
+                      className="text-sm mt-2 underline"
+                      style={{ fontWeight: 600 }}
+                    >
+                      Lire la suite
+                    </button>
+                  )}
+                </div>
+
+                {showFullDescription && (
+                  <>
+                    <h3 className="text-xl mt-8 mb-4" style={{ fontWeight: 600 }}>Le logement...</h3>
+                    <p className="text-base leading-relaxed text-gray-900">
+                      Ce studio confortable dispose de tout le nécessaire pour passer un agréable séjour. La pièce principale est lumineuse et bien aménagée. La cuisine est entièrement équipée avec réfrigérateur, plaques de cuisson, micro-ondes et tous les ustensiles nécessaires. La salle de bain moderne comprend une douche, un lavabo et des rangements. Le logement est situé dans un quartier calme et bien desservi par les transports en commun.
+                    </p>
+                  </>
+                )}
+              </div>
+
+              {/* Where you'll sleep */}
+              <div className="py-8 border-gray-200">
+                <h3 className="text-xl mb-6" style={{ fontWeight: 600 }}>Où vous dormirez</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="rounded-xl">
+                    <img src={images[2]} alt="Bedroom 1" className="w-full h-64 object-cover rounded-lg mb-4" />
+                    <h4 className="text-base" style={{ fontWeight: 600 }}>Chambre</h4>
+                    <p className="text-sm text-gray-600 mt-1">1 lit double</p>
+                  </div>
+                  <div className="rounded-xl">
+                    <img src={images[1]} alt="Bedroom 2" className="w-full h-64 object-cover rounded-lg mb-4" />
+                    <h4 className="text-base" style={{ fontWeight: 600 }}>Espace commun</h4>
+                    <p className="text-sm text-gray-600 mt-1">1 canapé-lit</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Disclaimer */}
+              {/* <div className="py-8">
+                <p className="text-sm text-gray-600">
+                  Certaines informations ont été traduites automatiquement.
+                </p>
+                <button className="text-sm underline mt-2" style={{ fontWeight: 600 }}>
+                  Afficher le texte d'origine
+                </button>
+              </div> */}
+
+              {/* Property Highlights */}
+              <div className="py-8 border-t border-gray-200 space-y-6">
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 mt-1">
+                    <div className="text-2xl">🏆</div>
+                  </div>
+                  <div>
+                    <h3 className="text-base mb-1" style={{ fontWeight: 600 }}>
+                      Ce logement fait partie des 10 % de logements préférés sur HOMIQIO
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      Ce logement est très bien classé, d'après ses évaluations, ses commentaires et la fiabilité de l'hôte pour répondre aux questions des voyageurs.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 mt-1">
+                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-base mb-1" style={{ fontWeight: 600 }}>
+                      Procédure d'arrivée exceptionnelle
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      Les voyageurs récents ont attribué 5 étoiles à la procédure d'arrivée.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 mt-1">
+                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-base mb-1" style={{ fontWeight: 600 }}>
+                      Annulation gratuite avant le 2 avril
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      Obtenez un remboursement intégral si vous changez d'avis.
+                    </p>
+                  </div>
+                </div>
               </div>
 
               {/* 2 nuits à Paris - Calendar Section */}
@@ -811,6 +728,70 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
                 Jeremy nous a accueilli chaleureusement, les échanges avec lui ont été sympathique et réactif. L'appartement est très propre et bien situé. Je recommande vivement !
               </p>
               <button className="text-sm underline" style={{ fontWeight: 600 }}>Lire la suite</button>
+            </div>
+          </div>
+
+          {/* Add a comment */}
+          <div className="border-t border-gray-200 pt-8 mb-8">
+            <h3 className="text-lg mb-4" style={{ fontWeight: 600 }}>Laisser un commentaire</h3>
+            <div className="bg-white border border-gray-200 rounded-xl p-6">
+              {/* Star rating */}
+              <div className="flex items-center gap-1 mb-4">
+                <span className="text-sm mr-2" style={{ color: '#717171', fontWeight: 500 }}>Votre note :</span>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    onMouseEnter={() => setHoverRating(star)}
+                    onMouseLeave={() => setHoverRating(0)}
+                    onClick={() => setCommentRating(star)}
+                    className="transition-colors"
+                  >
+                    <Star
+                      className={`w-5 h-5 ${
+                        star <= (hoverRating || commentRating)
+                          ? 'fill-yellow-400 text-yellow-400'
+                          : 'text-gray-300'
+                      }`}
+                    />
+                  </button>
+                ))}
+                {commentRating > 0 && (
+                  <span className="text-sm ml-2" style={{ fontWeight: 600 }}>{commentRating}/5</span>
+                )}
+              </div>
+              {/* Comment textarea */}
+              <textarea
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                placeholder="Partagez votre expérience avec les autres voyageurs..."
+                className="w-full border border-gray-300 rounded-lg p-3 text-sm resize-none focus:outline-none focus:border-gray-900 transition-colors"
+                rows={4}
+                style={{ color: '#222222' }}
+              />
+              <div className="flex items-center justify-between mt-3">
+                <p className="text-xs" style={{ color: '#9CA3AF' }}>
+                  {commentText.length}/500 caractères
+                </p>
+                <button
+                  onClick={() => {
+                    if (commentText.trim() && commentRating > 0) {
+                      setCommentText('');
+                      setCommentRating(0);
+                      alert('Merci pour votre commentaire !');
+                    }
+                  }}
+                  disabled={!commentText.trim() || commentRating === 0}
+                  className="px-6 py-2.5 rounded-lg text-sm text-white transition-opacity"
+                  style={{
+                    fontWeight: 600,
+                    backgroundColor: '#000000',
+                    opacity: !commentText.trim() || commentRating === 0 ? 0.4 : 1,
+                    cursor: !commentText.trim() || commentRating === 0 ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  Publier
+                </button>
+              </div>
             </div>
           </div>
 
