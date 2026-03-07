@@ -49,7 +49,7 @@ export function HostSidebar({ activePage }: HostSidebarProps) {
         { id: 'host-reservations', label: 'Réservations', icon: CalendarDays, href: ROUTES.HOST_RESERVATIONS },
         { id: 'host-calendar', label: 'Calendrier', icon: CalendarDays, href: ROUTES.HOST_CALENDAR },
         { id: 'annonces', label: 'Annonces', icon: Megaphone, href: ROUTES.ANNONCES },
-        { id: 'messages', label: 'Boîte de réception', icon: MessageSquare, href: ROUTES.MESSAGES },
+        { id: 'messages', label: 'Boîte de réception', icon: MessageSquare, href: ROUTES.HOST_INBOX },
       ]
     },
     {

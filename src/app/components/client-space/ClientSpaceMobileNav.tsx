@@ -9,11 +9,12 @@ export function ClientSpaceMobileNav() {
   const { user } = useAuth();
 
   // Hide mobile nav on specific subpages
-  if (pathname?.startsWith('/client-space/profile') || 
-      pathname?.startsWith('/client-space/security') || 
-      pathname?.startsWith('/client-space/notifications') || 
+  if (pathname?.startsWith('/client-space/profile') ||
+      pathname?.startsWith('/client-space/security') ||
+      pathname?.startsWith('/client-space/notifications') ||
       pathname?.startsWith('/client-space/payments') ||
-      pathname?.startsWith('/client-space/languages')) {
+      pathname?.startsWith('/client-space/languages') ||
+      pathname?.startsWith('/client-space/messages')) {
     return null;
   }
 

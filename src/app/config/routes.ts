@@ -12,6 +12,7 @@ export const ROUTES = {
   // Pages utilisateur
   MESSAGES: '/messages',
   CLIENT_SPACE: '/client-space',
+  CLIENT_SPACE_MESSAGES: '/client-space/messages',
   CLIENT_SPACE_RESERVATIONS: '/client-space/reservations',
   CLIENT_SPACE_PROFILE: '/client-space/profile',
   CLIENT_SPACE_PAYMENTS: '/client-space/payments',
@@ -25,6 +26,7 @@ export const ROUTES = {
   HOST_RESERVATIONS: '/annonces/reservations',
   HOST_CALENDAR: '/annonces/calendar',
   HOST_REVENUES: '/annonces/revenues',
+  HOST_INBOX: '/annonces/inbox',
   HOST_SETTINGS: '/annonces/settings',
   HOST_PROFILE: '/annonces/profile',
   ANNONCES: '/annonces',
@@ -119,7 +121,7 @@ export function getNavigationPath(
     case 'services':
       return ROUTES.SERVICES;
     case 'messages':
-      return ROUTES.MESSAGES;
+      return ROUTES.CLIENT_SPACE_MESSAGES;
     case 'host-onboarding':
       return ROUTES.HOST_ONBOARDING;
     case 'host-dashboard':

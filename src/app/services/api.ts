@@ -726,3 +726,172 @@ export const userProfileApi = {
     });
   },
 };
+
+// ─── Messaging Types ──────────────────────────────────────────────────────────
+
+export interface ConversationParticipant {
+  id: number;
+  first_name: string;
+  last_name: string;
+  profile_photo_url: string | null;
+}
+
+export interface ConversationReservation {
+  id: number;
+  check_in: string;
+  check_out: string;
+  guests_count: number;
+  status: 'pending' | 'confirmed' | 'active' | 'completed' | 'cancelled';
+  listing: {
+    id: number;
+    title: string;
+    photo_url: string | null;
+  };
+}
+
+export interface Conversation {
+  id: number;
+  reservation: ConversationReservation;
+  host: ConversationParticipant;
+  guest: ConversationParticipant;
+  last_message: {
+    text: string;
+    sender_id: number;
+    created_at: string;
+    has_image: boolean;
+  } | null;
+  unread_count: number;
+  is_archived: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ConversationsResponse {
+  conversations: Conversation[];
+  total: number;
+}
+
+export interface ChatMessage {
+  id: number;
+  conversation_id: number;
+  sender_id: number;
+  text: string | null;
+  image_url: string | null;
+  read_at: string | null;
+  created_at: string;
+}
+
+export interface ChatMessagesResponse {
+  messages: ChatMessage[];
+  conversation: Conversation;
+}
+
+export interface SendMessageResponse {
+  message: string;
+  data: ChatMessage;
+}
+
+// ─── Messaging API ────────────────────────────────────────────────────────────
+
+export type ConversationFilter = 'all' | 'pending' | 'upcoming' | 'active' | 'past';
+
+export const messagesApi = {
+  /**
+   * Get conversations for the current user (works for both host and guest)
+   * When role=host, returns conversations linked to the user's listings
+   * When role=guest, returns conversations where the user is the guest
+   */
+  getConversations: async (params?: {
+    role?: 'host' | 'guest';
+    filter?: ConversationFilter;
+    search?: string;
+    archived?: boolean;
+  }): Promise<ConversationsResponse> => {
+    const query = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, val]) => {
+        if (val !== undefined && val !== '') query.append(key, String(val));
+      });
+    }
+    const qs = query.toString();
+    return apiFetch<ConversationsResponse>(`/conversations${qs ? `?${qs}` : ''}`);
+  },
+
+  /**
+   * Get messages for a specific conversation
+   */
+  getMessages: async (conversationId: number): Promise<ChatMessagesResponse> => {
+    return apiFetch<ChatMessagesResponse>(`/conversations/${conversationId}/messages`);
+  },
+
+  /**
+   * Send a text message
+   */
+  sendMessage: async (conversationId: number, text: string): Promise<SendMessageResponse> => {
+    return apiFetch<SendMessageResponse>(`/conversations/${conversationId}/messages`, {
+      method: 'POST',
+      body: JSON.stringify({ text }),
+    });
+  },
+
+  /**
+   * Send an image message
+   */
+  sendImage: async (conversationId: number, file: File, text?: string): Promise<SendMessageResponse> => {
+    const token = getAuthToken();
+    const formData = new FormData();
+    formData.append('image', file);
+    if (text) formData.append('text', text);
+
+    const response = await fetch(`${API_BASE_URL}/conversations/${conversationId}/messages/image`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || 'Erreur lors de l\'envoi de l\'image');
+    }
+    return data;
+  },
+
+  /**
+   * Mark conversation as read
+   */
+  markAsRead: async (conversationId: number): Promise<MessageResponse> => {
+    return apiFetch<MessageResponse>(`/conversations/${conversationId}/read`, {
+      method: 'POST',
+    });
+  },
+
+  /**
+   * Mark conversation as unread
+   */
+  markAsUnread: async (conversationId: number): Promise<MessageResponse> => {
+    return apiFetch<MessageResponse>(`/conversations/${conversationId}/unread`, {
+      method: 'POST',
+    });
+  },
+
+  /**
+   * Archive a conversation
+   */
+  archiveConversation: async (conversationId: number): Promise<MessageResponse> => {
+    return apiFetch<MessageResponse>(`/conversations/${conversationId}/archive`, {
+      method: 'POST',
+    });
+  },
+
+  /**
+   * Unarchive a conversation
+   */
+  unarchiveConversation: async (conversationId: number): Promise<MessageResponse> => {
+    return apiFetch<MessageResponse>(`/conversations/${conversationId}/unarchive`, {
+      method: 'POST',
+    });
+  },
+};
