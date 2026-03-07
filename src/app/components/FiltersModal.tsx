@@ -148,7 +148,7 @@ export function FiltersModal({ isOpen, onClose, onApplyFilters }: FiltersModalPr
       aria-labelledby="filters-modal-title"
     >
       {/* Overlay background with blur */}
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
 
       {/* Modal - continued in next section */}
       <div
