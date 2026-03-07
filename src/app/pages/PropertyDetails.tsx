@@ -1007,20 +1007,6 @@ export function PropertyDetails({ onBack, onBook }: PropertyDetailsProps) {
           </div>
         </div>
 
-        {/* Breadcrumb */}
-        <div className="bg-white bg-gray-200">
-          <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-20 py-8">
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <button className="hover:underline">HOMIQIO</button>
-              <ChevronRight className="w-4 h-4" />
-              <button className="hover:underline">Émirats arabes unis</button>
-              <ChevronRight className="w-4 h-4" />
-              <button className="hover:underline">Dubaï</button>
-              <ChevronRight className="w-4 h-4" />
-              <button className="hover:underline">Dubaï</button>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Sticky Bottom Bar - Mobile Only */}

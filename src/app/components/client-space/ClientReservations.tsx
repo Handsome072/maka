@@ -1,8 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
 import { ReservationDetail } from '@/app/components/ReservationDetail';
 
 const PROPERTY_IMAGES = [
@@ -39,13 +37,7 @@ export function ClientReservations() {
 
   return (
     <div className="px-4 sm:px-6 lg:px-12 py-6 md:py-8 w-full">
-      <div className="flex items-center gap-3 mb-8">
-        <Link 
-          href="/"
-          className="md:hidden p-1 -ml-2 hover:bg-gray-100 rounded-full transition-colors"
-        >
-          <ArrowLeft className="w-6 h-6" style={{ color: '#222222' }} />
-        </Link>
+      <div className="mb-8">
         <h2 className="text-lg md:text-2xl" style={{ fontWeight: 600, color: '#222222' }}>
           Mes réservations
         </h2>
