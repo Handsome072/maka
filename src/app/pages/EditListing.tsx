@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { HostSidebar } from '@/app/components/HostSidebar';
 
 interface EditListingProps {
   onNavigate: (page: string) => void;
@@ -253,68 +254,11 @@ export function EditListing({ onNavigate, uploadedPhotos = [], listingTitle = 'M
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Host Header */}
-      <header className="sticky top-0 bg-white border-b border-gray-100 px-8 py-4 flex items-center justify-between z-20">
-        <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
-          <img
-            src="/logo.png"
-            alt="HOMIQIO Logo"
-            className="w-[120px] h-auto"
-          />
-        </button>
-
-        {/* Host Navigation */}
-        <nav className="flex items-center gap-8">
-          <button className="text-sm hover:opacity-70 transition-opacity" style={{ color: '#717171' }}>
-            Aujourd'hui
-          </button>
-          <button className="text-sm hover:opacity-70 transition-opacity" style={{ color: '#717171' }}>
-            Calendrier
-          </button>
-          <button 
-            onClick={() => onNavigate('annonces')}
-            className="text-sm hover:opacity-70 transition-opacity pb-3 border-b-2 border-gray-900" 
-            style={{ fontWeight: 600, color: '#222222' }}
-          >
-            Annonces
-          </button>
-          <button 
-            onClick={() => onNavigate('messages')}
-            className="text-sm hover:opacity-70 transition-opacity" 
-            style={{ color: '#717171' }}
-          >
-            Messages
-          </button>
-        </nav>
-
-        {/* Right side */}
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={() => onNavigate('annonces')}
-            className="text-sm hover:opacity-70 transition-opacity" 
-            style={{ fontWeight: 600, color: '#222222' }}
-          >
-            Passer en mode voyageur
-          </button>
-          <button className="w-8 h-8 rounded-full bg-gray-700 text-white flex items-center justify-center text-sm hover:opacity-90 transition-opacity">
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-          </button>
-          <button className="w-8 h-8 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center">
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#222222" strokeWidth="2">
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
-          </button>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gray-50">
+      <HostSidebar activePage="annonces" />
 
       {/* Main Content */}
-      <div className="flex min-h-screen">
+      <div className="lg:ml-[280px] flex min-h-screen mt-16 lg:mt-0">
         {/* Left Sidebar */}
         <div className="w-80 bg-white border-r border-gray-200 p-6 overflow-y-auto sticky top-0 h-screen">
           {/* Back Button */}
