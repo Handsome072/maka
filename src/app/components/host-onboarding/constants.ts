@@ -119,6 +119,19 @@ export const PERMISSIONS_DATA = [
   { id: 'outdoor_fire', label: "Possible de faire un feu à l'extérieur" },
 ];
 
+export const BED_TYPE_LABELS: Record<string, string> = {
+  simple: 'Lit simple',
+  double: 'Lit double',
+  queen: 'Lit Queen',
+  king: 'Lit King',
+  simple_bunk: 'Lit simple superposé',
+  double_bunk: 'Lit double superposé',
+  queen_bunk: 'Lit queen superposé',
+  king_bunk: 'Lit king superposé',
+  sofa_bed: 'Canapé-lit',
+  other: "Matériel d'appoint",
+};
+
 export const DAYS_OF_WEEK = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
 export const BIG_STEPS = [

@@ -1,21 +1,21 @@
 import { PropertyDetailsClient } from './PropertyDetailsClient';
 
 /**
- * Generate static params for property pages
- * These IDs correspond to the mock properties in the application
+ * Generate static params for property pages.
+ * With output: 'export', we pre-generate pages for a range of IDs.
+ * Actual data is fetched client-side via API.
  */
 export function generateStaticParams() {
-  // Generate IDs for mock properties (1-10)
-  return Array.from({ length: 10 }, (_, i) => ({
+  return Array.from({ length: 50 }, (_, i) => ({
     id: String(i + 1),
   }));
 }
 
-/**
- * Page Property Details Next.js
- * Réutilise le composant PropertyDetails existant
- */
-export default function PropertyDetailsPage() {
-  return <PropertyDetailsClient />;
+interface Props {
+  params: Promise<{ id: string }>;
 }
 
+export default async function PropertyDetailsPage({ params }: Props) {
+  const { id } = await params;
+  return <PropertyDetailsClient id={id} />;
+}
