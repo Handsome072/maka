@@ -913,70 +913,6 @@ export function PropertyDetails({ listing, onBack, onBook }: PropertyDetailsProp
               ))}
             </div>
 
-            {/* Add a comment */}
-            <div className="border-t border-gray-200 pt-8 mb-8">
-              <h3 className="text-lg mb-4" style={{ fontWeight: 600 }}>Laisser un commentaire</h3>
-              <div className="bg-white border border-gray-200 rounded-xl p-6">
-                {/* Star rating */}
-                <div className="flex items-center gap-1 mb-4">
-                  <span className="text-sm mr-2" style={{ color: '#717171', fontWeight: 500 }}>Votre note :</span>
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      onMouseEnter={() => setHoverRating(star)}
-                      onMouseLeave={() => setHoverRating(0)}
-                      onClick={() => setCommentRating(star)}
-                      className="transition-colors"
-                    >
-                      <Star
-                        className={`w-5 h-5 ${
-                          star <= (hoverRating || commentRating)
-                            ? 'fill-yellow-400 text-yellow-400'
-                            : 'text-gray-300'
-                        }`}
-                      />
-                    </button>
-                  ))}
-                  {commentRating > 0 && (
-                    <span className="text-sm ml-2" style={{ fontWeight: 600 }}>{commentRating}/5</span>
-                  )}
-                </div>
-                {/* Comment textarea */}
-                <textarea
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  placeholder="Partagez votre expérience avec les autres voyageurs..."
-                  className="w-full border border-gray-300 rounded-lg p-3 text-sm resize-none focus:outline-none focus:border-gray-900 transition-colors"
-                  rows={4}
-                  style={{ color: '#222222' }}
-                />
-                <div className="flex items-center justify-between mt-3">
-                  <p className="text-xs" style={{ color: '#9CA3AF' }}>
-                    {commentText.length}/500 caractères
-                  </p>
-                  <button
-                    onClick={() => {
-                      if (commentText.trim() && commentRating > 0) {
-                        setCommentText('');
-                        setCommentRating(0);
-                        alert('Merci pour votre commentaire !');
-                      }
-                    }}
-                    disabled={!commentText.trim() || commentRating === 0}
-                    className="px-6 py-2.5 rounded-lg text-sm text-white transition-opacity"
-                    style={{
-                      fontWeight: 600,
-                      backgroundColor: '#000000',
-                      opacity: !commentText.trim() || commentRating === 0 ? 0.4 : 1,
-                      cursor: !commentText.trim() || commentRating === 0 ? 'not-allowed' : 'pointer',
-                    }}
-                  >
-                    Publier
-                  </button>
-                </div>
-              </div>
-            </div>
-
             {/* Show all reviews button */}
             {reviewsSummary.count > 6 && (
               <div className="text-center flex self-start">
@@ -987,6 +923,70 @@ export function PropertyDetails({ listing, onBack, onBook }: PropertyDetailsProp
             )}
           </div>
         )}
+
+        {/* Add a comment - Always visible */}
+        <div className="max-w-[1280px] border-t border-gray-200 py-10 md:py-16 mx-auto px-4 sm:px-6 lg:px-20">
+          <h3 className="text-lg mb-4" style={{ fontWeight: 600 }}>Laisser un commentaire</h3>
+          <div className="bg-white border border-gray-200 rounded-xl p-6">
+            {/* Star rating */}
+            <div className="flex items-center gap-1 mb-4">
+              <span className="text-sm mr-2" style={{ color: '#717171', fontWeight: 500 }}>Votre note :</span>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  onMouseEnter={() => setHoverRating(star)}
+                  onMouseLeave={() => setHoverRating(0)}
+                  onClick={() => setCommentRating(star)}
+                  className="transition-colors"
+                >
+                  <Star
+                    className={`w-5 h-5 ${
+                      star <= (hoverRating || commentRating)
+                        ? 'fill-yellow-400 text-yellow-400'
+                        : 'text-gray-300'
+                    }`}
+                  />
+                </button>
+              ))}
+              {commentRating > 0 && (
+                <span className="text-sm ml-2" style={{ fontWeight: 600 }}>{commentRating}/5</span>
+              )}
+            </div>
+            {/* Comment textarea */}
+            <textarea
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              placeholder="Partagez votre expérience avec les autres voyageurs..."
+              className="w-full border border-gray-300 rounded-lg p-3 text-sm resize-none focus:outline-none focus:border-gray-900 transition-colors"
+              rows={4}
+              style={{ color: '#222222' }}
+            />
+            <div className="flex items-center justify-between mt-3">
+              <p className="text-xs" style={{ color: '#9CA3AF' }}>
+                {commentText.length}/500 caractères
+              </p>
+              <button
+                onClick={() => {
+                  if (commentText.trim() && commentRating > 0) {
+                    setCommentText('');
+                    setCommentRating(0);
+                    alert('Merci pour votre commentaire !');
+                  }
+                }}
+                disabled={!commentText.trim() || commentRating === 0}
+                className="px-6 py-2.5 rounded-lg text-sm text-white transition-opacity"
+                style={{
+                  fontWeight: 600,
+                  backgroundColor: '#000000',
+                  opacity: !commentText.trim() || commentRating === 0 ? 0.4 : 1,
+                  cursor: !commentText.trim() || commentRating === 0 ? 'not-allowed' : 'pointer',
+                }}
+              >
+                Publier
+              </button>
+            </div>
+          </div>
+        </div>
 
         {/* Location Section - Full Width */}
         <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-20 py-10 md:py-16 border-t border-gray-200">
