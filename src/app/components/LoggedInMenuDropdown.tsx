@@ -98,7 +98,7 @@ export function LoggedInMenuDropdown({ isOpen, onClose, onBecomeHostClick, onLan
 
         {/* Messages */}
         <Link
-          href={ROUTES.MESSAGES}
+          href={ROUTES.CLIENT_SPACE_MESSAGES}
           className="w-full px-8 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3 text-left"
           onClick={onClose}
         >

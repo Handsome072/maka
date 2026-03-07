@@ -1,6 +1,6 @@
 'use client';
 
-import { ClipboardList, User, Shield, Bell, CreditCard, Globe, Menu, X, LogOut, Settings, ChevronUp } from 'lucide-react';
+import { ClipboardList, User, Shield, Bell, CreditCard, Globe, Menu, X, LogOut, Settings, ChevronUp, MessageSquare } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -35,6 +35,7 @@ export function ClientSpaceSidebar() {
       category: 'COMPTE',
       items: [
         { id: 'reservations', label: 'Mes réservations', icon: ClipboardList, href: ROUTES.CLIENT_SPACE_RESERVATIONS },
+        { id: 'messages', label: 'Messages', icon: MessageSquare, href: ROUTES.CLIENT_SPACE_MESSAGES },
         { id: 'profile', label: 'Informations personnelles', icon: User, href: ROUTES.CLIENT_SPACE_PROFILE },
         { id: 'security', label: 'Connexion et sécurité', icon: Shield, href: ROUTES.CLIENT_SPACE_SECURITY },
       ]
