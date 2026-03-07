@@ -9,9 +9,9 @@ export function ClientPayments() {
 
   return (
     <div className="px-4 sm:px-6 lg:px-12 py-6 md:py-8 w-full">
-      <div className="max-w-xl mx-auto">
+      <div>
         <div className="mb-8">
-          <h2 className="text-xl md:text-3xl" style={{ fontWeight: 600, color: '#222222' }}>
+          <h2 className="text-lg md:text-2xl" style={{ fontWeight: 600, color: '#222222' }}>
             Paiements
           </h2>
         </div>
@@ -46,7 +46,7 @@ export function ClientPayments() {
           <>
             {/* Vos paiements */}
             <div className="mb-12">
-              <h3 className="text-lg md:text-xl mb-4" style={{ fontWeight: 600, color: '#222222' }}>
+              <h3 className="text-base md:text-lg mb-4" style={{ fontWeight: 600, color: '#222222' }}>
                 Vos paiements
               </h3>
               <p className="text-xs md:text-sm text-gray-600 mb-6">
@@ -59,7 +59,7 @@ export function ClientPayments() {
 
             {/* Modes de paiement */}
             <div className="mb-12">
-              <h3 className="text-lg md:text-xl mb-4" style={{ fontWeight: 600, color: '#222222' }}>
+              <h3 className="text-base md:text-lg mb-4" style={{ fontWeight: 600, color: '#222222' }}>
                 Modes de paiement
               </h3>
               <p className="text-xs md:text-sm text-gray-600 mb-6">
@@ -76,7 +76,7 @@ export function ClientPayments() {
 
             {/* Crédit cadeau HOMIQIO */}
             <div>
-              <h3 className="text-lg md:text-xl mb-6" style={{ fontWeight: 600, color: '#222222' }}>
+              <h3 className="text-base md:text-lg mb-6" style={{ fontWeight: 600, color: '#222222' }}>
                 Crédit cadeau HOMIQIO
               </h3>
               <button className="px-6 py-3 bg-gray-900 text-white rounded-lg text-sm transition-colors hover:bg-gray-800" style={{ fontWeight: 600 }}>
@@ -91,7 +91,7 @@ export function ClientPayments() {
           <>
             {/* Votre mode de versement */}
             <div className="mb-12">
-              <h3 className="text-lg md:text-xl mb-4" style={{ fontWeight: 600, color: '#222222' }}>
+              <h3 className="text-base md:text-lg mb-4" style={{ fontWeight: 600, color: '#222222' }}>
                 Votre mode de versement
               </h3>
               <p className="text-xs md:text-sm text-gray-600 mb-6">
@@ -108,7 +108,7 @@ export function ClientPayments() {
 
             {/* Besoin d'aide ? */}
             <div className="border border-gray-300 rounded-xl p-6">
-              <h3 className="text-lg mb-6" style={{ fontWeight: 600, color: '#222222' }}>
+              <h3 className="text-base md:text-lg mb-6" style={{ fontWeight: 600, color: '#222222' }}>
                 Besoin d'aide ?
               </h3>
 
@@ -149,7 +149,7 @@ export function ClientPayments() {
           <>
             {/* Paramètres des frais de service */}
             <div className="mb-8">
-              <h3 className="text-lg md:text-xl mb-2" style={{ fontWeight: 600, color: '#222222' }}>
+              <h3 className="text-base md:text-lg mb-2" style={{ fontWeight: 600, color: '#222222' }}>
                 Paramètres des frais de service
               </h3>
               <p className="text-xs md:text-sm mb-6" style={{ color: '#C13515' }}>

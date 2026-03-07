@@ -102,7 +102,7 @@ export function ClientProfile() {
   if (loading) {
     return (
       <div className="px-4 sm:px-6 lg:px-12 py-6 md:py-8 w-full">
-        <div className="max-w-xl mx-auto flex items-center justify-center py-24">
+        <div className="flex items-center justify-center py-24">
           <div className="w-8 h-8 border-2 border-gray-900 border-t-transparent rounded-full animate-spin" />
         </div>
       </div>
@@ -111,7 +111,7 @@ export function ClientProfile() {
 
   return (
     <div className="px-4 sm:px-6 lg:px-12 py-6 md:py-8 w-full">
-      <div className="max-w-xl mx-auto">
+      <div>
         <div className="mb-8">
           <h2 className="text-lg md:text-2xl" style={{ fontWeight: 600, color: '#222222' }}>
             Informations personnelles

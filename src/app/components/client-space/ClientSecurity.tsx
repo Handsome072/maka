@@ -7,17 +7,17 @@ export function ClientSecurity() {
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
 
   return (
-    <div className="px-4 sm:px-6 lg:px-12 py-4 md:py-8 w-full">
-      <div className="max-w-xl mx-auto">
-        <div className="mb-5 md:mb-8">
-          <h2 className="text-xl md:text-3xl" style={{ fontWeight: 600, color: '#222222' }}>
+    <div className="px-4 sm:px-6 lg:px-12 py-6 md:py-8 w-full">
+      <div>
+        <div className="mb-8">
+          <h2 className="text-lg md:text-2xl" style={{ fontWeight: 600, color: '#222222' }}>
             Connexion et sécurité
           </h2>
         </div>
 
         {/* Connexion Section */}
         <div className="mb-6 md:mb-12">
-          <h3 className="text-lg md:text-xl mb-4 md:mb-6" style={{ fontWeight: 600, color: '#222222' }}>
+          <h3 className="text-base md:text-lg mb-4 md:mb-6" style={{ fontWeight: 600, color: '#222222' }}>
             Connexion
           </h3>
 
@@ -92,7 +92,7 @@ export function ClientSecurity() {
 
         {/* Compte Section */}
         <div className="mb-6 md:mb-12">
-          <h3 className="text-lg md:text-xl mb-4 md:mb-6" style={{ fontWeight: 600, color: '#222222' }}>
+          <h3 className="text-base md:text-lg mb-4 md:mb-6" style={{ fontWeight: 600, color: '#222222' }}>
             Compte
           </h3>
 
@@ -130,7 +130,7 @@ export function ClientSecurity() {
               Quitter
             </button>
 
-            <h3 className="text-lg md:text-xl mb-5 md:mb-6 pr-14 md:pr-16" style={{ fontWeight: 600, color: '#222222' }}>
+            <h3 className="text-base md:text-lg mb-5 md:mb-6 pr-14 md:pr-16" style={{ fontWeight: 600, color: '#222222' }}>
               Pourquoi choisissez-vous de désactiver votre compte ?
             </h3>
 

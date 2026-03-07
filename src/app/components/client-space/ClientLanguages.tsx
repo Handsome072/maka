@@ -4,9 +4,9 @@
 export function ClientLanguages() {
   return (
     <div className="px-4 sm:px-6 lg:px-12 py-6 md:py-8 w-full">
-      <div className="max-w-xl mx-auto">
+      <div>
         <div className="mb-8">
-          <h2 className="text-xl md:text-3xl" style={{ fontWeight: 600, color: '#222222' }}>
+          <h2 className="text-lg md:text-2xl" style={{ fontWeight: 600, color: '#222222' }}>
             Langues et devise
           </h2>
         </div>
