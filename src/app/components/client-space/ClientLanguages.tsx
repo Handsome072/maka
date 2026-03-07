@@ -1,19 +1,11 @@
 'use client';
 
-import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
 
 export function ClientLanguages() {
   return (
     <div className="px-4 sm:px-6 lg:px-12 py-6 md:py-8 w-full">
       <div className="max-w-xl mx-auto">
-        <div className="flex items-center gap-3 mb-8">
-          <Link
-            href="/client-space"
-            className="md:hidden p-1 -ml-2 hover:bg-gray-100 rounded-full transition-colors"
-          >
-            <ArrowLeft className="w-6 h-6" style={{ color: '#222222' }} />
-          </Link>
+        <div className="mb-8">
           <h2 className="text-xl md:text-3xl" style={{ fontWeight: 600, color: '#222222' }}>
             Langues et devise
           </h2>
