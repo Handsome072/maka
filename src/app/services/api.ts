@@ -895,3 +895,144 @@ export const messagesApi = {
     });
   },
 };
+
+// ─── Host Revenue Types ──────────────────────────────────────────────────────
+
+export interface RevenueSummary {
+  revenue_this_month: number;
+  revenue_this_year: number;
+  revenue_total: number;
+  revenue_estimated: number;
+  currency: string;
+}
+
+export interface RevenueChartMonth {
+  month: number;
+  revenue: number;
+  gross: number;
+  commission: number;
+}
+
+export interface RevenueChartYear {
+  year: number;
+  revenue: number;
+}
+
+export interface RevenueChartResponse {
+  monthly: RevenueChartMonth[];
+  yearly: RevenueChartYear[];
+  selected_year: number;
+}
+
+export interface RevenueStats {
+  total_nights: number;
+  avg_revenue_per_night: number;
+  avg_stay_duration: number;
+  total_reservations: number;
+}
+
+export interface PayoutListing {
+  id: number;
+  title: string;
+  city: string;
+}
+
+export interface Payout {
+  id: number;
+  reservation_id: number;
+  listing: PayoutListing | null;
+  reservation_dates: { check_in: string; check_out: string } | null;
+  gross_amount: number;
+  commission_amount: number;
+  net_amount: number;
+  currency: string;
+  status: 'pending' | 'scheduled' | 'paid' | 'failed';
+  scheduled_date: string | null;
+  paid_date: string | null;
+}
+
+export interface PayoutDetail {
+  id: number;
+  reservation_id: number;
+  listing: PayoutListing | null;
+  reservation: {
+    id: number;
+    check_in: string;
+    check_out: string;
+    total_price: string;
+    guests_count: number;
+  } | null;
+  gross_amount: number;
+  cleaning_fee: number;
+  commission_rate: number;
+  commission_amount: number;
+  taxes: number;
+  net_amount: number;
+  currency: string;
+  status: string;
+  scheduled_date: string | null;
+  paid_date: string | null;
+  reference: string | null;
+  created_at: string;
+}
+
+export interface RevenueListingOption {
+  id: number;
+  title: string;
+  city: string;
+}
+
+// ─── Host Revenue API ────────────────────────────────────────────────────────
+
+export const hostRevenueApi = {
+  getSummary: async (): Promise<RevenueSummary> => {
+    return apiFetch<RevenueSummary>('/host/revenues/summary');
+  },
+
+  getChart: async (params?: { year?: number; listing_id?: number }): Promise<RevenueChartResponse> => {
+    const query = new URLSearchParams();
+    if (params?.year) query.append('year', String(params.year));
+    if (params?.listing_id) query.append('listing_id', String(params.listing_id));
+    const qs = query.toString();
+    return apiFetch<RevenueChartResponse>(`/host/revenues/chart${qs ? `?${qs}` : ''}`);
+  },
+
+  getStats: async (): Promise<RevenueStats> => {
+    return apiFetch<RevenueStats>('/host/revenues/stats');
+  },
+
+  getUpcoming: async (): Promise<{ payouts: Payout[] }> => {
+    return apiFetch<{ payouts: Payout[] }>('/host/revenues/upcoming');
+  },
+
+  getHistory: async (params?: { year?: number; month?: number }): Promise<{ payouts: Payout[] }> => {
+    const query = new URLSearchParams();
+    if (params?.year) query.append('year', String(params.year));
+    if (params?.month) query.append('month', String(params.month));
+    const qs = query.toString();
+    return apiFetch<{ payouts: Payout[] }>(`/host/revenues/history${qs ? `?${qs}` : ''}`);
+  },
+
+  getPayoutDetail: async (id: number): Promise<{ payout: PayoutDetail }> => {
+    return apiFetch<{ payout: PayoutDetail }>(`/host/revenues/${id}`);
+  },
+
+  getListings: async (): Promise<{ listings: RevenueListingOption[] }> => {
+    return apiFetch<{ listings: RevenueListingOption[] }>('/host/revenues/listings');
+  },
+
+  exportCSV: async (params?: { year?: number; month?: number }): Promise<Blob> => {
+    const token = getAuthToken();
+    const query = new URLSearchParams();
+    if (params?.year) query.append('year', String(params.year));
+    if (params?.month) query.append('month', String(params.month));
+    const qs = query.toString();
+    const response = await fetch(`${API_BASE_URL}/host/revenues/export${qs ? `?${qs}` : ''}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'text/csv',
+      },
+    });
+    return response.blob();
+  },
+};
