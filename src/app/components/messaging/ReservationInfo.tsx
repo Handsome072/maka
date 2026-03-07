@@ -1,8 +1,9 @@
-import { CalendarDays, Users } from 'lucide-react';
+import { CalendarDays, Users, MessageSquare } from 'lucide-react';
 import type { ConversationReservation } from '@/app/services/api';
 
 interface ReservationInfoProps {
-  reservation: ConversationReservation;
+  reservation: ConversationReservation | null;
+  listing?: { id: number; title: string; photo_url: string | null } | null;
 }
 
 function formatDate(dateString: string): string {
@@ -22,7 +23,43 @@ const STATUS_LABELS: Record<string, { label: string; color: string; bg: string }
   cancelled: { label: 'Annulée', color: '#991B1B', bg: '#FEE2E2' },
 };
 
-export function ReservationInfo({ reservation }: ReservationInfoProps) {
+export function ReservationInfo({ reservation, listing }: ReservationInfoProps) {
+  // Direct message (no reservation)
+  if (!reservation) {
+    const directListing = listing;
+    return (
+      <div className="border-l border-gray-200 w-[300px] flex-shrink-0 hidden xl:flex flex-col bg-white">
+        <div className="p-6 border-b border-gray-200">
+          <h3 className="text-sm mb-1" style={{ fontWeight: 600, color: '#717171' }}>
+            MESSAGE DIRECT
+          </h3>
+        </div>
+        <div className="p-6 space-y-6 overflow-y-auto flex-1">
+          {directListing && (
+            <div>
+              {directListing.photo_url && (
+                <img
+                  src={directListing.photo_url}
+                  alt={directListing.title}
+                  className="w-full h-36 object-cover rounded-xl mb-3"
+                />
+              )}
+              <h4 className="text-base" style={{ fontWeight: 600, color: '#222222' }}>
+                {directListing.title}
+              </h4>
+            </div>
+          )}
+          <div className="flex items-start gap-3">
+            <MessageSquare className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#717171' }} />
+            <p className="text-sm" style={{ color: '#717171' }}>
+              Conversation sans réservation
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const status = STATUS_LABELS[reservation.status] || STATUS_LABELS.pending;
 
   return (

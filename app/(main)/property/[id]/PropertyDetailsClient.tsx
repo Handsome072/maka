@@ -80,6 +80,7 @@ export function PropertyDetailsClient({ id }: Props) {
       onBack={handleBack}
       onBook={handleBook}
       onReviewAdded={fetchListing}
+      onNavigate={(path) => router.push(path)}
     />
   );
 }

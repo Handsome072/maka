@@ -1,7 +1,7 @@
 import { Heart, Share, Star, ChevronRight, ChevronLeft } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { ImageCarouselModal } from '../components/ImageCarouselModal';
-import { ListingDetail, reviewsApi } from '../services/api';
+import { ListingDetail, reviewsApi, messagesApi } from '../services/api';
 import { BED_TYPE_LABELS } from '../components/host-onboarding/constants';
 
 // ─── Helper functions ────────────────────────────────────────────────────────
@@ -207,9 +207,10 @@ interface PropertyDetailsProps {
   onBack: () => void;
   onBook?: (data: Record<string, unknown>) => void;
   onReviewAdded?: () => void;
+  onNavigate?: (path: string) => void;
 }
 
-export function PropertyDetails({ listing, onBack, onBook, onReviewAdded }: PropertyDetailsProps) {
+export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavigate }: PropertyDetailsProps) {
   const [showCarousel, setShowCarousel] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -220,6 +221,10 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded }: Prop
   const [hoverRating, setHoverRating] = useState(0);
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [reviewError, setReviewError] = useState<string | null>(null);
+  const [showMessageModal, setShowMessageModal] = useState(false);
+  const [hostMessage, setHostMessage] = useState('');
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
+  const [messageError, setMessageError] = useState<string | null>(null);
   const sleepScrollRef = useRef<HTMLDivElement>(null);
   const [canScrollSleepLeft, setCanScrollSleepLeft] = useState(false);
   const [canScrollSleepRight, setCanScrollSleepRight] = useState(false);
@@ -1118,7 +1123,8 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded }: Prop
                 </div>
 
                 <button
-                  className="w-full md:w-auto py-3 px-6 bg-gray-100 rounded-lg text-base mb-6"
+                  onClick={() => setShowMessageModal(true)}
+                  className="w-full md:w-auto py-3 px-6 bg-gray-100 rounded-lg text-base mb-6 cursor-pointer hover:bg-gray-200 transition-colors"
                   style={{ fontWeight: 600 }}
                 >
                   Envoyer un message à l&apos;hôte
@@ -1225,6 +1231,67 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded }: Prop
           Réserver
         </button>
       </div>
+      {/* Message Host Modal */}
+      {showMessageModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowMessageModal(false)} />
+          <div className="bg-white rounded-2xl w-full max-w-lg relative z-10 animate-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+              <h2 className="text-lg" style={{ fontWeight: 600 }}>Envoyer un message à {host?.first_name || 'l\'hôte'}</h2>
+              <button onClick={() => setShowMessageModal(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="p-6">
+              <textarea
+                value={hostMessage}
+                onChange={(e) => setHostMessage(e.target.value)}
+                placeholder={`Bonjour ${host?.first_name || ''}, je suis intéressé(e) par votre logement...`}
+                className="w-full border border-gray-300 rounded-lg p-3 text-sm resize-none focus:outline-none focus:border-gray-900 transition-colors"
+                rows={5}
+                style={{ color: '#222222' }}
+              />
+              {messageError && (
+                <p className="text-sm text-red-600 mt-2">{messageError}</p>
+              )}
+              <div className="flex justify-end mt-4">
+                <button
+                  onClick={async () => {
+                    if (!hostMessage.trim() || isSendingMessage) return;
+                    setIsSendingMessage(true);
+                    setMessageError(null);
+                    try {
+                      const result = await messagesApi.startConversation(listing.id, hostMessage.trim());
+                      setHostMessage('');
+                      setShowMessageModal(false);
+                      if (onNavigate) {
+                        onNavigate(`/client-space/messages?conversation=${result.conversation_id}`);
+                      }
+                    } catch (err: unknown) {
+                      const message = err instanceof Error ? err.message : 'Erreur lors de l\'envoi';
+                      setMessageError(message);
+                    } finally {
+                      setIsSendingMessage(false);
+                    }
+                  }}
+                  disabled={!hostMessage.trim() || isSendingMessage}
+                  className="px-6 py-2.5 rounded-lg text-sm text-white transition-opacity"
+                  style={{
+                    fontWeight: 600,
+                    backgroundColor: '#000000',
+                    opacity: !hostMessage.trim() || isSendingMessage ? 0.4 : 1,
+                    cursor: !hostMessage.trim() || isSendingMessage ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {isSendingMessage ? 'Envoi...' : 'Envoyer'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

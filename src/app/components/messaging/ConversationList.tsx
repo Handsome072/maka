@@ -200,7 +200,7 @@ export function ConversationList({
                       </span>
                     </div>
                     <p className="text-xs truncate mb-0.5" style={{ color: '#717171' }}>
-                      {conv.reservation.listing.title}
+                      {conv.reservation?.listing?.title || conv.listing?.title || 'Message direct'}
                     </p>
                     <p
                       className="text-sm truncate"

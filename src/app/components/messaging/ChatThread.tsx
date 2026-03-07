@@ -98,7 +98,7 @@ export function ChatThread({
             {other.first_name} {other.last_name}
           </h3>
           <p className="text-xs truncate" style={{ color: '#717171' }}>
-            {conversation.reservation.listing.title}
+            {conversation.reservation?.listing?.title || conversation.listing?.title || 'Message direct'}
           </p>
         </div>
       </div>
