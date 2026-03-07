@@ -245,7 +245,7 @@ export function HostInbox() {
 
         {/* Reservation Info Panel */}
         {selectedConversation && (
-          <ReservationInfo reservation={selectedConversation.reservation} />
+          <ReservationInfo reservation={selectedConversation.reservation} listing={selectedConversation.listing} />
         )}
       </div>
     </div>

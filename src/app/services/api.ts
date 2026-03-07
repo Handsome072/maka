@@ -815,7 +815,8 @@ export interface ConversationReservation {
 
 export interface Conversation {
   id: number;
-  reservation: ConversationReservation;
+  reservation: ConversationReservation | null;
+  listing: { id: number; title: string; photo_url: string | null } | null;
   host: ConversationParticipant;
   guest: ConversationParticipant;
   last_message: {
@@ -860,6 +861,23 @@ export interface SendMessageResponse {
 export type ConversationFilter = 'all' | 'pending' | 'upcoming' | 'active' | 'past';
 
 export const messagesApi = {
+  /**
+   * Start or find a conversation with a listing's host
+   */
+  startConversation: async (listingId: number, message: string): Promise<{ conversation_id: number }> => {
+    return apiFetch<{ conversation_id: number }>('/conversations/start', {
+      method: 'POST',
+      body: JSON.stringify({ listing_id: listingId, message }),
+    });
+  },
+
+  /**
+   * Get total unread message count
+   */
+  getUnreadCount: async (role: 'host' | 'guest' = 'guest'): Promise<{ unread_count: number }> => {
+    return apiFetch<{ unread_count: number }>(`/conversations/unread-count?role=${role}`);
+  },
+
   /**
    * Get conversations for the current user (works for both host and guest)
    * When role=host, returns conversations linked to the user's listings

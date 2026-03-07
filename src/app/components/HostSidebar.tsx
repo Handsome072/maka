@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { ROUTES } from '../config/routes';
 import { useAuth } from '../context/AuthContext';
+import { messagesApi } from '../services/api';
 
 type HostPage = 'host-dashboard' | 'host-reservations' | 'host-calendar' | 'annonces' | 'messages' | 'host-revenues';
 
@@ -16,6 +17,7 @@ interface HostSidebarProps {
 export function HostSidebar({ activePage }: HostSidebarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
@@ -30,6 +32,18 @@ export function HostSidebar({ activePage }: HostSidebarProps) {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchUnread = () => {
+      messagesApi.getUnreadCount('host')
+        .then(res => setUnreadCount(res.unread_count))
+        .catch(() => {});
+    };
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 30000);
+    return () => clearInterval(interval);
+  }, [user]);
 
   const handleLogout = async () => {
     await logout();
@@ -120,6 +134,11 @@ export function HostSidebar({ activePage }: HostSidebarProps) {
                     >
                       <IconComponent className="w-5 h-5" />
                       <span className="text-sm flex-1 break-words" style={{ fontWeight: active ? 600 : 500 }}>{item.label}</span>
+                      {item.id === 'messages' && unreadCount > 0 && (
+                        <span className="bg-red-500 text-white text-xs rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5" style={{ fontWeight: 600 }}>
+                          {unreadCount > 99 ? '99+' : unreadCount}
+                        </span>
+                      )}
                     </Link>
                   );
                 })}
