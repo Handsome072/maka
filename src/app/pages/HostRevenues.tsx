@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { HostSidebar } from '@/app/components/HostSidebar';
 import {
-  hostRevenueApi,
   type RevenueSummary,
   type RevenueChartResponse,
   type RevenueStats,
@@ -47,12 +46,20 @@ const MOCK_SUMMARY: RevenueSummary = {
 };
 
 const MOCK_CHART: RevenueChartResponse = {
-  monthly: Array.from({ length: 12 }, (_, i) => ({
-    month: i + 1,
-    revenue: Math.round(Math.random() * 4000 + 500),
-    gross: Math.round(Math.random() * 5000 + 600),
-    commission: Math.round(Math.random() * 800 + 100),
-  })),
+  monthly: [
+    { month: 1, revenue: 833, gross: 980, commission: 147 },
+    { month: 2, revenue: 3289, gross: 3870, commission: 581 },
+    { month: 3, revenue: 5950, gross: 7000, commission: 1050 },
+    { month: 4, revenue: 2720, gross: 3200, commission: 480 },
+    { month: 5, revenue: 3400, gross: 4000, commission: 600 },
+    { month: 6, revenue: 4250, gross: 5000, commission: 750 },
+    { month: 7, revenue: 5525, gross: 6500, commission: 975 },
+    { month: 8, revenue: 5100, gross: 6000, commission: 900 },
+    { month: 9, revenue: 3825, gross: 4500, commission: 675 },
+    { month: 10, revenue: 2550, gross: 3000, commission: 450 },
+    { month: 11, revenue: 2975, gross: 3500, commission: 525 },
+    { month: 12, revenue: 1785, gross: 2100, commission: 315 },
+  ],
   yearly: [
     { year: 2024, revenue: 28500 },
     { year: 2025, revenue: 38200 },
@@ -85,7 +92,7 @@ const MOCK_UPCOMING: Payout[] = [
   {
     id: 2,
     reservation_id: 3,
-    listing: { id: 1, title: 'Chalet Mont-Tremblant', city: 'Mont-Tremblant' },
+    listing: { id: 2, title: 'Appartement Vieux-Montreal', city: 'Montreal' },
     reservation_dates: { check_in: '2026-03-15', check_out: '2026-03-20' },
     gross_amount: 1750,
     commission_amount: 262.50,
@@ -106,6 +113,19 @@ const MOCK_UPCOMING: Payout[] = [
     currency: 'CAD',
     status: 'pending',
     scheduled_date: '2026-04-05',
+    paid_date: null,
+  },
+  {
+    id: 8,
+    reservation_id: 12,
+    listing: { id: 3, title: 'Condo Lac-Beauport', city: 'Quebec' },
+    reservation_dates: { check_in: '2026-04-10', check_out: '2026-04-15' },
+    gross_amount: 1200,
+    commission_amount: 180,
+    net_amount: 1020,
+    currency: 'CAD',
+    status: 'pending',
+    scheduled_date: '2026-04-16',
     paid_date: null,
   },
 ];
@@ -150,11 +170,38 @@ const MOCK_HISTORY: Payout[] = [
     scheduled_date: '2026-01-21',
     paid_date: '2026-01-21',
   },
+  {
+    id: 7,
+    reservation_id: 8,
+    listing: { id: 3, title: 'Condo Lac-Beauport', city: 'Quebec' },
+    reservation_dates: { check_in: '2025-12-20', check_out: '2025-12-27' },
+    gross_amount: 2100,
+    commission_amount: 315,
+    net_amount: 1785,
+    currency: 'CAD',
+    status: 'paid',
+    scheduled_date: '2025-12-28',
+    paid_date: '2025-12-28',
+  },
+  {
+    id: 9,
+    reservation_id: 10,
+    listing: { id: 1, title: 'Chalet Mont-Tremblant', city: 'Mont-Tremblant' },
+    reservation_dates: { check_in: '2025-11-15', check_out: '2025-11-22' },
+    gross_amount: 3500,
+    commission_amount: 525,
+    net_amount: 2975,
+    currency: 'CAD',
+    status: 'paid',
+    scheduled_date: '2025-11-23',
+    paid_date: '2025-11-23',
+  },
 ];
 
 const MOCK_LISTINGS: RevenueListingOption[] = [
   { id: 1, title: 'Chalet Mont-Tremblant', city: 'Mont-Tremblant' },
   { id: 2, title: 'Appartement Vieux-Montreal', city: 'Montreal' },
+  { id: 3, title: 'Condo Lac-Beauport', city: 'Quebec' },
 ];
 
 const MOCK_PAYOUT_DETAIL: PayoutDetail = {
@@ -166,8 +213,8 @@ const MOCK_PAYOUT_DETAIL: PayoutDetail = {
   cleaning_fee: 150,
   commission_rate: 15,
   commission_amount: 367.50,
-  taxes: 0,
-  net_amount: 2082.50,
+  taxes: 48.90,
+  net_amount: 2033.60,
   currency: 'CAD',
   status: 'scheduled',
   scheduled_date: '2026-03-30',
@@ -192,84 +239,52 @@ function formatDate(dateStr: string | null): string {
 
 export function HostRevenues() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('overview');
-  const [summary, setSummary] = useState<RevenueSummary>(MOCK_SUMMARY);
-  const [chart, setChart] = useState<RevenueChartResponse>(MOCK_CHART);
-  const [stats, setStats] = useState<RevenueStats>(MOCK_STATS);
-  const [upcoming, setUpcoming] = useState<Payout[]>(MOCK_UPCOMING);
-  const [history, setHistory] = useState<Payout[]>(MOCK_HISTORY);
-  const [listings, setListings] = useState<RevenueListingOption[]>(MOCK_LISTINGS);
   const [chartView, setChartView] = useState<'monthly' | 'yearly'>('monthly');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedListing, setSelectedListing] = useState<number | ''>('');
   const [selectedPayout, setSelectedPayout] = useState<PayoutDetail | null>(null);
   const [showDetail, setShowDetail] = useState(false);
-  const [loading, setLoading] = useState(true);
 
-  const fetchData = useCallback(async () => {
-    try {
-      const [summaryData, chartData, statsData, upcomingData, historyData, listingsData] = await Promise.all([
-        hostRevenueApi.getSummary(),
-        hostRevenueApi.getChart({ year: selectedYear, listing_id: selectedListing || undefined }),
-        hostRevenueApi.getStats(),
-        hostRevenueApi.getUpcoming(),
-        hostRevenueApi.getHistory(),
-        hostRevenueApi.getListings(),
-      ]);
-      setSummary(summaryData);
-      setChart(chartData);
-      setStats(statsData);
-      setUpcoming(upcomingData.payouts);
-      setHistory(historyData.payouts);
-      setListings(listingsData.listings);
-    } catch {
-      // Use mock data on error (API not yet connected)
-    } finally {
-      setLoading(false);
-    }
-  }, [selectedYear, selectedListing]);
+  // Mock data (TODO: replace with API calls when backend is ready)
+  const summary = MOCK_SUMMARY;
+  const chart = MOCK_CHART;
+  const stats = MOCK_STATS;
+  const listings = MOCK_LISTINGS;
+  const upcoming = selectedListing
+    ? MOCK_UPCOMING.filter(p => p.listing?.id === selectedListing)
+    : MOCK_UPCOMING;
+  const history = selectedListing
+    ? MOCK_HISTORY.filter(p => p.listing?.id === selectedListing)
+    : MOCK_HISTORY;
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  const handlePayoutClick = async (payout: Payout) => {
-    try {
-      const { payout: detail } = await hostRevenueApi.getPayoutDetail(payout.id);
-      setSelectedPayout(detail);
-    } catch {
-      // Fallback to mock detail
-      setSelectedPayout({
-        ...MOCK_PAYOUT_DETAIL,
-        id: payout.id,
-        gross_amount: payout.gross_amount,
-        commission_amount: payout.commission_amount,
-        net_amount: payout.net_amount,
-        status: payout.status,
-        listing: payout.listing,
-      });
-    }
+  const handlePayoutClick = (payout: Payout) => {
+    setSelectedPayout({
+      ...MOCK_PAYOUT_DETAIL,
+      id: payout.id,
+      reservation_id: payout.reservation_id,
+      gross_amount: payout.gross_amount,
+      commission_amount: payout.commission_amount,
+      net_amount: payout.net_amount,
+      status: payout.status,
+      listing: payout.listing,
+      scheduled_date: payout.scheduled_date,
+      paid_date: payout.paid_date,
+      reservation: payout.reservation_dates ? {
+        id: payout.reservation_id,
+        check_in: payout.reservation_dates.check_in,
+        check_out: payout.reservation_dates.check_out,
+        total_price: String(payout.gross_amount),
+        guests_count: MOCK_PAYOUT_DETAIL.reservation?.guests_count ?? 2,
+      } : MOCK_PAYOUT_DETAIL.reservation,
+    });
     setShowDetail(true);
   };
 
-  const handleExport = async (type: 'monthly' | 'annual' | 'csv') => {
-    const params: { year?: number; month?: number } = {};
-    if (type === 'monthly') {
-      params.year = selectedYear;
-      params.month = new Date().getMonth() + 1;
-    } else if (type === 'annual') {
-      params.year = selectedYear;
-    }
-    try {
-      const blob = await hostRevenueApi.exportCSV(params);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `revenus-${type === 'monthly' ? `${selectedYear}-${String(new Date().getMonth() + 1).padStart(2, '0')}` : type === 'annual' ? String(selectedYear) : 'complet'}.csv`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch {
-      // Export not yet available
-    }
+  const handleExport = (type: 'monthly' | 'annual' | 'csv') => {
+    // TODO: Replace with API call when backend is ready
+    // hostRevenueApi.exportCSV(params)
+    const filename = `revenus-${type === 'monthly' ? `${selectedYear}-${String(new Date().getMonth() + 1).padStart(2, '0')}` : type === 'annual' ? String(selectedYear) : 'complet'}.csv`;
+    alert(`Export "${filename}" sera disponible quand le backend sera connecte.`);
   };
 
   const chartData = chartView === 'monthly'
