@@ -513,26 +513,6 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
                     );
                   })}
 
-                  {/* Show absent safety amenities as crossed out */}
-                  {!hasCo && (
-                    <div className="flex items-center gap-4 py-3">
-                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <line x1="18" y1="6" x2="6" y2="18" strokeWidth={2} />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <span className="text-base line-through text-black">Détecteur de monoxyde de carbone</span>
-                    </div>
-                  )}
-
-                  {!hasSmoke && (
-                    <div className="flex items-center gap-4 py-3">
-                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <line x1="18" y1="6" x2="6" y2="18" strokeWidth={2} />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
-                      </svg>
-                      <span className="text-base line-through text-black">Détecteur de fumée</span>
-                    </div>
-                  )}
                 </div>
 
                 {!showAllAmenities && displayAmenities.length > 8 && (
