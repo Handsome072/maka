@@ -78,7 +78,7 @@ export function useHostOnboardingState({
   // 5. Amenities
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [expandedAmenities, setExpandedAmenities] = useState<Record<string, boolean>>({
-    'Attraits extérieurs': true,
+    'Connectivité et multimédia': true,
   });
 
   // 6. Expectations
