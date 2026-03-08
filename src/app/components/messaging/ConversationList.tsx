@@ -1,4 +1,4 @@
-import { Search, Archive, MailOpen, Mail, MoreHorizontal } from 'lucide-react';
+import { Search, Archive, MailOpen, Mail, MoreVertical } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import type { Conversation, ConversationFilter } from '@/app/services/api';
 
@@ -181,9 +181,6 @@ export function ConversationList({
                         {other.first_name.charAt(0).toUpperCase()}
                       </div>
                     )}
-                    {isUnread && (
-                      <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-rose-500 rounded-full border-2 border-white" />
-                    )}
                   </div>
 
                   {/* Content */}
@@ -195,20 +192,27 @@ export function ConversationList({
                       >
                         {other.first_name} {other.last_name}
                       </h3>
-                      <span className="text-xs ml-2 flex-shrink-0" style={{ color: '#717171' }}>
+                      <span className="text-xs ml-2 flex-shrink-0 group-hover:mr-6 transition-all" style={{ color: '#717171' }}>
                         {conv.last_message ? formatDate(conv.last_message.created_at) : ''}
                       </span>
                     </div>
                     <p className="text-xs truncate mb-0.5" style={{ color: '#717171' }}>
                       {conv.reservation?.listing?.title || conv.listing?.title || 'Message direct'}
                     </p>
-                    <p
-                      className="text-sm truncate"
-                      style={{ color: isUnread ? '#222222' : '#717171', fontWeight: isUnread ? 600 : 400 }}
-                    >
-                      {conv.last_message?.has_image && !conv.last_message.text && 'Image'}
-                      {conv.last_message?.text || 'Nouvelle conversation'}
-                    </p>
+                    <div className="flex items-center justify-between gap-2">
+                      <p
+                        className="text-sm truncate"
+                        style={{ color: isUnread ? '#222222' : '#717171', fontWeight: isUnread ? 600 : 400 }}
+                      >
+                        {conv.last_message?.has_image && !conv.last_message.text && 'Image'}
+                        {conv.last_message?.text || 'Nouvelle conversation'}
+                      </p>
+                      {isUnread && (
+                        <span className="bg-rose-500 text-white text-xs rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5 flex-shrink-0" style={{ fontWeight: 600 }}>
+                          {conv.unread_count > 99 ? '99+' : conv.unread_count}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </button>
 
@@ -218,9 +222,9 @@ export function ConversationList({
                     e.stopPropagation();
                     setContextMenuId(contextMenuId === conv.id ? null : conv.id);
                   }}
-                  className="absolute top-4 right-3 p-1 rounded-full hover:bg-gray-200 opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute top-3 right-1 p-1.5 rounded-full hover:bg-gray-200 opacity-0 group-hover:opacity-100 transition-opacity"
                 >
-                  <MoreHorizontal className="w-4 h-4 text-gray-500" />
+                  <MoreVertical className="w-4 h-4 text-gray-500" />
                 </button>
 
                 {/* Context menu */}

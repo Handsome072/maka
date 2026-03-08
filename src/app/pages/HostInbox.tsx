@@ -74,6 +74,7 @@ export function HostInbox() {
                 c.id === selectedConversationId ? { ...c, unread_count: 0 } : c
               )
             );
+            window.dispatchEvent(new Event('unread-count-changed'));
           }
         }
       } catch (err) {
@@ -149,6 +150,7 @@ export function HostInbox() {
       setConversations((prev) =>
         prev.map((c) => (c.id === convId ? { ...c, unread_count: 0 } : c))
       );
+      window.dispatchEvent(new Event('unread-count-changed'));
     } catch (err) {
       console.error('Error marking as read:', err);
     }
@@ -160,6 +162,7 @@ export function HostInbox() {
       setConversations((prev) =>
         prev.map((c) => (c.id === convId ? { ...c, unread_count: 1 } : c))
       );
+      window.dispatchEvent(new Event('unread-count-changed'));
     } catch (err) {
       console.error('Error marking as unread:', err);
     }

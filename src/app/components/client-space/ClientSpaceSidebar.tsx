@@ -36,7 +36,11 @@ export function ClientSpaceSidebar() {
     };
     fetchUnread();
     const interval = setInterval(fetchUnread, 30000);
-    return () => clearInterval(interval);
+    window.addEventListener('unread-count-changed', fetchUnread);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('unread-count-changed', fetchUnread);
+    };
   }, [user]);
 
   const handleLogout = async () => {
