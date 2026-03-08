@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { ImageCarouselModal } from '../components/ImageCarouselModal';
 import { ListingDetail, reviewsApi, messagesApi } from '../services/api';
 import { BED_TYPE_LABELS } from '../components/host-onboarding/constants';
+import { useAuth } from '../context/AuthContext';
 
 // ─── Helper functions ────────────────────────────────────────────────────────
 
@@ -211,6 +212,7 @@ interface PropertyDetailsProps {
 }
 
 export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavigate }: PropertyDetailsProps) {
+  const { isAuthenticated } = useAuth();
   const [showCarousel, setShowCarousel] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -975,6 +977,10 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
               </p>
               <button
                 onClick={async () => {
+                  if (!isAuthenticated) {
+                    onNavigate?.('/login');
+                    return;
+                  }
                   if (!commentText.trim() || commentRating === 0 || isSubmittingReview) return;
                   setIsSubmittingReview(true);
                   setReviewError(null);
@@ -1123,7 +1129,13 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
                 </div>
 
                 <button
-                  onClick={() => setShowMessageModal(true)}
+                  onClick={() => {
+                    if (!isAuthenticated) {
+                      onNavigate?.('/login');
+                      return;
+                    }
+                    setShowMessageModal(true);
+                  }}
                   className="w-full md:w-auto py-3 px-6 bg-gray-100 rounded-lg text-base mb-6 cursor-pointer hover:bg-gray-200 transition-colors"
                   style={{ fontWeight: 600 }}
                 >
