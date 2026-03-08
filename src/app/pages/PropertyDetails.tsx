@@ -89,29 +89,47 @@ function formatRating(rating: number | null): string {
 // ─── Amenity icon mapping ────────────────────────────────────────────────────
 
 const AMENITY_CONFIG: Record<string, { label: string; icon: string }> = {
-  cuisine:          { label: 'Cuisine',                    icon: 'kitchen' },
-  wifi:             { label: 'Wifi',                       icon: 'wifi' },
-  television:       { label: 'Télévision',                 icon: 'tv' },
-  seche_cheveux:    { label: 'Sèche-cheveux',              icon: 'dryer' },
-  espace_travail:   { label: 'Espace de travail dédié',    icon: 'workspace' },
-  animaux_acceptes: { label: 'Animaux acceptés',           icon: 'pets' },
-  refrigerateur:    { label: 'Réfrigérateur',              icon: 'fridge' },
-  micro_ondes:      { label: 'Four à micro-ondes',         icon: 'microwave' },
-  climatisation:    { label: 'Climatisation',              icon: 'ac' },
-  chauffage:        { label: 'Chauffage',                  icon: 'heating' },
-  lave_linge:       { label: 'Lave-linge',                 icon: 'washer' },
-  seche_linge:      { label: 'Sèche-linge',               icon: 'dryer' },
-  parking:          { label: 'Parking gratuit',            icon: 'parking' },
-  piscine:          { label: 'Piscine',                    icon: 'pool' },
-  jacuzzi:          { label: 'Jacuzzi',                    icon: 'jacuzzi' },
-  fer_repasser:     { label: 'Fer à repasser',             icon: 'iron' },
-  cintres:          { label: 'Cintres',                    icon: 'hangers' },
-  draps:            { label: 'Draps',                      icon: 'sheets' },
-  oreillers:        { label: 'Oreillers et couvertures',   icon: 'pillows' },
-  detecteur_fumee:  { label: 'Détecteur de fumée',         icon: 'smoke' },
-  detecteur_co:     { label: 'Détecteur de monoxyde de carbone', icon: 'co' },
-  extincteur:       { label: 'Extincteur',                 icon: 'extinguisher' },
-  trousse_secours:  { label: 'Trousse de premiers secours', icon: 'firstaid' },
+  // Connectivité et multimédia
+  wifi:               { label: 'Wifi',                             icon: 'wifi' },
+  television:         { label: 'Télévision',                       icon: 'tv' },
+  // Confort et climatisation
+  climatisation:      { label: 'Climatisation',                    icon: 'default' },
+  chauffage:          { label: 'Chauffage',                        icon: 'default' },
+  ventilateur:        { label: 'Ventilateur',                      icon: 'default' },
+  eau_chaude:         { label: 'Eau chaude',                       icon: 'default' },
+  eau_potable:        { label: 'Eau potable',                      icon: 'default' },
+  electricite:        { label: 'Électricité',                      icon: 'default' },
+  prises_lit:         { label: 'Prises électriques près du lit',   icon: 'default' },
+  // Espace de travail
+  bureau:             { label: 'Bureau / espace de travail dédié', icon: 'workspace' },
+  chaise_bureau:      { label: 'Chaise de bureau',                 icon: 'default' },
+  // Entretien du linge
+  fer_repasser:       { label: 'Fer à repasser',                   icon: 'default' },
+  planche_repasser:   { label: 'Planche à repasser',               icon: 'default' },
+  machine_laver:      { label: 'Machine à laver',                  icon: 'default' },
+  seche_linge:        { label: 'Sèche-linge',                     icon: 'default' },
+  etendoir:           { label: 'Étendoir à linge',                 icon: 'default' },
+  // Cuisine et électroménager
+  cuisine_equipee:    { label: 'Cuisine équipée',                  icon: 'kitchen' },
+  refrigerateur:      { label: 'Réfrigérateur',                    icon: 'fridge' },
+  congelateur:        { label: 'Congélateur',                      icon: 'default' },
+  four:               { label: 'Four',                             icon: 'default' },
+  micro_ondes:        { label: 'Four à micro-ondes',               icon: 'microwave' },
+  plaques_cuisson:    { label: 'Plaques de cuisson',               icon: 'default' },
+  bouilloire:         { label: 'Bouilloire électrique',            icon: 'default' },
+  machine_cafe:       { label: 'Machine à café',                   icon: 'default' },
+  grille_pain:        { label: 'Grille-pain',                      icon: 'default' },
+  mixeur:             { label: 'Mixeur / Blender',                 icon: 'default' },
+  // Ustensiles et vaisselle
+  batterie_cuisine:   { label: 'Batterie de cuisine',              icon: 'default' },
+  vaisselle_couverts: { label: 'Vaisselle et couverts',            icon: 'default' },
+  assiettes:          { label: 'Assiettes',                        icon: 'default' },
+  verres:             { label: 'Verres',                           icon: 'default' },
+  tasses:             { label: 'Tasses',                           icon: 'default' },
+  ustensiles_cuisine: { label: 'Ustensiles de cuisine',            icon: 'default' },
+  planche_decouper:   { label: 'Planche à découper',               icon: 'default' },
+  eponge_produit:     { label: 'Éponge et produit vaisselle',      icon: 'default' },
+  table_manger:       { label: 'Table à manger',                   icon: 'default' },
 };
 
 function AmenityIcon({ type }: { type: string }) {
@@ -222,6 +240,7 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
   const [commentRating, setCommentRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [showAllAmenities, setShowAllAmenities] = useState(false);
   const [reviewError, setReviewError] = useState<string | null>(null);
   const [showMessageModal, setShowMessageModal] = useState(false);
   const [hostMessage, setHostMessage] = useState('');
@@ -478,11 +497,11 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
                 </div>
               </div>
 
-              {/* Ce que propose ce logement */}
+              {/* Ce que propose ce chalet */}
               <div className="py-8 border-b border-gray-200">
-                <h3 className="text-xl mb-6" style={{ fontWeight: 600 }}>Ce que propose ce logement</h3>
+                <h3 className="text-xl mb-6" style={{ fontWeight: 600 }}>Ce que propose ce chalet</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {displayAmenities.map((amenityKey, index) => {
+                  {(showAllAmenities ? displayAmenities : displayAmenities.slice(0, 8)).map((amenityKey, index) => {
                     const config = AMENITY_CONFIG[amenityKey];
                     const label = config?.label || amenityKey;
                     const iconType = config?.icon || 'default';
@@ -516,9 +535,13 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
                   )}
                 </div>
 
-                {amenities.length > 8 && (
-                  <button className="mt-6 px-6 py-3 bg-gray-100 rounded-lg hover:bg-gray-300 transition-colors text-base" style={{ fontWeight: 600 }}>
-                    Afficher les {amenities.length} équipements
+                {!showAllAmenities && displayAmenities.length > 8 && (
+                  <button
+                    onClick={() => setShowAllAmenities(true)}
+                    className="mt-6 px-6 py-3 bg-gray-100 rounded-lg hover:bg-gray-300 transition-colors text-base"
+                    style={{ fontWeight: 600 }}
+                  >
+                    Afficher les {displayAmenities.length} équipements
                   </button>
                 )}
               </div>

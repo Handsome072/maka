@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { Logo } from '@/app/components/Logo';
 import {
   Check, ChevronRight, Minus, Plus, Pencil, X, ChevronDown, ChevronUp, ChevronLeft,
-  Waves, Anchor, LifeBuoy, Thermometer, Activity, Fish, Droplets,
-  Warehouse, Sunset, Flame, Ship, Fuel, Sparkles, Utensils, DoorOpen,
-  Trees, Bed, Umbrella, Eye, CloudRain, Snowflake, Armchair,
-  Wifi, Tv, Car, Bike, UtensilsCrossed, Coffee, Baby, Accessibility, Ban,
+  Wifi, Tv, Snowflake, Flame, Fan, Droplets, Zap, Plug,
+  Monitor, Armchair, Shirt, WashingMachine, Wind,
+  UtensilsCrossed, Refrigerator, Thermometer, Microwave, CookingPot,
+  Coffee, Blend, Utensils, CircleDot, GlassWater, Sparkles,
+  CupSoda, Scissors, SprayCan, Table, Box, ChefHat, Sandwich, Grid3x3,
   MapPin, Upload, Info, HelpCircle, Calendar as CalendarIcon, User,
   Loader2
 } from 'lucide-react';
@@ -67,59 +68,53 @@ interface Bedroom {
 
 // Amenities Data
 const AMENITIES_DATA = {
-  'Attraits extérieurs': [
-    { id: 'water_access', label: "Accès à l'eau", icon: Waves },
-    { id: 'lounge_chairs', label: "Chaises longues", icon: Armchair },
-    { id: 'dock', label: "Quai", icon: Anchor },
-    { id: 'life_jackets', label: "Gilets de sauvetage", icon: LifeBuoy },
-    { id: 'pool', label: "Piscine", icon: Droplets },
-    { id: 'sauna', label: "Sauna", icon: Thermometer },
-    { id: 'volleyball', label: "Filet de volley-ball", icon: Activity },
-    { id: 'lake_front', label: "Au bord d'un lac", icon: Fish },
-    { id: 'near_water', label: "Près de l'eau", icon: Waves },
-    { id: 'garage', label: "Accès au garage", icon: Warehouse },
-    { id: 'sea_front', label: "Au bord de la mer", icon: Sunset },
-    { id: 'fire_pit', label: "Foyer extérieur", icon: Flame },
-    { id: 'electric_boat', label: "Lac navigable (électrique)", icon: Ship },
-    { id: 'propane', label: "Propane inclus", icon: Fuel },
-    { id: 'spa', label: "Spa", icon: Sparkles },
-    { id: 'bbq', label: "BBQ/Grill", icon: Utensils },
-    { id: 'balcony', label: "Balcon/terrasse", icon: DoorOpen },
-    { id: 'backyard', label: "Cour arrière", icon: Trees },
-    { id: 'boat_dock', label: "Débarcadère bateaux", icon: Ship },
-    { id: 'hammock', label: "Hamak", icon: Bed },
-    { id: 'motor_boat', label: "Lac navigable (moteur)", icon: Ship },
-    { id: 'beach', label: "Plage", icon: Umbrella },
-    { id: 'view', label: "Vue", icon: Eye },
-    { id: 'river_front', label: "Au bord d'une rivière", icon: CloudRain },
-    { id: 'ski_in_out', label: "Ski-in/ski-out", icon: Snowflake },
+  'Connectivité et multimédia': [
+    { id: 'wifi', label: "Wifi", icon: Wifi },
+    { id: 'television', label: "Télévision", icon: Tv },
   ],
-  'Sports et activités à proximité': [
-    { id: 'hiking', label: "Randonnée", icon: Trees },
-    { id: 'cycling', label: "Piste cyclable", icon: Bike },
+  'Confort et climatisation': [
+    { id: 'climatisation', label: "Climatisation", icon: Snowflake },
+    { id: 'chauffage', label: "Chauffage", icon: Flame },
+    { id: 'ventilateur', label: "Ventilateur", icon: Fan },
+    { id: 'eau_chaude', label: "Eau chaude", icon: Droplets },
+    { id: 'eau_potable', label: "Eau potable", icon: GlassWater },
+    { id: 'electricite', label: "Électricité", icon: Zap },
+    { id: 'prises_lit', label: "Prises électriques près du lit", icon: Plug },
   ],
-  'Attraits intérieurs': [
-    { id: 'wifi', label: "Wi-Fi", icon: Wifi },
-    { id: 'tv', label: "Télévision", icon: Tv },
+  'Espace de travail': [
+    { id: 'bureau', label: "Bureau / espace de travail dédié", icon: Monitor },
+    { id: 'chaise_bureau', label: "Chaise de bureau", icon: Armchair },
   ],
-  'Cuisine': [
-    { id: 'kitchen_full', label: "Cuisine équipée", icon: UtensilsCrossed },
+  'Entretien du linge': [
+    { id: 'fer_repasser', label: "Fer à repasser", icon: Shirt },
+    { id: 'planche_repasser', label: "Planche à repasser", icon: Grid3x3 },
+    { id: 'machine_laver', label: "Machine à laver", icon: WashingMachine },
+    { id: 'seche_linge', label: "Sèche-linge", icon: Wind },
+    { id: 'etendoir', label: "Étendoir à linge", icon: Shirt },
   ],
-  'Café': [
-    { id: 'coffee_maker', label: "Cafetière", icon: Coffee },
+  'Cuisine et électroménager': [
+    { id: 'cuisine_equipee', label: "Cuisine équipée", icon: UtensilsCrossed },
+    { id: 'refrigerateur', label: "Réfrigérateur", icon: Refrigerator },
+    { id: 'congelateur', label: "Congélateur", icon: Thermometer },
+    { id: 'four', label: "Four", icon: Box },
+    { id: 'micro_ondes', label: "Four à micro-ondes", icon: Microwave },
+    { id: 'plaques_cuisson', label: "Plaques de cuisson", icon: Flame },
+    { id: 'bouilloire', label: "Bouilloire électrique", icon: CookingPot },
+    { id: 'machine_cafe', label: "Machine à café", icon: Coffee },
+    { id: 'grille_pain', label: "Grille-pain", icon: Sandwich },
+    { id: 'mixeur', label: "Mixeur / Blender", icon: Blend },
   ],
-  'Attraits pour la famille': [
-    { id: 'crib', label: "Lit pour bébé", icon: Baby },
+  'Ustensiles et vaisselle': [
+    { id: 'batterie_cuisine', label: "Batterie de cuisine", icon: CookingPot },
+    { id: 'vaisselle_couverts', label: "Vaisselle et couverts", icon: Utensils },
+    { id: 'assiettes', label: "Assiettes", icon: CircleDot },
+    { id: 'verres', label: "Verres", icon: GlassWater },
+    { id: 'tasses', label: "Tasses", icon: CupSoda },
+    { id: 'ustensiles_cuisine', label: "Ustensiles de cuisine", icon: ChefHat },
+    { id: 'planche_decouper', label: "Planche à découper", icon: Scissors },
+    { id: 'eponge_produit', label: "Éponge et produit vaisselle", icon: SprayCan },
+    { id: 'table_manger', label: "Table à manger", icon: Table },
   ],
-  'Accessibilité': [
-    { id: 'step_free', label: "Plain-pied", icon: Accessibility },
-  ],
-  'Services': [
-    { id: 'parking', label: "Stationnement", icon: Car },
-  ],
-  'Exclusion': [
-    { id: 'no_smoking', label: "Non fumeur", icon: Ban },
-  ]
 };
 
 // Expectations Data
@@ -270,7 +265,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
   // 5. Amenities
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [expandedAmenities, setExpandedAmenities] = useState<Record<string, boolean>>({
-    'Attraits extérieurs': true // Default expanded
+    'Connectivité et multimédia': true // Default expanded
   });
 
   // 6. Expectations
@@ -734,6 +729,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
   const isNextDisabled = () => {
     if (currentStep === 'acceptance-condition' && !acceptedConditions) return true;
     if (currentStep === 'reservation-type' && (!rentalFrequency || !spaceType)) return true;
+    if (currentStep === 'amenities' && selectedAmenities.length < 8) return true;
     if (currentStep === 'local-laws' && !acceptedLocalLaws) return true;
     if (currentStep === 'guest-arrival' && (!guestArrival.internetSpeed || guestArrival.hasWifi === null || !guestArrival.checkinMethod)) return true;
     if (currentStep === 'phone-number' && !phoneNumber) return true;
@@ -1102,7 +1098,10 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
 
         {currentStep === 'amenities' && (
           <div className="max-w-4xl mx-auto space-y-8">
-            <h1 className="text-3xl font-bold text-[#222222] mb-6">Commodités</h1>
+            <h1 className="text-3xl font-bold text-[#222222] mb-2">Commodités</h1>
+            <p className={`text-sm mb-6 ${selectedAmenities.length < 8 ? 'text-red-500' : 'text-gray-500'}`}>
+              {selectedAmenities.length}/8 sélectionnées (minimum 8 requises)
+            </p>
             <div className="space-y-6">
               {Object.entries(AMENITIES_DATA).map(([section, items]) => (
                 <div key={section} className="border-b border-gray-100 pb-6">
