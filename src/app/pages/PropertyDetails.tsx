@@ -66,12 +66,9 @@ function countTotalBeds(bedroomsData?: unknown[] | null, openAreasData?: unknown
   return total || 1;
 }
 
-function buildMapEmbedUrl(lat?: number | null, lng?: number | null, city?: string | null, country?: string | null): string {
-  if (lat && lng) {
-    return `https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d10000!2d${lng}!3d${lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sfr!2sfr`;
-  }
-  const query = encodeURIComponent(`${city || ''}, ${country || ''}`);
-  return `https://www.google.com/maps/embed/v1/place?key=&q=${query}`;
+function buildMapEmbedUrl(city?: string | null, country?: string | null): string {
+  const query = encodeURIComponent([city, country].filter(Boolean).join(', ') || 'Canada');
+  return `https://maps.google.com/maps?q=${query}&z=12&output=embed&hl=fr`;
 }
 
 function formatPrice(price: string | number | null, currency?: string): string {
@@ -1028,7 +1025,7 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
           {/* Map */}
           <div className="relative w-full h-[240px] md:h-[480px] rounded-xl overflow-hidden mb-6 bg-gray-100">
             <iframe
-              src={buildMapEmbedUrl(listing.latitude, listing.longitude, listing.city, listing.country)}
+              src={buildMapEmbedUrl(listing.city, listing.country)}
               width="100%"
               height="100%"
               style={{ border: 0 }}
