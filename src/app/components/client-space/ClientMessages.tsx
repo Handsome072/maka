@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/app/context/AuthContext';
 import { ConversationList } from '@/app/components/messaging/ConversationList';
 import { ChatThread } from '@/app/components/messaging/ChatThread';
@@ -14,13 +15,17 @@ import {
 export function ClientMessages() {
   const { user } = useAuth();
   const currentUserId = user?.id ?? 0;
+  const searchParams = useSearchParams();
 
   // Conversations state
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loadingConversations, setLoadingConversations] = useState(true);
 
-  // Selected conversation
-  const [selectedConversationId, setSelectedConversationId] = useState<number | null>(null);
+  // Selected conversation - init from URL param
+  const conversationParam = searchParams?.get('conversation');
+  const [selectedConversationId, setSelectedConversationId] = useState<number | null>(
+    conversationParam ? parseInt(conversationParam, 10) : null
+  );
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loadingMessages, setLoadingMessages] = useState(false);
 
@@ -74,6 +79,7 @@ export function ClientMessages() {
                 c.id === selectedConversationId ? { ...c, unread_count: 0 } : c
               )
             );
+            window.dispatchEvent(new Event('unread-count-changed'));
           }
         }
       } catch (err) {
@@ -148,6 +154,7 @@ export function ClientMessages() {
       setConversations((prev) =>
         prev.map((c) => (c.id === convId ? { ...c, unread_count: 0 } : c))
       );
+      window.dispatchEvent(new Event('unread-count-changed'));
     } catch (err) {
       console.error('Error:', err);
     }
@@ -159,6 +166,7 @@ export function ClientMessages() {
       setConversations((prev) =>
         prev.map((c) => (c.id === convId ? { ...c, unread_count: 1 } : c))
       );
+      window.dispatchEvent(new Event('unread-count-changed'));
     } catch (err) {
       console.error('Error:', err);
     }
