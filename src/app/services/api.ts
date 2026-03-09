@@ -385,6 +385,15 @@ export interface ListingResponse {
 
 export const listingsApi = {
   /**
+   * Check if a listing title already exists
+   */
+  checkTitle: async (title: string, excludeId?: number): Promise<{ exists: boolean }> => {
+    const params = new URLSearchParams({ title });
+    if (excludeId) params.append('exclude_id', String(excludeId));
+    return apiFetch<{ exists: boolean }>(`/listings/check-title?${params.toString()}`);
+  },
+
+  /**
    * Create a new listing (full 24-step onboarding payload + base64 photos)
    */
   createListing: async (data: Record<string, unknown>): Promise<ListingResponse> => {

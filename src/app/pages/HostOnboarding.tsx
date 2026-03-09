@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Logo } from '@/app/components/Logo';
 import {
   Check, ChevronRight, Minus, Plus, Pencil, X, ChevronDown, ChevronUp, ChevronLeft,
@@ -8,7 +8,7 @@ import {
   Coffee, Blend, Utensils, CircleDot, GlassWater, Sparkles,
   CupSoda, Scissors, SprayCan, Table, Box, ChefHat, Sandwich, Grid3x3,
   MapPin, Upload, Info, HelpCircle, Calendar as CalendarIcon, User,
-  Loader2
+  Loader2, AlertCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { listingsApi, Listing } from '@/app/services/api';
@@ -292,6 +292,36 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
     transport: '',
     otherInfo: ''
   });
+  const [titleExists, setTitleExists] = useState(false);
+  const [checkingTitle, setCheckingTitle] = useState(false);
+  const titleCheckRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Check title uniqueness with debounce
+  useEffect(() => {
+    const title = descriptionData.title?.trim();
+    if (!title) {
+      setTitleExists(false);
+      return;
+    }
+
+    if (titleCheckRef.current) clearTimeout(titleCheckRef.current);
+
+    titleCheckRef.current = setTimeout(async () => {
+      setCheckingTitle(true);
+      try {
+        const res = await listingsApi.checkTitle(title, listingId);
+        setTitleExists(res.exists);
+      } catch {
+        setTitleExists(false);
+      } finally {
+        setCheckingTitle(false);
+      }
+    }, 500);
+
+    return () => {
+      if (titleCheckRef.current) clearTimeout(titleCheckRef.current);
+    };
+  }, [descriptionData.title, listingId]);
 
   // 8. Reservation Mode & Stay Duration
   const [reservationMode, setReservationMode] = useState<'request' | 'instant'>('request');
@@ -730,6 +760,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
     if (currentStep === 'acceptance-condition' && !acceptedConditions) return true;
     if (currentStep === 'reservation-type' && (!rentalFrequency || !spaceType)) return true;
     if (currentStep === 'amenities' && selectedAmenities.length < 8) return true;
+    if (currentStep === 'chalet-description' && titleExists) return true;
     if (currentStep === 'local-laws' && !acceptedLocalLaws) return true;
     if (currentStep === 'guest-arrival' && (!guestArrival.internetSpeed || guestArrival.hasWifi === null || !guestArrival.checkinMethod)) return true;
     if (currentStep === 'phone-number' && !phoneNumber) return true;
@@ -1297,12 +1328,23 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
              <div className="space-y-6">
                 <div className="space-y-2">
                    <label className="block text-sm font-bold text-[#222222]">Titre de l'annonce *</label>
-                   <input 
-                      type="text" 
+                   <input
+                      type="text"
                       value={descriptionData.title}
                       onChange={(e) => setDescriptionData({...descriptionData, title: e.target.value})}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black"
+                      className={`w-full p-3 border rounded-lg focus:outline-none ${
+                        titleExists ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-black'
+                      }`}
                    />
+                   {titleExists && (
+                     <div className="flex items-center gap-2 text-red-600 text-sm">
+                       <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                       <p>Ce titre existe déjà. Veuillez en choisir un autre.</p>
+                     </div>
+                   )}
+                   {checkingTitle && (
+                     <p className="text-xs text-gray-400">Vérification du titre...</p>
+                   )}
                    <div className="flex items-start gap-2 text-gray-500 text-xs">
                      <Info className="w-3 h-3 mt-0.5" />
                      <p>Astuce: Suscitez l'intérêt des voyageurs avec un titre accrocheur qui souligne ce qui rend votre chalet unique.</p>
