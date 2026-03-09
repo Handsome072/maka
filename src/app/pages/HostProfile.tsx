@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { HostSidebar } from '@/app/components/HostSidebar';
 import { userProfileApi, User, listingsApi, Listing } from '@/app/services/api';
+import { useAuth } from '@/app/context/AuthContext';
 import { Camera, Check, X } from 'lucide-react';
 
 const AVAILABLE_INTERESTS = [
@@ -17,6 +18,7 @@ const AVAILABLE_LANGUAGES = [
 ];
 
 export function HostProfile() {
+  const { refreshUser } = useAuth();
   const [profile, setProfile] = useState<User | null>(null);
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
@@ -74,6 +76,7 @@ export function HostProfile() {
     try {
       const res = await userProfileApi.uploadPhoto(file);
       setProfile(prev => prev ? { ...prev, profile_photo_url: res.profile_photo_url } : null);
+      await refreshUser();
       showToast('success', 'Photo mise à jour.');
     } catch (err: any) {
       showToast('error', err.message || 'Erreur lors de l\'upload.');

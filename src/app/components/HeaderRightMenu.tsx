@@ -65,16 +65,12 @@ export function HeaderRightMenu({
         >
           <Menu className="w-4 h-4 ml-1" />
           {user ? (
-            user.profile_photo_url ? (
-              <img src={user.profile_photo_url} alt={user.name} className="w-8 h-8 rounded-full object-cover" />
-            ) : (
-              <div
-                className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white text-sm"
-                style={{ fontWeight: 600 }}
-              >
-                {user.name.charAt(0).toUpperCase()}
-              </div>
-            )
+            <div
+              className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white text-sm"
+              style={{ fontWeight: 600 }}
+            >
+              {user.name.charAt(0).toUpperCase()}
+            </div>
           ) : (
             <div className="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center">
               <User className="w-5 h-5 text-white" />
