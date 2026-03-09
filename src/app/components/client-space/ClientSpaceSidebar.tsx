@@ -184,9 +184,13 @@ export function ClientSpaceSidebar() {
             onClick={() => setShowUserMenu(!showUserMenu)}
             className="w-full p-4 flex items-center gap-3 hover:bg-gray-50 transition-colors"
           >
-            <div className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center text-white text-sm flex-shrink-0" style={{ fontWeight: 600 }}>
-              {userInitial}
-            </div>
+            {user?.profile_photo_url ? (
+              <img src={user.profile_photo_url} alt={userName} className="w-10 h-10 rounded-full object-cover flex-shrink-0" />
+            ) : (
+              <div className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center text-white text-sm flex-shrink-0" style={{ fontWeight: 600 }}>
+                {userInitial}
+              </div>
+            )}
             <div className="flex-1 text-left min-w-0">
               <div className="text-sm truncate" style={{ fontWeight: 600 }}>{userName}</div>
               {userEmail && <div className="text-xs text-gray-500 truncate">{userEmail}</div>}

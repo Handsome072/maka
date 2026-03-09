@@ -48,11 +48,15 @@ export function ClientSpaceMobileNav() {
             isActive('/client-space/profile') ? 'text-black' : 'text-gray-500'
           }`}
         >
-          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-xs flex-shrink-0 ${
-            isActive('/client-space/profile') ? 'bg-gray-900' : 'bg-gray-500'
-          }`} style={{ fontWeight: 600 }}>
-            {user?.name.charAt(0).toUpperCase() || 'A'}
-          </div>
+          {user?.profile_photo_url ? (
+            <img src={user.profile_photo_url} alt={user.name} className="w-6 h-6 rounded-full object-cover flex-shrink-0" />
+          ) : (
+            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-xs flex-shrink-0 ${
+              isActive('/client-space/profile') ? 'bg-gray-900' : 'bg-gray-500'
+            }`} style={{ fontWeight: 600 }}>
+              {user?.name.charAt(0).toUpperCase() || 'A'}
+            </div>
+          )}
           <span className="text-[10px] font-medium text-center leading-tight">Profil</span>
         </Link>
 
