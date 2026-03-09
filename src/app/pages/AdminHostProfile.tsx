@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -8,149 +8,87 @@ import {
   FileText, Monitor, MapPin, Phone, Mail, Globe, Calendar, AlertTriangle,
   Star, DollarSign, Home, TrendingUp, Clock, XCircle, Lock, CheckCircle,
   Trash2, Flag, CreditCard, RotateCcw, Eye, ChevronDown, ChevronUp,
-  Building, User, BarChart3, Wallet, Receipt
+  Building, User, BarChart3, Wallet, Receipt, Loader2
 } from 'lucide-react';
 import { AdminSidebar } from '@/app/components/AdminSidebar';
-
-interface AdminNote {
-  id: number;
-  author: string;
-  date: string;
-  content: string;
-}
-
-const hostsData: Record<string, {
-  id: number; name: string; email: string; avatar: string; phone: string;
-  country: string; city: string; verified: boolean; joinDate: string; language: string;
-  status: 'ACTIF' | 'SUSPENDU' | 'BANNI';
-  verificationDate: string | null;
-  documents: { name: string; date: string; status: string }[];
-  addressVerified: boolean;
-  bankVerified: boolean;
-  emailVerified: boolean;
-  phoneVerified: boolean;
-  properties: { id: number; name: string; city: string; pricePerNight: string; status: string; rating: number; totalBookings: number; type: string }[];
-  stats: { totalBookings: number; totalEarnings: string; totalEarningsValue: number; occupancyRate: string; avgRating: number; responseRate: string; cancellationRate: string; totalProperties: number; totalReviews: number };
-  bookings: { property: string; guest: string; dates: string; amount: string; status: string }[];
-  payments: { id: string; property: string; amount: string; commission: string; net: string; date: string; status: string }[];
-  refunds: { id: string; guest: string; amount: string; reason: string; date: string; status: string }[];
-  reviews: { guest: string; property: string; rating: number; comment: string; date: string }[];
-  disputes: { id: string; guest: string; property: string; reason: string; status: string; date: string }[];
-  signals: { id: string; type: string; reporter: string; description: string; date: string; status: string }[];
-  risk: { lastLogin: string; ip: string; device: string; fraudScore: number; accountAge: string; };
-}> = {
-  '1001': {
-    id: 1001, name: 'Jean Dupont', email: 'jean.dupont@email.com', avatar: 'JD',
-    phone: '+33 6 12 34 56 78', country: 'France', city: 'Paris', verified: true,
-    joinDate: '15 jan. 2023', language: 'Francais', status: 'ACTIF',
-    verificationDate: '20 jan. 2023',
-    documents: [
-      { name: 'Carte d\'identite', date: '15 jan. 2023', status: 'APPROUVE' },
-      { name: 'Justificatif de domicile', date: '15 jan. 2023', status: 'APPROUVE' },
-      { name: 'RIB bancaire', date: '16 jan. 2023', status: 'APPROUVE' },
-    ],
-    addressVerified: true,
-    bankVerified: true,
-    emailVerified: true,
-    phoneVerified: true,
-    properties: [
-      { id: 101, name: 'Villa Toscane', city: 'Paris', pricePerNight: '180 €', status: 'ACTIF', rating: 4.9, totalBookings: 67, type: 'Villa' },
-      { id: 102, name: 'Appartement Paris 8e', city: 'Paris', pricePerNight: '120 €', status: 'ACTIF', rating: 4.7, totalBookings: 45, type: 'Appartement' },
-      { id: 103, name: 'Studio Montmartre', city: 'Paris', pricePerNight: '85 €', status: 'INACTIF', rating: 4.5, totalBookings: 23, type: 'Studio' },
-      { id: 104, name: 'Loft Marais', city: 'Paris', pricePerNight: '200 €', status: 'ACTIF', rating: 4.8, totalBookings: 21, type: 'Loft' },
-    ],
-    stats: { totalBookings: 156, totalEarnings: '45 230 €', totalEarningsValue: 45230, occupancyRate: '78%', avgRating: 4.8, responseRate: '96%', cancellationRate: '2%', totalProperties: 4, totalReviews: 89 },
-    bookings: [
-      { property: 'Villa Toscane', guest: 'Marie Simon', dates: '15-20 fev. 2025', amount: '900 €', status: 'CONFIRMEE' },
-      { property: 'Appartement Paris 8e', guest: 'Pierre Laurent', dates: '01-05 jan. 2025', amount: '480 €', status: 'TERMINEE' },
-      { property: 'Villa Toscane', guest: 'Sophie Martin', dates: '20-27 dec. 2024', amount: '1 260 €', status: 'TERMINEE' },
-      { property: 'Loft Marais', guest: 'Thomas Dubois', dates: '10-12 nov. 2024', amount: '400 €', status: 'ANNULEE' },
-      { property: 'Studio Montmartre', guest: 'Lucie Bernard', dates: '01-03 oct. 2024', amount: '170 €', status: 'TERMINEE' },
-    ],
-    payments: [
-      { id: 'PAY-H001', property: 'Villa Toscane', amount: '900 €', commission: '90 €', net: '810 €', date: '22 fev. 2025', status: 'VERSE' },
-      { id: 'PAY-H002', property: 'Appartement Paris 8e', amount: '480 €', commission: '48 €', net: '432 €', date: '07 jan. 2025', status: 'VERSE' },
-      { id: 'PAY-H003', property: 'Villa Toscane', amount: '1 260 €', commission: '126 €', net: '1 134 €', date: '29 dec. 2024', status: 'VERSE' },
-      { id: 'PAY-H004', property: 'Studio Montmartre', amount: '170 €', commission: '17 €', net: '153 €', date: '05 oct. 2024', status: 'VERSE' },
-    ],
-    refunds: [
-      { id: 'REF-001', guest: 'Thomas Dubois', amount: '400 €', reason: 'Annulation voyageur', date: '11 nov. 2024', status: 'EFFECTUE' },
-    ],
-    reviews: [
-      { guest: 'Marie Simon', property: 'Villa Toscane', rating: 5, comment: 'Logement exceptionnel, hote tres accueillant. Je recommande vivement !', date: '21 fev. 2025' },
-      { guest: 'Pierre Laurent', property: 'Appartement Paris 8e', rating: 4, comment: 'Tres bien situe, propre et confortable. Petit bemol sur le bruit.', date: '06 jan. 2025' },
-      { guest: 'Sophie Martin', property: 'Villa Toscane', rating: 5, comment: 'Parfait pour les fetes. Tout etait impeccable.', date: '28 dec. 2024' },
-      { guest: 'Lucie Bernard', property: 'Studio Montmartre', rating: 4, comment: 'Bon rapport qualite-prix. Studio tres bien equipe.', date: '04 oct. 2024' },
-    ],
-    disputes: [
-      { id: 'DIS-H001', guest: 'Thomas Dubois', property: 'Loft Marais', reason: 'Annulation de derniere minute', status: 'RESOLU', date: '12 nov. 2024' },
-    ],
-    signals: [
-      { id: 'SIG-001', type: 'Contenu inapproprie', reporter: 'Systeme automatique', description: 'Description de logement potentiellement trompeuse detectee', date: '15 dec. 2024', status: 'TRAITE' },
-    ],
-    risk: { lastLogin: '05 mar. 2025 a 14:32', ip: '192.168.1.42', device: 'Chrome / macOS', fraudScore: 8, accountAge: '2 ans, 2 mois' },
-  },
-  '1002': {
-    id: 1002, name: 'Marie Simon', email: 'marie.simon@email.com', avatar: 'MS',
-    phone: '+33 6 23 45 67 89', country: 'France', city: 'Bordeaux', verified: true,
-    joinDate: '03 fev. 2023', language: 'Francais', status: 'ACTIF',
-    verificationDate: '10 fev. 2023',
-    documents: [
-      { name: 'Passeport', date: '03 fev. 2023', status: 'APPROUVE' },
-    ],
-    addressVerified: true,
-    bankVerified: true,
-    emailVerified: true,
-    phoneVerified: true,
-    properties: [
-      { id: 201, name: 'Maison Bordeaux', city: 'Bordeaux', pricePerNight: '150 €', status: 'ACTIF', rating: 4.6, totalBookings: 52, type: 'Maison' },
-      { id: 202, name: 'Appartement Nice', city: 'Nice', pricePerNight: '110 €', status: 'ACTIF', rating: 4.5, totalBookings: 46, type: 'Appartement' },
-    ],
-    stats: { totalBookings: 98, totalEarnings: '32 150 €', totalEarningsValue: 32150, occupancyRate: '72%', avgRating: 4.6, responseRate: '92%', cancellationRate: '3%', totalProperties: 2, totalReviews: 54 },
-    bookings: [
-      { property: 'Maison Bordeaux', guest: 'Antoine Moreau', dates: '01-07 mar. 2025', amount: '900 €', status: 'CONFIRMEE' },
-      { property: 'Appartement Nice', guest: 'Lucie Bernard', dates: '14-18 fev. 2025', amount: '440 €', status: 'TERMINEE' },
-    ],
-    payments: [
-      { id: 'PAY-H010', property: 'Maison Bordeaux', amount: '900 €', commission: '90 €', net: '810 €', date: '09 mar. 2025', status: 'VERSE' },
-      { id: 'PAY-H011', property: 'Appartement Nice', amount: '440 €', commission: '44 €', net: '396 €', date: '20 fev. 2025', status: 'VERSE' },
-    ],
-    refunds: [],
-    reviews: [
-      { guest: 'Antoine Moreau', property: 'Maison Bordeaux', rating: 5, comment: 'Maison magnifique avec un jardin superbe. Hote parfaite.', date: '08 mar. 2025' },
-      { guest: 'Lucie Bernard', property: 'Appartement Nice', rating: 4, comment: 'Bel appartement bien equipe. Vue mer agreable.', date: '19 fev. 2025' },
-    ],
-    disputes: [],
-    signals: [],
-    risk: { lastLogin: '04 mar. 2025 a 09:15', ip: '10.0.0.58', device: 'Safari / iOS', fraudScore: 5, accountAge: '2 ans, 1 mois' },
-  },
-};
-
-const defaultHost = hostsData['1001'];
+import { adminHostsApi, AdminHostDetail, AdminHostNote } from '@/app/services/api';
 
 type Tab = 'overview' | 'properties' | 'bookings' | 'payments' | 'reviews' | 'disputes';
 
 export function AdminHostProfile() {
   const params = useParams();
-  const hostId = params?.id as string || '1001';
-  const host = hostsData[hostId] || defaultHost;
+  const hostId = params?.id as string;
 
+  const [host, setHost] = useState<AdminHostDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>('overview');
   const [showActions, setShowActions] = useState(false);
-  const [notes, setNotes] = useState<AdminNote[]>([
-    { id: 1, author: 'Admin', date: '01 mar. 2025', content: 'Hote fiable avec un excellent taux de reponse. Super host potentiel.' },
-  ]);
+  const [notes, setNotes] = useState<AdminHostNote[]>([]);
   const [newNote, setNewNote] = useState('');
+  const [addingNote, setAddingNote] = useState(false);
 
-  const addNote = () => {
-    if (!newNote.trim()) return;
-    setNotes(prev => [...prev, {
-      id: Date.now(),
-      author: 'Admin',
-      date: '05 mar. 2025',
-      content: newNote.trim(),
-    }]);
-    setNewNote('');
+  const fetchHost = useCallback(async () => {
+    if (!hostId) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await adminHostsApi.getOne(Number(hostId));
+      setHost(response.host);
+      setNotes(response.host.notes || []);
+    } catch (err: any) {
+      setError(err.message || 'Erreur lors du chargement du profil');
+    } finally {
+      setLoading(false);
+    }
+  }, [hostId]);
+
+  useEffect(() => {
+    fetchHost();
+  }, [fetchHost]);
+
+  const addNote = async () => {
+    if (!newNote.trim() || !host) return;
+    setAddingNote(true);
+    try {
+      const response = await adminHostsApi.addNote(host.id, newNote.trim());
+      setNotes(prev => [...prev, response.note]);
+      setNewNote('');
+    } catch (err: any) {
+      alert(err.message || 'Erreur lors de l\'ajout de la note');
+    } finally {
+      setAddingNote(false);
+    }
+  };
+
+  const handleSuspend = async () => {
+    if (!host) return;
+    try {
+      await adminHostsApi.suspend(host.id);
+      setHost(prev => prev ? { ...prev, status: 'SUSPENDU' } : null);
+    } catch (err: any) {
+      alert(err.message || 'Erreur');
+    }
+  };
+
+  const handleBan = async () => {
+    if (!host) return;
+    try {
+      await adminHostsApi.ban(host.id);
+      setHost(prev => prev ? { ...prev, status: 'BANNI' } : null);
+    } catch (err: any) {
+      alert(err.message || 'Erreur');
+    }
+  };
+
+  const handleActivate = async () => {
+    if (!host) return;
+    try {
+      await adminHostsApi.activate(host.id);
+      setHost(prev => prev ? { ...prev, status: 'ACTIF' } : null);
+    } catch (err: any) {
+      alert(err.message || 'Erreur');
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -197,6 +135,43 @@ export function AdminHostProfile() {
       ))}
     </div>
   );
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <AdminSidebar />
+        <main className="lg:ml-[280px] p-4 md:p-6 lg:p-8">
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <div className="text-center">
+              <Loader2 className="w-8 h-8 animate-spin text-gray-400 mx-auto mb-3" />
+              <p className="text-sm text-gray-500">Chargement du profil...</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error || !host) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <AdminSidebar />
+        <main className="lg:ml-[280px] p-4 md:p-6 lg:p-8">
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <div className="text-center">
+              <AlertTriangle className="w-8 h-8 text-red-400 mx-auto mb-3" />
+              <p className="text-sm text-gray-700 mb-3">{error || 'Hote introuvable'}</p>
+              <button onClick={fetchHost} className="px-4 py-2 bg-[#111827] text-white rounded-xl hover:bg-[#1f2937] transition-colors text-sm">
+                Reessayer
+              </button>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   const tabs: { key: Tab; label: string; count?: number }[] = [
     { key: 'overview', label: 'Vue d\'ensemble' },
@@ -258,11 +233,11 @@ export function AdminHostProfile() {
                     <span className="text-sm" style={{ fontWeight: 500 }}>Approuver</span>
                   </button>
                 )}
-                <button className="px-3.5 py-2 border border-amber-200 text-amber-700 bg-amber-50 rounded-xl hover:bg-amber-100 transition-colors flex items-center gap-2">
+                <button onClick={handleSuspend} className="px-3.5 py-2 border border-amber-200 text-amber-700 bg-amber-50 rounded-xl hover:bg-amber-100 transition-colors flex items-center gap-2">
                   <PauseCircle className="w-4 h-4" />
                   <span className="text-sm" style={{ fontWeight: 500 }}>Suspendre</span>
                 </button>
-                <button className="px-3.5 py-2 border border-red-200 text-red-700 bg-red-50 rounded-xl hover:bg-red-100 transition-colors flex items-center gap-2">
+                <button onClick={handleBan} className="px-3.5 py-2 border border-red-200 text-red-700 bg-red-50 rounded-xl hover:bg-red-100 transition-colors flex items-center gap-2">
                   <Ban className="w-4 h-4" />
                   <span className="text-sm" style={{ fontWeight: 500 }}>Bannir</span>
                 </button>
@@ -292,10 +267,10 @@ export function AdminHostProfile() {
                         <CheckCircle className="w-4 h-4" /> Approuver
                       </button>
                     )}
-                    <button className="px-3 py-2.5 border border-amber-200 text-amber-700 bg-amber-50 rounded-xl hover:bg-amber-100 transition-colors flex items-center justify-center gap-2 text-xs" style={{ fontWeight: 500 }}>
+                    <button onClick={handleSuspend} className="px-3 py-2.5 border border-amber-200 text-amber-700 bg-amber-50 rounded-xl hover:bg-amber-100 transition-colors flex items-center justify-center gap-2 text-xs" style={{ fontWeight: 500 }}>
                       <PauseCircle className="w-4 h-4" /> Suspendre
                     </button>
-                    <button className="px-3 py-2.5 border border-red-200 text-red-700 bg-red-50 rounded-xl hover:bg-red-100 transition-colors flex items-center justify-center gap-2 text-xs" style={{ fontWeight: 500 }}>
+                    <button onClick={handleBan} className="px-3 py-2.5 border border-red-200 text-red-700 bg-red-50 rounded-xl hover:bg-red-100 transition-colors flex items-center justify-center gap-2 text-xs" style={{ fontWeight: 500 }}>
                       <Ban className="w-4 h-4" /> Bannir
                     </button>
                     <button className="px-3 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-xs" style={{ fontWeight: 500 }}>
@@ -428,7 +403,7 @@ export function AdminHostProfile() {
                     </div>
                     <div>
                       <div className="text-xs text-gray-400">Telephone</div>
-                      <div className="text-sm" style={{ fontWeight: 500 }}>{host.phone}</div>
+                      <div className="text-sm" style={{ fontWeight: 500 }}>{host.phone || '-'}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
@@ -437,7 +412,7 @@ export function AdminHostProfile() {
                     </div>
                     <div>
                       <div className="text-xs text-gray-400">Localisation</div>
-                      <div className="text-sm" style={{ fontWeight: 500 }}>{host.city}, {host.country}</div>
+                      <div className="text-sm" style={{ fontWeight: 500 }}>{host.city || '-'}, {host.country || '-'}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
@@ -564,9 +539,10 @@ export function AdminHostProfile() {
                   />
                   <button
                     onClick={addNote}
-                    className="px-4 py-2.5 bg-[#111827] text-white rounded-xl hover:bg-[#1f2937] transition-colors self-end sm:self-stretch"
+                    disabled={addingNote}
+                    className="px-4 py-2.5 bg-[#111827] text-white rounded-xl hover:bg-[#1f2937] transition-colors self-end sm:self-stretch disabled:opacity-50"
                   >
-                    <span className="text-sm" style={{ fontWeight: 600 }}>Ajouter</span>
+                    <span className="text-sm" style={{ fontWeight: 600 }}>{addingNote ? 'Ajout...' : 'Ajouter'}</span>
                   </button>
                 </div>
               </div>

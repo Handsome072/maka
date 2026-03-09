@@ -1127,3 +1127,222 @@ export const hostRevenueApi = {
     return response.blob();
   },
 };
+
+// ─── Admin Hosts Types ──────────────────────────────────────────────────────
+
+export interface AdminHost {
+  id: number;
+  name: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  avatar: string;
+  phone: string | null;
+  country: string | null;
+  verified: boolean;
+  properties: number;
+  totalBookings: number;
+  totalEarnings: string;
+  totalEarningsValue: number;
+  avgRating: number;
+  joinDate: string;
+  joinDateValue: number;
+  status: 'ACTIF' | 'SUSPENDU' | 'BANNI';
+  profile_photo_url: string | null;
+}
+
+export interface AdminHostsStats {
+  totalHosts: number;
+  totalActive: number;
+  totalVerified: number;
+  totalProperties: number;
+  totalSuspended: number;
+  countries: string[];
+}
+
+export interface AdminHostsResponse {
+  hosts: AdminHost[];
+  stats: AdminHostsStats;
+}
+
+// ─── Admin Host Detail Types ────────────────────────────────────────────────
+
+export interface AdminHostDocument {
+  name: string;
+  date: string;
+  status: string;
+}
+
+export interface AdminHostProperty {
+  id: number;
+  name: string;
+  city: string;
+  pricePerNight: string;
+  status: string;
+  rating: number;
+  totalBookings: number;
+  type: string;
+}
+
+export interface AdminHostStats {
+  totalBookings: number;
+  totalEarnings: string;
+  totalEarningsValue: number;
+  occupancyRate: string;
+  avgRating: number;
+  responseRate: string;
+  cancellationRate: string;
+  totalProperties: number;
+  totalReviews: number;
+}
+
+export interface AdminHostBooking {
+  property: string;
+  guest: string;
+  dates: string;
+  amount: string;
+  status: string;
+}
+
+export interface AdminHostPayment {
+  id: string;
+  property: string;
+  amount: string;
+  commission: string;
+  net: string;
+  date: string;
+  status: string;
+}
+
+export interface AdminHostRefund {
+  id: string;
+  guest: string;
+  amount: string;
+  reason: string;
+  date: string;
+  status: string;
+}
+
+export interface AdminHostReview {
+  guest: string;
+  property: string;
+  rating: number;
+  comment: string;
+  date: string;
+}
+
+export interface AdminHostDispute {
+  id: string;
+  guest: string;
+  property: string;
+  reason: string;
+  status: string;
+  date: string;
+}
+
+export interface AdminHostSignal {
+  id: string;
+  type: string;
+  reporter: string;
+  description: string;
+  date: string;
+  status: string;
+}
+
+export interface AdminHostNote {
+  id: number;
+  author: string;
+  date: string;
+  content: string;
+}
+
+export interface AdminHostRisk {
+  lastLogin: string;
+  ip: string;
+  device: string;
+  fraudScore: number;
+  accountAge: string;
+}
+
+export interface AdminHostDetail {
+  id: number;
+  name: string;
+  email: string;
+  avatar: string;
+  phone: string | null;
+  country: string | null;
+  city: string | null;
+  verified: boolean;
+  joinDate: string;
+  language: string;
+  status: 'ACTIF' | 'SUSPENDU' | 'BANNI';
+  verificationDate: string | null;
+  documents: AdminHostDocument[];
+  addressVerified: boolean;
+  bankVerified: boolean;
+  emailVerified: boolean;
+  phoneVerified: boolean;
+  properties: AdminHostProperty[];
+  stats: AdminHostStats;
+  bookings: AdminHostBooking[];
+  payments: AdminHostPayment[];
+  refunds: AdminHostRefund[];
+  reviews: AdminHostReview[];
+  disputes: AdminHostDispute[];
+  signals: AdminHostSignal[];
+  notes: AdminHostNote[];
+  risk: AdminHostRisk;
+}
+
+export interface AdminHostDetailResponse {
+  host: AdminHostDetail;
+}
+
+// ─── Admin Hosts API ────────────────────────────────────────────────────────
+
+export const adminHostsApi = {
+  getAll: async (params?: {
+    search?: string;
+    status?: string;
+    verified?: string;
+    country?: string;
+  }): Promise<AdminHostsResponse> => {
+    const query = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, val]) => {
+        if (val !== undefined && val !== '') query.append(key, String(val));
+      });
+    }
+    const qs = query.toString();
+    return apiFetch<AdminHostsResponse>(`/admin/hosts${qs ? `?${qs}` : ''}`);
+  },
+
+  getOne: async (id: number): Promise<AdminHostDetailResponse> => {
+    return apiFetch<AdminHostDetailResponse>(`/admin/hosts/${id}`);
+  },
+
+  suspend: async (id: number): Promise<MessageResponse> => {
+    return apiFetch<MessageResponse>(`/admin/hosts/${id}/suspend`, {
+      method: 'POST',
+    });
+  },
+
+  ban: async (id: number): Promise<MessageResponse> => {
+    return apiFetch<MessageResponse>(`/admin/hosts/${id}/ban`, {
+      method: 'POST',
+    });
+  },
+
+  activate: async (id: number): Promise<MessageResponse> => {
+    return apiFetch<MessageResponse>(`/admin/hosts/${id}/activate`, {
+      method: 'POST',
+    });
+  },
+
+  addNote: async (id: number, content: string): Promise<{ message: string; note: AdminHostNote }> => {
+    return apiFetch<{ message: string; note: AdminHostNote }>(`/admin/hosts/${id}/note`, {
+      method: 'POST',
+      body: JSON.stringify({ content }),
+    });
+  },
+};

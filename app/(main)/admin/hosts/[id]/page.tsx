@@ -1,20 +1,9 @@
 import { AdminHostProfile } from '@/app/pages/AdminHostProfile';
 
 export function generateStaticParams() {
-  return [
-    { id: '1001' },
-    { id: '1002' },
-    { id: '1003' },
-    { id: '1004' },
-    { id: '1005' },
-    { id: '1006' },
-    { id: '1007' },
-    { id: '1008' },
-    { id: '1009' },
-    { id: '1010' },
-    { id: '1011' },
-    { id: '1012' },
-  ];
+  // Pre-generate pages for a range of host IDs to support static export
+  // The AdminHostProfile component fetches data client-side via API
+  return Array.from({ length: 200 }, (_, i) => ({ id: String(i + 1) }));
 }
 
 export default function AdminHostProfilePage() {
