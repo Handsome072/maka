@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { listingsApi, Listing } from '@/app/services/api';
+import { useAuth } from '@/app/context/AuthContext';
 
 // Import images
 const summaryChaletImg = "https://images.unsplash.com/photo-1685475512320-eede8aea2b95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBsdXh1cnklMjBjaGFsZXQlMjBleHRlcmlvciUyMGdyZWVuJTIwbmF0dXJlfGVufDF8fHx8MTc3MDk5NTg1M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
@@ -192,9 +193,11 @@ function MockMap() {
 
 export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition', onCompleteOnboarding, listingId }: HostOnboardingProps) {
   const isEditMode = !!listingId;
+  const { user } = useAuth();
+  const hasProfilePhoto = !!user?.profile_photo_url;
 
-  // Linearize steps
-  const stepsList: Step[] = [
+  // Linearize steps - skip host-photo if user already has a profile photo
+  const allSteps: Step[] = [
     'acceptance-condition',
     'reservation-type',
     'address-location',
@@ -220,6 +223,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
     'verification',
     'signature'
   ];
+  const stepsList = hasProfilePhoto ? allSteps.filter(s => s !== 'host-photo') : allSteps;
 
   const [currentStep, setCurrentStep] = useState<Step>(initialStep);
   const [isLoadingListing, setIsLoadingListing] = useState(isEditMode);

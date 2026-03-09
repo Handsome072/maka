@@ -13,6 +13,7 @@ export interface User {
   role?: string;
   email_verified?: boolean;
   avatar?: string;
+  profile_photo_url?: string;
 }
 
 interface AuthContextType {
@@ -55,6 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     email: apiUser.email,
     role: apiUser.role,
     email_verified: apiUser.email_verified,
+    profile_photo_url: apiUser.profile_photo_url,
   });
 
   // Load user from storage and validate token on mount

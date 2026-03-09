@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import type { Step, Bedroom } from './types';
 import { EXPECTATIONS_DATA } from './constants';
 import { STEPS_LIST } from './constants';
+import { useAuth } from '@/app/context/AuthContext';
 
 const emptyBedroomBeds = {
   simple: 0, double: 0, queen: 0, king: 0,
@@ -27,6 +28,9 @@ export function useHostOnboardingState({
   onStepChange,
   listingId,
 }: UseHostOnboardingStateProps) {
+  const { user } = useAuth();
+  const hasProfilePhoto = !!user?.profile_photo_url;
+
   const [currentStep, setCurrentStep] = useState<Step>(initialStep);
 
   useEffect(() => {
@@ -195,8 +199,9 @@ export function useHostOnboardingState({
   const [editingItem, setEditingItem] = useState<{ item: Bedroom; type: 'bedroom' | 'openArea' } | null>(null);
 
   // Helpers
-  const currentStepIndex = STEPS_LIST.indexOf(currentStep);
-  const progressPercentage = ((currentStepIndex + 1) / STEPS_LIST.length) * 100;
+  const stepsList = hasProfilePhoto ? STEPS_LIST.filter(s => s !== 'host-photo') : STEPS_LIST;
+  const currentStepIndex = stepsList.indexOf(currentStep);
+  const progressPercentage = ((currentStepIndex + 1) / stepsList.length) * 100;
 
   const getCurrentBigStep = () => {
     if (['acceptance-condition', 'reservation-type', 'address-location', 'capacity-details', 'client-expectations', 'amenities', 'summary-review-1'].includes(currentStep)) return 1;
@@ -309,8 +314,8 @@ export function useHostOnboardingState({
       setIsSmsModalOpen(true);
       return;
     }
-    if (nextIndex < STEPS_LIST.length) {
-      changeStep(STEPS_LIST[nextIndex]);
+    if (nextIndex < stepsList.length) {
+      changeStep(stepsList[nextIndex]);
       window.scrollTo(0, 0);
     } else {
       if (onCompleteOnboarding) onCompleteOnboarding();
@@ -321,7 +326,7 @@ export function useHostOnboardingState({
   const handleBack = () => {
     const prevIndex = currentStepIndex - 1;
     if (prevIndex >= 0) {
-      changeStep(STEPS_LIST[prevIndex]);
+      changeStep(stepsList[prevIndex]);
       window.scrollTo(0, 0);
     } else {
       onNavigate('logements');
@@ -339,7 +344,7 @@ export function useHostOnboardingState({
     currentStepIndex,
     progressPercentage,
     currentBigStep,
-    stepsList: STEPS_LIST,
+    stepsList,
     onNavigate,
     onCompleteOnboarding,
     acceptedConditions,
