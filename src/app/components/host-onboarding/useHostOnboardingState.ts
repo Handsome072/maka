@@ -17,6 +17,7 @@ export interface UseHostOnboardingStateProps {
   onNavigate: (page: string, data?: any) => void;
   onCompleteOnboarding?: () => void;
   onStepChange?: (step: Step) => void;
+  listingId?: number;
 }
 
 export function useHostOnboardingState({
@@ -24,6 +25,7 @@ export function useHostOnboardingState({
   onNavigate,
   onCompleteOnboarding,
   onStepChange,
+  listingId,
 }: UseHostOnboardingStateProps) {
   const [currentStep, setCurrentStep] = useState<Step>(initialStep);
 
@@ -104,6 +106,7 @@ export function useHostOnboardingState({
     transport: '',
     otherInfo: '',
   });
+  const [titleExists, setTitleExists] = useState(false);
 
   // 8. Reservation Mode & Stay Duration
   const [reservationMode, setReservationMode] = useState<'request' | 'instant'>('request');
@@ -292,6 +295,7 @@ export function useHostOnboardingState({
   const isNextDisabled = () => {
     if (currentStep === 'acceptance-condition' && !acceptedConditions) return true;
     if (currentStep === 'reservation-type' && (!rentalFrequency || !spaceType)) return true;
+    if (currentStep === 'chalet-description' && titleExists) return true;
     if (currentStep === 'local-laws' && !acceptedLocalLaws) return true;
     if (currentStep === 'guest-arrival' && (!guestArrival.internetSpeed || guestArrival.hasWifi === null || !guestArrival.checkinMethod)) return true;
     if (currentStep === 'phone-number' && !phoneNumber) return true;
@@ -360,6 +364,9 @@ export function useHostOnboardingState({
     setChaletPhotos,
     descriptionData,
     setDescriptionData,
+    titleExists,
+    setTitleExists,
+    listingId,
     reservationMode,
     setReservationMode,
     arrivalTime,

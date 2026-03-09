@@ -1,10 +1,40 @@
 'use client';
 
-import { Info } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Info, AlertCircle } from 'lucide-react';
 import { useHostOnboarding } from '../HostOnboardingContext';
+import { listingsApi } from '@/app/services/api';
 
 export function ChaletDescriptionStep() {
-  const { descriptionData, setDescriptionData } = useHostOnboarding();
+  const { descriptionData, setDescriptionData, titleExists, setTitleExists } = useHostOnboarding();
+  const [checkingTitle, setCheckingTitle] = useState(false);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    const title = descriptionData.title?.trim();
+    if (!title) {
+      setTitleExists(false);
+      return;
+    }
+
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    debounceRef.current = setTimeout(async () => {
+      setCheckingTitle(true);
+      try {
+        const res = await listingsApi.checkTitle(title);
+        setTitleExists(res.exists);
+      } catch {
+        setTitleExists(false);
+      } finally {
+        setCheckingTitle(false);
+      }
+    }, 500);
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [descriptionData.title]);
 
   return (
     <div className="max-w-3xl mx-auto space-y-10">
@@ -17,8 +47,19 @@ export function ChaletDescriptionStep() {
             type="text"
             value={descriptionData.title}
             onChange={(e) => setDescriptionData({ ...descriptionData, title: e.target.value })}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black"
+            className={`w-full p-3 border rounded-lg focus:outline-none ${
+              titleExists ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-black'
+            }`}
           />
+          {titleExists && (
+            <div className="flex items-center gap-2 text-red-600 text-sm">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              <p>Ce titre existe déjà. Veuillez en choisir un autre.</p>
+            </div>
+          )}
+          {checkingTitle && (
+            <p className="text-xs text-gray-400">Vérification du titre...</p>
+          )}
           <div className="flex items-start gap-2 text-gray-500 text-xs">
             <Info className="w-3 h-3 mt-0.5" />
             <p>Astuce: Suscitez l'intérêt des voyageurs avec un titre accrocheur qui souligne ce qui rend votre chalet unique.</p>
