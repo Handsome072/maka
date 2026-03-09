@@ -1,111 +1,25 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Search, Eye, PauseCircle, ChevronUp, ChevronDown, FileDown,
   Shield, ShieldCheck, Star, ChevronLeft, ChevronRight, X, SlidersHorizontal,
-  Users, UserCheck, UserX, BadgeCheck, Home, DollarSign, TrendingUp, BarChart3
+  Users, UserCheck, UserX, BadgeCheck, Home, DollarSign, TrendingUp, BarChart3,
+  Loader2
 } from 'lucide-react';
 import { AdminSidebar } from '@/app/components/AdminSidebar';
 import Link from 'next/link';
-
-interface Host {
-  id: number;
-  name: string;
-  email: string;
-  avatar: string;
-  phone: string;
-  country: string;
-  verified: boolean;
-  properties: number;
-  totalBookings: number;
-  totalEarnings: string;
-  totalEarningsValue: number;
-  avgRating: number;
-  joinDate: string;
-  joinDateValue: number;
-  status: 'ACTIF' | 'SUSPENDU' | 'BANNI';
-}
-
-const hosts: Host[] = [
-  {
-    id: 1001, name: 'Jean Dupont', email: 'jean.dupont@email.com', avatar: 'JD',
-    phone: '+33 6 12 34 56 78', country: 'France', verified: true,
-    properties: 12, totalBookings: 156, totalEarnings: '45 230 €', totalEarningsValue: 45230,
-    avgRating: 4.8, joinDate: '15 jan. 2023', joinDateValue: 20230115, status: 'ACTIF'
-  },
-  {
-    id: 1002, name: 'Marie Simon', email: 'marie.simon@email.com', avatar: 'MS',
-    phone: '+33 6 23 45 67 89', country: 'France', verified: true,
-    properties: 8, totalBookings: 98, totalEarnings: '32 150 €', totalEarningsValue: 32150,
-    avgRating: 4.6, joinDate: '03 fev. 2023', joinDateValue: 20230203, status: 'ACTIF'
-  },
-  {
-    id: 1003, name: 'Pierre Laurent', email: 'pierre.laurent@email.com', avatar: 'PL',
-    phone: '+33 6 34 56 78 90', country: 'France', verified: false,
-    properties: 15, totalBookings: 210, totalEarnings: '67 890 €', totalEarningsValue: 67890,
-    avgRating: 4.3, joinDate: '22 mar. 2023', joinDateValue: 20230322, status: 'ACTIF'
-  },
-  {
-    id: 1004, name: 'Sophie Martin', email: 'sophie.martin@email.com', avatar: 'SM',
-    phone: '+33 6 45 67 89 01', country: 'Belgique', verified: true,
-    properties: 6, totalBookings: 72, totalEarnings: '18 450 €', totalEarningsValue: 18450,
-    avgRating: 4.9, joinDate: '08 sep. 2023', joinDateValue: 20230908, status: 'ACTIF'
-  },
-  {
-    id: 1005, name: 'Thomas Dubois', email: 'thomas.dubois@email.com', avatar: 'TD',
-    phone: '+32 2 123 45 67', country: 'Belgique', verified: true,
-    properties: 9, totalBookings: 45, totalEarnings: '28 340 €', totalEarningsValue: 28340,
-    avgRating: 3.9, joinDate: '17 nov. 2023', joinDateValue: 20231117, status: 'SUSPENDU'
-  },
-  {
-    id: 1006, name: 'Lucie Bernard', email: 'lucie.bernard@email.com', avatar: 'LB',
-    phone: '+41 21 345 67 89', country: 'Suisse', verified: true,
-    properties: 18, totalBookings: 312, totalEarnings: '89 120 €', totalEarningsValue: 89120,
-    avgRating: 4.7, joinDate: '30 jun. 2022', joinDateValue: 20220630, status: 'ACTIF'
-  },
-  {
-    id: 1007, name: 'Antoine Moreau', email: 'antoine.moreau@email.com', avatar: 'AM',
-    phone: '+1 438 555 6789', country: 'Canada', verified: true,
-    properties: 25, totalBookings: 420, totalEarnings: '125 450 €', totalEarningsValue: 125450,
-    avgRating: 4.5, joinDate: '12 avr. 2022', joinDateValue: 20220412, status: 'ACTIF'
-  },
-  {
-    id: 1008, name: 'Camille Leroy', email: 'camille.leroy@email.com', avatar: 'CL',
-    phone: '+33 6 89 01 23 45', country: 'France', verified: false,
-    properties: 4, totalBookings: 18, totalEarnings: '12 890 €', totalEarningsValue: 12890,
-    avgRating: 4.1, joinDate: '20 fev. 2025', joinDateValue: 20250220, status: 'BANNI'
-  },
-  {
-    id: 1009, name: 'Romain Girard', email: 'romain.girard@email.com', avatar: 'RG',
-    phone: '+33 6 90 12 34 56', country: 'France', verified: true,
-    properties: 11, totalBookings: 134, totalEarnings: '56 780 €', totalEarningsValue: 56780,
-    avgRating: 4.4, joinDate: '12 oct. 2023', joinDateValue: 20231012, status: 'ACTIF'
-  },
-  {
-    id: 1010, name: 'Isabelle Petit', email: 'isabelle.petit@email.com', avatar: 'IP',
-    phone: '+1 613 555 4321', country: 'Canada', verified: true,
-    properties: 3, totalBookings: 28, totalEarnings: '9 730 €', totalEarningsValue: 9730,
-    avgRating: 4.2, joinDate: '28 avr. 2024', joinDateValue: 20240428, status: 'ACTIF'
-  },
-  {
-    id: 1011, name: 'Emma Fontaine', email: 'emma.fontaine@email.com', avatar: 'EF',
-    phone: '+33 6 11 22 33 44', country: 'France', verified: true,
-    properties: 7, totalBookings: 89, totalEarnings: '34 560 €', totalEarningsValue: 34560,
-    avgRating: 4.6, joinDate: '05 mai 2023', joinDateValue: 20230505, status: 'ACTIF'
-  },
-  {
-    id: 1012, name: 'Nicolas Blanc', email: 'nicolas.blanc@email.com', avatar: 'NB',
-    phone: '+32 2 987 65 43', country: 'Belgique', verified: false,
-    properties: 2, totalBookings: 12, totalEarnings: '5 230 €', totalEarningsValue: 5230,
-    avgRating: 3.8, joinDate: '14 jan. 2025', joinDateValue: 20250114, status: 'ACTIF'
-  },
-];
+import { adminHostsApi, type AdminHost, type AdminHostsStats } from '@/app/services/api';
 
 type SortField = 'name' | 'properties' | 'totalBookings' | 'totalEarningsValue' | 'avgRating' | 'joinDateValue';
 type SortDirection = 'asc' | 'desc';
 
 export function AdminHosts() {
+  const [hosts, setHosts] = useState<AdminHost[]>([]);
+  const [stats, setStats] = useState<AdminHostsStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [verifiedFilter, setVerifiedFilter] = useState('');
@@ -118,6 +32,26 @@ export function AdminHosts() {
   const [currentPage, setCurrentPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
   const itemsPerPage = 8;
+
+  // Fetch hosts from API
+  useEffect(() => {
+    const fetchHosts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await adminHostsApi.getAll();
+        setHosts(response.hosts);
+        setStats(response.stats);
+      } catch (err: any) {
+        console.error('Error fetching hosts:', err);
+        setError(err.message || 'Erreur lors du chargement des hôtes');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHosts();
+  }, []);
 
   const getStatusColor = (status: string) => {
     if (status === 'ACTIF') return 'bg-emerald-50 text-emerald-700 border border-emerald-200';
@@ -192,17 +126,16 @@ export function AdminHosts() {
     });
 
     return result;
-  }, [search, statusFilter, verifiedFilter, countryFilter, propertiesFilter, earningsFilter, dateFilter, sortField, sortDirection]);
+  }, [hosts, search, statusFilter, verifiedFilter, countryFilter, propertiesFilter, earningsFilter, dateFilter, sortField, sortDirection]);
 
   const totalPages = Math.max(1, Math.ceil(filteredHosts.length / itemsPerPage));
   const paginatedHosts = filteredHosts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  const countries = [...new Set(hosts.map(h => h.country))];
-  const totalActive = hosts.filter(h => h.status === 'ACTIF').length;
-  const totalVerified = hosts.filter(h => h.verified).length;
-  const totalSuspended = hosts.filter(h => h.status === 'SUSPENDU' || h.status === 'BANNI').length;
-  const totalRevenue = hosts.reduce((sum, h) => sum + h.totalEarningsValue, 0);
-  const totalProperties = hosts.reduce((sum, h) => sum + h.properties, 0);
+  const countries = useMemo(() => stats?.countries || [...new Set(hosts.map(h => h.country).filter(Boolean))], [stats, hosts]);
+  const totalActive = stats?.totalActive ?? hosts.filter(h => h.status === 'ACTIF').length;
+  const totalVerified = stats?.totalVerified ?? hosts.filter(h => h.verified).length;
+  const totalSuspended = stats?.totalSuspended ?? hosts.filter(h => h.status === 'SUSPENDU' || h.status === 'BANNI').length;
+  const totalProperties = stats?.totalProperties ?? hosts.reduce((sum, h) => sum + h.properties, 0);
 
   const activeFiltersCount = [statusFilter, verifiedFilter, countryFilter, propertiesFilter, earningsFilter, dateFilter].filter(Boolean).length;
 
@@ -259,7 +192,7 @@ export function AdminHosts() {
               </div>
               <div className="text-xs text-gray-500 uppercase tracking-wide" style={{ fontWeight: 600 }}>Total hotes</div>
             </div>
-            <div className="text-2xl md:text-3xl" style={{ fontWeight: 700 }}>{hosts.length}</div>
+            <div className="text-2xl md:text-3xl" style={{ fontWeight: 700 }}>{loading ? '—' : hosts.length}</div>
           </div>
           <div className="bg-white rounded-xl p-4 md:p-5 shadow-sm border border-gray-100">
             <div className="flex items-center gap-3 mb-3">
@@ -268,7 +201,7 @@ export function AdminHosts() {
               </div>
               <div className="text-xs text-gray-500 uppercase tracking-wide" style={{ fontWeight: 600 }}>Actifs</div>
             </div>
-            <div className="text-2xl md:text-3xl" style={{ fontWeight: 700 }}>{totalActive}</div>
+            <div className="text-2xl md:text-3xl" style={{ fontWeight: 700 }}>{loading ? '—' : totalActive}</div>
           </div>
           <div className="bg-white rounded-xl p-4 md:p-5 shadow-sm border border-gray-100">
             <div className="flex items-center gap-3 mb-3">
@@ -277,7 +210,7 @@ export function AdminHosts() {
               </div>
               <div className="text-xs text-gray-500 uppercase tracking-wide" style={{ fontWeight: 600 }}>Verifies</div>
             </div>
-            <div className="text-2xl md:text-3xl" style={{ fontWeight: 700 }}>{totalVerified}</div>
+            <div className="text-2xl md:text-3xl" style={{ fontWeight: 700 }}>{loading ? '—' : totalVerified}</div>
           </div>
           <div className="bg-white rounded-xl p-4 md:p-5 shadow-sm border border-gray-100">
             <div className="flex items-center gap-3 mb-3">
@@ -286,7 +219,7 @@ export function AdminHosts() {
               </div>
               <div className="text-xs text-gray-500 uppercase tracking-wide" style={{ fontWeight: 600 }}>Logements</div>
             </div>
-            <div className="text-2xl md:text-3xl" style={{ fontWeight: 700 }}>{totalProperties}</div>
+            <div className="text-2xl md:text-3xl" style={{ fontWeight: 700 }}>{loading ? '—' : totalProperties}</div>
           </div>
           <div className="col-span-2 lg:col-span-1 bg-white rounded-xl p-4 md:p-5 shadow-sm border border-gray-100">
             <div className="flex items-center gap-3 mb-3">
@@ -295,11 +228,37 @@ export function AdminHosts() {
               </div>
               <div className="text-xs text-gray-500 uppercase tracking-wide" style={{ fontWeight: 600 }}>Suspendus / Bannis</div>
             </div>
-            <div className="text-2xl md:text-3xl" style={{ fontWeight: 700 }}>{totalSuspended}</div>
+            <div className="text-2xl md:text-3xl" style={{ fontWeight: 700 }}>{loading ? '—' : totalSuspended}</div>
           </div>
         </div>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-16 flex flex-col items-center justify-center gap-3">
+            <Loader2 className="w-8 h-8 text-gray-400 animate-spin" />
+            <p className="text-sm text-gray-500">Chargement des hotes...</p>
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && !loading && (
+          <div className="bg-white rounded-xl shadow-sm border border-red-200 p-16 flex flex-col items-center justify-center gap-3">
+            <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center">
+              <UserX className="w-6 h-6 text-red-500" />
+            </div>
+            <p className="text-sm text-red-600">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-2 px-4 py-2 bg-[#111827] text-white rounded-xl text-sm hover:bg-[#1f2937] transition-colors"
+              style={{ fontWeight: 500 }}
+            >
+              Reessayer
+            </button>
+          </div>
+        )}
+
         {/* Hosts List */}
+        {!loading && !error && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100">
           {/* Search & Filters Header */}
           <div className="p-4 md:p-6 border-b border-gray-100">
@@ -751,6 +710,7 @@ export function AdminHosts() {
             </div>
           )}
         </div>
+        )}
       </main>
     </div>
   );
