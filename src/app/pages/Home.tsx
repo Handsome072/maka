@@ -53,799 +53,163 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
       .finally(() => setListingsLoaded(true));
   }, []);
 
-  // Données pour "Annonces consultées récemment" (Recently Viewed Properties)
+  // Photos from DB listings - first photo of each listing
+  // Emily (57): 253=Sainte-Adele, 254=Charlevoix, 255=Sutton, 256=Stoneham, 257=Ile d'Orleans
+  // Pascal (58): 258=Saint-Sauveur, 259=Mont-Tremblant, 260=Whistler, 261=Chelsea, 262=Muskoka
+  // Lucas (59): 263=Tremblant, 264=Banff, 265=Tofino, 266=Lac-Saint-Jean, 267=Quebec
+  // Romeo (60): 268=Charlevoix, 269=Tofino, 270=Canmore, 271=Val-des-Monts, 272=Lac-Saint-Jean
+  const img = {
+    253: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80',
+    254: 'https://images.unsplash.com/photo-1518732714860-b62714ce0c59?w=800&q=80',
+    255: 'https://images.unsplash.com/photo-1470770841497-7b3202e2f483?w=800&q=80',
+    256: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&q=80',
+    257: 'https://images.unsplash.com/photo-1600573472550-8090b5e0745e?w=800&q=80',
+    258: 'https://images.unsplash.com/photo-1520984032042-162d526883e0?w=800&q=80',
+    259: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80',
+    260: 'https://images.unsplash.com/photo-1499696010180-025ef6e1a8f9?w=800&q=80',
+    261: 'https://images.unsplash.com/photo-1505843513577-22bb7d21e455?w=800&q=80',
+    262: 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800&q=80',
+    263: 'https://images.unsplash.com/photo-1596178065887-1198b6148b2b?w=800&q=80',
+    264: 'https://images.unsplash.com/photo-1542718610-a1d656d1884c?w=800&q=80',
+    265: 'https://images.unsplash.com/photo-1604014237800-1c9102c219da?w=800&q=80',
+    266: 'https://images.unsplash.com/photo-1544984243-ec57ea16fe25?w=800&q=80',
+    267: 'https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=800&q=80',
+    268: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80',
+    269: 'https://images.unsplash.com/photo-1505916349660-8d91a09afa5a?w=800&q=80',
+    270: 'https://images.unsplash.com/photo-1630699144867-37acec97df5a?w=800&q=80',
+    271: 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&q=80',
+    272: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
+  } as Record<number, string>;
+
+  // Annonces consultees recemment
   const recentlyViewedProperties = [
-    {
-      image: "https://images.unsplash.com/photo-1663756915301-2ba688e078cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBhcGFydG1lbnQlMjBsaXZpbmclMjByb29tfGVufDF8fHx8MTc2NzU5NjExMHww&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "Appartement moderne · Paris",
-      location: "Hôte particulier",
-      date: "",
-      price: "250 € pour 2 nuits",
-      rating: 4.95,
-      badge: 'Coup de coeur' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1638454668466-e8dbd5462f20?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBhcGFydG1lbnQlMjBpbnRlcmlvcnxlbnwxfHx8fDE3Njc1MzY5NTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "Studio luxueux · Lyon",
-      location: "Hôte professionnel",
-      date: "",
-      price: "180 € pour 2 nuits",
-      rating: 4.88,
-      badge: 'Coup de coeur' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1593696140826-c58b021acf8b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBob3VzZSUyMGludGVyaW9yfGVufDF8fHx8MTc2NzU5OTA1OHww&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "Maison entière · Marseille",
-      location: "Hôte particulier",
-      date: "",
-      price: "320 € pour 2 nuits",
-      rating: 5.0,
-      badge: 'Coup de coeur' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1610343958761-ca16e472130e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcGFydG1lbnQlMjBjaXR5JTIwdmlld3xlbnwxfHx8fDE3Njc2MjEwNTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "Loft avec vue · Nice",
-      location: "Hôte particulier",
-      date: "",
-      price: "210 € pour 2 nuits",
-      rating: 4.92,
-      badge: 'Coup de coeur' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcGFydG1lbnR8ZW58MXx8fHwxNzY3NjIxMDU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "Appartement cosy · Bordeaux",
-      location: "Hôte particulier",
-      date: "",
-      price: "140 € pour 2 nuits",
-      rating: 4.85,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcGFydG1lbnR8ZW58MXx8fHwxNzY3NjIxMDU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "Duplex moderne · Lille",
-      location: "Hôte professionnel",
-      date: "",
-      price: "195 € pour 2 nuits",
-      rating: 4.90,
-      badge: 'Nouveau' as const
-    }
+    { id: '253', image: img[253], title: 'Chalet bois rond · Sainte-Adele', location: 'Emily Hote', date: '', price: '195 $ / nuit', rating: 4.95, badge: 'Coup de coeur' as const },
+    { id: '258', image: img[258], title: 'Chalet rustique · Saint-Sauveur', location: 'Pascal Hote', date: '', price: '295 $ / nuit', rating: 4.90, badge: 'Coup de coeur' as const },
+    { id: '263', image: img[263], title: 'Cabane dans les arbres · Tremblant', location: 'Lucas Hote', date: '', price: '189 $ / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
+    { id: '268', image: img[268], title: 'Chalet grand luxe · Charlevoix', location: 'Romeo Hote', date: '', price: '495 $ / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
+    { id: '257', image: img[257], title: 'Maison champetre · Ile d\'Orleans', location: 'Emily Hote', date: '', price: '220 $ / nuit', rating: 4.85, badge: undefined },
+    { id: '259', image: img[259], title: 'Chalet spa · Mont-Tremblant', location: 'Pascal Hote', date: '', price: '320 $ / nuit', rating: 4.88, badge: 'Nouveau' as const },
   ];
 
-  // Données pour "Logements populaires · Paris"
-  const parisProperties = [
-    {
-      image: "https://images.unsplash.com/photo-1663756915301-2ba688e078cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBhcGFydG1lbnQlMjBsaXZpbmclMjByb29tfGVufDF8fHx8MTc2NzU5NjExMHww&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "Chambre · Paris",
-      location: "Hôte particulier",
-      date: "",
-      price: "197 € pour 2 nuits",
-      rating: 4.93,
-      badge: 'Coup de coeur' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1667153653404-11bc88130b5d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb3p5JTIwYmVkcm9vbSUyMGhvdGVsfGVufDF8fHx8MTc2NzYxNjkyNnww&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "Chambre · Asnières-sur-Seine",
-      location: "Hôte particulier",
-      date: "",
-      price: "180 € pour 2 nuits",
-      rating: 4.92,
-      badge: 'Coup de coeur' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1638454668466-e8dbd5462f20?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBhcGFydG1lbnQlMjBpbnRlcmlvcnxlbnwxfHx8fDE3Njc1MzY5NTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "Appartement · Gonesse-Villiers",
-      location: "Hôte particulier",
-      date: "",
-      price: "18 € pour 2 nuits",
-      rating: 4.96,
-      badge: 'Coup de coeur' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1765775635143-6462630748ef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBob3RlbCUyMHJvb218ZW58MXx8fHwxNzY3NTEwODU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "Appartement · Paris",
-      location: "Hôte particulier",
-      date: "",
-      price: "168 € pour 2 nuits",
-      rating: 4.96,
-      badge: 'Coup de coeur' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1610343958761-ca16e472130e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcGFydG1lbnQlMjBjaXR5JTIwdmlld3xlbnwxfHx8fDE3Njc2MjEwNTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "Appartement en résidence · Saint-Denis",
-      location: "Hôte particulier",
-      date: "",
-      price: "148 € pour 2 nuits",
-      rating: 4.90,
-      badge: 'Coup de coeur' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1593696140826-c58b021acf8b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBob3VzZSUyMGludGVyaW9yfGVufDF8fHx8MTc2NzU5OTA1OHww&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "Appartement · Paris",
-      location: "Hôte particulier",
-      date: "",
-      price: "160 € pour 2 nuits",
-      rating: 5.0,
-      badge: 'Coup de coeur' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1590381105924-c72589b9ef3f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBob3RlbCUyMGxvYmJ5fGVufDF8fHx8MTc2NzYwMTQyOXww&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "Hébergement · Paris",
-      location: "Hôte particulier",
-      date: "",
-      price: "160 € pour 2 nuits",
-      rating: 4.92,
-      badge: 'Coup de coeur' as const
-    }
+  // Chalets populaires · Laurentides (Emily 253, Pascal 258, Lucas 263, Romeo 268/270)
+  const laurentidesProperties = [
+    { id: '253', image: img[253], title: 'Chalet bois rond · Sainte-Adele', location: 'Emily Hote', date: '', price: '195 $ / nuit', rating: 4.93, badge: 'Coup de coeur' as const },
+    { id: '258', image: img[258], title: 'Chalet rustique · Saint-Sauveur', location: 'Pascal Hote', date: '', price: '295 $ / nuit', rating: 4.92, badge: 'Coup de coeur' as const },
+    { id: '263', image: img[263], title: 'Cabane dans les arbres · Tremblant', location: 'Lucas Hote', date: '', price: '189 $ / nuit', rating: 4.96, badge: 'Populaire' as const },
+    { id: '270', image: img[270], title: 'Chalet alpin · Canmore', location: 'Romeo Hote', date: '', price: '310 $ / nuit', rating: 4.96, badge: 'Coup de coeur' as const },
+    { id: '255', image: img[255], title: 'Refuge forestier · Sutton', location: 'Emily Hote', date: '', price: '155 $ / nuit', rating: 4.90, badge: undefined },
+    { id: '259', image: img[259], title: 'Chalet spa · Mont-Tremblant', location: 'Pascal Hote', date: '', price: '320 $ / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
+    { id: '266', image: img[266], title: 'Chalet du Lac-Saint-Jean · Alma', location: 'Lucas Hote', date: '', price: '165 $ / nuit', rating: 4.92, badge: 'Nouveau' as const },
   ];
 
-  // Données pour "Hôtels à la une (Madrid)"
-  const madridHotels = [
-    {
-      image: "https://images.unsplash.com/photo-1760354527031-869c0315d7c4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtYWRyaWQlMjBob3RlbCUyMGJvdXRpcXVlfGVufDF8fHx8MTc2Nzc5NTU3OXww&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "easyHotel Madrid Alcala",
-      location: "À partir de 116 € pour 2 nuits",
-      date: "",
-      price: "",
-      rating: 4.75,
-      badge: 'Populaire' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1632228526522-cdbb7fac12dc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtYWRyaWQlMjBob3RlbCUyMGludGVyaW9yfGVufDF8fHx8MTc2NzgwNjczN3ww&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "Hotel Suites Feria de Madrid",
-      location: "À partir de 178 € pour 2 nuits",
-      date: "",
-      price: "",
-      rating: 4.78,
-      badge: 'Nouveau' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1600790298410-fa81c74d9732?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtYWRyaWQlMjBob3RlbCUyMHBvb2x8ZW58MXx8fHwxNzY3ODA2NzM4fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "Catalonia Atocha",
-      location: "À partir de 420 € pour 2 nuits",
-      date: "",
-      price: "",
-      rating: 5.0,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1737807478452-260777e0505d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtYWRyaWQlMjBob3RlbCUyMGx1eHVyeXxlbnwxfHx8fDE3Njc4MDY3Mzh8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "The Social Hub Madrid 4 Stars",
-      location: "À partir de 285 € pour 2 nuits",
-      date: "",
-      price: "",
-      rating: 5.0,
-      badge: 'Coup de coeur' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1760354527031-869c0315d7c4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtYWRyaWQlMjBob3RlbCUyMGJvdXRpcXVlfGVufDF8fHx8MTc2Nzc5NTU3OXww&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "chickbasic dot",
-      location: "À partir de 294 € pour 2 nuits",
-      date: "",
-      price: "",
-      rating: 4.89,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1632228526522-cdbb7fac12dc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtYWRyaWQlMjBob3RlbCUyMGludGVyaW9yfGVufDF8fHx8MTc2NzgwNjczN3ww&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "NH Madrid Barajas Airport",
-      location: "À partir de 190 € pour 2 nuits",
-      date: "",
-      price: "",
-      rating: 4.77,
-      badge: 'Populaire' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1600790298410-fa81c74d9732?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtYWRyaWQlMjBob3RlbCUyMHBvb2x8ZW58MXx8fHwxNzY3ODA2NzM4fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "SmarTrental Collection Gran Vía Centric",
-      location: "À partir de 403 € pour 2 nuits",
-      date: "",
-      price: "",
-      rating: 4.95,
-      badge: 'Nouveau' as const
-    }
+  // Chalets a la une · Charlevoix
+  const charlevoixProperties = [
+    { id: '268', image: img[268], title: 'Chalet grand luxe · La Malbaie', location: 'Romeo Hote', date: '', price: '495 $ / nuit', rating: 4.95, badge: 'Populaire' as const },
+    { id: '254', image: img[254], title: 'Chalet vue fleuve · Baie-Saint-Paul', location: 'Emily Hote', date: '', price: '275 $ / nuit', rating: 4.88, badge: 'Nouveau' as const },
+    { id: '260', image: img[260], title: 'Chalet ski alpin · Whistler', location: 'Pascal Hote', date: '', price: '450 $ / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
+    { id: '264', image: img[264], title: 'Chalet de montagne · Banff', location: 'Lucas Hote', date: '', price: '380 $ / nuit', rating: 4.89, badge: undefined },
+    { id: '269', image: img[269], title: 'Cabane ocean · Tofino', location: 'Romeo Hote', date: '', price: '295 $ / nuit', rating: 4.92, badge: 'Populaire' as const },
+    { id: '256', image: img[256], title: 'Grand chalet ski · Stoneham', location: 'Emily Hote', date: '', price: '345 $ / nuit', rating: 4.77, badge: undefined },
+    { id: '261', image: img[261], title: 'Chalet familial · Chelsea', location: 'Pascal Hote', date: '', price: '215 $ / nuit', rating: 4.85, badge: 'Nouveau' as const },
   ];
 
-  // Données pour "Logements disponibles le mois prochain · Londres"
-  const londonProperties = [
-    {
-      image: "https://images.unsplash.com/photo-1595848463742-764e6b5c11d2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsb25kb24lMjBhcGFydG1lbnQlMjBiZWRyb29tfGVufDF8fHx8MTc2Nzc5NTU4MXww&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "Chambre · East Ham",
-      location: "Hôte particulier",
-      date: "",
-      price: "99 € pour 2 nuits",
-      rating: 4.9,
-      badge: 'Nouveau' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1650533966999-c07a71fd9146?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsb25kb24lMjBob3RlbCUyMHJvb218ZW58MXx8fHwxNzY3Nzk1NTgxfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "Hébergement · Acton",
-      location: "Hôte particulier",
-      date: "",
-      price: "116 € pour 2 nuits",
-      rating: 5.0,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1604701145698-2b38c3e20124?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsb25kb24lMjBtb2Rlcm4lMjBhcGFydG1lbnR8ZW58MXx8fHwxNzY3Nzk1NTgxfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "Chambre · Paddington",
-      location: "Hôte particulier",
-      date: "",
-      price: "178 € pour 2 nuits",
-      rating: 4.9,
-      badge: 'Populaire' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1595848463742-764e6b5c11d2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsb25kb24lMjBhcGFydG1lbnQlMjBiZWRyb29tfGVufDF8fHx8MTc2Nzc5NTU4MXww&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "Appartement · Bloomsbury",
-      location: "Hôte professionnel",
-      date: "",
-      price: "203 € pour 2 nuits",
-      rating: 4.89,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1650533966999-c07a71fd9146?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsb25kb24lMjBob3RlbCUyMHJvb218ZW58MXx8fHwxNzY3Nzk1NTgxfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "Chambre · Londres",
-      location: "Hôte particulier",
-      date: "",
-      price: "95 € pour 2 nuits",
-      rating: 4.9,
-      badge: 'Coup de coeur' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1604701145698-2b38c3e20124?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsb25kb24lMjBtb2Rlcm4lMjBhcGFydG1lbnR8ZW58MXx8fHwxNzY3Nzk1NTgxfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "Chambre · Churchill Gardens",
-      location: "Hôte particulier",
-      date: "",
-      price: "164 € pour 2 nuits",
-      rating: 4.84,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1595848463742-764e6b5c11d2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsb25kb24lMjBhcGFydG1lbnQlMjBiZWRyb29tfGVufDF8fHx8MTc2Nzc5NTU4MXww&ixlib=rb-4.1.0&q=80&w=1080",
-      title: "Chambre · Shadwell",
-      location: "Hôte particulier",
-      date: "",
-      price: "133 € pour 2 nuits",
-      rating: 5.0,
-      badge: 'Nouveau' as const
-    }
+  // Chalets disponibles · Cantons-de-l'Est
+  const cantonsProperties = [
+    { id: '265', image: img[265], title: 'Refuge cotier · Tofino', location: 'Lucas Hote', date: '', price: '265 $ / nuit', rating: 4.90, badge: 'Nouveau' as const },
+    { id: '271', image: img[271], title: 'Maison champetre · Val-des-Monts', location: 'Romeo Hote', date: '', price: '185 $ / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
+    { id: '255', image: img[255], title: 'Refuge forestier · Sutton', location: 'Emily Hote', date: '', price: '155 $ / nuit', rating: 4.90, badge: 'Populaire' as const },
+    { id: '258', image: img[258], title: 'Chalet rustique · Saint-Sauveur', location: 'Pascal Hote', date: '', price: '295 $ / nuit', rating: 4.89, badge: undefined },
+    { id: '266', image: img[266], title: 'Chalet du lac · Alma', location: 'Lucas Hote', date: '', price: '165 $ / nuit', rating: 4.90, badge: 'Coup de coeur' as const },
+    { id: '272', image: img[272], title: 'Chalet de peche · Roberval', location: 'Romeo Hote', date: '', price: '175 $ / nuit', rating: 4.84, badge: undefined },
+    { id: '254', image: img[254], title: 'Chalet vue fleuve · Charlevoix', location: 'Emily Hote', date: '', price: '275 $ / nuit', rating: 5.0, badge: 'Nouveau' as const },
   ];
 
-  // Données pour "Logements · Riyad"
-  const riyadProperties = [
-    {
-      image: "https://images.unsplash.com/photo-1646662521253-5b9253b1a207?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · Riyad",
-      location: "Hôte particulier",
-      date: "",
-      price: "78 € pour 2 nuits",
-      rating: 5.0,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1594873604892-b599f847e859?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · Riyad",
-      location: "Hôte particulier",
-      date: "",
-      price: "154 € pour 2 nuits",
-      rating: 4.91,
-      badge: 'Populaire' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1638454668466-e8dbd5462f20?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · Al Aqeeq",
-      location: "Hôte particulier",
-      date: "",
-      price: "299 € pour 2 nuits",
-      rating: 4.88,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1614622350812-96b09c78af77?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · Al Aqeeq",
-      location: "Hôte particulier",
-      date: "",
-      price: "94 € pour 2 nuits",
-      rating: 4.59,
-      badge: 'Nouveau' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1760259905231-2ccbddb7d147?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · Al Aoud",
-      location: "Hôte particulier",
-      date: "",
-      price: "130 € pour 2 nuits",
-      rating: 4.92,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1594873604892-b599f847e859?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · Al Aoud",
-      location: "Hôte particulier",
-      date: "",
-      price: "92 € pour 2 nuits",
-      rating: 4.88,
-      badge: 'Coup de coeur' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1646662521253-5b9253b1a207?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · Al Qadisiyah",
-      location: "Hôte particulier",
-      date: "",
-      price: "79 € pour 2 nuits",
-      rating: 4.9,
-      badge: undefined
-    }
+  // Chalets · Muskoka
+  const muskokaProperties = [
+    { id: '262', image: img[262], title: 'Chalet sur le lac · Bracebridge', location: 'Pascal Hote', date: '', price: '285 $ / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
+    { id: '263', image: img[263], title: 'Cabane dans les arbres · Tremblant', location: 'Lucas Hote', date: '', price: '189 $ / nuit', rating: 4.91, badge: 'Populaire' as const },
+    { id: '268', image: img[268], title: 'Chalet grand luxe · Charlevoix', location: 'Romeo Hote', date: '', price: '495 $ / nuit', rating: 4.88, badge: undefined },
+    { id: '253', image: img[253], title: 'Chalet bois rond · Sainte-Adele', location: 'Emily Hote', date: '', price: '195 $ / nuit', rating: 4.95, badge: 'Nouveau' as const },
+    { id: '261', image: img[261], title: 'Chalet familial · Chelsea', location: 'Pascal Hote', date: '', price: '215 $ / nuit', rating: 4.92, badge: undefined },
+    { id: '264', image: img[264], title: 'Chalet de montagne · Banff', location: 'Lucas Hote', date: '', price: '380 $ / nuit', rating: 4.88, badge: 'Coup de coeur' as const },
+    { id: '272', image: img[272], title: 'Chalet de peche · Roberval', location: 'Romeo Hote', date: '', price: '175 $ / nuit', rating: 4.90, badge: 'Populaire' as const },
   ];
 
-  // Données pour "Logements disponibles le mois prochain · Dubaï"
-  const dubaiProperties = [
-    {
-      image: "https://images.unsplash.com/photo-1637747021728-22764b40bd99?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · Dubaï-centre-ville",
-      location: "Hôte particulier",
-      date: "",
-      price: "221 € pour 2 nuits",
-      rating: 4.9,
-      badge: 'Populaire' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1594873604892-b599f847e859?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · Dubaï-centre-ville",
-      location: "Hôte particulier",
-      date: "",
-      price: "208 € pour 2 nuits",
-      rating: 4.86,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1638454668466-e8dbd5462f20?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · Dubaï",
-      location: "Hôte particulier",
-      date: "",
-      price: "193 € pour 2 nuits",
-      rating: 4.91,
-      badge: 'Nouveau' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1614622350812-96b09c78af77?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · Dubaï-centre-ville",
-      location: "Hôte particulier",
-      date: "",
-      price: "193 € pour 2 nuits",
-      rating: 4.91,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1760259905231-2ccbddb7d147?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · Dubaï",
-      location: "Hôte particulier",
-      date: "",
-      price: "137 € pour 2 nuits",
-      rating: 5.0,
-      badge: 'Coup de coeur' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1646662521253-5b9253b1a207?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · Dubaï",
-      location: "Hôte particulier",
-      date: "",
-      price: "176 € pour 2 nuits",
-      rating: 4.89,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1594873604892-b599f847e859?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · Dubaï",
-      location: "Hôte particulier",
-      date: "",
-      price: "171 € pour 2 nuits",
-      rating: 4.9,
-      badge: 'Populaire' as const
-    }
+  // Chalets disponibles · Mont-Tremblant
+  const tremblantProperties = [
+    { id: '256', image: img[256], title: 'Grand chalet ski · Stoneham', location: 'Emily Hote', date: '', price: '345 $ / nuit', rating: 4.97, badge: 'Populaire' as const },
+    { id: '259', image: img[259], title: 'Chalet spa · Lac-Tremblant', location: 'Pascal Hote', date: '', price: '320 $ / nuit', rating: 4.86, badge: undefined },
+    { id: '265', image: img[265], title: 'Refuge cotier · Tofino', location: 'Lucas Hote', date: '', price: '265 $ / nuit', rating: 4.91, badge: 'Nouveau' as const },
+    { id: '268', image: img[268], title: 'Chalet grand luxe · Charlevoix', location: 'Romeo Hote', date: '', price: '495 $ / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
+    { id: '257', image: img[257], title: 'Maison champetre · Ile d\'Orleans', location: 'Emily Hote', date: '', price: '220 $ / nuit', rating: 4.89, badge: undefined },
+    { id: '262', image: img[262], title: 'Chalet sur le lac · Muskoka', location: 'Pascal Hote', date: '', price: '285 $ / nuit', rating: 4.90, badge: 'Populaire' as const },
+    { id: '267', image: img[267], title: 'Loft heritage · Vieux-Quebec', location: 'Lucas Hote', date: '', price: '225 $ / nuit', rating: 4.95, badge: 'Nouveau' as const },
   ];
 
-  // Données pour "Logements · Madrid"
-  const madridApartments = [
-    {
-      image: "https://images.unsplash.com/photo-1680601531588-1944422d1bd2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Hébergement · Madrid",
-      location: "Hôte particulier",
-      date: "",
-      price: "104 € pour 2 nuits",
-      rating: 4.74,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1543273519-e0fe02a0757e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Chambre partagée · Lavapiés",
-      location: "Hôte particulier",
-      date: "",
-      price: "44 € pour 2 nuits",
-      rating: 4.77,
-      badge: 'Nouveau' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1570136608985-36fdcec5b7da?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Chambre · Usera",
-      location: "Hôte professionnel",
-      date: "",
-      price: "40 € pour 2 nuits",
-      rating: 4.93,
-      badge: 'Populaire' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1600790298410-fa81c74d9732?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Chambre partagée · Lavapiés",
-      location: "Hôte professionnel",
-      date: "",
-      price: "42 € pour 2 nuits",
-      rating: 4.5,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1680601531588-1944422d1bd2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Hébergement · Ópera",
-      location: "Hôte particulier",
-      date: "",
-      price: "95 € pour 2 nuits",
-      rating: 4.88,
-      badge: 'Coup de coeur' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1632228526522-cdbb7fac12dc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Chambre · Delicias",
-      location: "Hôte particulier",
-      date: "",
-      price: "48 € pour 2 nuits",
-      rating: 4.91,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1760354527031-869c0315d7c4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Maison d'hôtes · Retiro",
-      location: "Hôte professionnel",
-      date: "",
-      price: "130 € pour 2 nuits",
-      rating: 4.75,
-      badge: 'Nouveau' as const
-    }
+  // Chalets · Whistler
+  const whistlerProperties = [
+    { id: '270', image: img[270], title: 'Chalet alpin · Canmore', location: 'Romeo Hote', date: '', price: '310 $ / nuit', rating: 4.94, badge: 'Coup de coeur' as const },
+    { id: '253', image: img[253], title: 'Chalet bois rond · Sainte-Adele', location: 'Emily Hote', date: '', price: '195 $ / nuit', rating: 5.0, badge: 'Populaire' as const },
+    { id: '260', image: img[260], title: 'Chalet ski alpin · Whistler', location: 'Pascal Hote', date: '', price: '450 $ / nuit', rating: 4.93, badge: undefined },
+    { id: '264', image: img[264], title: 'Chalet de montagne · Banff', location: 'Lucas Hote', date: '', price: '380 $ / nuit', rating: 4.88, badge: 'Nouveau' as const },
+    { id: '269', image: img[269], title: 'Cabane ocean · Tofino', location: 'Romeo Hote', date: '', price: '295 $ / nuit', rating: 4.92, badge: 'Coup de coeur' as const },
+    { id: '255', image: img[255], title: 'Refuge forestier · Sutton', location: 'Emily Hote', date: '', price: '155 $ / nuit', rating: 4.85, badge: undefined },
+    { id: '259', image: img[259], title: 'Chalet spa · Mont-Tremblant', location: 'Pascal Hote', date: '', price: '320 $ / nuit', rating: 4.91, badge: 'Nouveau' as const },
   ];
 
-  // Données pour "Logements disponibles le mois prochain · Rome"
-  const romeProperties = [
-    {
-      image: "https://images.unsplash.com/photo-1729755033606-251c462a8bbf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · Aurélio",
-      location: "Hôte particulier",
-      date: "",
-      price: "110 € pour 2 nuits",
-      rating: 4.88,
-      badge: 'Populaire' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1658077306197-a848d26c6e0b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Loft · Colonna",
-      location: "Hôte professionnel",
-      date: "",
-      price: "128 € pour 2 nuits",
-      rating: 4.78,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1702014859878-5d4743176d28?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Chambre d'hôtel · Rome",
-      location: "Hôte professionnel",
-      date: "",
-      price: "96 € pour 2 nuits",
-      rating: 4.86,
-      badge: 'Nouveau' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1600790298410-fa81c74d9732?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Chambre · EUR",
-      location: "Hôte particulier",
-      date: "",
-      price: "60 € pour 2 nuits",
-      rating: 4.5,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1702014859878-5d4743176d28?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Chambre · Esquilin",
-      location: "Hôte particulier",
-      date: "",
-      price: "78 € pour 2 nuits",
-      rating: 4.75,
-      badge: 'Coup de coeur' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1729755033606-251c462a8bbf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · Rome",
-      location: "Hôte professionnel",
-      date: "",
-      price: "146 € pour 2 nuits",
-      rating: 4.89,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1658077306197-a848d26c6e0b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement en résidence · Trionfale",
-      location: "Hôte professionnel",
-      date: "",
-      price: "114 € pour 2 nuits",
-      rating: 4.86,
-      badge: 'Populaire' as const
-    }
+  // Chalets disponibles · Quebec
+  const quebecProperties = [
+    { id: '267', image: img[267], title: 'Loft heritage · Vieux-Quebec', location: 'Lucas Hote', date: '', price: '225 $ / nuit', rating: 4.88, badge: 'Populaire' as const },
+    { id: '271', image: img[271], title: 'Maison champetre · Val-des-Monts', location: 'Romeo Hote', date: '', price: '185 $ / nuit', rating: 4.78, badge: undefined },
+    { id: '256', image: img[256], title: 'Grand chalet ski · Stoneham', location: 'Emily Hote', date: '', price: '345 $ / nuit', rating: 4.86, badge: 'Nouveau' as const },
+    { id: '258', image: img[258], title: 'Chalet rustique · Saint-Sauveur', location: 'Pascal Hote', date: '', price: '295 $ / nuit', rating: 4.90, badge: undefined },
+    { id: '263', image: img[263], title: 'Cabane dans les arbres · Tremblant', location: 'Lucas Hote', date: '', price: '189 $ / nuit', rating: 4.95, badge: 'Coup de coeur' as const },
+    { id: '268', image: img[268], title: 'Chalet grand luxe · Charlevoix', location: 'Romeo Hote', date: '', price: '495 $ / nuit', rating: 5.0, badge: 'Populaire' as const },
+    { id: '257', image: img[257], title: 'Maison champetre · Ile d\'Orleans', location: 'Emily Hote', date: '', price: '220 $ / nuit', rating: 4.86, badge: undefined },
   ];
 
-  // Données pour "Logements · Milan"
-  const milanProperties = [
-    {
-      image: "https://images.unsplash.com/photo-1536494126589-29fadf0d7e3c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Chambre · Milan",
-      location: "Hôte particulier",
-      date: "",
-      price: "154 € pour 2 nuits",
-      rating: 4.98,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1718260872589-189e127a99b1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement en résidence · Milan",
-      location: "Hôte particulier",
-      date: "",
-      price: "344 € pour 3 nuits",
-      rating: 4.94,
-      badge: 'Nouveau' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1631176999981-75e49ff7d38c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement en résidence · Milan",
-      location: "Hôte particulier",
-      date: "",
-      price: "159 € pour 3 nuits",
-      rating: 5.0,
-      badge: 'Coup de coeur' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1663756915301-2ba688e078cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Hébergement · Milan",
-      location: "Hôte professionnel",
-      date: "",
-      price: "374 € pour 7 nuits",
-      rating: 4.56,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1639751907353-3629fc00d2b2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · Milan",
-      location: "Hôte particulier",
-      date: "",
-      price: "194 € pour 2 nuits",
-      rating: 5.0,
-      badge: 'Populaire' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1702014861736-d62834317c5e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Chambre · Garattello",
-      location: "Hôte particulier",
-      date: "",
-      price: "123 € pour 2 nuits",
-      rating: 4.8,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1536494126589-29fadf0d7e3c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement en résidence · Milan",
-      location: "Hôte professionnel",
-      date: "",
-      price: "168 € pour 2 nuits",
-      rating: 4.99,
-      badge: 'Nouveau' as const
-    }
+  // Chalets · Banff
+  const banffProperties = [
+    { id: '260', image: img[260], title: 'Chalet ski alpin · Whistler', location: 'Pascal Hote', date: '', price: '450 $ / nuit', rating: 4.98, badge: 'Coup de coeur' as const },
+    { id: '264', image: img[264], title: 'Chalet de montagne · Banff', location: 'Lucas Hote', date: '', price: '380 $ / nuit', rating: 4.94, badge: 'Nouveau' as const },
+    { id: '270', image: img[270], title: 'Chalet alpin · Canmore', location: 'Romeo Hote', date: '', price: '310 $ / nuit', rating: 5.0, badge: 'Populaire' as const },
+    { id: '254', image: img[254], title: 'Chalet vue fleuve · Charlevoix', location: 'Emily Hote', date: '', price: '275 $ / nuit', rating: 4.89, badge: undefined },
+    { id: '259', image: img[259], title: 'Chalet spa · Mont-Tremblant', location: 'Pascal Hote', date: '', price: '320 $ / nuit', rating: 4.92, badge: 'Coup de coeur' as const },
+    { id: '266', image: img[266], title: 'Chalet du lac · Alma', location: 'Lucas Hote', date: '', price: '165 $ / nuit', rating: 4.80, badge: undefined },
+    { id: '269', image: img[269], title: 'Cabane ocean · Tofino', location: 'Romeo Hote', date: '', price: '295 $ / nuit', rating: 4.95, badge: 'Nouveau' as const },
   ];
 
-  // Données pour "Logements à découvrir · Budapest"
-  const budapestProperties = [
-    {
-      image: "https://images.unsplash.com/photo-1719849448528-bf30db61d3a5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · 9ème arrondissement de Budapest",
-      location: "Hôte particulier",
-      date: "",
-      price: "121 € pour 2 nuits",
-      rating: 4.84,
-      badge: 'Populaire' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1663756915301-2ba688e078cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · 8ème arrondissement de Budapest",
-      location: "Hôte particulier",
-      date: "",
-      price: "98 € pour 2 nuits",
-      rating: 4.9,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1639751907353-3629fc00d2b2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement en résidence · 3ème arrondissement de Budapest",
-      location: "Hôte particulier",
-      date: "",
-      price: "148 € pour 2 nuits",
-      rating: 4.83,
-      badge: 'Nouveau' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1702014861736-d62834317c5e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · 6ème arrondissement de Budapest",
-      location: "Hôte professionnel",
-      date: "",
-      price: "68 € pour 2 nuits",
-      rating: 4.83,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1638454668466-e8dbd5462f20?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · 8ème arrondissement de Budapest",
-      location: "Hôte privé",
-      date: "",
-      price: "106 € pour 2 nuits",
-      rating: 4.52,
-      badge: 'Coup de coeur' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1614622350812-96b09c78af77?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement en résidence · 7ème arrondissement de Budapest",
-      location: "Hôte particulier",
-      date: "",
-      price: "87 € pour 2 nuits",
-      rating: 5.0,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1719849448528-bf30db61d3a5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · 7ème arrondissement de Budapest",
-      location: "Hôte particulier",
-      date: "",
-      price: "98 € pour 2 nuits",
-      rating: 4.88,
-      badge: 'Populaire' as const
-    }
+  // Chalets a decouvrir · Tofino
+  const tofinoProperties = [
+    { id: '257', image: img[257], title: 'Maison champetre · Ile d\'Orleans', location: 'Emily Hote', date: '', price: '220 $ / nuit', rating: 4.94, badge: 'Populaire' as const },
+    { id: '262', image: img[262], title: 'Chalet sur le lac · Muskoka', location: 'Pascal Hote', date: '', price: '285 $ / nuit', rating: 4.90, badge: undefined },
+    { id: '265', image: img[265], title: 'Refuge cotier · Tofino', location: 'Lucas Hote', date: '', price: '265 $ / nuit', rating: 4.88, badge: 'Nouveau' as const },
+    { id: '269', image: img[269], title: 'Cabane ocean · Tofino', location: 'Romeo Hote', date: '', price: '295 $ / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
+    { id: '253', image: img[253], title: 'Chalet bois rond · Sainte-Adele', location: 'Emily Hote', date: '', price: '195 $ / nuit', rating: 4.85, badge: undefined },
+    { id: '261', image: img[261], title: 'Chalet familial · Chelsea', location: 'Pascal Hote', date: '', price: '215 $ / nuit', rating: 4.92, badge: 'Populaire' as const },
+    { id: '267', image: img[267], title: 'Loft heritage · Vieux-Quebec', location: 'Lucas Hote', date: '', price: '225 $ / nuit', rating: 4.96, badge: 'Nouveau' as const },
   ];
 
-  // Données pour "Logements populaires · Barcelone"
-  const barcelonaProperties = [
-    {
-      image: "https://images.unsplash.com/photo-1693478075635-bf2742c3ea09?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Hôtel · Gràcia",
-      location: "Hôte professionnel",
-      date: "",
-      price: "190 € pour 2 nuits",
-      rating: 4.83,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1560448076-957f79776e95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · Sants-Montjuïc",
-      location: "Hôte particulier",
-      date: "",
-      price: "164 € pour 2 nuits",
-      rating: 4.75,
-      badge: 'Nouveau' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1600813547757-39c40da12c8d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Hôtel · Can Magarola",
-      location: "Hôte professionnel",
-      date: "",
-      price: "168 € pour 2 nuits",
-      rating: 4.88,
-      badge: 'Populaire' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1663756915301-2ba688e078cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Chambre d'hôtel partagée · Les Corts",
-      location: "Hôte professionnel",
-      date: "",
-      price: "114 € pour 2 nuits",
-      rating: 4.92,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1639751907353-3629fc00d2b2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Hébergement · el Barri Gòtic",
-      location: "Hôte particulier",
-      date: "",
-      price: "114 € pour 2 nuits",
-      rating: 4.83,
-      badge: 'Coup de coeur' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1693478075635-bf2742c3ea09?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Hôtel · Can Magarola",
-      location: "Hôte professionnel",
-      date: "",
-      price: "164 € pour 2 nuits",
-      rating: 4.83,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1560448076-957f79776e95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · Gràcia",
-      location: "Hôte particulier",
-      date: "",
-      price: "194 € pour 2 nuits",
-      rating: 4.92,
-      badge: 'Nouveau' as const
-    }
+  // Chalets populaires · Gatineau
+  const gatineauProperties = [
+    { id: '271', image: img[271], title: 'Maison champetre · Val-des-Monts', location: 'Romeo Hote', date: '', price: '185 $ / nuit', rating: 4.93, badge: 'Coup de coeur' as const },
+    { id: '255', image: img[255], title: 'Refuge forestier · Sutton', location: 'Emily Hote', date: '', price: '155 $ / nuit', rating: 4.85, badge: 'Nouveau' as const },
+    { id: '261', image: img[261], title: 'Chalet familial · Chelsea', location: 'Pascal Hote', date: '', price: '215 $ / nuit', rating: 4.88, badge: 'Populaire' as const },
+    { id: '264', image: img[264], title: 'Chalet de montagne · Banff', location: 'Lucas Hote', date: '', price: '380 $ / nuit', rating: 4.92, badge: undefined },
+    { id: '268', image: img[268], title: 'Chalet grand luxe · Charlevoix', location: 'Romeo Hote', date: '', price: '495 $ / nuit', rating: 4.90, badge: 'Coup de coeur' as const },
+    { id: '254', image: img[254], title: 'Chalet vue fleuve · Charlevoix', location: 'Emily Hote', date: '', price: '275 $ / nuit', rating: 4.78, badge: undefined },
+    { id: '261', image: img[261], title: 'Chalet Parc Gatineau · Chelsea', location: 'Pascal Hote', date: '', price: '215 $ / nuit', rating: 4.95, badge: 'Nouveau' as const },
   ];
 
-  // Données pour "Logements · Le Cap"
-  const capeTownProperties = [
-    {
-      image: "https://images.unsplash.com/photo-1549387025-c6b3d88e0ccb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · Centre-ville du Cap",
-      location: "Hôte particulier",
-      date: "",
-      price: "112 € pour 2 nuits",
-      rating: 5.0,
-      badge: 'Populaire' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1654161975362-a1dbab6ba37d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Chambre · Oranjezicht",
-      location: "Hôte particulier",
-      date: "",
-      price: "64 € pour 2 nuits",
-      rating: 4.89,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1701445952131-eaab0a82fb08?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Suite · Bloubergstrand",
-      location: "Hôte particulier",
-      date: "",
-      price: "82 € pour 2 nuits",
-      rating: 4.86,
-      badge: 'Nouveau' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1549387025-c6b3d88e0ccb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement · Centre-ville du Cap",
-      location: "Hôte particulier",
-      date: "",
-      price: "16 € pour 2 nuits",
-      rating: 4.9,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1654161975362-a1dbab6ba37d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Appartement en résidence · Centre-ville du Cap",
-      location: "Hôte professionnel",
-      date: "",
-      price: "70 € pour 2 nuits",
-      rating: 4.9,
-      badge: 'Coup de coeur' as const
-    },
-    {
-      image: "https://images.unsplash.com/photo-1701445952131-eaab0a82fb08?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Suite · Claremont",
-      location: "Hôte particulier",
-      date: "",
-      price: "90 € pour 2 nuits",
-      rating: 4.93,
-      badge: undefined
-    },
-    {
-      image: "https://images.unsplash.com/photo-1549387025-c6b3d88e0ccb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-      title: "Hébergement · Sea Point",
-      location: "Hôte professionnel",
-      date: "",
-      price: "27 € pour 2 nuits",
-      rating: 4.9,
-      badge: 'Populaire' as const
-    }
+  // Chalets · Lac-Saint-Jean
+  const lacStJeanProperties = [
+    { id: '266', image: img[266], title: 'Chalet du lac · Alma', location: 'Lucas Hote', date: '', price: '165 $ / nuit', rating: 5.0, badge: 'Populaire' as const },
+    { id: '272', image: img[272], title: 'Chalet de peche · Roberval', location: 'Romeo Hote', date: '', price: '175 $ / nuit', rating: 4.89, badge: undefined },
+    { id: '256', image: img[256], title: 'Grand chalet ski · Stoneham', location: 'Emily Hote', date: '', price: '345 $ / nuit', rating: 4.86, badge: 'Nouveau' as const },
+    { id: '259', image: img[259], title: 'Chalet spa · Mont-Tremblant', location: 'Pascal Hote', date: '', price: '320 $ / nuit', rating: 4.90, badge: undefined },
+    { id: '265', image: img[265], title: 'Refuge cotier · Tofino', location: 'Lucas Hote', date: '', price: '265 $ / nuit', rating: 4.88, badge: 'Coup de coeur' as const },
+    { id: '272', image: img[272], title: 'Chalet peche · Lac-Saint-Jean', location: 'Romeo Hote', date: '', price: '175 $ / nuit', rating: 4.93, badge: 'Populaire' as const },
+    { id: '257', image: img[257], title: 'Maison champetre · Ile d\'Orleans', location: 'Emily Hote', date: '', price: '220 $ / nuit', rating: 4.82, badge: undefined },
   ];
 
   return (
@@ -889,140 +253,140 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
           >
             {recentlyViewedProperties.map((property, index) => (
               <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
-                <PropertyCard {...property} onClick={() => onPropertyClick()} />
+                <PropertyCard {...property} onClick={() => onPropertyClick(property.id)} />
               </div>
             ))}
           </PropertyCarousel>
         )}
 
-        {/* Logements populaires · Paris */}
+        {/* Chalets populaires · Laurentides */}
         <PropertyCarousel
-          title="Logements populaires · Paris"
+          title="Chalets populaires · Laurentides"
           showMoreLink={true}
         >
-          {parisProperties.map((property, index) => (
+          {laurentidesProperties.map((property, index) => (
             <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
-              <PropertyCard {...property} onClick={() => onPropertyClick()} />
+              <PropertyCard {...property} onClick={() => onPropertyClick(property.id)} />
             </div>
           ))}
         </PropertyCarousel>
 
-        {/* Hôtels à la une (Madrid) */}
+        {/* Chalets à la une · Charlevoix */}
         <PropertyCarousel
-          title="Hôtels à la une (Madrid)"
+          title="Chalets à la une · Charlevoix"
           showMoreLink={true}
         >
-          {madridHotels.map((property, index) => (
+          {charlevoixProperties.map((property, index) => (
             <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
-              <PropertyCard {...property} onClick={() => onPropertyClick()} />
+              <PropertyCard {...property} onClick={() => onPropertyClick(property.id)} />
             </div>
           ))}
         </PropertyCarousel>
 
-        {/* Logements disponibles le mois prochain · Londres */}
+        {/* Chalets disponibles · Cantons-de-l'Est */}
         <PropertyCarousel
-          title="Logements disponibles le mois prochain · Londres"
+          title="Chalets disponibles · Cantons-de-l'Est"
           showMoreLink={true}
         >
-          {londonProperties.map((property, index) => (
+          {cantonsProperties.map((property, index) => (
             <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
-              <PropertyCard {...property} onClick={() => onPropertyClick()} />
+              <PropertyCard {...property} onClick={() => onPropertyClick(property.id)} />
             </div>
           ))}
         </PropertyCarousel>
 
-        {/* Logements  Riyad */}
+        {/* Chalets · Muskoka */}
         <PropertyCarousel
-          title="Logements · Riyad"
+          title="Chalets · Muskoka"
           showMoreLink={true}
         >
-          {riyadProperties.map((property, index) => (
+          {muskokaProperties.map((property, index) => (
             <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
-              <PropertyCard {...property} onClick={() => onPropertyClick()} />
+              <PropertyCard {...property} onClick={() => onPropertyClick(property.id)} />
             </div>
           ))}
         </PropertyCarousel>
 
-        {/* Logements disponibles le mois prochain · Dubaï */}
+        {/* Chalets disponibles · Mont-Tremblant */}
         <PropertyCarousel
-          title="Logements disponibles le mois prochain · Dubaï"
+          title="Chalets disponibles · Mont-Tremblant"
           showMoreLink={true}
         >
-          {dubaiProperties.map((property, index) => (
+          {tremblantProperties.map((property, index) => (
             <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
-              <PropertyCard {...property} onClick={() => onPropertyClick()} />
+              <PropertyCard {...property} onClick={() => onPropertyClick(property.id)} />
             </div>
           ))}
         </PropertyCarousel>
 
-        {/* Logements · Madrid */}
+        {/* Chalets · Whistler */}
         <PropertyCarousel
-          title="Logements · Madrid"
+          title="Chalets · Whistler"
           showMoreLink={true}
         >
-          {madridApartments.map((property, index) => (
+          {whistlerProperties.map((property, index) => (
             <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
-              <PropertyCard {...property} onClick={() => onPropertyClick()} />
+              <PropertyCard {...property} onClick={() => onPropertyClick(property.id)} />
             </div>
           ))}
         </PropertyCarousel>
 
-        {/* Logements disponibles le mois prochain · Rome */}
+        {/* Chalets disponibles · Québec */}
         <PropertyCarousel
-          title="Logements disponibles le mois prochain · Rome"
+          title="Chalets disponibles · Québec"
           showMoreLink={true}
         >
-          {romeProperties.map((property, index) => (
+          {quebecProperties.map((property, index) => (
             <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
-              <PropertyCard {...property} onClick={() => onPropertyClick()} />
+              <PropertyCard {...property} onClick={() => onPropertyClick(property.id)} />
             </div>
           ))}
         </PropertyCarousel>
 
-        {/* Logements · Milan */}
+        {/* Chalets · Banff */}
         <PropertyCarousel
-          title="Logements · Milan"
+          title="Chalets · Banff"
           showMoreLink={true}
         >
-          {milanProperties.map((property, index) => (
+          {banffProperties.map((property, index) => (
             <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
-              <PropertyCard {...property} onClick={() => onPropertyClick()} />
+              <PropertyCard {...property} onClick={() => onPropertyClick(property.id)} />
             </div>
           ))}
         </PropertyCarousel>
 
-        {/* Logements à découvrir · Budapest */}
+        {/* Chalets à découvrir · Tofino */}
         <PropertyCarousel
-          title="Logements à découvrir · Budapest"
+          title="Chalets à découvrir · Tofino"
           showMoreLink={true}
         >
-          {budapestProperties.map((property, index) => (
+          {tofinoProperties.map((property, index) => (
             <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
-              <PropertyCard {...property} onClick={() => onPropertyClick()} />
+              <PropertyCard {...property} onClick={() => onPropertyClick(property.id)} />
             </div>
           ))}
         </PropertyCarousel>
 
-        {/* Logements populaires · Barcelone */}
+        {/* Chalets populaires · Gatineau */}
         <PropertyCarousel
-          title="Logements populaires · Barcelone"
+          title="Chalets populaires · Gatineau"
           showMoreLink={true}
         >
-          {barcelonaProperties.map((property, index) => (
+          {gatineauProperties.map((property, index) => (
             <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
-              <PropertyCard {...property} onClick={() => onPropertyClick()} />
+              <PropertyCard {...property} onClick={() => onPropertyClick(property.id)} />
             </div>
           ))}
         </PropertyCarousel>
 
-        {/* Logements · Le Cap */}
+        {/* Chalets · Lac-Saint-Jean */}
         <PropertyCarousel
-          title="Logements · Le Cap"
+          title="Chalets · Lac-Saint-Jean"
           showMoreLink={true}
         >
-          {capeTownProperties.map((property, index) => (
+          {lacStJeanProperties.map((property, index) => (
             <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
-              <PropertyCard {...property} onClick={() => onPropertyClick()} />
+              <PropertyCard {...property} onClick={() => onPropertyClick(property.id)} />
             </div>
           ))}
         </PropertyCarousel>
