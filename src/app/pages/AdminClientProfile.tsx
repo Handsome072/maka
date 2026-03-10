@@ -1,16 +1,16 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
   ArrowLeft, Ban, PauseCircle, KeyRound, MessageCircle, ShieldCheck, Shield,
   FileText, Monitor, MapPin, Phone, Mail, Globe, Calendar, AlertTriangle,
   Star, Trash2, Flag, Eye, CreditCard, RotateCcw, Clock, Activity,
-  ChevronDown, ChevronUp, X, Loader2
+  ChevronDown, ChevronUp, X, Loader2, Send, ShieldAlert
 } from 'lucide-react';
 import { AdminSidebar } from '@/app/components/AdminSidebar';
-import { adminClientsApi, type AdminClientDetail, type AdminClientNote } from '@/app/services/api';
+import { adminClientsApi, type AdminClientDetail, type AdminClientNote, type AdminChatMessage } from '@/app/services/api';
 
 export function AdminClientProfile() {
   const params = useParams();
@@ -26,6 +26,12 @@ export function AdminClientProfile() {
   const [suspendModal, setSuspendModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [suspectModal, setSuspectModal] = useState(false);
+  const [messageModal, setMessageModal] = useState(false);
+  const [chatMessages, setChatMessages] = useState<AdminChatMessage[]>([]);
+  const [chatLoading, setChatLoading] = useState(false);
+  const [chatInput, setChatInput] = useState('');
+  const [chatSending, setChatSending] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const fetchClient = useCallback(async () => {
     try {
@@ -96,6 +102,50 @@ export function AdminClientProfile() {
       const message = err instanceof Error ? err.message : 'Erreur';
       alert(message);
     }
+  };
+
+  const openMessageModal = async () => {
+    setMessageModal(true);
+    setChatLoading(true);
+    try {
+      const response = await adminClientsApi.getMessages(Number(clientId));
+      setChatMessages(response.messages);
+    } catch {
+      setChatMessages([]);
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (!chatInput.trim() || chatSending) return;
+    setChatSending(true);
+    try {
+      const response = await adminClientsApi.sendMessage(Number(clientId), chatInput.trim());
+      setChatMessages(prev => [...prev, response.data]);
+      setChatInput('');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Erreur';
+      alert(message);
+    } finally {
+      setChatSending(false);
+    }
+  };
+
+  useEffect(() => {
+    if (messageModal) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [chatMessages, messageModal]);
+
+  const formatChatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+    const time = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    if (diffDays === 0) return time;
+    if (diffDays === 1) return `Hier ${time}`;
+    return `${date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })} ${time}`;
   };
 
   const getStatusColor = (status: string) => {
@@ -282,7 +332,7 @@ export function AdminClientProfile() {
                 <KeyRound className="w-4 h-4 text-gray-600" />
                 <span className="text-xs" style={{ fontWeight: 500 }}>Reset MDP</span>
               </button>
-              <button className="px-3 py-2 bg-[#111827] text-white rounded-lg hover:bg-[#1f2937] transition-colors flex items-center gap-1.5">
+              <button onClick={openMessageModal} className="px-3 py-2 bg-[#111827] text-white rounded-lg hover:bg-[#1f2937] transition-colors flex items-center gap-1.5">
                 <MessageCircle className="w-4 h-4" />
                 <span className="text-xs" style={{ fontWeight: 600 }}>Message</span>
               </button>
@@ -873,6 +923,111 @@ export function AdminClientProfile() {
               <button onClick={handleToggleSuspect} className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors text-sm" style={{ fontWeight: 600 }}>
                 {client.isSuspect ? 'Retirer des suspects' : 'Marquer suspect'}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Message Modal */}
+      {messageModal && client && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setMessageModal(false)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg flex flex-col" style={{ height: 'min(600px, 85vh)' }} onClick={e => e.stopPropagation()}>
+            {/* Header */}
+            <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-100">
+              <div className="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white flex-shrink-0">
+                <ShieldAlert className="w-5 h-5" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm" style={{ fontWeight: 600 }}>Message admin</h3>
+                <p className="text-xs text-gray-500 truncate">a {client.name} ({client.email})</p>
+              </div>
+              <button onClick={() => setMessageModal(false)} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+                <X className="w-5 h-5 text-gray-400" />
+              </button>
+            </div>
+
+            {/* Info banner */}
+            <div className="mx-4 mt-3 px-3 py-2 bg-indigo-50 border border-indigo-100 rounded-lg">
+              <p className="text-xs text-indigo-700">Les messages de l&apos;admin s&apos;affichent avec un style distinct dans la messagerie du client.</p>
+            </div>
+
+            {/* Messages area */}
+            <div className="flex-1 overflow-y-auto px-5 py-4">
+              {chatLoading ? (
+                <div className="flex items-center justify-center h-full">
+                  <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                </div>
+              ) : chatMessages.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full text-center">
+                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                    <MessageCircle className="w-6 h-6 text-gray-400" />
+                  </div>
+                  <p className="text-sm text-gray-500">Aucun message</p>
+                  <p className="text-xs text-gray-400 mt-1">Envoyez le premier message a {client.name}</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {chatMessages.map((msg) => {
+                    const isAdmin = msg.sender_role === 'admin';
+                    return (
+                      <div key={msg.id} className={`flex ${isAdmin ? 'justify-end' : 'justify-start'}`}>
+                        <div className={`max-w-[80%] ${isAdmin ? 'order-1' : 'order-1'}`}>
+                          <div
+                            className={`rounded-2xl px-4 py-2.5 ${
+                              isAdmin
+                                ? 'bg-indigo-600 text-white'
+                                : 'bg-gray-100 text-gray-900'
+                            }`}
+                          >
+                            {isAdmin && (
+                              <div className="flex items-center gap-1 mb-1">
+                                <ShieldAlert className="w-3 h-3 text-indigo-200" />
+                                <span className="text-[10px] text-indigo-200" style={{ fontWeight: 600 }}>ADMIN</span>
+                              </div>
+                            )}
+                            <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                          </div>
+                          <span className={`text-[10px] mt-1 block ${isAdmin ? 'text-right text-gray-400' : 'text-gray-400'}`}>
+                            {formatChatTime(msg.created_at)}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  <div ref={messagesEndRef} />
+                </div>
+              )}
+            </div>
+
+            {/* Input */}
+            <div className="px-4 py-3 border-t border-gray-100">
+              <div className="flex items-end gap-2">
+                <textarea
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSendMessage();
+                    }
+                  }}
+                  placeholder="Ecrire un message..."
+                  rows={1}
+                  className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm resize-none focus:outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400"
+                  style={{ maxHeight: '100px' }}
+                />
+                <button
+                  onClick={handleSendMessage}
+                  disabled={!chatInput.trim() || chatSending}
+                  className="p-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
+                >
+                  {chatSending ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <Send className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>
