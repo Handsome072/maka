@@ -5,7 +5,7 @@ import { ReservationDetailClient } from './ReservationDetailClient';
  * These IDs correspond to mock reservations
  */
 export function generateStaticParams() {
-  return Array.from({ length: 10 }, (_, i) => ({
+  return Array.from({ length: 5000 }, (_, i) => ({
     reservationId: String(i + 1),
   }));
 }

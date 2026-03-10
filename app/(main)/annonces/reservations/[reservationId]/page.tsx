@@ -1,10 +1,9 @@
 import { HostReservationDetailClient } from './HostReservationDetailClient';
 
 export function generateStaticParams() {
-  return [
-    'RES-001', 'RES-002', 'RES-003', 'RES-004', 'RES-005',
-    'RES-006', 'RES-007', 'RES-008', 'RES-009',
-  ].map(id => ({ reservationId: id }));
+  return Array.from({ length: 5000 }, (_, i) => ({
+    reservationId: String(i + 1),
+  }));
 }
 
 export default function HostReservationDetailPage() {

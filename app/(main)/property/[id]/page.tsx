@@ -6,7 +6,7 @@ import { PropertyDetailsClient } from './PropertyDetailsClient';
  * Actual data is fetched client-side via API.
  */
 export function generateStaticParams() {
-  return Array.from({ length: 50 }, (_, i) => ({
+  return Array.from({ length: 500 }, (_, i) => ({
     id: String(i + 1),
   }));
 }
