@@ -3,11 +3,12 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import {
   Search, Eye, Trash2, Ban, PauseCircle, ChevronUp, ChevronDown, FileDown,
-  Shield, ShieldCheck, Star, ChevronLeft, ChevronRight, X, SlidersHorizontal,
+  Shield, ShieldCheck, Star, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, X, SlidersHorizontal,
   Users, UserCheck, UserPlus, BadgeCheck, AlertTriangle, RotateCcw, Loader2
 } from 'lucide-react';
 import { AdminSidebar } from '@/app/components/AdminSidebar';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { adminClientsApi, type AdminClient, type AdminClientsStats } from '@/app/services/api';
 
 type Client = AdminClient;
@@ -16,6 +17,7 @@ type SortField = 'name' | 'totalBookings' | 'totalSpentValue' | 'joinDateValue' 
 type SortDirection = 'asc' | 'desc';
 
 export function AdminClients() {
+  const router = useRouter();
   const [clients, setClients] = useState<Client[]>([]);
   const [stats, setStats] = useState<AdminClientsStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -510,7 +512,7 @@ export function AdminClients() {
               </thead>
               <tbody>
                 {paginatedClients.map((client) => (
-                  <tr key={client.id} className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
+                  <tr key={client.id} className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors cursor-pointer" onClick={() => router.push(`/admin/clients/${client.id}`)}>
                     <td className="py-4 px-4">
                       <span className="text-xs text-gray-400 font-mono">#{client.id}</span>
                     </td>
@@ -523,7 +525,7 @@ export function AdminClients() {
                           <div className="flex items-center gap-1.5">
                             <span className="text-sm truncate" style={{ fontWeight: 600 }}>{client.name}</span>
                             {client.isSuspect && (
-                              <AlertTriangle className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" title="Suspect" />
+                              <AlertTriangle className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />
                             )}
                           </div>
                         </div>
@@ -554,11 +556,8 @@ export function AdminClients() {
                         {client.status}
                       </span>
                     </td>
-                    <td className="py-4 px-4">
+                    <td className="py-4 px-4" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center gap-0.5">
-                        <Link href={`/admin/clients/${client.id}`} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors" title="Voir le profil">
-                          <Eye className="w-4 h-4 text-gray-500" />
-                        </Link>
                         <button onClick={() => setSuspendModal(client)} className="p-1.5 hover:bg-orange-50 rounded-lg transition-colors" title="Suspendre">
                           <PauseCircle className="w-4 h-4 text-orange-500" />
                         </button>
@@ -597,7 +596,7 @@ export function AdminClients() {
               </thead>
               <tbody>
                 {paginatedClients.map((client) => (
-                  <tr key={client.id} className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
+                  <tr key={client.id} className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors cursor-pointer" onClick={() => router.push(`/admin/clients/${client.id}`)}>
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 bg-[#111827] rounded-full flex items-center justify-center text-white text-xs flex-shrink-0" style={{ fontWeight: 600 }}>
@@ -627,13 +626,13 @@ export function AdminClients() {
                         {client.status}
                       </span>
                     </td>
-                    <td className="py-4 px-4">
+                    <td className="py-4 px-4" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center gap-0.5">
-                        <Link href={`/admin/clients/${client.id}`} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
-                          <Eye className="w-4 h-4 text-gray-500" />
-                        </Link>
                         <button onClick={() => setSuspendModal(client)} className="p-1.5 hover:bg-orange-50 rounded-lg transition-colors">
                           <PauseCircle className="w-4 h-4 text-orange-500" />
+                        </button>
+                        <button onClick={() => setDeleteModal(client)} className="p-1.5 hover:bg-red-50 rounded-lg transition-colors">
+                          <Trash2 className="w-4 h-4 text-gray-400 hover:text-red-500" />
                         </button>
                       </div>
                     </td>
@@ -651,7 +650,7 @@ export function AdminClients() {
           {/* Mobile Card View */}
           <div className="lg:hidden divide-y divide-gray-100">
             {paginatedClients.map((client) => (
-              <div key={client.id} className="p-4 hover:bg-gray-50/50 transition-colors">
+              <div key={client.id} className="p-4 hover:bg-gray-50/50 transition-colors cursor-pointer" onClick={() => router.push(`/admin/clients/${client.id}`)}>
                 <div className="flex items-start gap-3 mb-3">
                   <div className="w-11 h-11 bg-[#111827] rounded-full flex items-center justify-center text-white flex-shrink-0 text-xs" style={{ fontWeight: 600 }}>
                     {client.avatar}
@@ -704,16 +703,12 @@ export function AdminClients() {
                     <div className="text-xs">{client.joinDate}</div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
-                  <Link href={`/admin/clients/${client.id}`} className="flex-1 px-3 py-2 bg-[#111827] text-white rounded-lg transition-colors flex items-center justify-center gap-2">
-                    <Eye className="w-4 h-4" />
-                    <span className="text-xs" style={{ fontWeight: 600 }}>Voir profil</span>
-                  </Link>
-                  <button onClick={() => setSuspendModal(client)} className="px-3 py-2 border border-orange-200 text-orange-600 rounded-lg hover:bg-orange-50 transition-colors flex items-center justify-center gap-2">
+                <div className="flex items-center gap-2 pt-3 border-t border-gray-100" onClick={(e) => e.stopPropagation()}>
+                  <button onClick={(e) => { e.stopPropagation(); setSuspendModal(client); }} className="px-3 py-2 border border-orange-200 text-orange-600 rounded-lg hover:bg-orange-50 transition-colors flex items-center justify-center gap-2">
                     <PauseCircle className="w-4 h-4" />
                     <span className="text-xs" style={{ fontWeight: 500 }}>Suspendre</span>
                   </button>
-                  <button onClick={() => setDeleteModal(client)} className="px-3 py-2 border border-gray-200 rounded-lg hover:bg-red-50 transition-colors">
+                  <button onClick={(e) => { e.stopPropagation(); setDeleteModal(client); }} className="px-3 py-2 border border-gray-200 rounded-lg hover:bg-red-50 transition-colors">
                     <Trash2 className="w-4 h-4 text-gray-400" />
                   </button>
                 </div>
@@ -740,8 +735,7 @@ export function AdminClients() {
                   className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed hidden sm:block"
                   title="Premiere page"
                 >
-                  <ChevronLeft className="w-4 h-4" />
-                  <ChevronLeft className="w-4 h-4 -ml-3" />
+                  <ChevronsLeft className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
@@ -781,8 +775,7 @@ export function AdminClients() {
                   className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed hidden sm:block"
                   title="Derniere page"
                 >
-                  <ChevronRight className="w-4 h-4" />
-                  <ChevronRight className="w-4 h-4 -ml-3" />
+                  <ChevronsRight className="w-4 h-4" />
                 </button>
               </div>
             </div>
