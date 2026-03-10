@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Search, Eye, PauseCircle, ChevronUp, ChevronDown, FileDown,
   Shield, ShieldCheck, Star, ChevronLeft, ChevronRight, X, SlidersHorizontal,
@@ -15,6 +16,7 @@ type SortField = 'name' | 'properties' | 'totalBookings' | 'totalEarningsValue' 
 type SortDirection = 'asc' | 'desc';
 
 export function AdminHosts() {
+  const router = useRouter();
   const [hosts, setHosts] = useState<AdminHost[]>([]);
   const [stats, setStats] = useState<AdminHostsStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -417,7 +419,7 @@ export function AdminHosts() {
               </thead>
               <tbody>
                 {paginatedHosts.map((host) => (
-                  <tr key={host.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                  <tr key={host.id} onClick={() => router.push(`/admin/hosts/${host.id}`)} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors cursor-pointer">
                     <td className="py-3.5 px-4">
                       <span className="text-xs text-gray-400 font-mono">#{host.id}</span>
                     </td>
@@ -468,7 +470,7 @@ export function AdminHosts() {
                         {host.status}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4">
+                    <td className="py-3.5 px-4" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center gap-1">
                         <Link href={`/admin/hosts/${host.id}`} className="p-2 hover:bg-blue-50 rounded-lg transition-colors group" title="Voir le profil">
                           <Eye className="w-4 h-4 text-gray-400 group-hover:text-blue-600" />
@@ -518,7 +520,7 @@ export function AdminHosts() {
               </thead>
               <tbody>
                 {paginatedHosts.map((host) => (
-                  <tr key={host.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                  <tr key={host.id} onClick={() => router.push(`/admin/hosts/${host.id}`)} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors cursor-pointer">
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 bg-[#111827] rounded-full flex items-center justify-center text-white text-xs flex-shrink-0" style={{ fontWeight: 600 }}>
@@ -551,7 +553,7 @@ export function AdminHosts() {
                         {host.status}
                       </span>
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-3 px-4" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center gap-1">
                         <Link href={`/admin/hosts/${host.id}`} className="p-1.5 hover:bg-blue-50 rounded-lg transition-colors">
                           <Eye className="w-4 h-4 text-gray-400 hover:text-blue-600" />
@@ -577,7 +579,7 @@ export function AdminHosts() {
           {/* Mobile Card View */}
           <div className="md:hidden divide-y divide-gray-100">
             {paginatedHosts.map((host) => (
-              <div key={host.id} className="p-4 hover:bg-gray-50/50 transition-colors">
+              <div key={host.id} onClick={() => router.push(`/admin/hosts/${host.id}`)} className="p-4 hover:bg-gray-50/50 transition-colors cursor-pointer">
                 {/* Header: Avatar + Info + Status */}
                 <div className="flex items-start gap-3 mb-3">
                   <div className="w-11 h-11 bg-[#111827] rounded-full flex items-center justify-center text-white text-xs flex-shrink-0" style={{ fontWeight: 600 }}>
@@ -636,7 +638,7 @@ export function AdminHosts() {
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
+                <div className="flex items-center gap-2 pt-3 border-t border-gray-100" onClick={(e) => e.stopPropagation()}>
                   <Link href={`/admin/hosts/${host.id}`} className="flex-1 px-3 py-2 bg-[#111827] text-white rounded-xl hover:bg-[#1f2937] transition-colors flex items-center justify-center gap-2">
                     <Eye className="w-4 h-4" />
                     <span className="text-xs" style={{ fontWeight: 600 }}>Voir le profil</span>
