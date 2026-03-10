@@ -1346,3 +1346,187 @@ export const adminHostsApi = {
     });
   },
 };
+
+// ─── Admin Clients Types ─────────────────────────────────────────────────────
+
+export interface AdminClient {
+  id: number;
+  name: string;
+  email: string;
+  avatar: string;
+  phone: string;
+  country: string;
+  verified: boolean;
+  totalBookings: number;
+  totalSpent: string;
+  totalSpentValue: number;
+  joinDate: string;
+  joinDateValue: number;
+  averageRating: number;
+  status: 'ACTIF' | 'SUSPENDU' | 'BANNI';
+  isSuspect: boolean;
+}
+
+export interface AdminClientsStats {
+  totalClients: number;
+  totalActive: number;
+  totalVerified: number;
+  newThisMonth: number;
+  totalSuspended: number;
+  totalSuspect: number;
+  countries: string[];
+}
+
+export interface AdminClientsResponse {
+  clients: AdminClient[];
+  stats: AdminClientsStats;
+}
+
+export interface AdminClientReview {
+  id: number;
+  hostName: string;
+  hostAvatar: string;
+  property: string;
+  rating: number;
+  comment: string;
+  date: string;
+}
+
+export interface AdminClientReport {
+  id: number;
+  reporter: string;
+  reason: string;
+  description: string;
+  date: string;
+  status: string;
+}
+
+export interface AdminClientActivityLog {
+  id: number;
+  action: string;
+  detail: string;
+  date: string;
+  ip: string;
+}
+
+export interface AdminClientRefund {
+  id: string;
+  reservationId: string;
+  amount: string;
+  reason: string;
+  status: string;
+  date: string;
+}
+
+export interface AdminClientNote {
+  id: number;
+  author: string;
+  date: string;
+  content: string;
+}
+
+export interface AdminClientRisk {
+  lastLogin: string;
+  ip: string;
+  device: string;
+  fraudScore: number;
+  loginCount: number;
+  failedLogins: number;
+}
+
+export interface AdminClientDetail {
+  id: number;
+  name: string;
+  email: string;
+  avatar: string;
+  phone: string;
+  country: string;
+  verified: boolean;
+  joinDate: string;
+  language: string;
+  status: 'ACTIF' | 'SUSPENDU' | 'BANNI';
+  isSuspect: boolean;
+  averageRating: number;
+  totalSpent: string;
+  verificationDate: string | null;
+  documents: { name: string; date: string; status: string }[];
+  totalBookings: number;
+  cancellations: number;
+  reviewsLeft: number;
+  reviewsReceived: number;
+  bookings: { property: string; host: string; dates: string; amount: string; status: string }[];
+  payments: { id: string; amount: string; status: string; date: string }[];
+  disputes: { id: string; property: string; status: string; date: string; description: string }[];
+  reviews: AdminClientReview[];
+  reports: AdminClientReport[];
+  activityLog: AdminClientActivityLog[];
+  refunds: AdminClientRefund[];
+  notes: AdminClientNote[];
+  risk: AdminClientRisk;
+}
+
+export interface AdminClientDetailResponse {
+  client: AdminClientDetail;
+}
+
+// ─── Admin Clients API ───────────────────────────────────────────────────────
+
+export const adminClientsApi = {
+  getAll: async (params?: {
+    search?: string;
+    status?: string;
+    verified?: string;
+    country?: string;
+    suspect?: string;
+  }): Promise<AdminClientsResponse> => {
+    const query = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, val]) => {
+        if (val !== undefined && val !== '') query.append(key, String(val));
+      });
+    }
+    const qs = query.toString();
+    return apiFetch<AdminClientsResponse>(`/admin/clients${qs ? `?${qs}` : ''}`);
+  },
+
+  getOne: async (id: number): Promise<AdminClientDetailResponse> => {
+    return apiFetch<AdminClientDetailResponse>(`/admin/clients/${id}`);
+  },
+
+  suspend: async (id: number): Promise<MessageResponse> => {
+    return apiFetch<MessageResponse>(`/admin/clients/${id}/suspend`, {
+      method: 'POST',
+    });
+  },
+
+  ban: async (id: number): Promise<MessageResponse> => {
+    return apiFetch<MessageResponse>(`/admin/clients/${id}/ban`, {
+      method: 'POST',
+    });
+  },
+
+  activate: async (id: number): Promise<MessageResponse> => {
+    return apiFetch<MessageResponse>(`/admin/clients/${id}/activate`, {
+      method: 'POST',
+    });
+  },
+
+  toggleSuspect: async (id: number): Promise<MessageResponse> => {
+    return apiFetch<MessageResponse>(`/admin/clients/${id}/suspect`, {
+      method: 'POST',
+    });
+  },
+
+  addNote: async (id: number, content: string): Promise<{ message: string; note: AdminClientNote }> => {
+    return apiFetch<{ message: string; note: AdminClientNote }>(`/admin/clients/${id}/note`, {
+      method: 'POST',
+      body: JSON.stringify({ content }),
+    });
+  },
+
+  delete: async (id: number): Promise<MessageResponse> => {
+    return apiFetch<MessageResponse>(`/admin/clients/${id}`, {
+      method: 'DELETE',
+    });
+  },
+};

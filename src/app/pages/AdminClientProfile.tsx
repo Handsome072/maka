@@ -1,172 +1,25 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
   ArrowLeft, Ban, PauseCircle, KeyRound, MessageCircle, ShieldCheck, Shield,
   FileText, Monitor, MapPin, Phone, Mail, Globe, Calendar, AlertTriangle,
   Star, Trash2, Flag, Eye, CreditCard, RotateCcw, Clock, Activity,
-  ChevronDown, ChevronUp, X
+  ChevronDown, ChevronUp, X, Loader2
 } from 'lucide-react';
 import { AdminSidebar } from '@/app/components/AdminSidebar';
-
-interface AdminNote {
-  id: number;
-  author: string;
-  date: string;
-  content: string;
-}
-
-interface Review {
-  id: number;
-  hostName: string;
-  hostAvatar: string;
-  property: string;
-  rating: number;
-  comment: string;
-  date: string;
-}
-
-interface Report {
-  id: number;
-  reporter: string;
-  reason: string;
-  description: string;
-  date: string;
-  status: 'OUVERT' | 'EN COURS' | 'RESOLU' | 'REJETE';
-}
-
-interface ActivityLog {
-  id: number;
-  action: string;
-  detail: string;
-  date: string;
-  ip: string;
-}
-
-interface Refund {
-  id: string;
-  reservationId: string;
-  amount: string;
-  reason: string;
-  status: 'EFFECTUE' | 'EN ATTENTE' | 'REFUSE';
-  date: string;
-}
-
-const clientsData: Record<string, {
-  id: number; name: string; email: string; avatar: string; phone: string;
-  country: string; verified: boolean; joinDate: string; language: string;
-  status: 'ACTIF' | 'SUSPENDU' | 'BANNI';
-  isSuspect: boolean;
-  averageRating: number;
-  verificationDate: string | null;
-  documents: { name: string; date: string; status: string }[];
-  totalBookings: number; cancellations: number; reviewsLeft: number; reviewsReceived: number;
-  totalSpent: string;
-  bookings: { property: string; host: string; dates: string; amount: string; status: string }[];
-  payments: { id: string; amount: string; status: string; date: string }[];
-  disputes: { id: string; property: string; status: string; date: string; description: string }[];
-  reviews: Review[];
-  reports: Report[];
-  activityLog: ActivityLog[];
-  refunds: Refund[];
-  risk: { lastLogin: string; ip: string; device: string; fraudScore: number; loginCount: number; failedLogins: number };
-}> = {
-  '1001': {
-    id: 1001, name: 'Jean Dupont', email: 'jean.dupont@email.com', avatar: 'JD',
-    phone: '+33 6 12 34 56 78', country: 'France', verified: true,
-    joinDate: '15 jan. 2024', language: 'Francais', status: 'ACTIF',
-    isSuspect: false, averageRating: 4.8, totalSpent: '8 320 $',
-    verificationDate: '20 jan. 2024',
-    documents: [
-      { name: 'Carte d\'identite', date: '15 jan. 2024', status: 'APPROUVE' },
-      { name: 'Justificatif de domicile', date: '15 jan. 2024', status: 'APPROUVE' },
-    ],
-    totalBookings: 12, cancellations: 1, reviewsLeft: 10, reviewsReceived: 8,
-    bookings: [
-      { property: 'Villa Toscane', host: 'Marie Simon', dates: '15-20 fev. 2025', amount: '1 250 $', status: 'CONFIRMEE' },
-      { property: 'Appartement Paris 8e', host: 'Pierre Laurent', dates: '01-05 jan. 2025', amount: '890 $', status: 'TERMINEE' },
-      { property: 'Chalet Alpes', host: 'Sophie Martin', dates: '20-27 dec. 2024', amount: '2 100 $', status: 'TERMINEE' },
-      { property: 'Studio Lyon', host: 'Thomas Dubois', dates: '10-12 nov. 2024', amount: '340 $', status: 'ANNULEE' },
-      { property: 'Loft Marseille', host: 'Camille Leroy', dates: '05-08 oct. 2024', amount: '560 $', status: 'TERMINEE' },
-      { property: 'Maison Bordeaux', host: 'Antoine Moreau', dates: '15-20 sep. 2024', amount: '980 $', status: 'TERMINEE' },
-    ],
-    payments: [
-      { id: 'PAY-001', amount: '1 250 $', status: 'REUSSI', date: '10 fev. 2025' },
-      { id: 'PAY-002', amount: '890 $', status: 'REUSSI', date: '28 dec. 2024' },
-      { id: 'PAY-003', amount: '2 100 $', status: 'REUSSI', date: '15 dec. 2024' },
-      { id: 'PAY-004', amount: '340 $', status: 'REMBOURSE', date: '05 nov. 2024' },
-    ],
-    disputes: [
-      { id: 'DIS-001', property: 'Studio Lyon', status: 'RESOLU', date: '12 nov. 2024', description: 'Logement non conforme aux photos' },
-    ],
-    reviews: [
-      { id: 1, hostName: 'Marie Simon', hostAvatar: 'MS', property: 'Villa Toscane', rating: 5, comment: 'Voyageur exemplaire, tres respectueux du logement. Je recommande vivement.', date: '22 fev. 2025' },
-      { id: 2, hostName: 'Pierre Laurent', hostAvatar: 'PL', property: 'Appartement Paris 8e', rating: 5, comment: 'Client parfait, communication fluide et logement laisse impeccable.', date: '06 jan. 2025' },
-      { id: 3, hostName: 'Sophie Martin', hostAvatar: 'SM', property: 'Chalet Alpes', rating: 4, comment: 'Bon sejour, quelques retards de communication mais globalement tres bien.', date: '28 dec. 2024' },
-      { id: 4, hostName: 'Thomas Dubois', hostAvatar: 'TD', property: 'Studio Lyon', rating: 4, comment: 'Sejour annule mais client correct dans la communication.', date: '13 nov. 2024' },
-      { id: 5, hostName: 'Camille Leroy', hostAvatar: 'CL', property: 'Loft Marseille', rating: 5, comment: 'Excellent voyageur, je l\'accueillerais a nouveau sans hesitation.', date: '09 oct. 2024' },
-    ],
-    reports: [
-      { id: 1, reporter: 'Thomas Dubois (Hote)', reason: 'Annulation tardive', description: 'Le voyageur a annule moins de 24h avant le check-in sans raison valable.', date: '10 nov. 2024', status: 'RESOLU' },
-    ],
-    activityLog: [
-      { id: 1, action: 'Connexion', detail: 'Connexion reussie', date: '05 mar. 2025 14:32', ip: '192.168.1.42' },
-      { id: 2, action: 'Reservation', detail: 'Nouvelle reservation Villa Toscane', date: '08 fev. 2025 10:15', ip: '192.168.1.42' },
-      { id: 3, action: 'Paiement', detail: 'Paiement PAY-001 effectue', date: '10 fev. 2025 11:20', ip: '192.168.1.42' },
-      { id: 4, action: 'Modification profil', detail: 'Mise a jour du numero de telephone', date: '01 fev. 2025 09:45', ip: '192.168.1.42' },
-      { id: 5, action: 'Avis', detail: 'Avis depose pour Chalet Alpes', date: '28 dec. 2024 16:00', ip: '10.0.0.15' },
-      { id: 6, action: 'Connexion', detail: 'Connexion reussie', date: '27 dec. 2024 08:30', ip: '10.0.0.15' },
-    ],
-    refunds: [
-      { id: 'REM-001', reservationId: 'RES-004', amount: '340 $', reason: 'Annulation - logement non conforme', status: 'EFFECTUE', date: '15 nov. 2024' },
-    ],
-    risk: { lastLogin: '05 mar. 2025 a 14:32', ip: '192.168.1.42', device: 'Chrome / macOS', fraudScore: 12, loginCount: 48, failedLogins: 1 },
-  },
-  '1002': {
-    id: 1002, name: 'Marie Simon', email: 'marie.simon@email.com', avatar: 'MS',
-    phone: '+33 6 23 45 67 89', country: 'France', verified: true,
-    joinDate: '03 fev. 2024', language: 'Francais', status: 'ACTIF',
-    isSuspect: false, averageRating: 4.5, totalSpent: '5 140 $',
-    verificationDate: '10 fev. 2024',
-    documents: [
-      { name: 'Passeport', date: '03 fev. 2024', status: 'APPROUVE' },
-    ],
-    totalBookings: 8, cancellations: 0, reviewsLeft: 7, reviewsReceived: 6,
-    bookings: [
-      { property: 'Maison Bordeaux', host: 'Antoine Moreau', dates: '01-07 mar. 2025', amount: '1 680 $', status: 'CONFIRMEE' },
-      { property: 'Appartement Nice', host: 'Lucie Bernard', dates: '14-18 fev. 2025', amount: '720 $', status: 'TERMINEE' },
-    ],
-    payments: [
-      { id: 'PAY-010', amount: '1 680 $', status: 'REUSSI', date: '25 fev. 2025' },
-      { id: 'PAY-011', amount: '720 $', status: 'REUSSI', date: '10 fev. 2025' },
-    ],
-    disputes: [],
-    reviews: [
-      { id: 1, hostName: 'Antoine Moreau', hostAvatar: 'AM', property: 'Maison Bordeaux', rating: 5, comment: 'Voyageuse tres agreable et respectueuse.', date: '08 mar. 2025' },
-      { id: 2, hostName: 'Lucie Bernard', hostAvatar: 'LB', property: 'Appartement Nice', rating: 4, comment: 'Bon sejour, client ponctuel et sympathique.', date: '19 fev. 2025' },
-    ],
-    reports: [],
-    activityLog: [
-      { id: 1, action: 'Connexion', detail: 'Connexion reussie', date: '04 mar. 2025 09:15', ip: '10.0.0.58' },
-      { id: 2, action: 'Reservation', detail: 'Nouvelle reservation Maison Bordeaux', date: '20 fev. 2025 14:30', ip: '10.0.0.58' },
-    ],
-    refunds: [],
-    risk: { lastLogin: '04 mar. 2025 a 09:15', ip: '10.0.0.58', device: 'Safari / iOS', fraudScore: 5, loginCount: 32, failedLogins: 0 },
-  },
-};
-
-const defaultClient = clientsData['1001'];
+import { adminClientsApi, type AdminClientDetail, type AdminClientNote } from '@/app/services/api';
 
 export function AdminClientProfile() {
   const params = useParams();
-  const clientId = params?.id as string || '1001';
-  const client = clientsData[clientId] || defaultClient;
+  const clientId = params?.id as string || '1';
 
-  const [notes, setNotes] = useState<AdminNote[]>([
-    { id: 1, author: 'Admin', date: '01 mar. 2025', content: 'Client VIP - a effectue plus de 10 reservations. Offrir un code promo pour fidelisation.' },
-  ]);
+  const [client, setClient] = useState<AdminClientDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [notes, setNotes] = useState<AdminClientNote[]>([]);
   const [newNote, setNewNote] = useState('');
   const [activeTab, setActiveTab] = useState<'reservations' | 'avis' | 'signalements' | 'activite'>('reservations');
   const [showBookingsAll, setShowBookingsAll] = useState(false);
@@ -174,15 +27,75 @@ export function AdminClientProfile() {
   const [deleteModal, setDeleteModal] = useState(false);
   const [suspectModal, setSuspectModal] = useState(false);
 
-  const addNote = () => {
-    if (!newNote.trim()) return;
-    setNotes(prev => [...prev, {
-      id: Date.now(),
-      author: 'Admin',
-      date: '05 mar. 2025',
-      content: newNote.trim(),
-    }]);
-    setNewNote('');
+  const fetchClient = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await adminClientsApi.getOne(Number(clientId));
+      setClient(response.client);
+      setNotes(response.client.notes || []);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Erreur lors du chargement du client';
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  }, [clientId]);
+
+  useEffect(() => {
+    fetchClient();
+  }, [fetchClient]);
+
+  const addNote = async () => {
+    if (!newNote.trim() || !client) return;
+    try {
+      const response = await adminClientsApi.addNote(client.id, newNote.trim());
+      setNotes(prev => [...prev, response.note]);
+      setNewNote('');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Erreur';
+      alert(message);
+    }
+  };
+
+  const handleSuspend = async () => {
+    if (!client) return;
+    try {
+      if (client.status === 'SUSPENDU' || client.status === 'BANNI') {
+        await adminClientsApi.activate(client.id);
+      } else {
+        await adminClientsApi.suspend(client.id);
+      }
+      setSuspendModal(false);
+      fetchClient();
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Erreur';
+      alert(message);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!client) return;
+    try {
+      await adminClientsApi.delete(client.id);
+      setDeleteModal(false);
+      window.location.href = '/admin/clients';
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Erreur';
+      alert(message);
+    }
+  };
+
+  const handleToggleSuspect = async () => {
+    if (!client) return;
+    try {
+      await adminClientsApi.toggleSuspect(client.id);
+      setSuspectModal(false);
+      fetchClient();
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Erreur';
+      alert(message);
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -241,6 +154,47 @@ export function AdminClientProfile() {
     if (score <= 50) return { bg: 'bg-orange-50 text-orange-700', label: 'Moyen' };
     return { bg: 'bg-red-50 text-red-700', label: 'Eleve' };
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <AdminSidebar />
+        <main className="lg:ml-[280px] p-4 md:p-6 lg:p-8">
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <div className="flex flex-col items-center gap-3">
+              <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+              <p className="text-sm text-gray-500">Chargement du profil client...</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (error || !client) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <AdminSidebar />
+        <main className="lg:ml-[280px] p-4 md:p-6 lg:p-8">
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <div className="flex flex-col items-center gap-3 text-center">
+              <AlertTriangle className="w-8 h-8 text-red-400" />
+              <p className="text-sm text-red-600">{error || 'Client introuvable'}</p>
+              <div className="flex gap-3">
+                <Link href="/admin/clients" className="px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition-colors">
+                  Retour a la liste
+                </Link>
+                <button onClick={fetchClient} className="px-4 py-2 bg-[#111827] text-white rounded-lg text-sm hover:bg-gray-800 transition-colors flex items-center gap-2">
+                  <RotateCcw className="w-4 h-4" />
+                  Reessayer
+                </button>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   const displayedBookings = showBookingsAll ? client.bookings : client.bookings.slice(0, 4);
 
@@ -857,8 +811,8 @@ export function AdminClientProfile() {
               <button onClick={() => setSuspendModal(false)} className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm" style={{ fontWeight: 500 }}>
                 Annuler
               </button>
-              <button onClick={() => setSuspendModal(false)} className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm" style={{ fontWeight: 600 }}>
-                Suspendre
+              <button onClick={handleSuspend} className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm" style={{ fontWeight: 600 }}>
+                {client.status === 'SUSPENDU' || client.status === 'BANNI' ? 'Reactiver' : 'Suspendre'}
               </button>
             </div>
           </div>
@@ -885,7 +839,7 @@ export function AdminClientProfile() {
               <button onClick={() => setDeleteModal(false)} className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm" style={{ fontWeight: 500 }}>
                 Annuler
               </button>
-              <button onClick={() => setDeleteModal(false)} className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm" style={{ fontWeight: 600 }}>
+              <button onClick={handleDelete} className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm" style={{ fontWeight: 600 }}>
                 Supprimer definitivement
               </button>
             </div>
@@ -916,8 +870,8 @@ export function AdminClientProfile() {
               <button onClick={() => setSuspectModal(false)} className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm" style={{ fontWeight: 500 }}>
                 Annuler
               </button>
-              <button onClick={() => setSuspectModal(false)} className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors text-sm" style={{ fontWeight: 600 }}>
-                Marquer suspect
+              <button onClick={handleToggleSuspect} className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors text-sm" style={{ fontWeight: 600 }}>
+                {client.isSuspect ? 'Retirer des suspects' : 'Marquer suspect'}
               </button>
             </div>
           </div>

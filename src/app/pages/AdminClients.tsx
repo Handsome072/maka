@@ -1,123 +1,25 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import {
   Search, Eye, Trash2, Ban, PauseCircle, ChevronUp, ChevronDown, FileDown,
   Shield, ShieldCheck, Star, ChevronLeft, ChevronRight, X, SlidersHorizontal,
-  Users, UserCheck, UserPlus, BadgeCheck, AlertTriangle, RotateCcw
+  Users, UserCheck, UserPlus, BadgeCheck, AlertTriangle, RotateCcw, Loader2
 } from 'lucide-react';
 import { AdminSidebar } from '@/app/components/AdminSidebar';
 import Link from 'next/link';
+import { adminClientsApi, type AdminClient, type AdminClientsStats } from '@/app/services/api';
 
-interface Client {
-  id: number;
-  name: string;
-  email: string;
-  avatar: string;
-  phone: string;
-  country: string;
-  verified: boolean;
-  totalBookings: number;
-  totalSpent: string;
-  totalSpentValue: number;
-  joinDate: string;
-  joinDateValue: number;
-  averageRating: number;
-  status: 'ACTIF' | 'SUSPENDU' | 'BANNI';
-  isSuspect: boolean;
-}
-
-const clients: Client[] = [
-  {
-    id: 1001, name: 'Jean Dupont', email: 'jean.dupont@email.com', avatar: 'JD',
-    phone: '+33 6 12 34 56 78', country: 'France', verified: true,
-    totalBookings: 12, totalSpent: '8 320 $', totalSpentValue: 8320,
-    joinDate: '15 jan. 2024', joinDateValue: 20240115, averageRating: 4.8, status: 'ACTIF', isSuspect: false
-  },
-  {
-    id: 1002, name: 'Marie Simon', email: 'marie.simon@email.com', avatar: 'MS',
-    phone: '+33 6 23 45 67 89', country: 'France', verified: true,
-    totalBookings: 8, totalSpent: '5 140 $', totalSpentValue: 5140,
-    joinDate: '03 fev. 2024', joinDateValue: 20240203, averageRating: 4.5, status: 'ACTIF', isSuspect: false
-  },
-  {
-    id: 1003, name: 'Pierre Laurent', email: 'pierre.laurent@email.com', avatar: 'PL',
-    phone: '+1 514 555 1234', country: 'Canada', verified: false,
-    totalBookings: 3, totalSpent: '1 890 $', totalSpentValue: 1890,
-    joinDate: '22 mar. 2024', joinDateValue: 20240322, averageRating: 3.9, status: 'ACTIF', isSuspect: false
-  },
-  {
-    id: 1004, name: 'Sophie Martin', email: 'sophie.martin@email.com', avatar: 'SM',
-    phone: '+33 6 45 67 89 01', country: 'France', verified: true,
-    totalBookings: 21, totalSpent: '15 670 $', totalSpentValue: 15670,
-    joinDate: '08 sep. 2023', joinDateValue: 20230908, averageRating: 4.9, status: 'ACTIF', isSuspect: false
-  },
-  {
-    id: 1005, name: 'Thomas Dubois', email: 'thomas.dubois@email.com', avatar: 'TD',
-    phone: '+32 2 123 45 67', country: 'Belgique', verified: true,
-    totalBookings: 5, totalSpent: '3 250 $', totalSpentValue: 3250,
-    joinDate: '17 nov. 2024', joinDateValue: 20241117, averageRating: 4.2, status: 'SUSPENDU', isSuspect: true
-  },
-  {
-    id: 1006, name: 'Lucie Bernard', email: 'lucie.bernard@email.com', avatar: 'LB',
-    phone: '+41 21 345 67 89', country: 'Suisse', verified: false,
-    totalBookings: 1, totalSpent: '420 $', totalSpentValue: 420,
-    joinDate: '05 jan. 2025', joinDateValue: 20250105, averageRating: 0, status: 'ACTIF', isSuspect: false
-  },
-  {
-    id: 1007, name: 'Antoine Moreau', email: 'antoine.moreau@email.com', avatar: 'AM',
-    phone: '+1 438 555 6789', country: 'Canada', verified: true,
-    totalBookings: 15, totalSpent: '11 200 $', totalSpentValue: 11200,
-    joinDate: '30 jun. 2023', joinDateValue: 20230630, averageRating: 4.7, status: 'ACTIF', isSuspect: false
-  },
-  {
-    id: 1008, name: 'Camille Leroy', email: 'camille.leroy@email.com', avatar: 'CL',
-    phone: '+33 6 89 01 23 45', country: 'France', verified: true,
-    totalBookings: 0, totalSpent: '0 $', totalSpentValue: 0,
-    joinDate: '20 fev. 2025', joinDateValue: 20250220, averageRating: 0, status: 'BANNI', isSuspect: true
-  },
-  {
-    id: 1009, name: 'Romain Girard', email: 'romain.girard@email.com', avatar: 'RG',
-    phone: '+33 6 90 12 34 56', country: 'France', verified: false,
-    totalBookings: 7, totalSpent: '4 580 $', totalSpentValue: 4580,
-    joinDate: '12 oct. 2024', joinDateValue: 20241012, averageRating: 3.6, status: 'ACTIF', isSuspect: false
-  },
-  {
-    id: 1010, name: 'Isabelle Petit', email: 'isabelle.petit@email.com', avatar: 'IP',
-    phone: '+1 613 555 4321', country: 'Canada', verified: true,
-    totalBookings: 9, totalSpent: '6 730 $', totalSpentValue: 6730,
-    joinDate: '28 avr. 2024', joinDateValue: 20240428, averageRating: 4.4, status: 'ACTIF', isSuspect: false
-  },
-  {
-    id: 1011, name: 'Marc Fontaine', email: 'marc.fontaine@email.com', avatar: 'MF',
-    phone: '+33 6 11 22 33 44', country: 'France', verified: true,
-    totalBookings: 18, totalSpent: '13 450 $', totalSpentValue: 13450,
-    joinDate: '10 avr. 2023', joinDateValue: 20230410, averageRating: 4.6, status: 'ACTIF', isSuspect: false
-  },
-  {
-    id: 1012, name: 'Elena Rossi', email: 'elena.rossi@email.com', avatar: 'ER',
-    phone: '+39 06 1234 5678', country: 'Italie', verified: true,
-    totalBookings: 6, totalSpent: '4 210 $', totalSpentValue: 4210,
-    joinDate: '14 jul. 2024', joinDateValue: 20240714, averageRating: 4.3, status: 'ACTIF', isSuspect: false
-  },
-  {
-    id: 1013, name: 'Yves Tremblay', email: 'yves.tremblay@email.com', avatar: 'YT',
-    phone: '+1 514 999 8877', country: 'Canada', verified: false,
-    totalBookings: 2, totalSpent: '980 $', totalSpentValue: 980,
-    joinDate: '02 fev. 2025', joinDateValue: 20250202, averageRating: 3.2, status: 'ACTIF', isSuspect: false
-  },
-  {
-    id: 1014, name: 'Clara Muller', email: 'clara.muller@email.com', avatar: 'CM',
-    phone: '+41 79 876 5432', country: 'Suisse', verified: true,
-    totalBookings: 11, totalSpent: '9 870 $', totalSpentValue: 9870,
-    joinDate: '19 mai 2023', joinDateValue: 20230519, averageRating: 4.9, status: 'ACTIF', isSuspect: false
-  },
-];
+type Client = AdminClient;
 
 type SortField = 'name' | 'totalBookings' | 'totalSpentValue' | 'joinDateValue' | 'averageRating';
 type SortDirection = 'asc' | 'desc';
 
 export function AdminClients() {
+  const [clients, setClients] = useState<Client[]>([]);
+  const [stats, setStats] = useState<AdminClientsStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [verifiedFilter, setVerifiedFilter] = useState('');
@@ -132,6 +34,51 @@ export function AdminClients() {
   const [suspendModal, setSuspendModal] = useState<Client | null>(null);
   const [deleteModal, setDeleteModal] = useState<Client | null>(null);
   const itemsPerPage = 8;
+
+  const fetchClients = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await adminClientsApi.getAll();
+      setClients(response.clients);
+      setStats(response.stats);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Erreur lors du chargement des clients';
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchClients();
+  }, [fetchClients]);
+
+  const handleSuspend = async (client: Client) => {
+    try {
+      if (client.status === 'SUSPENDU' || client.status === 'BANNI') {
+        await adminClientsApi.activate(client.id);
+      } else {
+        await adminClientsApi.suspend(client.id);
+      }
+      setSuspendModal(null);
+      fetchClients();
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Erreur';
+      alert(message);
+    }
+  };
+
+  const handleDelete = async (client: Client) => {
+    try {
+      await adminClientsApi.delete(client.id);
+      setDeleteModal(null);
+      fetchClients();
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Erreur';
+      alert(message);
+    }
+  };
 
   const getStatusColor = (status: string) => {
     if (status === 'ACTIF') return 'bg-green-50 text-green-700';
@@ -230,15 +177,15 @@ export function AdminClients() {
     });
 
     return result;
-  }, [search, statusFilter, verifiedFilter, countryFilter, dateFilter, bookingsFilter, spentFilter, sortField, sortDirection]);
+  }, [clients, search, statusFilter, verifiedFilter, countryFilter, dateFilter, bookingsFilter, spentFilter, sortField, sortDirection]);
 
   const totalPages = Math.max(1, Math.ceil(filteredClients.length / itemsPerPage));
   const paginatedClients = filteredClients.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  const countries = [...new Set(clients.map(c => c.country))].sort();
-  const totalActive = clients.filter(c => c.status === 'ACTIF').length;
-  const totalVerified = clients.filter(c => c.verified).length;
-  const newThisMonth = clients.filter(c => c.joinDateValue >= 20250201).length;
+  const countries = stats?.countries?.length ? [...stats.countries].sort() : [...new Set(clients.map(c => c.country).filter(Boolean))].sort();
+  const totalActive = stats?.totalActive ?? clients.filter(c => c.status === 'ACTIF').length;
+  const totalVerified = stats?.totalVerified ?? clients.filter(c => c.verified).length;
+  const newThisMonth = stats?.newThisMonth ?? 0;
   const totalSpentAll = clients.reduce((sum, c) => sum + c.totalSpentValue, 0);
 
   const getPageNumbers = () => {
@@ -256,6 +203,42 @@ export function AdminClients() {
     }
     return pages;
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <AdminSidebar />
+        <main className="lg:ml-[280px] p-4 md:p-6 lg:p-8">
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <div className="flex flex-col items-center gap-3">
+              <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+              <p className="text-sm text-gray-500">Chargement des clients...</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <AdminSidebar />
+        <main className="lg:ml-[280px] p-4 md:p-6 lg:p-8">
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <div className="flex flex-col items-center gap-3 text-center">
+              <AlertTriangle className="w-8 h-8 text-red-400" />
+              <p className="text-sm text-red-600">{error}</p>
+              <button onClick={fetchClients} className="px-4 py-2 bg-[#111827] text-white rounded-lg text-sm hover:bg-gray-800 transition-colors flex items-center gap-2">
+                <RotateCcw className="w-4 h-4" />
+                Reessayer
+              </button>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -830,11 +813,11 @@ export function AdminClients() {
                 Annuler
               </button>
               <button
-                onClick={() => setSuspendModal(null)}
+                onClick={() => handleSuspend(suspendModal)}
                 className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm"
                 style={{ fontWeight: 600 }}
               >
-                Suspendre
+                {suspendModal.status === 'SUSPENDU' || suspendModal.status === 'BANNI' ? 'Reactiver' : 'Suspendre'}
               </button>
             </div>
           </div>
@@ -866,7 +849,7 @@ export function AdminClients() {
                 Annuler
               </button>
               <button
-                onClick={() => setDeleteModal(null)}
+                onClick={() => handleDelete(deleteModal)}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
                 style={{ fontWeight: 600 }}
               >
