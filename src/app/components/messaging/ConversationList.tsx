@@ -1,4 +1,4 @@
-import { Search, Archive, MailOpen, Mail, MoreVertical } from 'lucide-react';
+import { Search, Archive, MailOpen, Mail, MoreVertical, ShieldAlert } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import type { Conversation, ConversationFilter } from '@/app/services/api';
 
@@ -170,7 +170,11 @@ export function ConversationList({
                 >
                   {/* Avatar */}
                   <div className="relative flex-shrink-0">
-                    {other.profile_photo_url ? (
+                    {conv.is_admin_conversation ? (
+                      <div className="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center text-white">
+                        <ShieldAlert className="w-5 h-5" />
+                      </div>
+                    ) : other.profile_photo_url ? (
                       <img
                         src={other.profile_photo_url}
                         alt={other.first_name}
@@ -190,14 +194,14 @@ export function ConversationList({
                         className="text-sm truncate"
                         style={{ fontWeight: isUnread ? 700 : 500, color: '#222222' }}
                       >
-                        {other.first_name} {other.last_name}
+                        {conv.is_admin_conversation ? 'Admin HOMIQIO' : `${other.first_name} ${other.last_name}`}
                       </h3>
                       <span className="text-xs ml-2 flex-shrink-0 group-hover:mr-6 transition-all" style={{ color: '#717171' }}>
                         {conv.last_message ? formatDate(conv.last_message.created_at) : ''}
                       </span>
                     </div>
-                    <p className="text-xs truncate mb-0.5" style={{ color: '#717171' }}>
-                      {conv.reservation?.listing?.title || conv.listing?.title || 'Message direct'}
+                    <p className="text-xs truncate mb-0.5" style={{ color: conv.is_admin_conversation ? '#6366f1' : '#717171' }}>
+                      {conv.is_admin_conversation ? 'Support plateforme' : (conv.reservation?.listing?.title || conv.listing?.title || 'Message direct')}
                     </p>
                     <div className="flex items-center justify-between gap-2">
                       <p

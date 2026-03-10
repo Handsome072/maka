@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ShieldAlert } from 'lucide-react';
 import type { ChatMessage, Conversation } from '@/app/services/api';
 import { MessageInput } from './MessageInput';
 
@@ -66,6 +66,7 @@ export function ChatThread({
 }: ChatThreadProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const other = getOtherParticipant(conversation, currentUserId);
+  const isAdminConversation = conversation.is_admin_conversation;
   const groupedMessages = groupMessagesByDate(messages);
 
   useEffect(() => {
@@ -82,7 +83,11 @@ export function ChatThread({
         >
           <ArrowLeft className="w-6 h-6" style={{ color: '#222222' }} />
         </button>
-        {other.profile_photo_url ? (
+        {isAdminConversation ? (
+          <div className="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white">
+            <ShieldAlert className="w-5 h-5" />
+          </div>
+        ) : other.profile_photo_url ? (
           <img
             src={other.profile_photo_url}
             alt={other.first_name}
@@ -95,10 +100,10 @@ export function ChatThread({
         )}
         <div className="flex-1 min-w-0">
           <h3 className="text-base truncate" style={{ fontWeight: 600, color: '#222222' }}>
-            {other.first_name} {other.last_name}
+            {isAdminConversation ? 'Admin HOMIQIO' : `${other.first_name} ${other.last_name}`}
           </h3>
           <p className="text-xs truncate" style={{ color: '#717171' }}>
-            {conversation.reservation?.listing?.title || conversation.listing?.title || 'Message direct'}
+            {isAdminConversation ? 'Support plateforme' : (conversation.reservation?.listing?.title || conversation.listing?.title || 'Message direct')}
           </p>
         </div>
       </div>
@@ -124,6 +129,7 @@ export function ChatThread({
                 <div className="space-y-2">
                   {group.messages.map((msg) => {
                     const isMe = msg.sender_id === currentUserId;
+                    const isAdminMsg = msg.sender_role === 'admin';
                     return (
                       <div
                         key={msg.id}
@@ -133,9 +139,19 @@ export function ChatThread({
                           className={`max-w-[70%] rounded-2xl ${
                             isMe
                               ? 'bg-black text-white'
-                              : 'bg-gray-100 text-gray-900'
+                              : isAdminMsg
+                                ? 'bg-indigo-600 text-white'
+                                : 'bg-gray-100 text-gray-900'
                           }`}
                         >
+                          {/* Admin badge */}
+                          {isAdminMsg && !isMe && (
+                            <div className="flex items-center gap-1 px-4 pt-2">
+                              <ShieldAlert className="w-3 h-3 text-indigo-200" />
+                              <span className="text-[10px] text-indigo-200" style={{ fontWeight: 600 }}>ADMIN HOMIQIO</span>
+                            </div>
+                          )}
+
                           {/* Image */}
                           {msg.image_url && (
                             <img
@@ -153,7 +169,7 @@ export function ChatThread({
                             )}
                             <span
                               className={`text-xs mt-1 block ${
-                                isMe ? 'text-gray-400' : 'text-gray-500'
+                                isMe ? 'text-gray-400' : isAdminMsg ? 'text-indigo-200' : 'text-gray-500'
                               }`}
                             >
                               {formatMessageTime(msg.created_at)}

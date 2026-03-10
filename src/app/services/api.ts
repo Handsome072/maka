@@ -836,6 +836,7 @@ export interface Conversation {
   } | null;
   unread_count: number;
   is_archived: boolean;
+  is_admin_conversation?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -849,6 +850,7 @@ export interface ChatMessage {
   id: number;
   conversation_id: number;
   sender_id: number;
+  sender_role?: string;
   text: string | null;
   image_url: string | null;
   read_at: string | null;
@@ -1529,4 +1531,39 @@ export const adminClientsApi = {
       method: 'DELETE',
     });
   },
+
+  getMessages: async (id: number): Promise<AdminChatResponse> => {
+    return apiFetch<AdminChatResponse>(`/admin/clients/${id}/messages`);
+  },
+
+  sendMessage: async (id: number, text: string): Promise<AdminSendMessageResponse> => {
+    return apiFetch<AdminSendMessageResponse>(`/admin/clients/${id}/messages`, {
+      method: 'POST',
+      body: JSON.stringify({ text }),
+    });
+  },
 };
+
+export interface AdminChatMessage {
+  id: number;
+  conversation_id: number;
+  sender_id: number;
+  sender_role: string;
+  sender_name: string;
+  text: string | null;
+  image_url: string | null;
+  read_at: string | null;
+  created_at: string;
+}
+
+export interface AdminChatResponse {
+  conversation_id: number | null;
+  messages: AdminChatMessage[];
+  is_admin_conversation: boolean;
+}
+
+export interface AdminSendMessageResponse {
+  message: string;
+  data: AdminChatMessage;
+  conversation_id: number;
+}
