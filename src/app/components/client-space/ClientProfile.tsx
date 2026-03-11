@@ -1,12 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { userProfileApi, User } from '@/app/services/api';
+import { useAuth } from '@/app/context/AuthContext';
+import { Camera } from 'lucide-react';
 
 export function ClientProfile() {
+  const { user, refreshUser } = useAuth();
   const [profile, setProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
   // Editing states
   const [editingOfficialName, setEditingOfficialName] = useState(false);
@@ -116,6 +121,66 @@ export function ClientProfile() {
           <h2 className="text-lg md:text-2xl" style={{ fontWeight: 600, color: '#222222' }}>
             Informations personnelles
           </h2>
+        </div>
+
+        {/* Photo de profil */}
+        <div className="flex items-center gap-5 mb-8 pb-8 border-b border-gray-200">
+          <div className="relative">
+            <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+              {(profile?.profile_photo_url || user?.profile_photo_url) ? (
+                <img
+                  src={profile?.profile_photo_url || user?.profile_photo_url}
+                  alt="Photo de profil"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-2xl font-semibold text-gray-500">
+                  {(profile?.first_name || user?.first_name)?.[0]?.toUpperCase()}{(profile?.last_name || user?.last_name)?.[0]?.toUpperCase()}
+                </span>
+              )}
+            </div>
+            <button
+              onClick={() => avatarInputRef.current?.click()}
+              disabled={uploadingAvatar}
+              className="absolute -bottom-1 -right-1 w-8 h-8 bg-white border-2 border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm"
+            >
+              {uploadingAvatar ? (
+                <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Camera className="w-4 h-4 text-gray-600" />
+              )}
+            </button>
+            <input
+              ref={avatarInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                if (file.size > 5 * 1024 * 1024) {
+                  showToast('error', 'La photo ne doit pas dépasser 5 Mo.');
+                  return;
+                }
+                setUploadingAvatar(true);
+                try {
+                  const res = await userProfileApi.uploadPhoto(file);
+                  setProfile(prev => prev ? { ...prev, profile_photo_url: res.profile_photo_url } : null);
+                  await refreshUser();
+                  showToast('success', 'Photo de profil mise à jour.');
+                } catch {
+                  showToast('error', 'Erreur lors de la mise à jour de la photo.');
+                } finally {
+                  setUploadingAvatar(false);
+                  e.target.value = '';
+                }
+              }}
+            />
+          </div>
+          <div>
+            <h3 className="text-base font-semibold" style={{ color: '#222222' }}>Photo de profil</h3>
+            <p className="text-sm text-gray-500 mt-0.5">Cliquez sur l&apos;icône pour changer votre photo</p>
+          </div>
         </div>
 
         <div className="space-y-0">
