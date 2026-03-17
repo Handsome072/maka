@@ -2,14 +2,14 @@ export { AcceptanceConditionStep } from './AcceptanceConditionStep';
 export { ReservationTypeStep } from './ReservationTypeStep';
 export { AddressLocationStep } from './AddressLocationStep';
 export { CapacityDetailsStep } from './CapacityDetailsStep';
-export { ClientExpectationsStep } from './ClientExpectationsStep';
+
 export { AmenitiesStep } from './AmenitiesStep';
 export { SummaryReview1Step } from './SummaryReview1Step';
 export { HostPhotoStep } from './HostPhotoStep';
 export { ChaletPhotosStep } from './ChaletPhotosStep';
 export { ChaletDescriptionStep } from './ChaletDescriptionStep';
 export { SummaryReview2Step } from './SummaryReview2Step';
-export { PermissionsStep } from './PermissionsStep';
+
 export { ReservationModeStep } from './ReservationModeStep';
 export { PricingStep } from './PricingStep';
 export { FeesStep } from './FeesStep';

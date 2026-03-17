@@ -15,14 +15,14 @@ export const STEPS_LIST: Step[] = [
   'reservation-type',
   'address-location',
   'capacity-details',
-  'client-expectations',
+
   'amenities',
   'summary-review-1',
   'host-photo',
   'chalet-photos',
   'chalet-description',
   'summary-review-2',
-  'permissions',
+
   'reservation-mode',
   'pricing',
   'fees',
@@ -87,32 +87,7 @@ export const AMENITIES_DATA = {
   ],
 };
 
-export const EXPECTATIONS_DATA = {
-  client: [
-    { id: 'noise', label: "Risque de bruit à proximité" },
-    { id: 'bad_cell', label: "La réception cellulaire est mauvaise" },
-    { id: '4x4_required', label: "Véhicule à 4 roues motrices nécessaires" },
-    { id: 'non_potable_water', label: "Eau non potable" },
-    { id: 'stairs_only', label: "Accès par escaliers seulement" },
-  ],
-  safety: [
-    { id: 'smoke_detector', label: "Détecteur de fumée" },
-    { id: 'co_detector', label: "Détecteur de monoxyde de carbone" },
-    { id: 'first_aid', label: "Trousse de premiers soins" },
-    { id: 'fire_extinguisher', label: "Extincteur de feu" },
-    { id: 'door_lock', label: "Serrure de porte de chambre" },
-  ],
-};
 
-export const PERMISSIONS_DATA = [
-  { id: 'children', label: "Convient aux enfants (2-14 ans)" },
-  { id: 'infants', label: "Convient aux bébés (moins de 2 ans)" },
-  { id: 'pets', label: "Animaux permis" },
-  { id: 'smoking', label: "Il est permis de fumer à l'intérieur" },
-  { id: 'parties', label: "Tenue d'une fête autorisée" },
-  { id: 'events', label: "Événements autorisés" },
-  { id: 'outdoor_fire', label: "Possible de faire un feu à l'extérieur" },
-];
 
 export const BED_TYPE_LABELS: Record<string, string> = {
   simple: 'Lit simple',

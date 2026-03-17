@@ -10,14 +10,14 @@ import {
   ReservationTypeStep,
   AddressLocationStep,
   CapacityDetailsStep,
-  ClientExpectationsStep,
+
   AmenitiesStep,
   SummaryReview1Step,
   HostPhotoStep,
   ChaletPhotosStep,
   ChaletDescriptionStep,
   SummaryReview2Step,
-  PermissionsStep,
+
   ReservationModeStep,
   PricingStep,
   FeesStep,
@@ -45,14 +45,14 @@ const STEP_COMPONENTS: Record<string, ComponentType> = {
   'reservation-type': ReservationTypeStep,
   'address-location': AddressLocationStep,
   'capacity-details': CapacityDetailsStep,
-  'client-expectations': ClientExpectationsStep,
+
   'amenities': AmenitiesStep,
   'summary-review-1': SummaryReview1Step,
   'host-photo': HostPhotoStep,
   'chalet-photos': ChaletPhotosStep,
   'chalet-description': ChaletDescriptionStep,
   'summary-review-2': SummaryReview2Step,
-  'permissions': PermissionsStep,
+
   'reservation-mode': ReservationModeStep,
   'pricing': PricingStep,
   'fees': FeesStep,

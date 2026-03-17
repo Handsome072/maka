@@ -9,7 +9,7 @@ export function SummaryReview3Step() {
   const { jumpToStep, handleNext } = useHostOnboarding();
 
   const stepItems: { label: string; step: Step }[] = [
-    { label: "Permissions", step: 'permissions' },
+
     { label: "Mode de réservation", step: 'reservation-mode' },
     { label: "Tarification", step: 'pricing' },
     { label: "Frais", step: 'fees' },

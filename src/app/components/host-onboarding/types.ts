@@ -3,14 +3,14 @@ export type Step =
   | 'reservation-type'
   | 'address-location'
   | 'capacity-details'
-  | 'client-expectations'
+
   | 'amenities'
   | 'summary-review-1'
   | 'host-photo'
   | 'chalet-photos'
   | 'chalet-description'
   | 'summary-review-2'
-  | 'permissions'
+
   | 'reservation-mode'
   | 'pricing'
   | 'fees'
