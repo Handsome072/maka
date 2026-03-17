@@ -1,11 +1,21 @@
 'use client';
 
+import { useMemo } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { useHostOnboarding } from '../HostOnboardingContext';
-import { MockMap } from '../MockMap';
+
+function buildMapEmbedUrl(city?: string, country?: string): string {
+  const query = encodeURIComponent([city, country].filter(Boolean).join(', ') || 'Canada');
+  return `https://maps.google.com/maps?q=${query}&z=12&output=embed&hl=fr`;
+}
 
 export function AddressLocationStep() {
   const { addressData, setAddressData } = useHostOnboarding();
+
+  const mapUrl = useMemo(
+    () => buildMapEmbedUrl(addressData.city, addressData.country),
+    [addressData.city, addressData.country]
+  );
 
   return (
     <div className="flex flex-col lg:flex-row gap-12">
@@ -23,22 +33,9 @@ export function AddressLocationStep() {
             <label className="block text-sm font-medium text-[#222222]">Adresse *</label>
             <input className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" placeholder="Adresse" value={addressData.address} onChange={(e) => setAddressData({ ...addressData, address: e.target.value })} />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-[#222222]">Code postal *</label>
-              <input className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" placeholder="Code postal" value={addressData.postalCode} onChange={(e) => setAddressData({ ...addressData, postalCode: e.target.value })} />
-            </div>
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-[#222222]">MRC (Optionnel)</label>
-              <div className="relative">
-                <select className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black appearance-none bg-white"><option value="">-</option></select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-              </div>
-            </div>
-          </div>
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-[#222222]">Comté (Optionnel)</label>
-            <input className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" placeholder="Comté" value={addressData.county} onChange={(e) => setAddressData({ ...addressData, county: e.target.value })} />
+            <label className="block text-sm font-medium text-[#222222]">Code postal *</label>
+            <input className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" placeholder="Code postal" value={addressData.postalCode} onChange={(e) => setAddressData({ ...addressData, postalCode: e.target.value })} />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -70,7 +67,16 @@ export function AddressLocationStep() {
       </div>
       <div className="flex-1">
         <div className="relative w-full aspect-square rounded-xl overflow-hidden border border-gray-200">
-          <MockMap />
+          <iframe
+            title="Carte Google Maps"
+            src={mapUrl}
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
         </div>
       </div>
     </div>
