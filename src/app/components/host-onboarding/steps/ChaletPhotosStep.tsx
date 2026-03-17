@@ -57,6 +57,29 @@ export function ChaletPhotosStep() {
             <p className="text-gray-400 text-xs mt-1">Formats acceptés: PNG, JPG, WEBP</p>
           </div>
         </div>
+
+        {chaletPhotos.length > 5 && (
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
+            {chaletPhotos.slice(5).map((photo, i) => {
+              const index = i + 5;
+              return (
+                <div key={index} className="aspect-square bg-gray-100 rounded-xl relative overflow-hidden group border border-gray-200">
+                  <img src={photo} alt={`Chalet ${index + 1}`} className="w-full h-full object-cover" />
+                  <button
+                    onClick={() => {
+                      const newPhotos = [...chaletPhotos];
+                      newPhotos.splice(index, 1);
+                      setChaletPhotos(newPhotos);
+                    }}
+                    className="absolute top-1 right-1 p-1 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
