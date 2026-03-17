@@ -150,44 +150,10 @@ const PERMISSIONS_DATA = [
 
 const DAYS_OF_WEEK = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
-// --- MOCK MAP COMPONENT ---
-function MockMap() {
-  return (
-    <div className="w-full h-full relative bg-[#E5E3DF] overflow-hidden">
-      <div className="absolute inset-0 opacity-20">
-        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#999" strokeWidth="0.5"/>
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
-      </div>
-      <svg className="absolute inset-0 w-full h-full opacity-10 pointer-events-none">
-        <path d="M0 100 Q 150 50 300 150 T 600 100" stroke="#fff" strokeWidth="15" fill="none" />
-        <path d="M100 0 Q 150 300 100 600" stroke="#fff" strokeWidth="12" fill="none" />
-      </svg>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-full drop-shadow-lg">
-        <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center relative z-10">
-          <MapPin className="w-5 h-5 text-white" fill="white" />
-          <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-4 h-4 bg-black rotate-45 transform origin-center z-[-1]" />
-        </div>
-        <div className="w-4 h-1.5 bg-black/20 rounded-[100%] absolute -bottom-2 left-1/2 -translate-x-1/2 blur-[2px]" />
-      </div>
-      <div className="absolute top-4 right-4 flex flex-col gap-2">
-        <button className="w-8 h-8 bg-white rounded-lg shadow-sm flex items-center justify-center hover:bg-gray-50 text-gray-700 font-bold transition-colors border border-gray-100">
-          <Plus className="w-4 h-4" />
-        </button>
-        <button className="w-8 h-8 bg-white rounded-lg shadow-sm flex items-center justify-center hover:bg-gray-50 text-gray-700 font-bold transition-colors border border-gray-100">
-          <Minus className="w-4 h-4" />
-        </button>
-      </div>
-      <div className="absolute bottom-2 right-2 text-[10px] text-gray-600 bg-white/80 px-2 py-1 rounded pointer-events-none backdrop-blur-sm">
-        © OpenStreetMap contributors
-      </div>
-    </div>
-  );
+// --- MAP EMBED HELPER ---
+function buildMapEmbedUrl(city?: string, country?: string): string {
+  const query = encodeURIComponent([city, country].filter(Boolean).join(', ') || 'Canada');
+  return `https://maps.google.com/maps?q=${query}&z=12&output=embed&hl=fr`;
 }
 
 // --- MAIN COMPONENT ---
@@ -704,22 +670,9 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
                   <label className="block text-sm font-medium text-[#222222]">Adresse *</label>
                   <input type="text" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" placeholder="Adresse" value={addressData.address} onChange={e => setAddressData({...addressData, address: e.target.value})} />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-[#222222]">Code postal *</label>
-                    <input type="text" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" placeholder="Code postal" value={addressData.postalCode} onChange={e => setAddressData({...addressData, postalCode: e.target.value})} />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-[#222222]">MRC (Optionnel)</label>
-                    <div className="relative">
-                      <select className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black appearance-none bg-white"><option value="">-</option></select>
-                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                    </div>
-                  </div>
-                </div>
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-[#222222]">Comté (Optionnel)</label>
-                  <input type="text" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" placeholder="Comté" value={addressData.county} onChange={e => setAddressData({...addressData, county: e.target.value})} />
+                  <label className="block text-sm font-medium text-[#222222]">Code postal *</label>
+                  <input type="text" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" placeholder="Code postal" value={addressData.postalCode} onChange={e => setAddressData({...addressData, postalCode: e.target.value})} />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -751,7 +704,16 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
             </div>
             <div className="flex-1">
                <div className="relative w-full aspect-square rounded-xl overflow-hidden border border-gray-200">
-                  <MockMap />
+                  <iframe
+                    title="Carte Google Maps"
+                    src={buildMapEmbedUrl(addressData.city, addressData.country)}
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
                </div>
             </div>
           </div>
