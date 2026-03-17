@@ -284,7 +284,8 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
   const images = listing.photos?.map(p => p.url) || [];
   const title = listing.title || 'Logement';
   const subtitle = listing.subtitle || title;
-  const spaceType = listing.space_type || 'Logement entier';
+  const spaceTypeLabels: Record<string, string> = { entire: 'Logement entier', private: 'Chambre privée', shared: 'Chambre partagée' };
+  const spaceType = (listing.space_type && spaceTypeLabels[listing.space_type]) || listing.space_type || 'Logement entier';
   const location = [listing.city, listing.country].filter(Boolean).join(', ');
   const capacity = listing.capacity || 1;
   const bathrooms = listing.bathrooms || 1;
