@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import type { Step, Bedroom } from './types';
-import { EXPECTATIONS_DATA } from './constants';
 import { STEPS_LIST } from './constants';
 import { useAuth } from '@/app/context/AuthContext';
 
@@ -87,13 +86,6 @@ export function useHostOnboardingState({
     'Connectivité et multimédia': true,
   });
 
-  // 6. Expectations
-  const [expectations, setExpectations] = useState<Record<string, 'yes' | 'no' | null>>(() => {
-    const defaults: Record<string, 'yes' | 'no' | null> = {};
-    EXPECTATIONS_DATA.client.forEach((item) => (defaults[item.id] = 'yes'));
-    EXPECTATIONS_DATA.safety.forEach((item) => (defaults[item.id] = 'yes'));
-    return defaults;
-  });
 
   // 7. Photos
   const [hostPhoto, setHostPhoto] = useState<string | null>(null);
@@ -117,7 +109,6 @@ export function useHostOnboardingState({
   const [arrivalTime, setArrivalTime] = useState('17:00');
   const [departureTime, setDepartureTime] = useState('11:00');
   const [minAge, setMinAge] = useState('18');
-  const [permissions, setPermissions] = useState<Record<string, 'yes' | 'no' | null>>({});
 
   const [minStay, setMinStay] = useState('1');
   const [maxStay, setMaxStay] = useState('Aucun maximum');
@@ -204,7 +195,7 @@ export function useHostOnboardingState({
   const progressPercentage = ((currentStepIndex + 1) / stepsList.length) * 100;
 
   const getCurrentBigStep = () => {
-    if (['acceptance-condition', 'reservation-type', 'address-location', 'capacity-details', 'client-expectations', 'amenities', 'summary-review-1'].includes(currentStep)) return 1;
+    if (['acceptance-condition', 'reservation-type', 'address-location', 'capacity-details', 'amenities', 'summary-review-1'].includes(currentStep)) return 1;
     if (['host-photo', 'chalet-photos', 'chalet-description', 'summary-review-2'].includes(currentStep)) return 2;
     return 3;
   };
@@ -263,13 +254,6 @@ export function useHostOnboardingState({
     setExpandedAmenities((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const setExpectationValue = (id: string, value: 'yes' | 'no') => {
-    setExpectations((prev) => ({ ...prev, [id]: value }));
-  };
-
-  const setPermissionValue = (id: string, value: 'yes' | 'no') => {
-    setPermissions((prev) => ({ ...prev, [id]: value }));
-  };
 
   const handleHostPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -363,7 +347,6 @@ export function useHostOnboardingState({
     setOpenAreas,
     selectedAmenities,
     expandedAmenities,
-    expectations,
     hostPhoto,
     chaletPhotos,
     setChaletPhotos,
@@ -380,7 +363,6 @@ export function useHostOnboardingState({
     setDepartureTime,
     minAge,
     setMinAge,
-    permissions,
     minStay,
     setMinStay,
     maxStay,
@@ -453,8 +435,6 @@ export function useHostOnboardingState({
     handleBedCountChange,
     toggleAmenity,
     toggleSection,
-    setExpectationValue,
-    setPermissionValue,
     handleHostPhotoUpload,
     handleChaletPhotoUpload,
     isNextDisabled,

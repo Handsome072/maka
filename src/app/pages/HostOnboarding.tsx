@@ -29,14 +29,14 @@ type Step =
   | 'reservation-type' 
   | 'address-location' 
   | 'capacity-details'
-  | 'client-expectations'
+
   | 'amenities'
   | 'summary-review-1'
   | 'host-photo'
   | 'chalet-photos'
   | 'chalet-description'
   | 'summary-review-2'
-  | 'permissions'
+
   | 'reservation-mode'
   | 'pricing'
   | 'fees'
@@ -118,34 +118,6 @@ const AMENITIES_DATA = {
   ],
 };
 
-// Expectations Data
-const EXPECTATIONS_DATA = {
-  client: [
-    { id: 'noise', label: "Risque de bruit à proximité" },
-    { id: 'bad_cell', label: "La réception cellulaire est mauvaise" },
-    { id: '4x4_required', label: "Véhicule à 4 roues motrices nécessaires" },
-    { id: 'non_potable_water', label: "Eau non potable" },
-    { id: 'stairs_only', label: "Accès par escaliers seulement" },
-  ],
-  safety: [
-    { id: 'smoke_detector', label: "Détecteur de fumée" },
-    { id: 'co_detector', label: "Détecteur de monoxyde de carbone" },
-    { id: 'first_aid', label: "Trousse de premiers soins" },
-    { id: 'fire_extinguisher', label: "Extincteur de feu" },
-    { id: 'door_lock', label: "Serrure de porte de chambre" },
-  ]
-};
-
-// Permissions Data
-const PERMISSIONS_DATA = [
-  { id: 'children', label: "Convient aux enfants (2-14 ans)" },
-  { id: 'infants', label: "Convient aux bébés (moins de 2 ans)" },
-  { id: 'pets', label: "Animaux permis" },
-  { id: 'smoking', label: "Il est permis de fumer à l'intérieur" },
-  { id: 'parties', label: "Tenue d'une fête autorisée" },
-  { id: 'events', label: "Événements autorisés" },
-  { id: 'outdoor_fire', label: "Possible de faire un feu à l'extérieur" },
-];
 
 const DAYS_OF_WEEK = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
@@ -168,14 +140,12 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
     'reservation-type',
     'address-location',
     'capacity-details',
-    'client-expectations',
     'amenities',
     'summary-review-1',
     'host-photo',
     'chalet-photos',
     'chalet-description',
     'summary-review-2',
-    'permissions',
     'reservation-mode',
     'pricing',
     'fees',
@@ -238,14 +208,6 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
     'Connectivité et multimédia': true // Default expanded
   });
 
-  // 6. Expectations
-  // Initialize with 'yes' for all items by default
-  const [expectations, setExpectations] = useState<Record<string, 'yes' | 'no' | null>>(() => {
-    const defaults: Record<string, 'yes' | 'no' | null> = {};
-    EXPECTATIONS_DATA.client.forEach(item => defaults[item.id] = 'yes');
-    EXPECTATIONS_DATA.safety.forEach(item => defaults[item.id] = 'yes');
-    return defaults;
-  });
 
   // 7. Photos
   const [hostPhoto, setHostPhoto] = useState<string | null>(null);
@@ -298,7 +260,6 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
   const [arrivalTime, setArrivalTime] = useState('17:00');
   const [departureTime, setDepartureTime] = useState('11:00');
   const [minAge, setMinAge] = useState("18");
-  const [permissions, setPermissions] = useState<Record<string, 'yes' | 'no' | null>>({});
 
   // Stay Duration (Merged into Reservation Mode)
   const [minStay, setMinStay] = useState("1");
@@ -421,7 +382,6 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
         }
 
         if (listing.amenities) setSelectedAmenities(listing.amenities);
-        if (listing.expectations) setExpectations(listing.expectations as Record<string, 'yes' | 'no' | null>);
 
         if (listing.host_photo_url) setHostPhoto(listing.host_photo_url);
         if (listing.photos && listing.photos.length > 0) {
@@ -439,7 +399,6 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
           otherInfo: listing.other_info || '',
         });
 
-        if (listing.permissions) setPermissions(listing.permissions as Record<string, 'yes' | 'no' | null>);
         if (listing.reservation_mode) setReservationMode(listing.reservation_mode as 'request' | 'instant');
         if (listing.arrival_time) setArrivalTime(listing.arrival_time);
         if (listing.departure_time) setDepartureTime(listing.departure_time);
@@ -496,7 +455,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
     // Group 1: Base + Summary
     if ([
       'acceptance-condition', 'reservation-type', 'address-location', 
-      'capacity-details', 'client-expectations', 'amenities', 'summary-review-1'
+      'capacity-details', 'amenities', 'summary-review-1'
     ].includes(currentStep)) return 1;
     
     // Group 2: Environment (Photos, Description, Summary)
@@ -530,7 +489,6 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
     bedrooms_data:    bedrooms,
     open_areas_data:  openAreas,
     amenities:        selectedAmenities,
-    expectations:     expectations,
     host_photo:       hostPhoto,
     chalet_photos:    chaletPhotos,
     title:            descriptionData.title,
@@ -541,7 +499,6 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
     neighborhood:     descriptionData.neighborhood,
     transport:        descriptionData.transport,
     other_info:       descriptionData.otherInfo,
-    permissions:      permissions,
     reservation_mode: reservationMode,
     arrival_time:     arrivalTime,
     departure_time:   departureTime,
@@ -690,13 +647,6 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
     }));
   };
 
-  const setExpectationValue = (id: string, value: 'yes' | 'no') => {
-    setExpectations(prev => ({ ...prev, [id]: value }));
-  };
-
-  const setPermissionValue = (id: string, value: 'yes' | 'no') => {
-    setPermissions(prev => ({ ...prev, [id]: value }));
-  };
 
   const handleHostPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -1036,62 +986,6 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
           </div>
         )}
 
-        {currentStep === 'client-expectations' && (
-          <div className="max-w-3xl mx-auto space-y-10">
-            <h1 className="text-3xl font-bold text-[#222222] mb-8 text-center">Attentes du client et sécurité</h1>
-            <div className="space-y-6">
-               {EXPECTATIONS_DATA.client.map((item) => (
-                 <div key={item.id} className="flex items-center justify-between border-b border-gray-50 pb-4">
-                   <span className="text-[#222222]">{item.label}</span>
-                   <div className="flex items-center gap-4">
-                     <button 
-                       onClick={() => setExpectationValue(item.id, 'yes')} 
-                       className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all ${
-                         expectations[item.id] === 'yes' ? 'bg-black border-black text-white' : 'border-gray-300 bg-white text-gray-300'
-                       }`}
-                     >
-                       <Check className="w-5 h-5" />
-                     </button>
-                     <button 
-                       onClick={() => setExpectationValue(item.id, 'no')} 
-                       className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all ${
-                         expectations[item.id] === 'no' ? 'bg-red-500 border-red-500 text-white' : 'border-red-200 text-red-500 bg-white'
-                       }`}
-                     >
-                       <X className="w-5 h-5" />
-                     </button>
-                   </div>
-                 </div>
-               ))}
-            </div>
-            <div className="w-full h-px bg-gray-100" />
-            <div className="space-y-6">
-               {EXPECTATIONS_DATA.safety.map((item) => (
-                 <div key={item.id} className="flex items-center justify-between border-b border-gray-50 pb-4">
-                   <span className="text-[#222222]">{item.label}</span>
-                   <div className="flex items-center gap-4">
-                     <button 
-                       onClick={() => setExpectationValue(item.id, 'yes')} 
-                       className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all ${
-                         expectations[item.id] === 'yes' ? 'bg-black border-black text-white' : 'border-gray-300 bg-white text-gray-300'
-                       }`}
-                     >
-                       <Check className="w-5 h-5" />
-                     </button>
-                     <button 
-                       onClick={() => setExpectationValue(item.id, 'no')} 
-                       className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all ${
-                         expectations[item.id] === 'no' ? 'bg-red-500 border-red-500 text-white' : 'border-red-200 text-red-500 bg-white'
-                       }`}
-                     >
-                       <X className="w-5 h-5" />
-                     </button>
-                   </div>
-                 </div>
-               ))}
-            </div>
-          </div>
-        )}
 
         {currentStep === 'amenities' && (
           <div className="max-w-4xl mx-auto space-y-8">
@@ -1153,7 +1047,6 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
                             { label: "Type de réservation", step: 'reservation-type' },
                             { label: "Saisir votre adresse", step: 'address-location' },
                             { label: "Capacité d'accueil du chalet", step: 'capacity-details' },
-                            { label: "Attentes des invités et sécurité", step: 'client-expectations' },
                             { label: "Commodités", step: 'amenities' }
                           ].map((item, idx) => (
                              <div key={idx} className="flex items-center justify-between p-4 border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors">
@@ -1493,52 +1386,6 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
           </div>
         )}
 
-        {currentStep === 'permissions' && (
-          <div className="max-w-3xl mx-auto space-y-10">
-            <h1 className="text-3xl font-bold text-[#222222]">Permissions</h1>
-            <div className="space-y-6">
-              {PERMISSIONS_DATA.map((item) => (
-                <div key={item.id} className="flex items-center justify-between border-b border-gray-50 pb-4">
-                  <span className="text-[#222222]">{item.label}</span>
-                  <div className="flex items-center gap-4">
-                    <button 
-                      onClick={() => setPermissionValue(item.id, 'yes')} 
-                      className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all ${
-                        permissions[item.id] === 'yes' ? 'bg-black border-black text-white ring-2 ring-black ring-offset-2' : 'border-gray-300 bg-white'
-                      }`}
-                    >
-                      <Check className="w-5 h-5" />
-                    </button>
-                    <button 
-                      onClick={() => setPermissionValue(item.id, 'no')} 
-                      className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all ${
-                        permissions[item.id] === 'no' ? 'bg-red-500 border-red-500 text-white ring-2 ring-red-500 ring-offset-2' : 'border-red-200 text-red-500 bg-white'
-                      }`}
-                    >
-                      <X className="w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-              
-              <div className="flex items-center justify-between border-b border-gray-50 pb-4 pt-2">
-                 <span className="text-[#222222] font-medium">Age minimum pour louer</span>
-                 <div className="relative w-24">
-                   <select 
-                     value={minAge} 
-                     onChange={(e) => setMinAge(e.target.value)} 
-                     className="w-full p-2 border border-gray-300 rounded-lg appearance-none bg-white text-center font-medium focus:outline-none focus:border-black"
-                   >
-                     {[18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30].map(age => (
-                       <option key={age} value={age}>{age} ans</option>
-                     ))}
-                   </select>
-                   <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                 </div>
-              </div>
-            </div>
-          </div>
-        )}
 
         {currentStep === 'reservation-mode' && (
           <div className="max-w-3xl mx-auto space-y-10">
@@ -2203,7 +2050,6 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
                        </div>
                        <div className="bg-white">
                           {[
-                            { label: "Permissions", step: 'permissions' },
                             { label: "Mode de réservation", step: 'reservation-mode' },
                             { label: "Tarification", step: 'pricing' },
                             { label: "Frais", step: 'fees' },

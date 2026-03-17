@@ -33,7 +33,7 @@ export function SummaryReview1Step() {
                   { label: "Type de réservation", step: 'reservation-type' as Step },
                   { label: "Saisir votre adresse", step: 'address-location' as Step },
                   { label: "Capacité d'accueil du chalet", step: 'capacity-details' as Step },
-                  { label: "Attentes des invités et sécurité", step: 'client-expectations' as Step },
+
                   { label: "Commodités", step: 'amenities' as Step },
                 ].map((item, idx) => (
                   <div key={idx} className="flex items-center justify-between p-4 border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors">
