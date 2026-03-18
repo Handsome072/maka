@@ -1,9 +1,10 @@
-import { Heart, Share, Star, ChevronRight, ChevronLeft } from 'lucide-react';
-import { useState, useEffect, useRef } from 'react';
+import { Heart, Share, Star, ChevronRight, ChevronLeft, ChevronDown, ChevronUp } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { ImageCarouselModal } from '../components/ImageCarouselModal';
-import { ListingDetail, reviewsApi, messagesApi } from '../services/api';
+import { ListingDetail, reviewsApi, messagesApi, reservationsApi, PriceBreakdown } from '../services/api';
 import { BED_TYPE_LABELS } from '../components/host-onboarding/constants';
 import { useAuth } from '../context/AuthContext';
+import { GuestsPicker } from '../components/GuestsPicker';
 
 // ─── Helper functions ────────────────────────────────────────────────────────
 
@@ -80,6 +81,54 @@ function formatPrice(price: string | number | null, _currency?: string): string 
 function formatRating(rating: number | null): string {
   if (!rating) return '0';
   return rating.toFixed(2).replace('.', ',');
+}
+
+const MONTH_NAMES_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+const MONTH_SHORT_FR = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+const DAY_NAMES_FR = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+
+function getDaysInMonth(year: number, month: number): (Date | null)[] {
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const daysInMonth = lastDay.getDate();
+  const startingDayOfWeek = (firstDay.getDay() + 6) % 7; // Monday = 0
+
+  const days: (Date | null)[] = [];
+  for (let i = 0; i < startingDayOfWeek; i++) days.push(null);
+  for (let i = 1; i <= daysInMonth; i++) days.push(new Date(year, month, i));
+  return days;
+}
+
+function isSameDay(a: Date | null, b: Date | null): boolean {
+  if (!a || !b) return false;
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+}
+
+function isInDateRange(day: Date, start: Date | null, end: Date | null): boolean {
+  if (!start || !end) return false;
+  return day.getTime() > start.getTime() && day.getTime() < end.getTime();
+}
+
+function formatDateShort(date: Date): string {
+  return `${date.getDate()} ${MONTH_SHORT_FR[date.getMonth()]} ${date.getFullYear()}`;
+}
+
+function formatDateInput(date: Date | null): string {
+  if (!date) return '';
+  const d = String(date.getDate()).padStart(2, '0');
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  return `${d}/${m}/${date.getFullYear()}`;
+}
+
+function nightsBetween(start: Date, end: Date): number {
+  return Math.max(0, Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)));
+}
+
+function formatDateApi(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
 }
 
 // ─── Amenity icon mapping ────────────────────────────────────────────────────
@@ -242,6 +291,20 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
   const [hostMessage, setHostMessage] = useState('');
   const [isSendingMessage, setIsSendingMessage] = useState(false);
   const [messageError, setMessageError] = useState<string | null>(null);
+
+  // Booking state
+  const [checkInDate, setCheckInDate] = useState<Date | null>(null);
+  const [checkOutDate, setCheckOutDate] = useState<Date | null>(null);
+  const [guests, setGuests] = useState({ adults: 1, children: 0, babies: 0, pets: 0 });
+  const [showGuestsPicker, setShowGuestsPicker] = useState(false);
+  const [calendarMonth, setCalendarMonth] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  });
+  const [priceBreakdown, setPriceBreakdown] = useState<PriceBreakdown | null>(null);
+  const [priceLoading, setPriceLoading] = useState(false);
+  const guestsPickerRef = useRef<HTMLDivElement>(null);
+
   const sleepScrollRef = useRef<HTMLDivElement>(null);
   const [canScrollSleepLeft, setCanScrollSleepLeft] = useState(false);
   const [canScrollSleepRight, setCanScrollSleepRight] = useState(false);
@@ -278,6 +341,125 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
       behavior: 'smooth',
     });
   };
+
+  // ─── Calendar date picking ─────────────────────────────────────────────────
+  const handleDateClick = useCallback((day: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (day < today) return;
+
+    if (!checkInDate || (checkInDate && checkOutDate)) {
+      setCheckInDate(day);
+      setCheckOutDate(null);
+      setPriceBreakdown(null);
+    } else if (checkInDate && !checkOutDate) {
+      if (day <= checkInDate) {
+        setCheckInDate(day);
+        setCheckOutDate(null);
+        setPriceBreakdown(null);
+      } else {
+        setCheckOutDate(day);
+      }
+    }
+  }, [checkInDate, checkOutDate]);
+
+  const clearDates = useCallback(() => {
+    setCheckInDate(null);
+    setCheckOutDate(null);
+    setPriceBreakdown(null);
+  }, []);
+
+  const nights = checkInDate && checkOutDate ? nightsBetween(checkInDate, checkOutDate) : 0;
+  const totalVoyageurs = guests.adults + guests.children;
+  const voyageursLabel = `${totalVoyageurs} voyageur${totalVoyageurs > 1 ? 's' : ''}`;
+
+  // Fetch price when dates & guests change
+  useEffect(() => {
+    if (!checkInDate || !checkOutDate) {
+      setPriceBreakdown(null);
+      return;
+    }
+    setPriceLoading(true);
+    reservationsApi.calculatePrice({
+      listing_id: listing.id,
+      check_in: formatDateApi(checkInDate),
+      check_out: formatDateApi(checkOutDate),
+      adults: guests.adults,
+      children: guests.children,
+      pets: guests.pets,
+    })
+      .then(setPriceBreakdown)
+      .catch(() => setPriceBreakdown(null))
+      .finally(() => setPriceLoading(false));
+  }, [checkInDate, checkOutDate, guests.adults, guests.children, guests.pets, listing.id]);
+
+  // Close guests picker on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (guestsPickerRef.current && !guestsPickerRef.current.contains(e.target as Node)) {
+        setShowGuestsPicker(false);
+      }
+    };
+    if (showGuestsPicker) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showGuestsPicker]);
+
+  // ─── Calendar render helper ───────────────────────────────────────────────
+  const renderMonth = useCallback((year: number, month: number) => {
+    const days = getDaysInMonth(year, month);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return (
+      <div>
+        <div className="grid grid-cols-7 gap-2 mb-2">
+          {DAY_NAMES_FR.map((day, i) => (
+            <div key={i} className="text-center text-xs text-gray-600 py-2" style={{ fontWeight: 600 }}>
+              {day}
+            </div>
+          ))}
+        </div>
+        <div className="grid grid-cols-7 gap-0">
+          {days.map((day, i) => {
+            if (!day) return <div key={i} className="aspect-square" />;
+
+            const isPast = day < today;
+            const isStart = isSameDay(day, checkInDate);
+            const isEnd = isSameDay(day, checkOutDate);
+            const inRange = isInDateRange(day, checkInDate, checkOutDate);
+            const isSelected = isStart || isEnd;
+
+            return (
+              <div
+                key={i}
+                className="aspect-square flex items-center justify-center relative"
+                style={{
+                  backgroundColor: inRange ? '#f0f0f0' : 'transparent',
+                }}
+              >
+                <button
+                  onClick={() => !isPast && handleDateClick(day)}
+                  disabled={isPast}
+                  className={`w-10 h-10 flex items-center justify-center text-sm rounded-full transition-colors ${
+                    isSelected
+                      ? 'bg-gray-900 text-white'
+                      : isPast
+                        ? 'text-gray-300 cursor-not-allowed'
+                        : 'hover:bg-gray-100 cursor-pointer'
+                  }`}
+                  style={{ fontWeight: isSelected ? 600 : 400 }}
+                >
+                  {day.getDate()}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }, [checkInDate, checkOutDate, handleDateClick]);
 
   // Derive data from listing
   const images = listing.photos?.map(p => p.url) || [];
@@ -345,15 +527,28 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
   };
 
   const bookingData = {
+    listingId: listing.id,
     title: subtitle,
     image: images[0],
     rating: reviewsSummary.average_rating,
     location: reviewsSummary.is_guest_favorite ? "Coup de cœur voyageurs" : location,
-    checkIn: "3-4",
-    checkOut: "avr. 2026",
-    guests: 1,
-    nights: 2,
-    pricePerNight: basePrice,
+    checkIn: checkInDate ? formatDateApi(checkInDate) : '',
+    checkOut: checkOutDate ? formatDateApi(checkOutDate) : '',
+    checkInDisplay: checkInDate ? formatDateShort(checkInDate) : '',
+    checkOutDisplay: checkOutDate ? formatDateShort(checkOutDate) : '',
+    adults: guests.adults,
+    children: guests.children,
+    infants: guests.babies,
+    pets: guests.pets,
+    guests: totalVoyageurs,
+    nights,
+    pricePerNight: priceBreakdown?.price_per_night ?? basePrice,
+    priceBreakdown,
+    currency,
+    hostName: host?.first_name || '',
+    hostPhoto: listing.host_photo_url || host?.profile_photo_url || '',
+    hostSince: host?.member_since || '',
+    cancellationPolicy,
   };
 
   return (
@@ -659,77 +854,49 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
               </div>
 
               {/* Calendar Section */}
-              <div className="py-8 border-t border-gray-200">
-                <h3 className="text-xl mb-2" style={{ fontWeight: 600 }}>2 nuits à {listing.city || 'destination'}</h3>
-                <p className="text-sm text-gray-600 mb-6">3 avr. 2026 - 5 avr. 2026</p>
+              <div id="booking-calendar" className="py-8 border-t border-gray-200">
+                <h3 className="text-xl mb-2" style={{ fontWeight: 600 }}>
+                  {nights > 0 ? `${nights} nuit${nights > 1 ? 's' : ''} à ${listing.city || 'destination'}` : `Sélectionnez vos dates`}
+                </h3>
+                <p className="text-sm text-gray-600 mb-6">
+                  {checkInDate && checkOutDate
+                    ? `${formatDateShort(checkInDate)} - ${formatDateShort(checkOutDate)}`
+                    : 'Ajoutez vos dates de voyage pour obtenir le prix exact'}
+                </p>
 
                 <div className="border border-gray-200 rounded-xl p-6">
                   <div className="flex items-center justify-between mb-6">
-                    <button className="p-2 hover:bg-gray-100 rounded-full">
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                      </svg>
+                    <button
+                      onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1))}
+                      className="p-2 hover:bg-gray-100 rounded-full"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
                     </button>
                     <div className="flex gap-12">
-                      <h4 className="text-base" style={{ fontWeight: 600 }}>Avril 2026</h4>
-                      <h4 className="text-base" style={{ fontWeight: 600 }}>Mai 2026</h4>
+                      <h4 className="text-base" style={{ fontWeight: 600 }}>
+                        {MONTH_NAMES_FR[calendarMonth.getMonth()]} {calendarMonth.getFullYear()}
+                      </h4>
+                      <h4 className="text-base" style={{ fontWeight: 600 }}>
+                        {MONTH_NAMES_FR[(calendarMonth.getMonth() + 1) % 12]} {calendarMonth.getMonth() === 11 ? calendarMonth.getFullYear() + 1 : calendarMonth.getFullYear()}
+                      </h4>
                     </div>
-                    <button className="p-2 hover:bg-gray-100 rounded-full">
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
+                    <button
+                      onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1))}
+                      className="p-2 hover:bg-gray-100 rounded-full"
+                    >
+                      <ChevronRight className="w-5 h-5" />
                     </button>
                   </div>
 
                   <div className="grid grid-cols-2 gap-12">
-                    {/* April Calendar */}
                     <div>
-                      <div className="grid grid-cols-7 gap-2 mb-2">
-                        {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((day, i) => (
-                          <div key={i} className="text-center text-xs text-gray-600 py-2" style={{ fontWeight: 600 }}>
-                            {day}
-                          </div>
-                        ))}
-                      </div>
-                      <div className="grid grid-cols-7 gap-2">
-                        {[null, null, null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30].map((day, i) => (
-                          <div
-                            key={i}
-                            className={`aspect-square flex items-center justify-center text-sm ${day === 3 || day === 5
-                              ? 'bg-gray-900 text-white rounded-full'
-                              : day === 4
-                                ? 'bg-gray-200'
-                                : day
-                                  ? 'hover:bg-gray-100 rounded-full cursor-pointer'
-                                  : ''
-                              }`}
-                          >
-                            {day || ''}
-                          </div>
-                        ))}
-                      </div>
+                      {renderMonth(calendarMonth.getFullYear(), calendarMonth.getMonth())}
                     </div>
-
-                    {/* May Calendar */}
                     <div>
-                      <div className="grid grid-cols-7 gap-2 mb-2">
-                        {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((day, i) => (
-                          <div key={i} className="text-center text-xs text-gray-600 py-2" style={{ fontWeight: 600 }}>
-                            {day}
-                          </div>
-                        ))}
-                      </div>
-                      <div className="grid grid-cols-7 gap-2">
-                        {[null, null, null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31].map((day, i) => (
-                          <div
-                            key={i}
-                            className={`aspect-square flex items-center justify-center text-sm ${day ? 'hover:bg-gray-100 rounded-full cursor-pointer' : ''
-                              }`}
-                          >
-                            {day || ''}
-                          </div>
-                        ))}
-                      </div>
+                      {renderMonth(
+                        calendarMonth.getMonth() === 11 ? calendarMonth.getFullYear() + 1 : calendarMonth.getFullYear(),
+                        (calendarMonth.getMonth() + 1) % 12
+                      )}
                     </div>
                   </div>
 
@@ -737,7 +904,7 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    <button className="text-sm underline" style={{ fontWeight: 600 }}>
+                    <button onClick={clearDates} className="text-sm underline" style={{ fontWeight: 600 }}>
                       Effacer les dates
                     </button>
                   </div>
@@ -751,8 +918,17 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
                 <div className="border border-gray-200 rounded-2xl p-6 shadow-xl">
                   {/* Price */}
                   <div className="flex items-baseline gap-1 mb-4">
-                    <span className="text-2xl" style={{ fontWeight: 600 }}>{formatPrice(basePrice * 2, currency)}</span>
-                    <span className="text-base text-gray-600">pour 2 nuits</span>
+                    {priceBreakdown ? (
+                      <>
+                        <span className="text-2xl" style={{ fontWeight: 600 }}>{formatPrice(priceBreakdown.total, currency)}</span>
+                        <span className="text-base text-gray-600">pour {nights} nuit{nights > 1 ? 's' : ''}</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-2xl" style={{ fontWeight: 600 }}>{formatPrice(basePrice, currency)}</span>
+                        <span className="text-base text-gray-600">/ nuit</span>
+                      </>
+                    )}
                   </div>
 
                   {/* Rare badge */}
@@ -774,39 +950,92 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
                   {/* Date inputs */}
                   <div className="border border-gray-300 rounded-lg mb-4">
                     <div className="grid grid-cols-2 divide-x divide-gray-300">
-                      <div className="p-3">
+                      <div className="p-3 cursor-pointer hover:bg-gray-50" onClick={() => {
+                        const calSection = document.getElementById('booking-calendar');
+                        calSection?.scrollIntoView({ behavior: 'smooth' });
+                      }}>
                         <label className="text-xs block mb-1" style={{ fontWeight: 600 }}>ARRIVÉE</label>
-                        <input type="text" value="03/04/2026" readOnly className="text-sm w-full outline-none" />
+                        <span className="text-sm">{checkInDate ? formatDateInput(checkInDate) : 'Ajouter'}</span>
                       </div>
-                      <div className="p-3">
+                      <div className="p-3 cursor-pointer hover:bg-gray-50" onClick={() => {
+                        const calSection = document.getElementById('booking-calendar');
+                        calSection?.scrollIntoView({ behavior: 'smooth' });
+                      }}>
                         <label className="text-xs block mb-1" style={{ fontWeight: 600 }}>DÉPART</label>
-                        <input type="text" value="05/04/2026" readOnly className="text-sm w-full outline-none" />
+                        <span className="text-sm">{checkOutDate ? formatDateInput(checkOutDate) : 'Ajouter'}</span>
                       </div>
                     </div>
-                    <div className="border-t border-gray-300 p-3">
+                    <div className="border-t border-gray-300 p-3 relative" ref={guestsPickerRef}>
                       <label className="text-xs block mb-1" style={{ fontWeight: 600 }}>VOYAGEURS</label>
-                      <button className="text-sm w-full text-left flex items-center justify-between">
-                        <span>1 voyageur</span>
-                        <ChevronRight className="w-4 h-4" />
+                      <button
+                        onClick={() => setShowGuestsPicker(!showGuestsPicker)}
+                        className="text-sm w-full text-left flex items-center justify-between"
+                      >
+                        <span>{voyageursLabel}</span>
+                        {showGuestsPicker ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                       </button>
+                      {showGuestsPicker && (
+                        <GuestsPicker
+                          onClose={() => setShowGuestsPicker(false)}
+                          onGuestsChange={setGuests}
+                          currentGuests={guests}
+                          maxCapacity={capacity}
+                          showCapacityInfo
+                        />
+                      )}
                     </div>
                   </div>
 
                   {/* Reserve button */}
                   <button
-                    onClick={() => onBook?.(bookingData)}
+                    onClick={() => {
+                      if (!checkInDate || !checkOutDate) {
+                        const calSection = document.getElementById('booking-calendar');
+                        calSection?.scrollIntoView({ behavior: 'smooth' });
+                        return;
+                      }
+                      onBook?.(bookingData);
+                    }}
+                    disabled={priceLoading}
                     className="w-full py-3 rounded-full text-white text-base mb-4 transition-colors hover:opacity-90"
                     style={{
                       fontWeight: 600,
-                      backgroundColor: '#000000'
+                      backgroundColor: '#000000',
+                      opacity: priceLoading ? 0.7 : 1,
                     }}
                   >
-                    Réserver
+                    {!checkInDate || !checkOutDate ? 'Vérifier la disponibilité' : 'Réserver'}
                   </button>
 
                   <p className="text-center text-sm text-gray-600 mb-4">
                     Aucun montant ne vous sera débité pour le moment
                   </p>
+
+                  {/* Price breakdown */}
+                  {priceBreakdown && nights > 0 && (
+                    <div className="pt-4 border-t border-gray-200 space-y-3 mb-4">
+                      <div className="flex justify-between text-sm">
+                        <span className="underline">{formatPrice(priceBreakdown.price_per_night, currency)} x {nights} nuit{nights > 1 ? 's' : ''}</span>
+                        <span>{formatPrice(priceBreakdown.base_total, currency)}</span>
+                      </div>
+                      {priceBreakdown.cleaning_fee > 0 && (
+                        <div className="flex justify-between text-sm">
+                          <span className="underline">Frais de ménage</span>
+                          <span>{formatPrice(priceBreakdown.cleaning_fee, currency)}</span>
+                        </div>
+                      )}
+                      {priceBreakdown.service_fee > 0 && (
+                        <div className="flex justify-between text-sm">
+                          <span className="underline">Frais de service HOMIQIO</span>
+                          <span>{formatPrice(priceBreakdown.service_fee, currency)}</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between text-base pt-3 border-t border-gray-200" style={{ fontWeight: 600 }}>
+                        <span>Total</span>
+                        <span>{formatPrice(priceBreakdown.total, currency)}</span>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Cancellation policy */}
                   {cancellationPolicy && (
@@ -1231,16 +1460,27 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 pb-6 z-40 md:hidden flex justify-between items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
         <div>
           <div className="flex items-baseline gap-1">
-            <span className="font-bold text-lg">{formatPrice(basePrice, currency)}</span>
+            <span className="font-bold text-lg">{formatPrice(priceBreakdown?.price_per_night ?? basePrice, currency)}</span>
             <span className="text-gray-600 text-sm"> / nuit</span>
           </div>
-          <div className="text-xs underline font-semibold mt-0.5">3-5 avr.</div>
+          {checkInDate && checkOutDate && (
+            <div className="text-xs underline font-semibold mt-0.5">
+              {checkInDate.getDate()}-{checkOutDate.getDate()} {MONTH_SHORT_FR[checkInDate.getMonth()]}
+            </div>
+          )}
         </div>
         <button
-          onClick={() => onBook?.(bookingData)}
+          onClick={() => {
+            if (!checkInDate || !checkOutDate) {
+              const calSection = document.getElementById('booking-calendar');
+              calSection?.scrollIntoView({ behavior: 'smooth' });
+              return;
+            }
+            onBook?.(bookingData);
+          }}
           className="bg-black text-white px-8 py-3 rounded-lg font-semibold text-base hover:opacity-90 transition-opacity"
         >
-          Réserver
+          {!checkInDate || !checkOutDate ? 'Dates' : 'Réserver'}
         </button>
       </div>
       {/* Message Host Modal */}

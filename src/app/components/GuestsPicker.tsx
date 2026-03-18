@@ -4,13 +4,19 @@ interface GuestsPickerProps {
   onClose: () => void;
   onGuestsChange?: (guests: { adults: number; children: number; babies: number; pets: number }) => void;
   currentGuests?: { adults: number; children: number; babies: number; pets: number };
+  maxCapacity?: number;
+  showCapacityInfo?: boolean;
+  showPets?: boolean;
 }
 
-export function GuestsPicker({ onClose, onGuestsChange, currentGuests }: GuestsPickerProps) {
-  const adults = currentGuests?.adults ?? 0;
+export function GuestsPicker({ onClose, onGuestsChange, currentGuests, maxCapacity, showCapacityInfo }: GuestsPickerProps) {
+  const adults = currentGuests?.adults ?? 1;
   const children = currentGuests?.children ?? 0;
   const babies = currentGuests?.babies ?? 0;
   const pets = currentGuests?.pets ?? 0;
+
+  const totalGuests = adults + children;
+  const maxReached = maxCapacity ? totalGuests >= maxCapacity : false;
 
   const updateCount = (
     current: number,
@@ -19,8 +25,7 @@ export function GuestsPicker({ onClose, onGuestsChange, currentGuests }: GuestsP
     key: 'adults' | 'children' | 'babies' | 'pets'
   ) => {
     const newValue = Math.max(min, current + delta);
-    
-    // Notify parent component
+
     if (onGuestsChange && currentGuests) {
       const updatedGuests = {
         ...currentGuests,
@@ -31,10 +36,10 @@ export function GuestsPicker({ onClose, onGuestsChange, currentGuests }: GuestsP
   };
 
   return (
-    <div 
+    <div
       className="absolute top-full right-0 mt-2 bg-white z-50"
-      style={{ 
-        borderRadius: '24px', 
+      style={{
+        borderRadius: '24px',
         boxShadow: '0 6px 20px rgba(0, 0, 0, 0.2)',
         width: '400px'
       }}
@@ -47,15 +52,15 @@ export function GuestsPicker({ onClose, onGuestsChange, currentGuests }: GuestsP
               Adultes
             </div>
             <div className="text-[14px]" style={{ color: '#717171' }}>
-              13 ans et plus
+              18 ans et plus
             </div>
           </div>
           <div className="flex items-center gap-4">
             <button
-              onClick={() => updateCount(adults, -1, 0, 'adults')}
-              disabled={adults <= 0}
+              onClick={() => updateCount(adults, -1, 1, 'adults')}
+              disabled={adults <= 1}
               className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all ${
-                adults <= 0
+                adults <= 1
                   ? 'border-gray-200 cursor-not-allowed opacity-40'
                   : 'border-gray-400 hover:border-gray-900'
               }`}
@@ -66,8 +71,13 @@ export function GuestsPicker({ onClose, onGuestsChange, currentGuests }: GuestsP
               {adults}
             </span>
             <button
-              onClick={() => updateCount(adults, 1, 0, 'adults')}
-              className="w-8 h-8 rounded-full border border-gray-400 hover:border-gray-900 flex items-center justify-center transition-all"
+              onClick={() => updateCount(adults, 1, 1, 'adults')}
+              disabled={maxReached}
+              className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all ${
+                maxReached
+                  ? 'border-gray-200 cursor-not-allowed opacity-40'
+                  : 'border-gray-400 hover:border-gray-900'
+              }`}
             >
               <Plus className="w-4 h-4" style={{ color: '#717171' }} strokeWidth={2} />
             </button>
@@ -81,7 +91,7 @@ export function GuestsPicker({ onClose, onGuestsChange, currentGuests }: GuestsP
               Enfants
             </div>
             <div className="text-[14px]" style={{ color: '#717171' }}>
-              De 2 à 12 ans
+              De 2 à 17 ans
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -101,7 +111,12 @@ export function GuestsPicker({ onClose, onGuestsChange, currentGuests }: GuestsP
             </span>
             <button
               onClick={() => updateCount(children, 1, 0, 'children')}
-              className="w-8 h-8 rounded-full border border-gray-400 hover:border-gray-900 flex items-center justify-center transition-all"
+              disabled={maxReached}
+              className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all ${
+                maxReached
+                  ? 'border-gray-200 cursor-not-allowed opacity-40'
+                  : 'border-gray-400 hover:border-gray-900'
+              }`}
             >
               <Plus className="w-4 h-4" style={{ color: '#717171' }} strokeWidth={2} />
             </button>
@@ -142,14 +157,14 @@ export function GuestsPicker({ onClose, onGuestsChange, currentGuests }: GuestsP
           </div>
         </div>
 
-        {/* Animaux domestiques */}
+        {/* Animaux de compagnie */}
         <div className="flex items-center justify-between pt-6">
           <div className="flex-1 pr-4">
             <div className="text-[16px] mb-1" style={{ fontWeight: 600, color: '#222222' }}>
-              Animaux domestiques
+              Animaux de compagnie
             </div>
             <div className="text-[14px] underline" style={{ color: '#717171' }}>
-              Vous voyagez avec un animal d'assistance ?
+              Vous voyagez avec un animal d&apos;assistance ?
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -174,6 +189,24 @@ export function GuestsPicker({ onClose, onGuestsChange, currentGuests }: GuestsP
               <Plus className="w-4 h-4" style={{ color: '#717171' }} strokeWidth={2} />
             </button>
           </div>
+        </div>
+
+        {/* Capacity info */}
+        {showCapacityInfo && maxCapacity && (
+          <p className="text-[14px] mt-6 leading-relaxed" style={{ color: '#717171' }}>
+            La capacité d&apos;accueil de ce logement est limitée à {maxCapacity} voyageur{maxCapacity > 1 ? 's' : ''}, sans compter les bébés. Si plus de deux animaux de compagnie vous accompagnent, veuillez en informer votre hôte.
+          </p>
+        )}
+
+        {/* Fermer button */}
+        <div className="flex justify-end mt-4">
+          <button
+            onClick={onClose}
+            className="text-[16px] underline"
+            style={{ fontWeight: 600, color: '#222222' }}
+          >
+            Fermer
+          </button>
         </div>
       </div>
     </div>

@@ -22,7 +22,12 @@ export default function BookingPage() {
 
   // Handle back navigation
   const handleBack = () => {
-    router.push('/property/1');
+    const listingId = bookingData?.listingId;
+    if (listingId) {
+      router.push(`/property/${listingId}`);
+    } else {
+      router.back();
+    }
   };
 
   if (!bookingData) {

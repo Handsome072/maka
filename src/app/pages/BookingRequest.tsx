@@ -1,18 +1,32 @@
 import { useState } from 'react';
 import { ArrowLeft, Star } from 'lucide-react';
+import { reservationsApi, PriceBreakdown } from '../services/api';
 
 interface BookingRequestProps {
   onBack: () => void;
   bookingData?: {
+    listingId: number;
     title: string;
     image: string;
     rating: number;
     location: string;
     checkIn: string;
     checkOut: string;
+    checkInDisplay: string;
+    checkOutDisplay: string;
+    adults: number;
+    children: number;
+    infants: number;
+    pets: number;
     guests: number;
     nights: number;
     pricePerNight: number;
+    priceBreakdown: PriceBreakdown | null;
+    currency: string;
+    hostName: string;
+    hostPhoto: string;
+    hostSince: string;
+    cancellationPolicy: string | null;
   };
 }
 
@@ -22,23 +36,64 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
   const [message, setMessage] = useState('');
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [editingStep, setEditingStep] = useState<number | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [reservationError, setReservationError] = useState<string | null>(null);
+  const [reservationSuccess, setReservationSuccess] = useState(false);
 
-  // Default data si aucune donnée n'est passée
   const data = bookingData || {
-    title: "Superbe studio de 15m² au calme tout confort",
-    image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-    rating: 4.96,
-    location: "Coup de cœur voyageurs",
-    checkIn: "3-4",
-    checkOut: "avr. 2026",
+    listingId: 0,
+    title: "Logement",
+    image: "",
+    rating: 0,
+    location: "",
+    checkIn: "",
+    checkOut: "",
+    checkInDisplay: "",
+    checkOutDisplay: "",
+    adults: 1,
+    children: 0,
+    infants: 0,
+    pets: 0,
     guests: 1,
-    nights: 2,
-    pricePerNight: 87.56
+    nights: 0,
+    pricePerNight: 0,
+    priceBreakdown: null,
+    currency: 'CAD',
+    hostName: '',
+    hostPhoto: '',
+    hostSince: '',
+    cancellationPolicy: null,
   };
 
-  const subtotal = data.nights * data.pricePerNight;
-  const taxes = 18.99;
-  const total = subtotal + taxes;
+  const pb = data.priceBreakdown;
+  const subtotal = pb ? pb.base_total : data.nights * data.pricePerNight;
+  const cleaningFee = pb?.cleaning_fee ?? 0;
+  const serviceFee = pb?.service_fee ?? 0;
+  const total = pb ? pb.total : subtotal + cleaningFee + serviceFee;
+
+  const handleSubmitReservation = async () => {
+    if (!data.listingId || !data.checkIn || !data.checkOut) return;
+    setIsSubmitting(true);
+    setReservationError(null);
+    try {
+      await reservationsApi.create({
+        listing_id: data.listingId,
+        check_in: data.checkIn,
+        check_out: data.checkOut,
+        adults: data.adults,
+        children: data.children,
+        infants: data.infants,
+        pets: data.pets,
+        guest_message: message || undefined,
+      });
+      setReservationSuccess(true);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Erreur lors de la réservation';
+      setReservationError(msg);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const isStepCompleted = (step: number) => completedSteps.includes(step);
   const isStepEditable = (step: number) => {
@@ -346,25 +401,31 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
               {isStepEditing(3) && (
                 <div className="rounded-2xl">
                   <p className="text-sm text-gray-700 mb-4">
-                    Avant de continuer, dites-lui un peu plus à Jeremy sur votre voyage et expliquez-lui pourquoi son logement est une bonne option.
+                    Avant de continuer, dites-lui un peu plus à {data.hostName || "l'hôte"} sur votre voyage et expliquez-lui pourquoi son logement est une bonne option.
                   </p>
 
-                  <div className="flex items-start gap-3 mb-4">
-                    <img
-                      src="https://images.unsplash.com/photo-1664482017668-91158897414c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=100"
-                      alt="Jérémy"
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
-                    <div>
-                      <p className="text-base" style={{ fontWeight: 600 }}>Jérémy</p>
-                      <p className="text-sm text-gray-600">Hôte depuis 2025</p>
+                  {data.hostName && (
+                    <div className="flex items-start gap-3 mb-4">
+                      {data.hostPhoto ? (
+                        <img src={data.hostPhoto} alt={data.hostName} className="w-10 h-10 rounded-full object-cover" />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-white text-lg" style={{ fontWeight: 600 }}>
+                          {data.hostName.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-base" style={{ fontWeight: 600 }}>{data.hostName}</p>
+                        {data.hostSince && (
+                          <p className="text-sm text-gray-600">Hôte depuis {new Date(data.hostSince).getFullYear()}</p>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   <textarea
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Par exemple: « Bonjour Jérémy, mon partenaire et moi allons au mariage d'un ami et votre logement est tout proche. »"
+                    placeholder={`Par exemple: « Bonjour ${data.hostName || ''}, mon partenaire et moi allons au mariage d'un ami et votre logement est tout proche. »`}
                     className="w-full min-h-[120px] px-4 py-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-gray-900 text-base"
                   />
 
@@ -427,9 +488,26 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
                   )}
 
                   {paymentMethod === 'card' && (
-                    <button className="w-full bg-[#000000] text-white rounded-lg py-4 flex items-center justify-center gap-2 hover:bg-[#222222] transition-colors text-base" style={{ fontWeight: 600 }}>
-                      Confirmer et payer
+                    <button
+                      onClick={handleSubmitReservation}
+                      disabled={isSubmitting}
+                      className="w-full bg-[#000000] text-white rounded-lg py-4 flex items-center justify-center gap-2 hover:bg-[#222222] transition-colors text-base"
+                      style={{ fontWeight: 600, opacity: isSubmitting ? 0.7 : 1 }}
+                    >
+                      {isSubmitting ? 'Réservation en cours...' : 'Confirmer et payer'}
                     </button>
+                  )}
+
+                  {reservationError && (
+                    <p className="text-sm text-red-600 mt-3">{reservationError}</p>
+                  )}
+
+                  {reservationSuccess && (
+                    <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                      <p className="text-sm text-green-800" style={{ fontWeight: 600 }}>
+                        Votre demande de réservation a été envoyée avec succès ! L&apos;hôte a 24 heures pour confirmer.
+                      </p>
+                    </div>
                   )}
                 </div>
               )}
@@ -464,7 +542,10 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
                   Annulation gratuite
                 </h4>
                 <p className="text-sm text-gray-700">
-                  Annulez avant le 2 avril pour recevoir un remboursement intégral.{' '}
+                  {data.checkIn
+                    ? `Annulez avant le ${new Date(new Date(data.checkIn).getTime() - 86400000).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} pour recevoir un remboursement intégral.`
+                    : 'Obtenez un remboursement intégral si vous changez d\'avis.'
+                  }{' '}
                   <button className="underline" style={{ fontWeight: 600 }}>
                     Consulter les conditions complètes
                   </button>
@@ -475,9 +556,13 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h4 className="text-base" style={{ fontWeight: 600 }}>Dates</h4>
-                  <p className="text-sm text-gray-700">{data.checkIn}-{data.checkOut}</p>
+                  <p className="text-sm text-gray-700">
+                    {data.checkInDisplay && data.checkOutDisplay
+                      ? `${data.checkInDisplay} - ${data.checkOutDisplay}`
+                      : `${data.checkIn} - ${data.checkOut}`}
+                  </p>
                 </div>
-                <button className="text-base underline" style={{ fontWeight: 600 }}>
+                <button onClick={onBack} className="text-base underline" style={{ fontWeight: 600 }}>
                   Modifier
                 </button>
               </div>
@@ -486,9 +571,13 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
               <div className="flex items-center justify-between mb-6 pb-6 border-b border-gray-200">
                 <div>
                   <h4 className="text-base" style={{ fontWeight: 600 }}>Voyageurs</h4>
-                  <p className="text-sm text-gray-700">{data.guests} adulte</p>
+                  <p className="text-sm text-gray-700">
+                    {data.adults} adulte{data.adults > 1 ? 's' : ''}
+                    {data.children > 0 ? `, ${data.children} enfant${data.children > 1 ? 's' : ''}` : ''}
+                    {data.infants > 0 ? `, ${data.infants} bébé${data.infants > 1 ? 's' : ''}` : ''}
+                  </p>
                 </div>
-                <button className="text-base underline" style={{ fontWeight: 600 }}>
+                <button onClick={onBack} className="text-base underline" style={{ fontWeight: 600 }}>
                   Modifier
                 </button>
               </div>
@@ -499,23 +588,28 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
               </h4>
               <div className="space-y-3 mb-6 pb-6 border-b border-gray-200">
                 <div className="flex items-center justify-between text-base">
-                  <span className="underline">{data.nights} nuits x {data.pricePerNight.toFixed(2)} C$</span>
+                  <span className="underline">{data.nights} nuit{data.nights > 1 ? 's' : ''} x {Number(data.pricePerNight).toFixed(2)} C$</span>
                   <span>{subtotal.toFixed(2)} C$</span>
                 </div>
-                <div className="flex items-center justify-between text-base">
-                  <span className="underline">Taxes</span>
-                  <span>{taxes.toFixed(2)} C$</span>
-                </div>
+                {cleaningFee > 0 && (
+                  <div className="flex items-center justify-between text-base">
+                    <span className="underline">Frais de ménage</span>
+                    <span>{cleaningFee.toFixed(2)} C$</span>
+                  </div>
+                )}
+                {serviceFee > 0 && (
+                  <div className="flex items-center justify-between text-base">
+                    <span className="underline">Frais de service</span>
+                    <span>{serviceFee.toFixed(2)} C$</span>
+                  </div>
+                )}
               </div>
 
               {/* Total */}
               <div className="flex items-center justify-between mb-2">
-                <span className="text-base" style={{ fontWeight: 600 }}>Total CAD</span>
+                <span className="text-base" style={{ fontWeight: 600 }}>Total {data.currency || 'CAD'}</span>
                 <span className="text-base" style={{ fontWeight: 600 }}>{total.toFixed(2)} C$</span>
               </div>
-              <button className="text-sm underline mb-6" style={{ fontWeight: 600 }}>
-                Détail du prix
-              </button>
 
               {/* Warning */}
               <div className="flex items-start gap-3 p-4 bg-green-50 rounded-lg border border-green-200">

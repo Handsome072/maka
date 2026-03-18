@@ -1567,3 +1567,92 @@ export interface AdminSendMessageResponse {
   data: AdminChatMessage;
   conversation_id: number;
 }
+
+// ─── Reservations API ─────────────────────────────────────────────────────────
+
+export interface PriceBreakdown {
+  nights: number;
+  price_per_night: number;
+  base_total: number;
+  cleaning_fee: number;
+  extra_guest_fee: number;
+  pet_fee: number;
+  service_fee: number;
+  total: number;
+  currency: string;
+}
+
+export interface ReservationData {
+  id: number;
+  guest_id: number;
+  listing_id: number;
+  check_in: string;
+  check_out: string;
+  adults: number;
+  children: number;
+  infants: number;
+  pets: number;
+  guests_count: number;
+  nights_count: number;
+  price_per_night: string;
+  cleaning_fee: string | null;
+  service_fee: string | null;
+  total_price: string;
+  currency: string;
+  status: string;
+  guest_message: string | null;
+  listing?: Listing;
+  created_at: string;
+  updated_at: string;
+}
+
+export const reservationsApi = {
+  calculatePrice: async (data: {
+    listing_id: number;
+    check_in: string;
+    check_out: string;
+    adults?: number;
+    children?: number;
+    pets?: number;
+  }): Promise<PriceBreakdown> => {
+    return apiFetch<PriceBreakdown>('/reservations/calculate-price', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  checkAvailability: async (data: {
+    listing_id: number;
+    check_in: string;
+    check_out: string;
+  }): Promise<{ available: boolean; conflicting_dates: string[] }> => {
+    return apiFetch<{ available: boolean; conflicting_dates: string[] }>('/reservations/check-availability', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  create: async (data: {
+    listing_id: number;
+    check_in: string;
+    check_out: string;
+    adults?: number;
+    children?: number;
+    infants?: number;
+    pets?: number;
+    guest_message?: string;
+  }): Promise<{ message: string; reservation: ReservationData }> => {
+    return apiFetch<{ message: string; reservation: ReservationData }>('/reservations', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  getMyReservations: async (): Promise<{ reservations: ReservationData[] }> => {
+    return apiFetch<{ reservations: ReservationData[] }>('/reservations');
+  },
+
+  getOne: async (id: number): Promise<{ reservation: ReservationData }> => {
+    return apiFetch<{ reservation: ReservationData }>(`/reservations/${id}`);
+  },
+};
