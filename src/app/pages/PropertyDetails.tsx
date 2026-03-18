@@ -71,13 +71,10 @@ function buildMapEmbedUrl(city?: string | null, country?: string | null): string
   return `https://maps.google.com/maps?q=${query}&z=12&output=embed&hl=fr`;
 }
 
-function formatPrice(price: string | number | null, currency?: string): string {
-  if (!price) return '$0';
+function formatPrice(price: string | number | null, _currency?: string): string {
+  if (!price) return '0 C$';
   const num = typeof price === 'string' ? parseFloat(price) : price;
-  const c = (currency || '').toUpperCase();
-  if (c.startsWith('EUR')) return `${num.toFixed(0)} €`;
-  if (c.startsWith('USD')) return `$${num.toFixed(0)} US`;
-  return `${num.toFixed(0)} $`;
+  return `${num.toFixed(0)} C$`;
 }
 
 function formatRating(rating: number | null): string {

@@ -83,133 +83,133 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
 
   // Annonces consultees recemment
   const recentlyViewedProperties = [
-    { id: '253', image: img[253], title: 'Chalet bois rond · Sainte-Adele', location: 'Emily Hote', date: '', price: '195 $ / nuit', rating: 4.95, badge: 'Coup de coeur' as const },
-    { id: '258', image: img[258], title: 'Chalet rustique · Saint-Sauveur', location: 'Pascal Hote', date: '', price: '295 $ / nuit', rating: 4.90, badge: 'Coup de coeur' as const },
-    { id: '263', image: img[263], title: 'Cabane dans les arbres · Tremblant', location: 'Lucas Hote', date: '', price: '189 $ / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
-    { id: '268', image: img[268], title: 'Chalet grand luxe · Charlevoix', location: 'Romeo Hote', date: '', price: '495 $ / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
-    { id: '257', image: img[257], title: 'Maison champetre · Ile d\'Orleans', location: 'Emily Hote', date: '', price: '220 $ / nuit', rating: 4.85, badge: undefined },
-    { id: '259', image: img[259], title: 'Chalet spa · Mont-Tremblant', location: 'Pascal Hote', date: '', price: '320 $ / nuit', rating: 4.88, badge: 'Nouveau' as const },
+    { id: '253', image: img[253], title: 'Chalet bois rond · Sainte-Adele', location: 'Emily Hote', date: '', price: '195 C$ / nuit', rating: 4.95, badge: 'Coup de coeur' as const },
+    { id: '258', image: img[258], title: 'Chalet rustique · Saint-Sauveur', location: 'Pascal Hote', date: '', price: '295 C$ / nuit', rating: 4.90, badge: 'Coup de coeur' as const },
+    { id: '263', image: img[263], title: 'Cabane dans les arbres · Tremblant', location: 'Lucas Hote', date: '', price: '189 C$ / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
+    { id: '268', image: img[268], title: 'Chalet grand luxe · Charlevoix', location: 'Romeo Hote', date: '', price: '495 C$ / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
+    { id: '257', image: img[257], title: 'Maison champetre · Ile d\'Orleans', location: 'Emily Hote', date: '', price: '220 C$ / nuit', rating: 4.85, badge: undefined },
+    { id: '259', image: img[259], title: 'Chalet spa · Mont-Tremblant', location: 'Pascal Hote', date: '', price: '320 C$ / nuit', rating: 4.88, badge: 'Nouveau' as const },
   ];
 
   // Chalets populaires · Laurentides (Emily 253, Pascal 258, Lucas 263, Romeo 268/270)
   const laurentidesProperties = [
-    { id: '253', image: img[253], title: 'Chalet bois rond · Sainte-Adele', location: 'Emily Hote', date: '', price: '195 $ / nuit', rating: 4.93, badge: 'Coup de coeur' as const },
-    { id: '258', image: img[258], title: 'Chalet rustique · Saint-Sauveur', location: 'Pascal Hote', date: '', price: '295 $ / nuit', rating: 4.92, badge: 'Coup de coeur' as const },
-    { id: '263', image: img[263], title: 'Cabane dans les arbres · Tremblant', location: 'Lucas Hote', date: '', price: '189 $ / nuit', rating: 4.96, badge: 'Populaire' as const },
-    { id: '270', image: img[270], title: 'Chalet alpin · Canmore', location: 'Romeo Hote', date: '', price: '310 $ / nuit', rating: 4.96, badge: 'Coup de coeur' as const },
-    { id: '255', image: img[255], title: 'Refuge forestier · Sutton', location: 'Emily Hote', date: '', price: '155 $ / nuit', rating: 4.90, badge: undefined },
-    { id: '259', image: img[259], title: 'Chalet spa · Mont-Tremblant', location: 'Pascal Hote', date: '', price: '320 $ / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
-    { id: '266', image: img[266], title: 'Chalet du Lac-Saint-Jean · Alma', location: 'Lucas Hote', date: '', price: '165 $ / nuit', rating: 4.92, badge: 'Nouveau' as const },
+    { id: '253', image: img[253], title: 'Chalet bois rond · Sainte-Adele', location: 'Emily Hote', date: '', price: '195 C$ / nuit', rating: 4.93, badge: 'Coup de coeur' as const },
+    { id: '258', image: img[258], title: 'Chalet rustique · Saint-Sauveur', location: 'Pascal Hote', date: '', price: '295 C$ / nuit', rating: 4.92, badge: 'Coup de coeur' as const },
+    { id: '263', image: img[263], title: 'Cabane dans les arbres · Tremblant', location: 'Lucas Hote', date: '', price: '189 C$ / nuit', rating: 4.96, badge: 'Populaire' as const },
+    { id: '270', image: img[270], title: 'Chalet alpin · Canmore', location: 'Romeo Hote', date: '', price: '310 C$ / nuit', rating: 4.96, badge: 'Coup de coeur' as const },
+    { id: '255', image: img[255], title: 'Refuge forestier · Sutton', location: 'Emily Hote', date: '', price: '155 C$ / nuit', rating: 4.90, badge: undefined },
+    { id: '259', image: img[259], title: 'Chalet spa · Mont-Tremblant', location: 'Pascal Hote', date: '', price: '320 C$ / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
+    { id: '266', image: img[266], title: 'Chalet du Lac-Saint-Jean · Alma', location: 'Lucas Hote', date: '', price: '165 C$ / nuit', rating: 4.92, badge: 'Nouveau' as const },
   ];
 
   // Chalets a la une · Charlevoix
   const charlevoixProperties = [
-    { id: '268', image: img[268], title: 'Chalet grand luxe · La Malbaie', location: 'Romeo Hote', date: '', price: '495 $ / nuit', rating: 4.95, badge: 'Populaire' as const },
-    { id: '254', image: img[254], title: 'Chalet vue fleuve · Baie-Saint-Paul', location: 'Emily Hote', date: '', price: '275 $ / nuit', rating: 4.88, badge: 'Nouveau' as const },
-    { id: '260', image: img[260], title: 'Chalet ski alpin · Whistler', location: 'Pascal Hote', date: '', price: '450 $ / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
-    { id: '264', image: img[264], title: 'Chalet de montagne · Banff', location: 'Lucas Hote', date: '', price: '380 $ / nuit', rating: 4.89, badge: undefined },
-    { id: '269', image: img[269], title: 'Cabane ocean · Tofino', location: 'Romeo Hote', date: '', price: '295 $ / nuit', rating: 4.92, badge: 'Populaire' as const },
-    { id: '256', image: img[256], title: 'Grand chalet ski · Stoneham', location: 'Emily Hote', date: '', price: '345 $ / nuit', rating: 4.77, badge: undefined },
-    { id: '261', image: img[261], title: 'Chalet familial · Chelsea', location: 'Pascal Hote', date: '', price: '215 $ / nuit', rating: 4.85, badge: 'Nouveau' as const },
+    { id: '268', image: img[268], title: 'Chalet grand luxe · La Malbaie', location: 'Romeo Hote', date: '', price: '495 C$ / nuit', rating: 4.95, badge: 'Populaire' as const },
+    { id: '254', image: img[254], title: 'Chalet vue fleuve · Baie-Saint-Paul', location: 'Emily Hote', date: '', price: '275 C$ / nuit', rating: 4.88, badge: 'Nouveau' as const },
+    { id: '260', image: img[260], title: 'Chalet ski alpin · Whistler', location: 'Pascal Hote', date: '', price: '450 C$ / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
+    { id: '264', image: img[264], title: 'Chalet de montagne · Banff', location: 'Lucas Hote', date: '', price: '380 C$ / nuit', rating: 4.89, badge: undefined },
+    { id: '269', image: img[269], title: 'Cabane ocean · Tofino', location: 'Romeo Hote', date: '', price: '295 C$ / nuit', rating: 4.92, badge: 'Populaire' as const },
+    { id: '256', image: img[256], title: 'Grand chalet ski · Stoneham', location: 'Emily Hote', date: '', price: '345 C$ / nuit', rating: 4.77, badge: undefined },
+    { id: '261', image: img[261], title: 'Chalet familial · Chelsea', location: 'Pascal Hote', date: '', price: '215 C$ / nuit', rating: 4.85, badge: 'Nouveau' as const },
   ];
 
   // Chalets disponibles · Cantons-de-l'Est
   const cantonsProperties = [
-    { id: '265', image: img[265], title: 'Refuge cotier · Tofino', location: 'Lucas Hote', date: '', price: '265 $ / nuit', rating: 4.90, badge: 'Nouveau' as const },
-    { id: '271', image: img[271], title: 'Maison champetre · Val-des-Monts', location: 'Romeo Hote', date: '', price: '185 $ / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
-    { id: '255', image: img[255], title: 'Refuge forestier · Sutton', location: 'Emily Hote', date: '', price: '155 $ / nuit', rating: 4.90, badge: 'Populaire' as const },
-    { id: '258', image: img[258], title: 'Chalet rustique · Saint-Sauveur', location: 'Pascal Hote', date: '', price: '295 $ / nuit', rating: 4.89, badge: undefined },
-    { id: '266', image: img[266], title: 'Chalet du lac · Alma', location: 'Lucas Hote', date: '', price: '165 $ / nuit', rating: 4.90, badge: 'Coup de coeur' as const },
-    { id: '272', image: img[272], title: 'Chalet de peche · Roberval', location: 'Romeo Hote', date: '', price: '175 $ / nuit', rating: 4.84, badge: undefined },
-    { id: '254', image: img[254], title: 'Chalet vue fleuve · Charlevoix', location: 'Emily Hote', date: '', price: '275 $ / nuit', rating: 5.0, badge: 'Nouveau' as const },
+    { id: '265', image: img[265], title: 'Refuge cotier · Tofino', location: 'Lucas Hote', date: '', price: '265 C$ / nuit', rating: 4.90, badge: 'Nouveau' as const },
+    { id: '271', image: img[271], title: 'Maison champetre · Val-des-Monts', location: 'Romeo Hote', date: '', price: '185 C$ / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
+    { id: '255', image: img[255], title: 'Refuge forestier · Sutton', location: 'Emily Hote', date: '', price: '155 C$ / nuit', rating: 4.90, badge: 'Populaire' as const },
+    { id: '258', image: img[258], title: 'Chalet rustique · Saint-Sauveur', location: 'Pascal Hote', date: '', price: '295 C$ / nuit', rating: 4.89, badge: undefined },
+    { id: '266', image: img[266], title: 'Chalet du lac · Alma', location: 'Lucas Hote', date: '', price: '165 C$ / nuit', rating: 4.90, badge: 'Coup de coeur' as const },
+    { id: '272', image: img[272], title: 'Chalet de peche · Roberval', location: 'Romeo Hote', date: '', price: '175 C$ / nuit', rating: 4.84, badge: undefined },
+    { id: '254', image: img[254], title: 'Chalet vue fleuve · Charlevoix', location: 'Emily Hote', date: '', price: '275 C$ / nuit', rating: 5.0, badge: 'Nouveau' as const },
   ];
 
   // Chalets · Muskoka
   const muskokaProperties = [
-    { id: '262', image: img[262], title: 'Chalet sur le lac · Bracebridge', location: 'Pascal Hote', date: '', price: '285 $ / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
-    { id: '263', image: img[263], title: 'Cabane dans les arbres · Tremblant', location: 'Lucas Hote', date: '', price: '189 $ / nuit', rating: 4.91, badge: 'Populaire' as const },
-    { id: '268', image: img[268], title: 'Chalet grand luxe · Charlevoix', location: 'Romeo Hote', date: '', price: '495 $ / nuit', rating: 4.88, badge: undefined },
-    { id: '253', image: img[253], title: 'Chalet bois rond · Sainte-Adele', location: 'Emily Hote', date: '', price: '195 $ / nuit', rating: 4.95, badge: 'Nouveau' as const },
-    { id: '261', image: img[261], title: 'Chalet familial · Chelsea', location: 'Pascal Hote', date: '', price: '215 $ / nuit', rating: 4.92, badge: undefined },
-    { id: '264', image: img[264], title: 'Chalet de montagne · Banff', location: 'Lucas Hote', date: '', price: '380 $ / nuit', rating: 4.88, badge: 'Coup de coeur' as const },
-    { id: '272', image: img[272], title: 'Chalet de peche · Roberval', location: 'Romeo Hote', date: '', price: '175 $ / nuit', rating: 4.90, badge: 'Populaire' as const },
+    { id: '262', image: img[262], title: 'Chalet sur le lac · Bracebridge', location: 'Pascal Hote', date: '', price: '285 C$ / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
+    { id: '263', image: img[263], title: 'Cabane dans les arbres · Tremblant', location: 'Lucas Hote', date: '', price: '189 C$ / nuit', rating: 4.91, badge: 'Populaire' as const },
+    { id: '268', image: img[268], title: 'Chalet grand luxe · Charlevoix', location: 'Romeo Hote', date: '', price: '495 C$ / nuit', rating: 4.88, badge: undefined },
+    { id: '253', image: img[253], title: 'Chalet bois rond · Sainte-Adele', location: 'Emily Hote', date: '', price: '195 C$ / nuit', rating: 4.95, badge: 'Nouveau' as const },
+    { id: '261', image: img[261], title: 'Chalet familial · Chelsea', location: 'Pascal Hote', date: '', price: '215 C$ / nuit', rating: 4.92, badge: undefined },
+    { id: '264', image: img[264], title: 'Chalet de montagne · Banff', location: 'Lucas Hote', date: '', price: '380 C$ / nuit', rating: 4.88, badge: 'Coup de coeur' as const },
+    { id: '272', image: img[272], title: 'Chalet de peche · Roberval', location: 'Romeo Hote', date: '', price: '175 C$ / nuit', rating: 4.90, badge: 'Populaire' as const },
   ];
 
   // Chalets disponibles · Mont-Tremblant
   const tremblantProperties = [
-    { id: '256', image: img[256], title: 'Grand chalet ski · Stoneham', location: 'Emily Hote', date: '', price: '345 $ / nuit', rating: 4.97, badge: 'Populaire' as const },
-    { id: '259', image: img[259], title: 'Chalet spa · Lac-Tremblant', location: 'Pascal Hote', date: '', price: '320 $ / nuit', rating: 4.86, badge: undefined },
-    { id: '265', image: img[265], title: 'Refuge cotier · Tofino', location: 'Lucas Hote', date: '', price: '265 $ / nuit', rating: 4.91, badge: 'Nouveau' as const },
-    { id: '268', image: img[268], title: 'Chalet grand luxe · Charlevoix', location: 'Romeo Hote', date: '', price: '495 $ / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
-    { id: '257', image: img[257], title: 'Maison champetre · Ile d\'Orleans', location: 'Emily Hote', date: '', price: '220 $ / nuit', rating: 4.89, badge: undefined },
-    { id: '262', image: img[262], title: 'Chalet sur le lac · Muskoka', location: 'Pascal Hote', date: '', price: '285 $ / nuit', rating: 4.90, badge: 'Populaire' as const },
-    { id: '267', image: img[267], title: 'Loft heritage · Vieux-Quebec', location: 'Lucas Hote', date: '', price: '225 $ / nuit', rating: 4.95, badge: 'Nouveau' as const },
+    { id: '256', image: img[256], title: 'Grand chalet ski · Stoneham', location: 'Emily Hote', date: '', price: '345 C$ / nuit', rating: 4.97, badge: 'Populaire' as const },
+    { id: '259', image: img[259], title: 'Chalet spa · Lac-Tremblant', location: 'Pascal Hote', date: '', price: '320 C$ / nuit', rating: 4.86, badge: undefined },
+    { id: '265', image: img[265], title: 'Refuge cotier · Tofino', location: 'Lucas Hote', date: '', price: '265 C$ / nuit', rating: 4.91, badge: 'Nouveau' as const },
+    { id: '268', image: img[268], title: 'Chalet grand luxe · Charlevoix', location: 'Romeo Hote', date: '', price: '495 C$ / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
+    { id: '257', image: img[257], title: 'Maison champetre · Ile d\'Orleans', location: 'Emily Hote', date: '', price: '220 C$ / nuit', rating: 4.89, badge: undefined },
+    { id: '262', image: img[262], title: 'Chalet sur le lac · Muskoka', location: 'Pascal Hote', date: '', price: '285 C$ / nuit', rating: 4.90, badge: 'Populaire' as const },
+    { id: '267', image: img[267], title: 'Loft heritage · Vieux-Quebec', location: 'Lucas Hote', date: '', price: '225 C$ / nuit', rating: 4.95, badge: 'Nouveau' as const },
   ];
 
   // Chalets · Whistler
   const whistlerProperties = [
-    { id: '270', image: img[270], title: 'Chalet alpin · Canmore', location: 'Romeo Hote', date: '', price: '310 $ / nuit', rating: 4.94, badge: 'Coup de coeur' as const },
-    { id: '253', image: img[253], title: 'Chalet bois rond · Sainte-Adele', location: 'Emily Hote', date: '', price: '195 $ / nuit', rating: 5.0, badge: 'Populaire' as const },
-    { id: '260', image: img[260], title: 'Chalet ski alpin · Whistler', location: 'Pascal Hote', date: '', price: '450 $ / nuit', rating: 4.93, badge: undefined },
-    { id: '264', image: img[264], title: 'Chalet de montagne · Banff', location: 'Lucas Hote', date: '', price: '380 $ / nuit', rating: 4.88, badge: 'Nouveau' as const },
-    { id: '269', image: img[269], title: 'Cabane ocean · Tofino', location: 'Romeo Hote', date: '', price: '295 $ / nuit', rating: 4.92, badge: 'Coup de coeur' as const },
-    { id: '255', image: img[255], title: 'Refuge forestier · Sutton', location: 'Emily Hote', date: '', price: '155 $ / nuit', rating: 4.85, badge: undefined },
-    { id: '259', image: img[259], title: 'Chalet spa · Mont-Tremblant', location: 'Pascal Hote', date: '', price: '320 $ / nuit', rating: 4.91, badge: 'Nouveau' as const },
+    { id: '270', image: img[270], title: 'Chalet alpin · Canmore', location: 'Romeo Hote', date: '', price: '310 C$ / nuit', rating: 4.94, badge: 'Coup de coeur' as const },
+    { id: '253', image: img[253], title: 'Chalet bois rond · Sainte-Adele', location: 'Emily Hote', date: '', price: '195 C$ / nuit', rating: 5.0, badge: 'Populaire' as const },
+    { id: '260', image: img[260], title: 'Chalet ski alpin · Whistler', location: 'Pascal Hote', date: '', price: '450 C$ / nuit', rating: 4.93, badge: undefined },
+    { id: '264', image: img[264], title: 'Chalet de montagne · Banff', location: 'Lucas Hote', date: '', price: '380 C$ / nuit', rating: 4.88, badge: 'Nouveau' as const },
+    { id: '269', image: img[269], title: 'Cabane ocean · Tofino', location: 'Romeo Hote', date: '', price: '295 C$ / nuit', rating: 4.92, badge: 'Coup de coeur' as const },
+    { id: '255', image: img[255], title: 'Refuge forestier · Sutton', location: 'Emily Hote', date: '', price: '155 C$ / nuit', rating: 4.85, badge: undefined },
+    { id: '259', image: img[259], title: 'Chalet spa · Mont-Tremblant', location: 'Pascal Hote', date: '', price: '320 C$ / nuit', rating: 4.91, badge: 'Nouveau' as const },
   ];
 
   // Chalets disponibles · Quebec
   const quebecProperties = [
-    { id: '267', image: img[267], title: 'Loft heritage · Vieux-Quebec', location: 'Lucas Hote', date: '', price: '225 $ / nuit', rating: 4.88, badge: 'Populaire' as const },
-    { id: '271', image: img[271], title: 'Maison champetre · Val-des-Monts', location: 'Romeo Hote', date: '', price: '185 $ / nuit', rating: 4.78, badge: undefined },
-    { id: '256', image: img[256], title: 'Grand chalet ski · Stoneham', location: 'Emily Hote', date: '', price: '345 $ / nuit', rating: 4.86, badge: 'Nouveau' as const },
-    { id: '258', image: img[258], title: 'Chalet rustique · Saint-Sauveur', location: 'Pascal Hote', date: '', price: '295 $ / nuit', rating: 4.90, badge: undefined },
-    { id: '263', image: img[263], title: 'Cabane dans les arbres · Tremblant', location: 'Lucas Hote', date: '', price: '189 $ / nuit', rating: 4.95, badge: 'Coup de coeur' as const },
-    { id: '268', image: img[268], title: 'Chalet grand luxe · Charlevoix', location: 'Romeo Hote', date: '', price: '495 $ / nuit', rating: 5.0, badge: 'Populaire' as const },
-    { id: '257', image: img[257], title: 'Maison champetre · Ile d\'Orleans', location: 'Emily Hote', date: '', price: '220 $ / nuit', rating: 4.86, badge: undefined },
+    { id: '267', image: img[267], title: 'Loft heritage · Vieux-Quebec', location: 'Lucas Hote', date: '', price: '225 C$ / nuit', rating: 4.88, badge: 'Populaire' as const },
+    { id: '271', image: img[271], title: 'Maison champetre · Val-des-Monts', location: 'Romeo Hote', date: '', price: '185 C$ / nuit', rating: 4.78, badge: undefined },
+    { id: '256', image: img[256], title: 'Grand chalet ski · Stoneham', location: 'Emily Hote', date: '', price: '345 C$ / nuit', rating: 4.86, badge: 'Nouveau' as const },
+    { id: '258', image: img[258], title: 'Chalet rustique · Saint-Sauveur', location: 'Pascal Hote', date: '', price: '295 C$ / nuit', rating: 4.90, badge: undefined },
+    { id: '263', image: img[263], title: 'Cabane dans les arbres · Tremblant', location: 'Lucas Hote', date: '', price: '189 C$ / nuit', rating: 4.95, badge: 'Coup de coeur' as const },
+    { id: '268', image: img[268], title: 'Chalet grand luxe · Charlevoix', location: 'Romeo Hote', date: '', price: '495 C$ / nuit', rating: 5.0, badge: 'Populaire' as const },
+    { id: '257', image: img[257], title: 'Maison champetre · Ile d\'Orleans', location: 'Emily Hote', date: '', price: '220 C$ / nuit', rating: 4.86, badge: undefined },
   ];
 
   // Chalets · Banff
   const banffProperties = [
-    { id: '260', image: img[260], title: 'Chalet ski alpin · Whistler', location: 'Pascal Hote', date: '', price: '450 $ / nuit', rating: 4.98, badge: 'Coup de coeur' as const },
-    { id: '264', image: img[264], title: 'Chalet de montagne · Banff', location: 'Lucas Hote', date: '', price: '380 $ / nuit', rating: 4.94, badge: 'Nouveau' as const },
-    { id: '270', image: img[270], title: 'Chalet alpin · Canmore', location: 'Romeo Hote', date: '', price: '310 $ / nuit', rating: 5.0, badge: 'Populaire' as const },
-    { id: '254', image: img[254], title: 'Chalet vue fleuve · Charlevoix', location: 'Emily Hote', date: '', price: '275 $ / nuit', rating: 4.89, badge: undefined },
-    { id: '259', image: img[259], title: 'Chalet spa · Mont-Tremblant', location: 'Pascal Hote', date: '', price: '320 $ / nuit', rating: 4.92, badge: 'Coup de coeur' as const },
-    { id: '266', image: img[266], title: 'Chalet du lac · Alma', location: 'Lucas Hote', date: '', price: '165 $ / nuit', rating: 4.80, badge: undefined },
-    { id: '269', image: img[269], title: 'Cabane ocean · Tofino', location: 'Romeo Hote', date: '', price: '295 $ / nuit', rating: 4.95, badge: 'Nouveau' as const },
+    { id: '260', image: img[260], title: 'Chalet ski alpin · Whistler', location: 'Pascal Hote', date: '', price: '450 C$ / nuit', rating: 4.98, badge: 'Coup de coeur' as const },
+    { id: '264', image: img[264], title: 'Chalet de montagne · Banff', location: 'Lucas Hote', date: '', price: '380 C$ / nuit', rating: 4.94, badge: 'Nouveau' as const },
+    { id: '270', image: img[270], title: 'Chalet alpin · Canmore', location: 'Romeo Hote', date: '', price: '310 C$ / nuit', rating: 5.0, badge: 'Populaire' as const },
+    { id: '254', image: img[254], title: 'Chalet vue fleuve · Charlevoix', location: 'Emily Hote', date: '', price: '275 C$ / nuit', rating: 4.89, badge: undefined },
+    { id: '259', image: img[259], title: 'Chalet spa · Mont-Tremblant', location: 'Pascal Hote', date: '', price: '320 C$ / nuit', rating: 4.92, badge: 'Coup de coeur' as const },
+    { id: '266', image: img[266], title: 'Chalet du lac · Alma', location: 'Lucas Hote', date: '', price: '165 C$ / nuit', rating: 4.80, badge: undefined },
+    { id: '269', image: img[269], title: 'Cabane ocean · Tofino', location: 'Romeo Hote', date: '', price: '295 C$ / nuit', rating: 4.95, badge: 'Nouveau' as const },
   ];
 
   // Chalets a decouvrir · Tofino
   const tofinoProperties = [
-    { id: '257', image: img[257], title: 'Maison champetre · Ile d\'Orleans', location: 'Emily Hote', date: '', price: '220 $ / nuit', rating: 4.94, badge: 'Populaire' as const },
-    { id: '262', image: img[262], title: 'Chalet sur le lac · Muskoka', location: 'Pascal Hote', date: '', price: '285 $ / nuit', rating: 4.90, badge: undefined },
-    { id: '265', image: img[265], title: 'Refuge cotier · Tofino', location: 'Lucas Hote', date: '', price: '265 $ / nuit', rating: 4.88, badge: 'Nouveau' as const },
-    { id: '269', image: img[269], title: 'Cabane ocean · Tofino', location: 'Romeo Hote', date: '', price: '295 $ / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
-    { id: '253', image: img[253], title: 'Chalet bois rond · Sainte-Adele', location: 'Emily Hote', date: '', price: '195 $ / nuit', rating: 4.85, badge: undefined },
-    { id: '261', image: img[261], title: 'Chalet familial · Chelsea', location: 'Pascal Hote', date: '', price: '215 $ / nuit', rating: 4.92, badge: 'Populaire' as const },
-    { id: '267', image: img[267], title: 'Loft heritage · Vieux-Quebec', location: 'Lucas Hote', date: '', price: '225 $ / nuit', rating: 4.96, badge: 'Nouveau' as const },
+    { id: '257', image: img[257], title: 'Maison champetre · Ile d\'Orleans', location: 'Emily Hote', date: '', price: '220 C$ / nuit', rating: 4.94, badge: 'Populaire' as const },
+    { id: '262', image: img[262], title: 'Chalet sur le lac · Muskoka', location: 'Pascal Hote', date: '', price: '285 C$ / nuit', rating: 4.90, badge: undefined },
+    { id: '265', image: img[265], title: 'Refuge cotier · Tofino', location: 'Lucas Hote', date: '', price: '265 C$ / nuit', rating: 4.88, badge: 'Nouveau' as const },
+    { id: '269', image: img[269], title: 'Cabane ocean · Tofino', location: 'Romeo Hote', date: '', price: '295 C$ / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
+    { id: '253', image: img[253], title: 'Chalet bois rond · Sainte-Adele', location: 'Emily Hote', date: '', price: '195 C$ / nuit', rating: 4.85, badge: undefined },
+    { id: '261', image: img[261], title: 'Chalet familial · Chelsea', location: 'Pascal Hote', date: '', price: '215 C$ / nuit', rating: 4.92, badge: 'Populaire' as const },
+    { id: '267', image: img[267], title: 'Loft heritage · Vieux-Quebec', location: 'Lucas Hote', date: '', price: '225 C$ / nuit', rating: 4.96, badge: 'Nouveau' as const },
   ];
 
   // Chalets populaires · Gatineau
   const gatineauProperties = [
-    { id: '271', image: img[271], title: 'Maison champetre · Val-des-Monts', location: 'Romeo Hote', date: '', price: '185 $ / nuit', rating: 4.93, badge: 'Coup de coeur' as const },
-    { id: '255', image: img[255], title: 'Refuge forestier · Sutton', location: 'Emily Hote', date: '', price: '155 $ / nuit', rating: 4.85, badge: 'Nouveau' as const },
-    { id: '261', image: img[261], title: 'Chalet familial · Chelsea', location: 'Pascal Hote', date: '', price: '215 $ / nuit', rating: 4.88, badge: 'Populaire' as const },
-    { id: '264', image: img[264], title: 'Chalet de montagne · Banff', location: 'Lucas Hote', date: '', price: '380 $ / nuit', rating: 4.92, badge: undefined },
-    { id: '268', image: img[268], title: 'Chalet grand luxe · Charlevoix', location: 'Romeo Hote', date: '', price: '495 $ / nuit', rating: 4.90, badge: 'Coup de coeur' as const },
-    { id: '254', image: img[254], title: 'Chalet vue fleuve · Charlevoix', location: 'Emily Hote', date: '', price: '275 $ / nuit', rating: 4.78, badge: undefined },
-    { id: '261', image: img[261], title: 'Chalet Parc Gatineau · Chelsea', location: 'Pascal Hote', date: '', price: '215 $ / nuit', rating: 4.95, badge: 'Nouveau' as const },
+    { id: '271', image: img[271], title: 'Maison champetre · Val-des-Monts', location: 'Romeo Hote', date: '', price: '185 C$ / nuit', rating: 4.93, badge: 'Coup de coeur' as const },
+    { id: '255', image: img[255], title: 'Refuge forestier · Sutton', location: 'Emily Hote', date: '', price: '155 C$ / nuit', rating: 4.85, badge: 'Nouveau' as const },
+    { id: '261', image: img[261], title: 'Chalet familial · Chelsea', location: 'Pascal Hote', date: '', price: '215 C$ / nuit', rating: 4.88, badge: 'Populaire' as const },
+    { id: '264', image: img[264], title: 'Chalet de montagne · Banff', location: 'Lucas Hote', date: '', price: '380 C$ / nuit', rating: 4.92, badge: undefined },
+    { id: '268', image: img[268], title: 'Chalet grand luxe · Charlevoix', location: 'Romeo Hote', date: '', price: '495 C$ / nuit', rating: 4.90, badge: 'Coup de coeur' as const },
+    { id: '254', image: img[254], title: 'Chalet vue fleuve · Charlevoix', location: 'Emily Hote', date: '', price: '275 C$ / nuit', rating: 4.78, badge: undefined },
+    { id: '261', image: img[261], title: 'Chalet Parc Gatineau · Chelsea', location: 'Pascal Hote', date: '', price: '215 C$ / nuit', rating: 4.95, badge: 'Nouveau' as const },
   ];
 
   // Chalets · Lac-Saint-Jean
   const lacStJeanProperties = [
-    { id: '266', image: img[266], title: 'Chalet du lac · Alma', location: 'Lucas Hote', date: '', price: '165 $ / nuit', rating: 5.0, badge: 'Populaire' as const },
-    { id: '272', image: img[272], title: 'Chalet de peche · Roberval', location: 'Romeo Hote', date: '', price: '175 $ / nuit', rating: 4.89, badge: undefined },
-    { id: '256', image: img[256], title: 'Grand chalet ski · Stoneham', location: 'Emily Hote', date: '', price: '345 $ / nuit', rating: 4.86, badge: 'Nouveau' as const },
-    { id: '259', image: img[259], title: 'Chalet spa · Mont-Tremblant', location: 'Pascal Hote', date: '', price: '320 $ / nuit', rating: 4.90, badge: undefined },
-    { id: '265', image: img[265], title: 'Refuge cotier · Tofino', location: 'Lucas Hote', date: '', price: '265 $ / nuit', rating: 4.88, badge: 'Coup de coeur' as const },
-    { id: '272', image: img[272], title: 'Chalet peche · Lac-Saint-Jean', location: 'Romeo Hote', date: '', price: '175 $ / nuit', rating: 4.93, badge: 'Populaire' as const },
-    { id: '257', image: img[257], title: 'Maison champetre · Ile d\'Orleans', location: 'Emily Hote', date: '', price: '220 $ / nuit', rating: 4.82, badge: undefined },
+    { id: '266', image: img[266], title: 'Chalet du lac · Alma', location: 'Lucas Hote', date: '', price: '165 C$ / nuit', rating: 5.0, badge: 'Populaire' as const },
+    { id: '272', image: img[272], title: 'Chalet de peche · Roberval', location: 'Romeo Hote', date: '', price: '175 C$ / nuit', rating: 4.89, badge: undefined },
+    { id: '256', image: img[256], title: 'Grand chalet ski · Stoneham', location: 'Emily Hote', date: '', price: '345 C$ / nuit', rating: 4.86, badge: 'Nouveau' as const },
+    { id: '259', image: img[259], title: 'Chalet spa · Mont-Tremblant', location: 'Pascal Hote', date: '', price: '320 C$ / nuit', rating: 4.90, badge: undefined },
+    { id: '265', image: img[265], title: 'Refuge cotier · Tofino', location: 'Lucas Hote', date: '', price: '265 C$ / nuit', rating: 4.88, badge: 'Coup de coeur' as const },
+    { id: '272', image: img[272], title: 'Chalet peche · Lac-Saint-Jean', location: 'Romeo Hote', date: '', price: '175 C$ / nuit', rating: 4.93, badge: 'Populaire' as const },
+    { id: '257', image: img[257], title: 'Maison champetre · Ile d\'Orleans', location: 'Emily Hote', date: '', price: '220 C$ / nuit', rating: 4.82, badge: undefined },
   ];
 
   return (
@@ -234,7 +234,7 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
                   title={`${listing.title || 'Logement'} · ${listing.city || ''}`}
                   location={listing.space_type === 'entire' ? 'Logement entier' : listing.space_type === 'private' ? 'Chambre privée' : 'Logement'}
                   date=""
-                  price={`${Number(listing.base_price || 0).toFixed(0)} ${(listing.currency || '').toUpperCase().startsWith('EUR') ? '€' : (listing.currency || '').toUpperCase().startsWith('USD') ? '$ US' : '$'} / nuit`}
+                  price={`${Number(listing.base_price || 0).toFixed(0)} C$ / nuit`}
                   rating={0}
                   badge="Nouveau"
                   guests={`${listing.capacity} voyageurs`}

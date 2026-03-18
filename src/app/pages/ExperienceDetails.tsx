@@ -334,7 +334,7 @@ export function ExperienceDetails({ onBack }: ExperienceDetailsProps) {
                     image="https://images.unsplash.com/photo-1557480091-8b815bba4064?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnZWxhdG8lMjBpY2UlMjBjcmVhbSUyMGl0YWx5fGVufDF8fHx8MTc2Nzg4MzE4NXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
                     title="Le secret des glaces et des pâtes fraîches dans une mais..."
                     host="Cuisine · 3 heures"
-                    price="À partir de 69 € par voyageur"
+                    price="À partir de 69 C$ par voyageur"
                     rating={4.89}
                   />
                   
@@ -342,7 +342,7 @@ export function ExperienceDetails({ onBack }: ExperienceDetailsProps) {
                     image="https://images.unsplash.com/photo-1714836403365-6659229f4d53?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3aW5lJTIwdGFzdGluZyUyMHNvbW1lbGllcnxlbnwxfHx8fDE3Njc4ODMxODl8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
                     title="Dégustation de vin avec le sommelier le plus italien de..."
                     host="Dégustations · 2 heures"
-                    price="À partir de 49 € par voyageur"
+                    price="À partir de 49 C$ par voyageur"
                     rating={4.95}
                   />
                   
@@ -350,7 +350,7 @@ export function ExperienceDetails({ onBack }: ExperienceDetailsProps) {
                     image="https://images.unsplash.com/photo-1714681480721-591a8d8475f7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtaWxhbiUyMHBvcnRhJTIwdmVuZXppYSUyMGFyY2hpdGVjdHVyZXxlbnwxfHx8fDE3Njc4ODMxOTF8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
                     title="Découvrez les trésors cachés de Porta Venezia"
                     host="Visites culturelles · 2 heures"
-                    price="À partir de 25 € par voyageur"
+                    price="À partir de 25 C$ par voyageur"
                     rating={4.97}
                   />
                   
@@ -358,7 +358,7 @@ export function ExperienceDetails({ onBack }: ExperienceDetailsProps) {
                     image="https://images.unsplash.com/photo-1720247521914-c12c3bd3a3c7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx2aW50YWdlJTIwY2FyJTIwbWlsYW4lMjBpdGFseXxlbnwxfHx8fDE3Njc4ODMxOTV8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
                     title="Explorez Milan en vintage embl..."
                     host="Visites culturelles"
-                    price="À partir de 129 € par voyageur"
+                    price="À partir de 129 C$ par voyageur"
                     rating={4.85}
                   />
                 </div>
@@ -417,7 +417,7 @@ export function ExperienceDetails({ onBack }: ExperienceDetailsProps) {
                   <div className="flex items-start justify-between mb-6 pb-6 border-b border-gray-200">
                     <div>
                       <div className="flex items-center gap-1 mb-1">
-                        <span className="text-base text-gray-900" style={{ fontWeight: 600 }}> À partir de 26 €</span>
+                        <span className="text-base text-gray-900" style={{ fontWeight: 600 }}> À partir de 26 C$</span>
                         <span className="text-gray-600 text-xs">par voyageur</span>
                       </div>
                       <p className="text-xs" style={{ color: '#059669', fontWeight: 600 }}>

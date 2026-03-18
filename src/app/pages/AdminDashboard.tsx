@@ -5,9 +5,9 @@ import { AdminSidebar } from '@/app/components/AdminSidebar';
 
 export function AdminDashboard() {
   const recentBookings = [
-    { id: '#12345', client: 'Jean Dupont', logement: 'Villa Toscane', date: '15/03/2025', montant: '€ 1,250', statut: 'CONFIRMÉE' },
-    { id: '#12344', client: 'Marie Martin', logement: 'Appartement Paris', date: '14/03/2025', montant: '€ 690', statut: 'EN ATTENTE' },
-    { id: '#12343', client: 'Pierre Durand', logement: 'Chalet Alpes', date: '13/03/2025', montant: '€ 2,300', statut: 'CONFIRMÉE' },
+    { id: '#12345', client: 'Jean Dupont', logement: 'Villa Toscane', date: '15/03/2025', montant: 'C$1,250', statut: 'CONFIRMÉE' },
+    { id: '#12344', client: 'Marie Martin', logement: 'Appartement Paris', date: '14/03/2025', montant: 'C$690', statut: 'EN ATTENTE' },
+    { id: '#12343', client: 'Pierre Durand', logement: 'Chalet Alpes', date: '13/03/2025', montant: 'C$2,300', statut: 'CONFIRMÉE' },
   ];
 
   return (
@@ -59,7 +59,7 @@ export function AdminDashboard() {
                 <DollarSign className="w-5 h-5 text-[#111827]" />
               </div>
             </div>
-            <div className="text-3xl mb-2" style={{ fontWeight: 600 }}>€ 342,890</div>
+            <div className="text-3xl mb-2" style={{ fontWeight: 600 }}>C$342,890</div>
             <div className="flex items-center gap-1 text-sm">
               <TrendingUp className="w-4 h-4 text-green-500" />
               <span className="text-green-500" style={{ fontWeight: 600 }}>+18.2%</span>

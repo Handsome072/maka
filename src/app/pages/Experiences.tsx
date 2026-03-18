@@ -48,7 +48,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Originals' as const,
       title: "Récupérez comme un athlète olympique avec un expert du sport",
       host: "Hôte particulier",
-      price: "À partir de 94 € par voyageur",
+      price: "À partir de 94 C$ par voyageur",
       rating: 5.0
     },
     {
@@ -56,7 +56,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Originals' as const,
       title: "Les secrets d'entraînement de l'artiste olympique expérimenté",
       host: "Hôte particulier",
-      price: "Durée d'excursion totale : À partir de 96 € par voyageur",
+      price: "Durée d'excursion totale : À partir de 96 C$ par voyageur",
       rating: 5.0
     },
     {
@@ -64,7 +64,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Originals' as const,
       title: "Carfez-en football réussi avec Alexis olympique de Paris",
       host: "Hôte particulier",
-      price: "Durée d'excursion totale : À partir de 80 € par voyageur",
+      price: "Durée d'excursion totale : À partir de 80 C$ par voyageur",
       rating: 4.92
     },
     {
@@ -80,7 +80,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Originals' as const,
       title: "Sculptez le marbre avec un sculpteur de la renaissance d'Italie",
       host: "Hôte particulier",
-      price: "Anciens, Grèce : Design de voyage - À partir de 90 € par voyageur",
+      price: "Anciens, Grèce : Design de voyage - À partir de 90 C$ par voyageur",
       rating: 5.0
     },
     {
@@ -88,7 +88,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Originals' as const,
       title: "Découvrez la musique et dégustez un cocktail avec un DJ invité",
       host: "Hôte professionnel",
-      price: "Hors, France : À partir de 69 € par voyageur",
+      price: "Hors, France : À partir de 69 C$ par voyageur",
       rating: 4.26
     },
     {
@@ -96,7 +96,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Originals' as const,
       title: "Dégustez du vin rosé et saluez dans un studio d'enregistrement",
       host: "Hôte particulier",
-      price: "Hôte particulier : À partir de 74 € par voyageur",
+      price: "Hôte particulier : À partir de 74 C$ par voyageur",
       rating: 4.98
     }
   ];
@@ -108,7 +108,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Coup de coeur' as const,
       title: "Apprenez à préparer des croissants parfaits",
       host: "Hôte professionnel",
-      price: "À partir de 95 € par voyageur",
+      price: "À partir de 95 C$ par voyageur",
       rating: 4.95
     },
     {
@@ -116,7 +116,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: undefined,
       title: "Percez les secrets des bars clandestins de Paris",
       host: "Hôte particulier",
-      price: "À partir de 25 € par voyageur",
+      price: "À partir de 25 C$ par voyageur",
       rating: 4.93
     },
     {
@@ -124,7 +124,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Nouveau' as const,
       title: "No Diet Club : les meilleurs spots pains et pâtisseries",
       host: "Hôte particulier",
-      price: "À partir de 61 € par voyageur",
+      price: "À partir de 61 C$ par voyageur",
       rating: 4.93
     },
     {
@@ -132,7 +132,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: undefined,
       title: "Préparez des macarons dans une cuisine professionnelle",
       host: "Hôte professionnel",
-      price: "À partir de 64 € par voyageur",
+      price: "À partir de 64 C$ par voyageur",
       rating: 4.95
     },
     {
@@ -140,7 +140,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Populaire' as const,
       title: "Découvrez Paris à bord d'une Citroën 2CV d'époque",
       host: "Hôte professionnel",
-      price: "À partir de 76 € par voyageur",
+      price: "À partir de 76 C$ par voyageur",
       rating: 4.97
     },
     {
@@ -148,7 +148,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: undefined,
       title: "Explorez des petits cachés de Londres : fromages et vins",
       host: "Hôte professionnel",
-      price: "À partir de 70 € par voyageur",
+      price: "À partir de 70 C$ par voyageur",
       rating: 4.91
     },
     {
@@ -156,7 +156,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Nouveau' as const,
       title: "Plongez au cœur de la vie instrumentale : piano et cordes",
       host: "Hôte particulier",
-      price: "À partir de 75 € par voyageur",
+      price: "À partir de 75 C$ par voyageur",
       rating: 4.93
     },
     {
@@ -164,7 +164,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Coup de coeur' as const,
       title: "Dégustation de fromages et de vins dans une cave parisienne",
       host: "Hôte professionnel",
-      price: "À partir de 87 € par voyageur",
+      price: "À partir de 87 C$ par voyageur",
       rating: 4.87
     }
   ];
@@ -176,7 +176,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Populaire' as const,
       title: "Promenez-vous dans Londres avec un habitant qui a quitté la France",
       host: "Hôte particulier",
-      price: "À partir de 16 € par voyageur",
+      price: "À partir de 16 C$ par voyageur",
       rating: 4.98
     },
     {
@@ -184,7 +184,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: undefined,
       title: "Visite familiale de Londres et du Palais de Harry Potter",
       host: "Hôte professionnel",
-      price: "À partir de 16 € par voyageur",
+      price: "À partir de 16 C$ par voyageur",
       rating: 4.98
     },
     {
@@ -192,7 +192,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Nouveau' as const,
       title: "Visite à pied de Londres : 30 sites touristiques en 3 heures",
       host: "Hôte professionnel",
-      price: "À partir de 22 € par voyageur",
+      price: "À partir de 22 C$ par voyageur",
       rating: 4.98
     },
     {
@@ -200,7 +200,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Coup de coeur' as const,
       title: "Découvrez plus de 30 sites touristiques de Londres en minibus",
       host: "Hôte professionnel",
-      price: "À partir de 27 € par voyageur",
+      price: "À partir de 27 C$ par voyageur",
       rating: 5.0
     },
     {
@@ -208,7 +208,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: undefined,
       title: "Explorez des petits cachés de Londres : histoire et architecture",
       host: "Hôte professionnel",
-      price: "À partir de 20 € par voyageur",
+      price: "À partir de 20 C$ par voyageur",
       rating: 4.5
     },
     {
@@ -216,7 +216,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Populaire' as const,
       title: "No Diet Club : visite gastronomique à vélo à Londres",
       host: "Hôte professionnel",
-      price: "À partir de 30 € par voyageur",
+      price: "À partir de 30 C$ par voyageur",
       rating: 4.96
     },
     {
@@ -224,7 +224,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: undefined,
       title: "No Diet Club : les meilleurs spots de vin de Londres",
       host: "Hôte professionnel",
-      price: "À partir de 81 € par voyageur",
+      price: "À partir de 81 C$ par voyageur",
       rating: 4.96
     }
   ];
@@ -236,7 +236,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: undefined,
       title: "Safari de luxe dans le désert à Dubaï : VIP et soirée gastronomique",
       host: "Hôte particulier",
-      price: "À partir de 40 € par voyageur",
+      price: "À partir de 40 C$ par voyageur",
       rating: 4.45
     },
     {
@@ -244,7 +244,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Nouveau' as const,
       title: "Visite premium du désert au coucher de soleil et dîner BBQ",
       host: "Hôte professionnel",
-      price: "À partir de 35 € par voyageur",
+      price: "À partir de 35 C$ par voyageur",
       rating: 4.45
     },
     {
@@ -252,7 +252,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Populaire' as const,
       title: "Excursion matinale dans le désert : lever du soleil et sport",
       host: "Hôte professionnel",
-      price: "À partir de 21 € par voyageur",
+      price: "À partir de 21 C$ par voyageur",
       rating: 4.88
     },
     {
@@ -260,7 +260,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: undefined,
       title: "Safari dans le désert au coucher du soleil, dîner et spectacle de lanternes",
       host: "Hôte professionnel",
-      price: "À partir de 29 € par voyageur",
+      price: "À partir de 29 C$ par voyageur",
       rating: 4.64
     },
     {
@@ -268,7 +268,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Coup de coeur' as const,
       title: "Safari dans le désert avec barbecues, balade en chameau et quad",
       host: "Hôte professionnel",
-      price: "À partir de 35 € par voyageur",
+      price: "À partir de 35 C$ par voyageur",
       rating: 4.34
     },
     {
@@ -276,7 +276,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: undefined,
       title: "Visite au coucher du soleil, quad, fauconnerie et aventure",
       host: "Hôte professionnel",
-      price: "À partir de 33 € par voyageur",
+      price: "À partir de 33 C$ par voyageur",
       rating: 4.93
     },
     {
@@ -284,7 +284,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Nouveau' as const,
       title: "Excursion inoubliable d'une journée de Dubaï à Abu Dhabi",
       host: "Hôte professionnel",
-      price: "À partir de 29 € par voyageur",
+      price: "À partir de 29 C$ par voyageur",
       rating: 4.32
     }
   ];
@@ -296,7 +296,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Populaire' as const,
       title: "Découvrez l'historique Madrid",
       host: "Hôte professionnel",
-      price: "À partir de 22 € par voyageur",
+      price: "À partir de 22 C$ par voyageur",
       rating: 4.88
     },
     {
@@ -304,7 +304,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: undefined,
       title: "Découvrez le flamenco authentique",
       host: "Hôte professionnel",
-      price: "À partir de 22 € par voyageur",
+      price: "À partir de 22 C$ par voyageur",
       rating: 4.83
     },
     {
@@ -312,7 +312,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Coup de coeur' as const,
       title: "Découvrez les meilleurs vins d'Espagne de Madrid avec un spécialiste",
       host: "Hôte particulier",
-      price: "À partir de 60 € par voyageur",
+      price: "À partir de 60 C$ par voyageur",
       rating: 4.94
     },
     {
@@ -320,7 +320,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: undefined,
       title: "Dîner des vins espagnols à Madrid",
       host: "Hôte créateur de métier",
-      price: "À partir de 30 € par voyageur",
+      price: "À partir de 30 C$ par voyageur",
       rating: 4.93
     },
     {
@@ -328,7 +328,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Nouveau' as const,
       title: "Madrid racine : histoire, accents et anecdotes",
       host: "Hôte particulier",
-      price: "À partir de 24 € par voyageur",
+      price: "À partir de 24 C$ par voyageur",
       rating: 4.93
     },
     {
@@ -336,7 +336,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: undefined,
       title: "Entre-Madrid Déblotion Tapas",
       host: "Hôte particulier",
-      price: "À partir de 69 € par voyageur",
+      price: "À partir de 69 C$ par voyageur",
       rating: 4.98
     },
     {
@@ -344,7 +344,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Populaire' as const,
       title: "Le secret de Madrid",
       host: "Hôte particulier",
-      price: "À partir de 22 € par voyageur",
+      price: "À partir de 22 C$ par voyageur",
       rating: 4.98
     }
   ];
@@ -356,7 +356,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Coup de coeur' as const,
       title: "Préparez des fettuccine et du tiramisu avec une hôtelière",
       host: "Hôte particulier",
-      price: "À partir de 89 € par voyageur",
+      price: "À partir de 89 C$ par voyageur",
       rating: 4.87
     },
     {
@@ -364,7 +364,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: undefined,
       title: "Visite guidée : Colisée, Forum et Palatin",
       host: "Hôte professionnel",
-      price: "À partir de 54 € par voyageur",
+      price: "À partir de 54 C$ par voyageur",
       rating: 4.68
     },
     {
@@ -372,7 +372,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Nouveau' as const,
       title: "Tournée des bars à Rome",
       host: "Hôte professionnel",
-      price: "À partir de 36 € par voyageur",
+      price: "À partir de 36 C$ par voyageur",
       rating: 4.89
     },
     {
@@ -380,7 +380,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: undefined,
       title: "Découvrez les incontournables de Rome avec un artiste local",
       host: "Hôte professionnel",
-      price: "À partir de 49 € par voyageur",
+      price: "À partir de 49 C$ par voyageur",
       rating: 4.97
     },
     {
@@ -388,7 +388,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Populaire' as const,
       title: "Préparez des pâtes et du tiramisu avec Sabrina",
       host: "Hôte particulier",
-      price: "À partir de 56 € par voyageur",
+      price: "À partir de 56 C$ par voyageur",
       rating: 4.98
     },
     {
@@ -396,7 +396,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: undefined,
       title: "Découvrez les couloirs du Vatican",
       host: "Hôte professionnel",
-      price: "À partir de 50 € par voyageur",
+      price: "À partir de 50 C$ par voyageur",
       rating: 4.98
     },
     {
@@ -404,7 +404,7 @@ export function Experiences({ isScrolled, onExperienceClick, onSearch }: Experie
       badge: 'Nouveau' as const,
       title: "Visite à pied avec un archéologue",
       host: "Hôte professionnel",
-      price: "À partir de 54 € par voyageur",
+      price: "À partir de 54 C$ par voyageur",
       rating: 4.96
     }
   ];

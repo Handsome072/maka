@@ -292,11 +292,11 @@ function PropertyCard({ property }: { property: Property }) {
         <div className="flex items-baseline gap-1.5">
           {property.originalPrice && (
             <span className="text-[15px] line-through" style={{ color: '#717171' }}>
-              {property.originalPrice} €
+              {property.originalPrice} C$
             </span>
           )}
           <span className="text-[15px]" style={{ fontWeight: 600, color: '#222222' }}>
-            {property.price} €
+            {property.price} C$
           </span>
           <span className="text-[15px]" style={{ color: '#717171' }}>
             par mois
@@ -666,7 +666,7 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
                   Français (FR)
                 </button>
                 <button className="flex items-center gap-2 text-[14px] hover:underline" style={{ fontWeight: 600, color: '#222222' }}>
-                  € EUR
+                  C$ CAD
                 </button>
                 <div className="flex items-center gap-3">
                   <a href="#" className="hover:opacity-70 transition-opacity">

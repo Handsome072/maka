@@ -161,7 +161,7 @@ export function CalendarGrid({
   }, [dragStart, dragEnd, onDateClick, onDateRangeSelect]);
 
   const formatPrice = (price: number) => {
-    return `${price} $`;
+    return `${price} C$`;
   };
 
   return (

@@ -126,8 +126,8 @@ export function FilterModal({ isOpen, onClose }: FilterModalProps) {
                 </label>
                 <input
                   type="text"
-                  value={`€${minPrice}`}
-                  onChange={(e) => setMinPrice(parseInt(e.target.value.replace('€', '')) || 0)}
+                  value={`C$${minPrice}`}
+                  onChange={(e) => setMinPrice(parseInt(e.target.value.replace('C$', '')) || 0)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                 />
               </div>
@@ -137,8 +137,8 @@ export function FilterModal({ isOpen, onClose }: FilterModalProps) {
                 </label>
                 <input
                   type="text"
-                  value={maxPrice >= 11000 ? '€11000+' : `€${maxPrice}`}
-                  onChange={(e) => setMaxPrice(parseInt(e.target.value.replace(/[€+]/g, '')) || 0)}
+                  value={maxPrice >= 11000 ? 'C$11000+' : `C$${maxPrice}`}
+                  onChange={(e) => setMaxPrice(parseInt(e.target.value.replace(/[C$+]/g, '')) || 0)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                 />
               </div>

@@ -183,7 +183,7 @@ export function FiltersModal({ isOpen, onClose, onApplyFilters }: FiltersModalPr
               <div className="flex-1">
                 <label className="text-xs text-gray-500 mb-1 block">Minimum</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">€</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">C$</span>
                   <input
                     type="number"
                     value={filters.priceMin}
@@ -199,7 +199,7 @@ export function FiltersModal({ isOpen, onClose, onApplyFilters }: FiltersModalPr
               <div className="flex-1">
                 <label className="text-xs text-gray-500 mb-1 block">Maximum</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">€</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">C$</span>
                   <input
                     type="number"
                     value={filters.priceMax}

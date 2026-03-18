@@ -486,7 +486,7 @@ export function HostSettings() {
                       onChange={e => setPrefCurrency(e.target.value)}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111827]"
                     >
-                      <option value="CAD">CAD ($)</option>
+                      <option value="CAD">CAD (C$)</option>
                       <option value="EUR">EUR (€)</option>
                       <option value="USD">USD ($)</option>
                       <option value="GBP">GBP (£)</option>

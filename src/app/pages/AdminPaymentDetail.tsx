@@ -75,8 +75,8 @@ const paymentDetails: Record<string, PaymentDetail> = {
     date: '2025-03-15T14:32:00', payoutDate: '2025-03-18T09:00:00',
     isFlagged: false, flagReason: null, stripePaymentId: 'pi_3NqK8dL2eZvKY3ab1',
     history: [
-      { date: '2025-03-18T09:00:00', action: 'Payout verse', actor: 'Systeme', details: 'Virement de 1 710,20 EUR vers le compte de Jean Dupont' },
-      { date: '2025-03-15T14:32:00', action: 'Paiement reussi', actor: 'Systeme', details: 'Paiement de 2 012,00 EUR par carte bancaire Visa •••• 4242' },
+      { date: '2025-03-18T09:00:00', action: 'Payout verse', actor: 'Systeme', details: 'Virement de 1 710,20 C$ vers le compte de Jean Dupont' },
+      { date: '2025-03-15T14:32:00', action: 'Paiement reussi', actor: 'Systeme', details: 'Paiement de 2 012,00 C$ par carte bancaire Visa •••• 4242' },
       { date: '2025-03-15T14:30:00', action: 'Paiement initie', actor: 'Alexandre Leroy', details: 'Reservation RES-2401 confirmee' },
     ],
   },
@@ -93,8 +93,8 @@ const paymentDetails: Record<string, PaymentDetail> = {
     history: [
       { date: '2025-03-12T16:00:00', action: 'Payout suspendu', actor: 'Admin (Marie Admin)', details: 'Payout suspendu en raison de suspicion de fraude' },
       { date: '2025-03-11T09:30:00', action: 'Marque comme fraude', actor: 'Admin (Marie Admin)', details: 'Transaction signalee pour verification' },
-      { date: '2025-03-10T14:00:00', action: 'Remboursement total', actor: 'Admin (Marie Admin)', details: 'Remboursement de 2 597,00 EUR suite a annulation' },
-      { date: '2025-03-08T10:15:00', action: 'Paiement reussi', actor: 'Systeme', details: 'Paiement de 2 597,00 EUR par Stripe' },
+      { date: '2025-03-10T14:00:00', action: 'Remboursement total', actor: 'Admin (Marie Admin)', details: 'Remboursement de 2 597,00 C$ suite a annulation' },
+      { date: '2025-03-08T10:15:00', action: 'Paiement reussi', actor: 'Systeme', details: 'Paiement de 2 597,00 C$ par Stripe' },
       { date: '2025-03-08T10:12:00', action: 'Paiement initie', actor: 'Thomas Petit', details: 'Reservation RES-2405 confirmee' },
     ],
   },
@@ -122,7 +122,7 @@ function getPaymentDetail(id: string): PaymentDetail {
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount);
+  return new Intl.NumberFormat('fr-CA', { style: 'currency', currency: 'CAD' }).format(amount);
 }
 
 function formatDateTime(dateStr: string): string {

@@ -858,7 +858,7 @@ export function ClientSpace({ onNavigate, initialSection = 'reservations' }: Cli
                           </svg>
                           <span className="text-[10px] text-white opacity-90 whitespace-nowrap font-medium">TOTAL / MOIS</span>
                         </div>
-                        <span className="text-lg text-white font-bold">700 €</span>
+                        <span className="text-lg text-white font-bold">700 C$</span>
                       </div>
 
                       <button
@@ -951,7 +951,7 @@ export function ClientSpace({ onNavigate, initialSection = 'reservations' }: Cli
                               </svg>
                               <span className="text-[10px] text-white opacity-90 whitespace-nowrap font-medium">TOTAL / MOIS</span>
                             </div>
-                            <span className="text-lg text-white font-bold">700 €</span>
+                            <span className="text-lg text-white font-bold">700 C$</span>
                           </div>
                         </div>
                       </div>
@@ -1037,7 +1037,7 @@ export function ClientSpace({ onNavigate, initialSection = 'reservations' }: Cli
                           </svg>
                           <span className="text-[10px] text-white opacity-90 whitespace-nowrap font-medium">TOTAL / MOIS</span>
                         </div>
-                        <span className="text-lg text-white font-bold">700 €</span>
+                        <span className="text-lg text-white font-bold">700 C$</span>
                       </div>
                     </div>
                   </div>

@@ -14,37 +14,37 @@ export function ServiceDetails({ onBack }: ServiceDetailsProps) {
     {
       image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpdGFsaWFuJTIwZm9vZCUyMHBhc3RhfGVufDF8fHx8MTc2Nzg4NjQzNHww&ixlib=rb-4.1.0&q=80&w=1080',
       title: 'Expérience autour de la cuisine romaine',
-      price: '35 €',
+      price: '35 C$',
       description: 'Vous souhaitez profiter de l\'expérience d\'un chef privé à domicile sans dépenser beaucoup ? Cette option vous permet de choisir un plat parmi mes classiques romains, comme les spaghettis à la carbonara ou mon tiramisù...'
     },
     {
       image: 'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpdGFsaWFuJTIwY2hlZiUyMGNvb2tpbmd8ZW58MXx8fHwxNzY3ODg2NDM0fDA&ixlib=rb-4.1.0&q=80&w=1080',
       title: 'Menu de base : saveurs de Rome',
-      price: '65 €',
+      price: '65 C$',
       description: 'Chef privé romain qui apporte les saveurs traditionnelles dans les maisons et les BnB de Rome. Mon menu de base comprend quatre plats : bruschetta à la tomate, spaghetti à la carbonara, saltimbocca alla romana et tiramisù. Si...'
     },
     {
       image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkZXNzZXJ0JTIwcGFzdHJ5fGVufDF8fHx8MTc2Nzg4NjQzNXww&ixlib=rb-4.1.0&q=80&w=1080',
       title: 'Pâtes et dessert faits maison',
-      price: '65 €',
+      price: '65 C$',
       description: 'Apprenez l\'art des pâtes fraîches et d\'un dessert traditionnel fait maison, directement chez vous. Au lieu d\'aller dans des endroits bondés, de prendre des taxis et d\'attendre les autres, vous pouvez profiter de cette expérience...'
     },
     {
       image: 'https://images.unsplash.com/photo-1599974862459-7d7d536c7e8f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxoYWxsb3dlZW4lMjBwdW1wa2luJTIwZm9vZHxlbnwxfHx8fDE3Njc4ODY0MzV8MA&ixlib=rb-4.1.0&q=80&w=1080',
       title: 'Halloween à Rome',
-      price: '85 €',
+      price: '85 C$',
       description: 'Passez un merveilleux Halloween à Rome en famille ou entre amis, en dégustant des plats romains ou des plats de votre choix. Pendant que vous êtes à la maison, je viendrai vous préparer un délicieux dîner ou dîner'
     },
     {
       image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0aXJhbWlzdSUyMGRlc3NlcnR8ZW58MXx8fHwxNzY3ODg2NDM1fDA&ixlib=rb-4.1.0&q=80&w=1080',
       title: 'Menu de fruits de mer à la romaine',
-      price: '100 €',
+      price: '100 C$',
       description: 'Un voyage en quatre services dédié aux fruits de mer pour ceux qui veulent une expérience complète et raffinée. Du l\'entrée au dessert, chaque plat est préparé avec des ingrédients frais de saison inspirés de la tradition...'
     },
     {
       image: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaHJpc3RtYXMlMjBkaW5uZXIlMjBob2xpZGF5fGVufDF8fHx8MTc2Nzg4NjQzNnww&ixlib=rb-4.1.0&q=80&w=1080',
       title: 'Noël à Rome',
-      price: '100 €',
+      price: '100 C$',
       description: 'Célébrez Noël à Rome avec style et sans stress. Un chef privé préparera un déjeuner ou un dîner mémorable pour vous et vos proches. Choisissez parmi mes plats romains traditionnels, mes recettes de vacances classiques ou un...'
     }
   ];
@@ -165,7 +165,7 @@ export function ServiceDetails({ onBack }: ServiceDetailsProps) {
               <div className="flex items-center justify-between text-center fixed bottom-0 w-[350px] bg-white shadow-lg rounded-tl-3xl rounded-tr-3xl pt-4 px-4">
                 <div className="mb-4 flex flex-col items-start">
                   <div className="text-lg mb-1">
-                    <span style={{ fontWeight: 600 }}>À partir de 65 €</span>
+                    <span style={{ fontWeight: 600 }}>À partir de 65 C$</span>
                   </div>
                   <div className="text-sm text-gray-600">par voyageur</div>
                   <div className="text-sm text-gray-600">Annulation gratuite</div>
