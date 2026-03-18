@@ -358,10 +358,10 @@ export function AdminHosts() {
                     className="px-3 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111827] text-sm bg-gray-50"
                   >
                     <option value="">Revenus generes</option>
-                    <option value="0-10000">0 - 10 000 €</option>
-                    <option value="10000-30000">10 000 - 30 000 €</option>
-                    <option value="30000-60000">30 000 - 60 000 €</option>
-                    <option value="60000+">60 000+ €</option>
+                    <option value="0-10000">0 - 10 000 C$</option>
+                    <option value="10000-30000">10 000 - 30 000 C$</option>
+                    <option value="30000-60000">30 000 - 60 000 C$</option>
+                    <option value="60000+">60 000+ C$</option>
                   </select>
                   <select
                     value={dateFilter}

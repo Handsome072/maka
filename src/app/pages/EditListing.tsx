@@ -406,7 +406,7 @@ export function EditListing({ onNavigate, uploadedPhotos = [], listingTitle = 'M
                 Tarification
               </p>
               <p className="text-sm" style={{ color: '#717171' }}>
-                $26 par nuit
+                26 C$ par nuit
               </p>
               <p className="text-sm" style={{ color: '#717171' }}>
                 Tarif week-end de $26

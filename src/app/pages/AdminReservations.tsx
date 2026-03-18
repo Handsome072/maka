@@ -257,7 +257,7 @@ export function AdminReservations() {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount);
+    return new Intl.NumberFormat('fr-CA', { style: 'currency', currency: 'CAD' }).format(amount);
   };
 
   // ── Detail View ────────────────────────────────────────────────────────────
@@ -545,7 +545,7 @@ export function AdminReservations() {
               <h3 className="text-lg text-center mb-2" style={{ fontWeight: 600 }}>Forcer un remboursement</h3>
               <p className="text-sm text-gray-500 text-center mb-4">Le remboursement sera effectue sur le moyen de paiement original du voyageur.</p>
               <div className="mb-4">
-                <label className="text-xs text-gray-500 mb-1.5 block" style={{ fontWeight: 500 }}>Montant du remboursement (EUR)</label>
+                <label className="text-xs text-gray-500 mb-1.5 block" style={{ fontWeight: 500 }}>Montant du remboursement (C$)</label>
                 <input
                   type="number"
                   value={refundAmount}
@@ -757,10 +757,10 @@ export function AdminReservations() {
                     <label className="text-xs text-gray-500 mb-1.5 block" style={{ fontWeight: 500 }}>Montant</label>
                     <select value={amountFilter} onChange={(e) => { setAmountFilter(e.target.value); setCurrentPage(1); }} className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111827]/20 text-sm">
                       <option value="all">Tous</option>
-                      <option value="0-500">0 - 500 EUR</option>
-                      <option value="500-1000">500 - 1 000 EUR</option>
-                      <option value="1000-2000">1 000 - 2 000 EUR</option>
-                      <option value="2000+">2 000+ EUR</option>
+                      <option value="0-500">0 - 500 C$</option>
+                      <option value="500-1000">500 - 1 000 C$</option>
+                      <option value="1000-2000">1 000 - 2 000 C$</option>
+                      <option value="2000+">2 000+ C$</option>
                     </select>
                   </div>
                 </div>

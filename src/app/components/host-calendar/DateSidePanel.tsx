@@ -190,7 +190,7 @@ export function PanelContent({
             className="text-xs underline transition-colors hover:opacity-70"
             style={{ color: '#717171', fontWeight: 500 }}
           >
-            Réinitialiser au prix de base ({basePrice} $)
+            Réinitialiser au prix de base ({basePrice} C$)
           </button>
         </div>
       )}

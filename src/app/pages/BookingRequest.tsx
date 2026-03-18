@@ -119,7 +119,7 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
                     />
                     <div className="flex-1">
                       <p className="text-base mb-1" style={{ fontWeight: 600 }}>
-                        Payer ${total.toFixed(2)} maintenant
+                        Payer {total.toFixed(2)} C$ maintenant
                       </p>
                     </div>
                   </label>
@@ -138,7 +138,7 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
                         Payer une partie maintenant et l'autre plus tard
                       </p>
                       <p className="text-sm text-gray-600">
-                        ${(total / 2).toFixed(2)} maintenant, ${(total / 2).toFixed(2)} à payer le 25 mars. Pas de frais supplémentaires.{' '}
+                        {(total / 2).toFixed(2)} C$ maintenant, {(total / 2).toFixed(2)} C$ à payer le 25 mars. Pas de frais supplémentaires.{' '}
                         <button className="underline" style={{ fontWeight: 600 }}>
                           Plus d'informations
                         </button>
@@ -160,7 +160,7 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
 
               {isStepCompleted(1) && !isStepEditing(1) && (
                 <p className="text-base">
-                  Payer ${total.toFixed(2)} maintenant
+                  Payer {total.toFixed(2)} C$ maintenant
                 </p>
               )}
             </div>
@@ -499,19 +499,19 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
               </h4>
               <div className="space-y-3 mb-6 pb-6 border-b border-gray-200">
                 <div className="flex items-center justify-between text-base">
-                  <span className="underline">{data.nights} nuits x ${data.pricePerNight.toFixed(2)}</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span className="underline">{data.nights} nuits x {data.pricePerNight.toFixed(2)} C$</span>
+                  <span>{subtotal.toFixed(2)} C$</span>
                 </div>
                 <div className="flex items-center justify-between text-base">
                   <span className="underline">Taxes</span>
-                  <span>${taxes.toFixed(2)}</span>
+                  <span>{taxes.toFixed(2)} C$</span>
                 </div>
               </div>
 
               {/* Total */}
               <div className="flex items-center justify-between mb-2">
-                <span className="text-base" style={{ fontWeight: 600 }}>Total USD</span>
-                <span className="text-base" style={{ fontWeight: 600 }}>${total.toFixed(2)}</span>
+                <span className="text-base" style={{ fontWeight: 600 }}>Total CAD</span>
+                <span className="text-base" style={{ fontWeight: 600 }}>{total.toFixed(2)} C$</span>
               </div>
               <button className="text-sm underline mb-6" style={{ fontWeight: 600 }}>
                 Détail du prix

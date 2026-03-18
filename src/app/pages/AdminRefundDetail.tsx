@@ -129,7 +129,7 @@ function getRefundDetail(id: string): RefundDetail {
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount);
+  return new Intl.NumberFormat('fr-CA', { style: 'currency', currency: 'CAD' }).format(amount);
 }
 
 function formatDateTime(dateStr: string): string {

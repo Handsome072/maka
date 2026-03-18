@@ -3383,7 +3383,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                           Frais de service ({serviceFeePercentage} %)
                         </span>
                         <span className="text-sm md:text-base" style={{ color: '#222222', fontWeight: 600 }}>
-                          -${serviceFee.toFixed(0)}
+                          -{serviceFee.toFixed(0)} C$
                         </span>
                       </div>
                       <div className="border-t border-gray-300 pt-3 flex justify-between items-center">
@@ -3391,7 +3391,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                           Vous gagnez
                         </span>
                         <span className="text-sm md:text-base" style={{ color: '#222222', fontWeight: 600 }}>
-                          ${youEarn.toFixed(0)}
+                          {youEarn.toFixed(0)} C$
                         </span>
                       </div>
                     </div>

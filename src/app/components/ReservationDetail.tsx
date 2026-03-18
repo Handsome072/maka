@@ -59,7 +59,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                     Frais de réservation
                   </span>
                   <span className="text-base" style={{ fontWeight: 600, color: '#222222' }}>
-                    580€
+                    580 C$
                   </span>
                 </div>
 
@@ -69,7 +69,7 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                       Remboursement
                     </span>
                     <span className="text-base text-white" style={{ fontWeight: 600 }}>
-                      290€
+                      290 C$
                     </span>
                   </div>
                   <p className="text-sm text-white opacity-90 leading-relaxed">
@@ -327,26 +327,26 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                     <div className="space-y-3 mb-4">
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-gray-700">Arrhes</span>
-                        <span className="text-gray-700">500€</span>
+                        <span className="text-gray-700">500 C$</span>
                       </div>
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-gray-700">Services ponctuels</span>
-                        <span className="text-gray-700">80€</span>
+                        <span className="text-gray-700">80 C$</span>
                       </div>
                       <div className="pl-4 flex items-center justify-between text-sm text-gray-500">
                         <span>Ménage hebdomadaire</span>
-                        <span>40€</span>
+                        <span>40 C$</span>
                       </div>
                     </div>
 
                     <div className="border-t border-gray-200 pt-4">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-lg" style={{ fontWeight: 600, color: '#222222' }}>Total</span>
-                        <span className="text-lg" style={{ fontWeight: 600, color: '#222222' }}>580€</span>
+                        <span className="text-lg" style={{ fontWeight: 600, color: '#222222' }}>580 C$</span>
                       </div>
                       <div className="flex items-center justify-between text-sm text-gray-500">
                         <span>Dont TVA</span>
-                        <span>54,66 €</span>
+                        <span>54,66  C$</span>
                       </div>
                     </div>
                   </div>
@@ -365,30 +365,30 @@ export function ReservationDetail({ onClose }: ReservationDetailProps) {
                     <div className="space-y-3 mb-4">
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-gray-700">Loyer</span>
-                        <span className="text-gray-700">500€ par mois</span>
+                        <span className="text-gray-700">500 C$ par mois</span>
                       </div>
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-gray-700">3 occupants</span>
-                        <span className="text-gray-700">200€ par mois</span>
+                        <span className="text-gray-700">200 C$ par mois</span>
                       </div>
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-gray-700">Services supplémentaires</span>
-                        <span className="text-gray-700">40€ par mois</span>
+                        <span className="text-gray-700">40 C$ par mois</span>
                       </div>
                       <div className="pl-4 flex items-center justify-between text-sm text-gray-500">
                         <span>Ménage hebdomadaire</span>
-                        <span>40€ par mois</span>
+                        <span>40 C$ par mois</span>
                       </div>
                     </div>
 
                     <div className="border-t border-gray-200 pt-4">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-lg" style={{ fontWeight: 600, color: '#222222' }}>Total</span>
-                        <span className="text-lg" style={{ fontWeight: 600, color: '#222222' }}>740€ par mois</span>
+                        <span className="text-lg" style={{ fontWeight: 600, color: '#222222' }}>740 C$ par mois</span>
                       </div>
                       <div className="flex items-center justify-between text-sm text-gray-500">
                         <span>Dont TVA</span>
-                        <span>54,66 €</span>
+                        <span>54,66  C$</span>
                       </div>
                     </div>
                   </div>

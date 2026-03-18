@@ -129,7 +129,7 @@ export function AdminPropertyDetail() {
 
   const formatPrice = (price: string | null | undefined) => {
     if (!price) return '--';
-    return `${Number(price).toFixed(0)}`;
+    return `${Number(price).toFixed(0)} C$`;
   };
 
   if (loading) {
@@ -367,36 +367,36 @@ export function AdminPropertyDetail() {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   <div>
                     <div className="text-xs text-gray-500 mb-1">Prix / nuit</div>
-                    <div className="text-lg" style={{ fontWeight: 600 }}>{formatPrice(listing.base_price)} {listing.currency}</div>
+                    <div className="text-lg" style={{ fontWeight: 600 }}>{formatPrice(listing.base_price)}</div>
                   </div>
                   {listing.weekend_price && (
                     <div>
                       <div className="text-xs text-gray-500 mb-1">Week-end</div>
-                      <div className="text-sm" style={{ fontWeight: 600 }}>{formatPrice(listing.weekend_price)} {listing.currency}</div>
+                      <div className="text-sm" style={{ fontWeight: 600 }}>{formatPrice(listing.weekend_price)}</div>
                     </div>
                   )}
                   {listing.weekly_price && (
                     <div>
                       <div className="text-xs text-gray-500 mb-1">Semaine</div>
-                      <div className="text-sm" style={{ fontWeight: 600 }}>{formatPrice(listing.weekly_price)} {listing.currency}</div>
+                      <div className="text-sm" style={{ fontWeight: 600 }}>{formatPrice(listing.weekly_price)}</div>
                     </div>
                   )}
                   {listing.monthly_price && (
                     <div>
                       <div className="text-xs text-gray-500 mb-1">Mois</div>
-                      <div className="text-sm" style={{ fontWeight: 600 }}>{formatPrice(listing.monthly_price)} {listing.currency}</div>
+                      <div className="text-sm" style={{ fontWeight: 600 }}>{formatPrice(listing.monthly_price)}</div>
                     </div>
                   )}
                   {listing.cleaning_fee && Number(listing.cleaning_fee) > 0 && (
                     <div>
                       <div className="text-xs text-gray-500 mb-1">Frais menage</div>
-                      <div className="text-sm" style={{ fontWeight: 600 }}>{formatPrice(listing.cleaning_fee)} {listing.currency}</div>
+                      <div className="text-sm" style={{ fontWeight: 600 }}>{formatPrice(listing.cleaning_fee)}</div>
                     </div>
                   )}
                   {listing.security_deposit && Number(listing.security_deposit) > 0 && (
                     <div>
                       <div className="text-xs text-gray-500 mb-1">Depot securite</div>
-                      <div className="text-sm" style={{ fontWeight: 600 }}>{formatPrice(listing.security_deposit)} {listing.currency}</div>
+                      <div className="text-sm" style={{ fontWeight: 600 }}>{formatPrice(listing.security_deposit)}</div>
                     </div>
                   )}
                 </div>

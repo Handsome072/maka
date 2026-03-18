@@ -100,8 +100,8 @@ export function LegalFooter({ activePage }: LegalFooterProps) {
 
               {/* Currency */}
               <button className="flex items-center gap-1 text-sm hover:underline" style={{ fontWeight: 600 }}>
-                <span>€</span>
-                <span>EUR</span>
+                <span>C$</span>
+                <span>CAD</span>
               </button>
 
               {/* Social Icons */}

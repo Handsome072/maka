@@ -154,9 +154,9 @@ export function AdminProperties() {
     return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
-  const formatPrice = (price: string | null, currency: string) => {
+  const formatPrice = (price: string | null, _currency: string) => {
     if (!price) return '--';
-    return `${Number(price).toFixed(0)} ${currency}`;
+    return `${Number(price).toFixed(0)} C$`;
   };
 
   return (
