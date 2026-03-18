@@ -1051,9 +1051,10 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
                     ref={badgeCalendarRef}
                     className="absolute left-0 right-0 bg-white rounded-2xl z-50 mt-2"
                     style={{
-                      boxShadow: '0 6px 20px rgba(0,0,0,0.2)',
-                      width: '660px',
-                      marginLeft: '-240px',
+                      boxShadow: 'rgba(0, 0, 0, 0.2) 0px 6px 20px',
+                      width: '400px',
+                      marginLeft: '-90px',
+                      top: '50px',
                     }}
                   >
                     <div className="p-6">
