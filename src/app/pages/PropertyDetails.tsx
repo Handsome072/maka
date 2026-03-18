@@ -74,8 +74,10 @@ function buildMapEmbedUrl(city?: string | null, country?: string | null): string
 function formatPrice(price: string | number | null, currency?: string): string {
   if (!price) return '$0';
   const num = typeof price === 'string' ? parseFloat(price) : price;
-  if (currency === 'EUR') return `${num.toFixed(0)} €`;
-  return `$${num.toFixed(0)}`;
+  const c = (currency || '').toUpperCase();
+  if (c.startsWith('EUR')) return `${num.toFixed(0)} €`;
+  if (c.startsWith('USD')) return `$${num.toFixed(0)} US`;
+  return `${num.toFixed(0)} $`;
 }
 
 function formatRating(rating: number | null): string {

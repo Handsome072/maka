@@ -234,7 +234,7 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
                   title={`${listing.title || 'Logement'} · ${listing.city || ''}`}
                   location={listing.space_type === 'entire' ? 'Logement entier' : listing.space_type === 'private' ? 'Chambre privée' : 'Logement'}
                   date=""
-                  price={`${Number(listing.base_price || 0).toFixed(0)} ${listing.currency} / nuit`}
+                  price={`${Number(listing.base_price || 0).toFixed(0)} ${(listing.currency || '').toUpperCase().startsWith('EUR') ? '€' : (listing.currency || '').toUpperCase().startsWith('USD') ? '$ US' : '$'} / nuit`}
                   rating={0}
                   badge="Nouveau"
                   guests={`${listing.capacity} voyageurs`}
