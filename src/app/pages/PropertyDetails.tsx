@@ -303,7 +303,13 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
   });
   const [priceBreakdown, setPriceBreakdown] = useState<PriceBreakdown | null>(null);
   const [priceLoading, setPriceLoading] = useState(false);
+  const [showBadgeCalendar, setShowBadgeCalendar] = useState(false);
+  const [badgeCalendarMonth, setBadgeCalendarMonth] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  });
   const guestsPickerRef = useRef<HTMLDivElement>(null);
+  const badgeCalendarRef = useRef<HTMLDivElement>(null);
 
   const sleepScrollRef = useRef<HTMLDivElement>(null);
   const [canScrollSleepLeft, setCanScrollSleepLeft] = useState(false);
@@ -405,6 +411,24 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [showGuestsPicker]);
+
+  // Close badge calendar on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (badgeCalendarRef.current && !badgeCalendarRef.current.contains(e.target as Node)) {
+        setShowBadgeCalendar(false);
+      }
+    };
+    if (showBadgeCalendar) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showBadgeCalendar]);
+
+  // Sync badge calendar month with main calendar
+  useEffect(() => {
+    setBadgeCalendarMonth(calendarMonth);
+  }, [calendarMonth]);
 
   // ─── Calendar render helper ───────────────────────────────────────────────
   const renderMonth = useCallback((year: number, month: number) => {
@@ -915,7 +939,7 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
             {/* Right Column - Reservation Card */}
             <div className="hidden lg:block lg:col-span-1">
               <div className="sticky top-24">
-                <div className="border border-gray-200 rounded-2xl p-6 shadow-xl">
+                <div className="border border-gray-200 rounded-2xl p-6 shadow-xl relative">
                   {/* Price */}
                   <div className="flex items-baseline gap-1 mb-4">
                     {priceBreakdown ? (
@@ -950,17 +974,17 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
                   {/* Date inputs */}
                   <div className="border border-gray-300 rounded-lg mb-4">
                     <div className="grid grid-cols-2 divide-x divide-gray-300">
-                      <div className="p-3 cursor-pointer hover:bg-gray-50" onClick={() => {
-                        const calSection = document.getElementById('booking-calendar');
-                        calSection?.scrollIntoView({ behavior: 'smooth' });
-                      }}>
+                      <div
+                        className="p-3 cursor-pointer hover:bg-gray-50"
+                        onClick={() => setShowBadgeCalendar(true)}
+                      >
                         <label className="text-xs block mb-1" style={{ fontWeight: 600 }}>ARRIVÉE</label>
                         <span className="text-sm">{checkInDate ? formatDateInput(checkInDate) : 'Ajouter'}</span>
                       </div>
-                      <div className="p-3 cursor-pointer hover:bg-gray-50" onClick={() => {
-                        const calSection = document.getElementById('booking-calendar');
-                        calSection?.scrollIntoView({ behavior: 'smooth' });
-                      }}>
+                      <div
+                        className="p-3 cursor-pointer hover:bg-gray-50"
+                        onClick={() => setShowBadgeCalendar(true)}
+                      >
                         <label className="text-xs block mb-1" style={{ fontWeight: 600 }}>DÉPART</label>
                         <span className="text-sm">{checkOutDate ? formatDateInput(checkOutDate) : 'Ajouter'}</span>
                       </div>
@@ -990,8 +1014,7 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
                   <button
                     onClick={() => {
                       if (!checkInDate || !checkOutDate) {
-                        const calSection = document.getElementById('booking-calendar');
-                        calSection?.scrollIntoView({ behavior: 'smooth' });
+                        setShowBadgeCalendar(true);
                         return;
                       }
                       onBook?.(bookingData);
@@ -1004,50 +1027,15 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
                       opacity: priceLoading ? 0.7 : 1,
                     }}
                   >
-                    {!checkInDate || !checkOutDate ? 'Vérifier la disponibilité' : 'Réserver'}
+                    Réserver
                   </button>
 
-                  <p className="text-center text-sm text-gray-600 mb-4">
+                  <p className="text-center text-sm text-gray-600 mb-2">
                     Aucun montant ne vous sera débité pour le moment
                   </p>
 
-                  {/* Price breakdown */}
-                  {priceBreakdown && nights > 0 && (
-                    <div className="pt-4 border-t border-gray-200 space-y-3 mb-4">
-                      <div className="flex justify-between text-sm">
-                        <span className="underline">{formatPrice(priceBreakdown.price_per_night, currency)} x {nights} nuit{nights > 1 ? 's' : ''}</span>
-                        <span>{formatPrice(priceBreakdown.base_total, currency)}</span>
-                      </div>
-                      {priceBreakdown.cleaning_fee > 0 && (
-                        <div className="flex justify-between text-sm">
-                          <span className="underline">Frais de ménage</span>
-                          <span>{formatPrice(priceBreakdown.cleaning_fee, currency)}</span>
-                        </div>
-                      )}
-                      {priceBreakdown.service_fee > 0 && (
-                        <div className="flex justify-between text-sm">
-                          <span className="underline">Frais de service HOMIQIO</span>
-                          <span>{formatPrice(priceBreakdown.service_fee, currency)}</span>
-                        </div>
-                      )}
-                      <div className="flex justify-between text-base pt-3 border-t border-gray-200" style={{ fontWeight: 600 }}>
-                        <span>Total</span>
-                        <span>{formatPrice(priceBreakdown.total, currency)}</span>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Cancellation policy */}
-                  {cancellationPolicy && (
-                    <div className="text-center pt-4 border-t border-gray-200">
-                      <p className="text-sm text-gray-600">
-                        Annulation gratuite
-                      </p>
-                    </div>
-                  )}
-
                   {/* Report listing */}
-                  <div className="mt-6 pt-6 border-t border-gray-200">
+                  <div className="mt-4 pt-4 border-t border-gray-200">
                     <button className="flex items-center gap-2 text-sm underline mx-auto">
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
@@ -1056,6 +1044,133 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
                     </button>
                   </div>
                 </div>
+
+                {/* Badge Calendar Popup */}
+                {showBadgeCalendar && (
+                  <div
+                    ref={badgeCalendarRef}
+                    className="absolute left-0 right-0 bg-white rounded-2xl z-50 mt-2"
+                    style={{
+                      boxShadow: '0 6px 20px rgba(0,0,0,0.2)',
+                      width: '660px',
+                      marginLeft: '-240px',
+                    }}
+                  >
+                    <div className="p-6">
+                      {/* Header: nights + date inputs */}
+                      <div className="flex items-start justify-between mb-6">
+                        <div>
+                          <h3 className="text-xl" style={{ fontWeight: 600 }}>
+                            {nights > 0 ? `${nights} nuit${nights > 1 ? 's' : ''}` : 'Sélectionnez vos dates'}
+                          </h3>
+                          {checkInDate && checkOutDate && (
+                            <p className="text-sm text-gray-500 mt-1">
+                              {formatDateShort(checkInDate)} - {formatDateShort(checkOutDate)}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* ARRIVÉE / DÉPART inputs */}
+                        <div className="border border-gray-300 rounded-lg overflow-hidden" style={{ width: '300px' }}>
+                          <div className="grid grid-cols-2 divide-x divide-gray-300">
+                            <div className="p-3 relative">
+                              <label className="text-[10px] block mb-0.5" style={{ fontWeight: 700, letterSpacing: '0.05em' }}>ARRIVÉE</label>
+                              <span className="text-sm" style={{ color: '#222' }}>{checkInDate ? formatDateInput(checkInDate) : 'Ajouter'}</span>
+                              {checkInDate && (
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); setCheckInDate(null); setCheckOutDate(null); setPriceBreakdown(null); }}
+                                  className="absolute top-2 right-2 p-1 hover:bg-gray-100 rounded-full"
+                                >
+                                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                  </svg>
+                                </button>
+                              )}
+                            </div>
+                            <div className="p-3 relative">
+                              <label className="text-[10px] block mb-0.5" style={{ fontWeight: 700, letterSpacing: '0.05em' }}>DÉPART</label>
+                              <span className="text-sm" style={{ color: '#222' }}>{checkOutDate ? formatDateInput(checkOutDate) : 'Ajouter'}</span>
+                              {checkOutDate && (
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); setCheckOutDate(null); setPriceBreakdown(null); }}
+                                  className="absolute top-2 right-2 p-1 hover:bg-gray-100 rounded-full"
+                                >
+                                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                  </svg>
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Calendar navigation */}
+                      <div className="flex items-center justify-between mb-4">
+                        <button
+                          onClick={() => setBadgeCalendarMonth(new Date(badgeCalendarMonth.getFullYear(), badgeCalendarMonth.getMonth() - 1, 1))}
+                          className="p-2 hover:bg-gray-100 rounded-full"
+                        >
+                          <ChevronLeft className="w-5 h-5" />
+                        </button>
+                        <div className="flex gap-16">
+                          <h4 className="text-base" style={{ fontWeight: 600 }}>
+                            {MONTH_NAMES_FR[badgeCalendarMonth.getMonth()]} {badgeCalendarMonth.getFullYear()}
+                          </h4>
+                          <h4 className="text-base" style={{ fontWeight: 600 }}>
+                            {MONTH_NAMES_FR[(badgeCalendarMonth.getMonth() + 1) % 12]} {badgeCalendarMonth.getMonth() === 11 ? badgeCalendarMonth.getFullYear() + 1 : badgeCalendarMonth.getFullYear()}
+                          </h4>
+                        </div>
+                        <button
+                          onClick={() => setBadgeCalendarMonth(new Date(badgeCalendarMonth.getFullYear(), badgeCalendarMonth.getMonth() + 1, 1))}
+                          className="p-2 hover:bg-gray-100 rounded-full"
+                        >
+                          <ChevronRight className="w-5 h-5" />
+                        </button>
+                      </div>
+
+                      {/* Two-month calendar */}
+                      <div className="grid grid-cols-2 gap-8">
+                        <div>
+                          {renderMonth(badgeCalendarMonth.getFullYear(), badgeCalendarMonth.getMonth())}
+                        </div>
+                        <div>
+                          {renderMonth(
+                            badgeCalendarMonth.getMonth() === 11 ? badgeCalendarMonth.getFullYear() + 1 : badgeCalendarMonth.getFullYear(),
+                            (badgeCalendarMonth.getMonth() + 1) % 12
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Footer: keyboard icon + clear dates + close */}
+                      <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
+                        <svg className="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <div className="flex items-center gap-4">
+                          <button
+                            onClick={() => { clearDates(); }}
+                            className="text-sm underline"
+                            style={{ fontWeight: 600 }}
+                          >
+                            Effacer les dates
+                          </button>
+                          <button
+                            onClick={() => {
+                              setShowBadgeCalendar(false);
+                              // Sync main calendar
+                              setCalendarMonth(badgeCalendarMonth);
+                            }}
+                            className="px-6 py-2.5 bg-gray-900 text-white rounded-lg text-sm hover:bg-gray-800 transition-colors"
+                            style={{ fontWeight: 600 }}
+                          >
+                            Fermer
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -1480,7 +1595,7 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
           }}
           className="bg-black text-white px-8 py-3 rounded-lg font-semibold text-base hover:opacity-90 transition-opacity"
         >
-          {!checkInDate || !checkOutDate ? 'Dates' : 'Réserver'}
+          Réserver
         </button>
       </div>
       {/* Message Host Modal */}
