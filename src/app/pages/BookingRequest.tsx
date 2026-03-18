@@ -8,7 +8,7 @@ interface BookingRequestProps {
     listingId: number;
     title: string;
     image: string;
-    rating: number;
+    rating: number | null;
     location: string;
     checkIn: string;
     checkOut: string;
@@ -528,10 +528,12 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
                   <h3 className="text-base mb-2" style={{ fontWeight: 600 }}>
                     {data.title}
                   </h3>
-                  <div className="flex items-center gap-1 text-sm mb-1">
-                    <Star className="w-3.5 h-3.5 fill-current" />
-                    <span style={{ fontWeight: 600 }}>{data.rating.toFixed(2)}</span>
-                  </div>
+                  {data.rating != null && (
+                    <div className="flex items-center gap-1 text-sm mb-1">
+                      <Star className="w-3.5 h-3.5 fill-current" />
+                      <span style={{ fontWeight: 600 }}>{data.rating.toFixed(2)}</span>
+                    </div>
+                  )}
                   <p className="text-sm text-gray-600">{data.location}</p>
                 </div>
               </div>
