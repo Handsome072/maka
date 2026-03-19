@@ -552,7 +552,7 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
 
   const bookingData = {
     listingId: listing.id,
-    title: subtitle,
+    title: title,
     image: images[0],
     rating: reviewsSummary.average_rating,
     location: reviewsSummary.is_guest_favorite ? "Coup de cœur voyageurs" : location,
@@ -573,6 +573,7 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
     hostPhoto: listing.host_photo_url || host?.profile_photo_url || '',
     hostSince: host?.member_since || '',
     cancellationPolicy,
+    capacity,
   };
 
   return (
