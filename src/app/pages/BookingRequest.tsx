@@ -68,8 +68,10 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
   const pb = data.priceBreakdown;
   const subtotal = pb ? pb.base_total : data.nights * data.pricePerNight;
   const cleaningFee = pb?.cleaning_fee ?? 0;
+  const extraGuestFee = pb?.extra_guest_fee ?? 0;
+  const petFee = pb?.pet_fee ?? 0;
   const serviceFee = pb?.service_fee ?? 0;
-  const total = pb ? pb.total : subtotal + cleaningFee + serviceFee;
+  const total = pb ? pb.total : subtotal + cleaningFee + extraGuestFee + petFee + serviceFee;
 
   const handleSubmitReservation = async () => {
     if (!data.listingId || !data.checkIn || !data.checkOut) return;
@@ -599,9 +601,21 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
                     <span>{cleaningFee.toFixed(2)} C$</span>
                   </div>
                 )}
+                {extraGuestFee > 0 && (
+                  <div className="flex items-center justify-between text-base">
+                    <span className="underline">Frais de voyageur supplémentaire</span>
+                    <span>{extraGuestFee.toFixed(2)} C$</span>
+                  </div>
+                )}
+                {petFee > 0 && (
+                  <div className="flex items-center justify-between text-base">
+                    <span className="underline">Frais d&apos;animaux</span>
+                    <span>{petFee.toFixed(2)} C$</span>
+                  </div>
+                )}
                 {serviceFee > 0 && (
                   <div className="flex items-center justify-between text-base">
-                    <span className="underline">Frais de service</span>
+                    <span className="underline">Frais de service HOMIQIO</span>
                     <span>{serviceFee.toFixed(2)} C$</span>
                   </div>
                 )}
