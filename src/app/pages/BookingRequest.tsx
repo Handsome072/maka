@@ -1,6 +1,8 @@
-import { useState } from 'react';
-import { ArrowLeft, Star } from 'lucide-react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { ArrowLeft, Star, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react';
 import { reservationsApi, PriceBreakdown } from '../services/api';
+import { getSavedPaymentMethods, SavedPaymentMethod } from '../components/client-space/ClientPayments';
+import { GuestsPicker } from '../components/GuestsPicker';
 
 interface BookingRequestProps {
   onBack: () => void;
@@ -27,7 +29,64 @@ interface BookingRequestProps {
     hostPhoto: string;
     hostSince: string;
     cancellationPolicy: string | null;
+    capacity?: number;
   };
+}
+
+// ─── Calendar helpers ─────────────────────────────────────────────────────────
+const MONTH_NAMES_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+const MONTH_SHORT_FR = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+const DAY_NAMES_FR = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+
+function getDaysInMonth(year: number, month: number): (Date | null)[] {
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const daysInMonth = lastDay.getDate();
+  const startingDayOfWeek = (firstDay.getDay() + 6) % 7;
+  const days: (Date | null)[] = [];
+  for (let i = 0; i < startingDayOfWeek; i++) days.push(null);
+  for (let i = 1; i <= daysInMonth; i++) days.push(new Date(year, month, i));
+  return days;
+}
+
+function isSameDay(a: Date | null, b: Date | null): boolean {
+  if (!a || !b) return false;
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+}
+
+function isInDateRange(day: Date, start: Date | null, end: Date | null): boolean {
+  if (!start || !end) return false;
+  return day.getTime() > start.getTime() && day.getTime() < end.getTime();
+}
+
+function nightsBetween(start: Date, end: Date): number {
+  return Math.max(0, Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)));
+}
+
+function formatDateApi(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function formatDateShort(date: Date): string {
+  return `${date.getDate()} ${MONTH_SHORT_FR[date.getMonth()]} ${date.getFullYear()}`;
+}
+
+function formatDateInput(date: Date | null): string {
+  if (!date) return '';
+  const d = String(date.getDate()).padStart(2, '0');
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const y = date.getFullYear();
+  return `${d}/${m}/${y}`;
+}
+
+function parseApiDate(str: string): Date | null {
+  if (!str) return null;
+  const parts = str.split('-');
+  if (parts.length !== 3) return null;
+  return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
 }
 
 export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
@@ -39,6 +98,152 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [reservationError, setReservationError] = useState<string | null>(null);
   const [reservationSuccess, setReservationSuccess] = useState(false);
+  const [savedPaymentMethods, setSavedPaymentMethods] = useState<SavedPaymentMethod[]>([]);
+  const [selectedSavedIndex, setSelectedSavedIndex] = useState<number | null>(null);
+  const [acceptedConditions, setAcceptedConditions] = useState(false);
+
+  // ─── Editable dates & guests state ──────────────────────────────────────────
+  const [checkInDate, setCheckInDate] = useState<Date | null>(null);
+  const [checkOutDate, setCheckOutDate] = useState<Date | null>(null);
+  const [guests, setGuests] = useState({ adults: 1, children: 0, babies: 0, pets: 0 });
+  const [localPriceBreakdown, setLocalPriceBreakdown] = useState<PriceBreakdown | null>(null);
+  const [priceLoading, setPriceLoading] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [showGuestsPicker, setShowGuestsPicker] = useState(false);
+  const [calendarMonth, setCalendarMonth] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  });
+  const calendarRef = useRef<HTMLDivElement>(null);
+  const guestsPickerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const methods = getSavedPaymentMethods();
+    setSavedPaymentMethods(methods);
+    if (methods.length > 0) {
+      setSelectedSavedIndex(0);
+      setPaymentMethod('card');
+    }
+  }, []);
+
+  // Initialize dates & guests from bookingData
+  useEffect(() => {
+    if (bookingData) {
+      const ci = parseApiDate(bookingData.checkIn);
+      const co = parseApiDate(bookingData.checkOut);
+      if (ci) setCheckInDate(ci);
+      if (co) setCheckOutDate(co);
+      if (ci) setCalendarMonth(new Date(ci.getFullYear(), ci.getMonth(), 1));
+      setGuests({
+        adults: bookingData.adults,
+        children: bookingData.children,
+        babies: bookingData.infants,
+        pets: bookingData.pets,
+      });
+      if (bookingData.priceBreakdown) {
+        setLocalPriceBreakdown(bookingData.priceBreakdown);
+      }
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Recalculate price when dates or guests change
+  useEffect(() => {
+    if (!checkInDate || !checkOutDate || !bookingData?.listingId) {
+      setLocalPriceBreakdown(null);
+      return;
+    }
+    setPriceLoading(true);
+    reservationsApi.calculatePrice({
+      listing_id: bookingData.listingId,
+      check_in: formatDateApi(checkInDate),
+      check_out: formatDateApi(checkOutDate),
+      adults: guests.adults,
+      children: guests.children,
+      pets: guests.pets,
+    })
+      .then(setLocalPriceBreakdown)
+      .catch(() => setLocalPriceBreakdown(null))
+      .finally(() => setPriceLoading(false));
+  }, [checkInDate, checkOutDate, guests.adults, guests.children, guests.pets, bookingData?.listingId]);
+
+  // Close calendar on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (calendarRef.current && !calendarRef.current.contains(e.target as Node)) {
+        setShowCalendar(false);
+      }
+    }
+    if (showCalendar) document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [showCalendar]);
+
+  // Close guests picker on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (guestsPickerRef.current && !guestsPickerRef.current.contains(e.target as Node)) {
+        setShowGuestsPicker(false);
+      }
+    }
+    if (showGuestsPicker) document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [showGuestsPicker]);
+
+  const handleDateClick = useCallback((day: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (day < today) return;
+    if (!checkInDate || (checkInDate && checkOutDate)) {
+      setCheckInDate(day);
+      setCheckOutDate(null);
+    } else if (checkInDate && !checkOutDate) {
+      if (day <= checkInDate) {
+        setCheckInDate(day);
+        setCheckOutDate(null);
+      } else {
+        setCheckOutDate(day);
+      }
+    }
+  }, [checkInDate, checkOutDate]);
+
+  const renderMonth = useCallback((year: number, month: number) => {
+    const days = getDaysInMonth(year, month);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return (
+      <div>
+        <div className="grid grid-cols-7 gap-2 mb-2">
+          {DAY_NAMES_FR.map((day, i) => (
+            <div key={i} className="text-center text-xs text-gray-600 py-2" style={{ fontWeight: 600 }}>{day}</div>
+          ))}
+        </div>
+        <div className="grid grid-cols-7 gap-0">
+          {days.map((day, i) => {
+            if (!day) return <div key={i} className="aspect-square" />;
+            const isPast = day < today;
+            const isStart = isSameDay(day, checkInDate);
+            const isEnd = isSameDay(day, checkOutDate);
+            const inRange = isInDateRange(day, checkInDate, checkOutDate);
+            const isSelected = isStart || isEnd;
+            return (
+              <div key={i} className="aspect-square flex items-center justify-center relative" style={{ backgroundColor: inRange ? '#f0f0f0' : 'transparent' }}>
+                <button
+                  onClick={() => !isPast && handleDateClick(day)}
+                  disabled={isPast}
+                  className={`w-10 h-10 flex items-center justify-center text-sm rounded-full transition-colors ${isSelected ? 'bg-gray-900 text-white' : isPast ? 'text-gray-300 cursor-not-allowed' : 'hover:bg-gray-100 cursor-pointer'}`}
+                  style={{ fontWeight: isSelected ? 600 : 400 }}
+                >
+                  {day.getDate()}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }, [checkInDate, checkOutDate, handleDateClick]);
+
+  const nights = checkInDate && checkOutDate ? nightsBetween(checkInDate, checkOutDate) : 0;
+  const totalVoyageurs = guests.adults + guests.children;
 
   const data = bookingData || {
     listingId: 0,
@@ -65,27 +270,29 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
     cancellationPolicy: null,
   };
 
-  const pb = data.priceBreakdown;
-  const subtotal = pb ? pb.base_total : data.nights * data.pricePerNight;
+  const pb = localPriceBreakdown;
+  const pricePerNight = pb?.price_per_night ?? data.pricePerNight;
+  const subtotal = pb ? pb.base_total : nights * pricePerNight;
   const cleaningFee = pb?.cleaning_fee ?? 0;
   const extraGuestFee = pb?.extra_guest_fee ?? 0;
   const petFee = pb?.pet_fee ?? 0;
   const serviceFee = pb?.service_fee ?? 0;
   const total = pb ? pb.total : subtotal + cleaningFee + extraGuestFee + petFee + serviceFee;
+  const capacity = data.capacity ?? 10;
 
   const handleSubmitReservation = async () => {
-    if (!data.listingId || !data.checkIn || !data.checkOut) return;
+    if (!data.listingId || !checkInDate || !checkOutDate) return;
     setIsSubmitting(true);
     setReservationError(null);
     try {
       await reservationsApi.create({
         listing_id: data.listingId,
-        check_in: data.checkIn,
-        check_out: data.checkOut,
-        adults: data.adults,
-        children: data.children,
-        infants: data.infants,
-        pets: data.pets,
+        check_in: formatDateApi(checkInDate),
+        check_out: formatDateApi(checkOutDate),
+        adults: guests.adults,
+        children: guests.children,
+        infants: guests.babies,
+        pets: guests.pets,
         guest_message: message || undefined,
       });
       setReservationSuccess(true);
@@ -241,82 +448,126 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
 
               {isStepEditing(2) && (
                 <div>
-                  <div className="rounded-2xl mb-4">
-                    {/* Card option */}
-                    <label className="flex items-center justify-between mb-6 cursor-pointer pt-4">
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-2">
-                          <svg className="w-8 h-6" viewBox="0 0 32 24" fill="none">
-                            <rect width="32" height="24" rx="3" fill="#1A1F71"/>
-                            <rect x="6" y="8" width="20" height="8" rx="1" fill="#FF5F00"/>
-                            <circle cx="12" cy="12" r="5" fill="#EB001B"/>
-                            <circle cx="20" cy="12" r="5" fill="#F79E1B"/>
-                          </svg>
-                          <svg className="w-8 h-6" viewBox="0 0 32 24" fill="none">
-                            <rect width="32" height="24" rx="3" fill="#0066B2"/>
-                            <path d="M12 8h8v8h-8z" fill="#FFA500"/>
-                          </svg>
-                          <svg className="w-8 h-6" viewBox="0 0 32 24" fill="none">
-                            <rect width="32" height="24" rx="3" fill="#00579F"/>
-                            <path d="M14 8l4 8h-8l4-8z" fill="#FAA61A"/>
-                          </svg>
-                          <svg className="w-8 h-6" viewBox="0 0 32 24" fill="none">
-                            <rect width="32" height="24" rx="3" fill="#E21836"/>
-                          </svg>
-                        </div>
+                  {/* Saved payment methods */}
+                  {savedPaymentMethods.length > 0 && (
+                    <div className="mb-6">
+                      <p className="text-sm text-gray-600 mb-3">Vos modes de paiement enregistrés</p>
+                      <div className="space-y-3">
+                        {savedPaymentMethods.map((m, i) => (
+                          <label key={i} className="flex items-center justify-between p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                            <div className="flex items-center gap-3">
+                              <svg className="w-8 h-6" viewBox="0 0 32 24" fill="none">
+                                <rect width="32" height="24" rx="3" fill="#1A1F71"/>
+                                <rect x="6" y="8" width="20" height="8" rx="1" fill="#FF5F00"/>
+                                <circle cx="12" cy="12" r="5" fill="#EB001B"/>
+                                <circle cx="20" cy="12" r="5" fill="#F79E1B"/>
+                              </svg>
+                              <div>
+                                <span className="text-sm" style={{ fontWeight: 600 }}>{m.brand} •••• {m.last4}</span>
+                                <span className="text-xs text-gray-500 ml-2">{m.expiry}</span>
+                              </div>
+                            </div>
+                            <input
+                              type="radio"
+                              name="payment-method"
+                              checked={selectedSavedIndex === i && paymentMethod === 'card'}
+                              onChange={() => { setSelectedSavedIndex(i); setPaymentMethod('card'); }}
+                              className="w-5 h-5 text-gray-900 border-gray-300 focus:ring-gray-900"
+                            />
+                          </label>
+                        ))}
                       </div>
-                      <input
-                        type="radio"
-                        name="payment-method"
-                        checked={paymentMethod === 'card'}
-                        onChange={() => setPaymentMethod('card')}
-                        className="w-5 h-5 text-gray-900 border-gray-300 focus:ring-gray-900"
-                      />
-                    </label>
+                      <button
+                        onClick={() => { setSelectedSavedIndex(null); setPaymentMethod('card'); }}
+                        className="text-sm underline mt-3"
+                        style={{ fontWeight: 600 }}
+                      >
+                        Utiliser une autre carte
+                      </button>
+                    </div>
+                  )}
 
-                    {paymentMethod === 'card' && (
-                      <div className="space-y-4">
-                        <p className="text-base mb-4" style={{ fontWeight: 600 }}>
-                          Carte de crédit ou de débit
-                        </p>
-                        
-                        <input
-                          type="text"
-                          placeholder="Numéro de carte"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
-                        />
-                        
-                        <div className="grid grid-cols-2 gap-4">
+                  <div className="rounded-2xl mb-4">
+                    {/* New card option - show if no saved methods or user chose "autre carte" */}
+                    {(savedPaymentMethods.length === 0 || selectedSavedIndex === null) && (
+                      <>
+                        {/* Card option */}
+                        <label className="flex items-center justify-between mb-6 cursor-pointer pt-4">
+                          <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2">
+                              <svg className="w-8 h-6" viewBox="0 0 32 24" fill="none">
+                                <rect width="32" height="24" rx="3" fill="#1A1F71"/>
+                                <rect x="6" y="8" width="20" height="8" rx="1" fill="#FF5F00"/>
+                                <circle cx="12" cy="12" r="5" fill="#EB001B"/>
+                                <circle cx="20" cy="12" r="5" fill="#F79E1B"/>
+                              </svg>
+                              <svg className="w-8 h-6" viewBox="0 0 32 24" fill="none">
+                                <rect width="32" height="24" rx="3" fill="#0066B2"/>
+                                <path d="M12 8h8v8h-8z" fill="#FFA500"/>
+                              </svg>
+                              <svg className="w-8 h-6" viewBox="0 0 32 24" fill="none">
+                                <rect width="32" height="24" rx="3" fill="#00579F"/>
+                                <path d="M14 8l4 8h-8l4-8z" fill="#FAA61A"/>
+                              </svg>
+                              <svg className="w-8 h-6" viewBox="0 0 32 24" fill="none">
+                                <rect width="32" height="24" rx="3" fill="#E21836"/>
+                              </svg>
+                            </div>
+                          </div>
                           <input
-                            type="text"
-                            placeholder="Expiration"
-                            className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            type="radio"
+                            name="payment-method"
+                            checked={paymentMethod === 'card' && selectedSavedIndex === null}
+                            onChange={() => { setPaymentMethod('card'); setSelectedSavedIndex(null); }}
+                            className="w-5 h-5 text-gray-900 border-gray-300 focus:ring-gray-900"
                           />
-                          <input
-                            type="text"
-                            placeholder="Cryptogramme"
-                            className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
-                          />
-                        </div>
-                        
-                        <input
-                          type="text"
-                          placeholder="Code postal"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
-                        />
-                        
-                        <div className="relative">
-                          <input
-                            type="text"
-                            value="France"
-                            readOnly
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-gray-900"
-                          />
-                          <select className="absolute inset-0 opacity-0 cursor-pointer">
-                            <option>France</option>
-                          </select>
-                        </div>
-                      </div>
+                        </label>
+
+                        {paymentMethod === 'card' && selectedSavedIndex === null && (
+                          <div className="space-y-4">
+                            <p className="text-base mb-4" style={{ fontWeight: 600 }}>
+                              Carte de crédit ou de débit
+                            </p>
+
+                            <input
+                              type="text"
+                              placeholder="Numéro de carte"
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            />
+
+                            <div className="grid grid-cols-2 gap-4">
+                              <input
+                                type="text"
+                                placeholder="Expiration"
+                                className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                              />
+                              <input
+                                type="text"
+                                placeholder="Cryptogramme"
+                                className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                              />
+                            </div>
+
+                            <input
+                              type="text"
+                              placeholder="Code postal"
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            />
+
+                            <div className="relative">
+                              <input
+                                type="text"
+                                value="France"
+                                readOnly
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-gray-900"
+                              />
+                              <select className="absolute inset-0 opacity-0 cursor-pointer">
+                                <option>France</option>
+                              </select>
+                            </div>
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
 
@@ -375,10 +626,44 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
 
               {isStepCompleted(2) && !isStepEditing(2) && (
                 <p className="text-base flex items-center gap-2">
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#4285F4">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
-                  </svg>
-                  Google Pay
+                  {paymentMethod === 'googlepay' && (
+                    <>
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#4285F4">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+                      </svg>
+                      Google Pay
+                    </>
+                  )}
+                  {paymentMethod === 'paypal' && (
+                    <>
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#003087">
+                        <path d="M20.905 9.5c.21-1.342.095-2.256-.432-3.016C19.628 5.397 17.983 5 15.634 5H8.849c-.51 0-.945.37-1.025.876l-3.015 19.13c-.06.38.227.732.613.732h4.458l1.12-7.1-.035.224c.08-.506.51-.876 1.025-.876h2.138c4.201 0 7.49-1.707 8.45-6.644.027-.138.048-.272.067-.402.362-2.324-.001-3.904-1.74-5.44z"/>
+                      </svg>
+                      PayPal
+                    </>
+                  )}
+                  {paymentMethod === 'card' && selectedSavedIndex !== null && savedPaymentMethods[selectedSavedIndex] && (
+                    <>
+                      <svg className="w-8 h-6" viewBox="0 0 32 24" fill="none">
+                        <rect width="32" height="24" rx="3" fill="#1A1F71"/>
+                        <rect x="6" y="8" width="20" height="8" rx="1" fill="#FF5F00"/>
+                        <circle cx="12" cy="12" r="5" fill="#EB001B"/>
+                        <circle cx="20" cy="12" r="5" fill="#F79E1B"/>
+                      </svg>
+                      {savedPaymentMethods[selectedSavedIndex].brand} •••• {savedPaymentMethods[selectedSavedIndex].last4}
+                    </>
+                  )}
+                  {paymentMethod === 'card' && selectedSavedIndex === null && (
+                    <>
+                      <svg className="w-8 h-6" viewBox="0 0 32 24" fill="none">
+                        <rect width="32" height="24" rx="3" fill="#1A1F71"/>
+                        <rect x="6" y="8" width="20" height="8" rx="1" fill="#FF5F00"/>
+                        <circle cx="12" cy="12" r="5" fill="#EB001B"/>
+                        <circle cx="20" cy="12" r="5" fill="#F79E1B"/>
+                      </svg>
+                      Carte de crédit ou de débit
+                    </>
+                  )}
                 </p>
               )}
             </div>
@@ -453,52 +738,33 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
               {isStepEditable(4) && (
                 <div>
                   <p className="text-base text-gray-700 mb-4">
-                    L'hôte a 24 heures pour confirmer votre réservation. Nous vous débiterons une fois la demande acceptée.
-                  </p>
-                  
-                  <p className="text-sm text-gray-700 mb-6">
-                    En sélectionnant le bouton, j'accepte les{' '}
-                    <button className="underline" style={{ fontWeight: 600 }}>
-                      conditions de réservation
-                    </button>
-                    .
+                    L&apos;hôte a 24 heures pour confirmer votre réservation. Nous vous débiterons une fois la demande acceptée.
                   </p>
 
-                  {/* Payment button based on selected method */}
-                  {paymentMethod === 'googlepay' && (
-                    <button className="w-full bg-black text-white rounded-lg py-4 flex items-center justify-center gap-2 hover:bg-gray-900 transition-colors">
-                      <svg className="h-6" viewBox="0 0 48 20" fill="none">
-                        <path d="M22.5 9.5h-3.6v5.9h-2.3V5.1h5.9c1.7 0 3 .4 3.9 1.3.9.9 1.4 2.1 1.4 3.6 0 1.6-.5 2.8-1.4 3.7-.9.9-2.2 1.3-3.9 1.3zm0-6.7h-3.6v4.4h3.6c.9 0 1.6-.3 2.1-.8.5-.5.8-1.2.8-2.1s-.3-1.6-.8-2.1c-.5-.3-1.2-.4-2.1-.4zm11.6 12.8c-1.2 0-2.1-.3-2.8-1-.7-.7-1-1.6-1-2.8V8.2h-1.7V6.5h1.7V3.7h2.3v2.8h2.8v1.7h-2.8v3.6c0 .5.1.9.4 1.2.3.3.6.4 1.1.4.6 0 1.1-.2 1.6-.5v1.9c-.6.5-1.3.8-2.6.8zm7.9.1c-1.2 0-2.1-.4-2.8-1.1V21h-2.3V6.5h2.3v1c.7-.8 1.6-1.2 2.8-1.2 1.3 0 2.3.4 3.1 1.3.8.9 1.2 2 1.2 3.5s-.4 2.7-1.2 3.6c-.8.8-1.9 1.3-3.1 1.3zm-.5-7.6c-.7 0-1.3.2-1.8.7-.5.5-.7 1.2-.7 2.1v.3c0 .9.2 1.6.7 2.1.5.5 1.1.7 1.8.7.7 0 1.3-.3 1.7-.8.4-.5.7-1.3.7-2.2s-.2-1.7-.7-2.2c-.4-.5-1-.7-1.7-.7z" fill="white"/>
-                        <path d="M23.4 9.2c0-1.3-.4-2.3-1.1-3-.7-.7-1.7-1.1-3-1.1H15v10.3h2.3V11h2.1l2.1 4.4h2.5l-2.3-4.6c.9-.4 1.6-1 2.1-1.8.4-.5.6-1.2.6-1.8z" fill="#EA4335"/>
-                        <path d="M30.1 6.3c-1.3 0-2.3.4-3.1 1.3-.8.8-1.2 2-1.2 3.5s.4 2.6 1.2 3.5c.8.9 1.9 1.3 3.1 1.3 1.3 0 2.3-.4 3.1-1.3.8-.9 1.2-2 1.2-3.5s-.4-2.6-1.2-3.5c-.8-.9-1.8-1.3-3.1-1.3zm1.7 6.5c-.4.5-1 .8-1.7.8s-1.3-.3-1.7-.8c-.4-.5-.7-1.3-.7-2.2s.2-1.7.7-2.2c.4-.5 1-.8 1.7-.8s1.3.3 1.7.8c.4.5.7 1.3.7 2.2s-.2 1.6-.7 2.2z" fill="#FBBC04"/>
-                        <path d="M41.5 6.3c-1.3 0-2.3.4-3.1 1.3-.8.8-1.2 2-1.2 3.5s.4 2.6 1.2 3.5c.8.9 1.9 1.3 3.1 1.3 1.3 0 2.3-.4 3.1-1.3.8-.9 1.2-2 1.2-3.5s-.4-2.6-1.2-3.5c-.8-.9-1.8-1.3-3.1-1.3zm1.7 6.5c-.4.5-1 .8-1.7.8s-1.3-.3-1.7-.8c-.4-.5-.7-1.3-.7-2.2s.2-1.7.7-2.2c.4-.5 1-.8 1.7-.8s1.3.3 1.7.8c.4.5.7 1.3.7 2.2s-.2 1.6-.7 2.2z" fill="#4285F4"/>
-                        <path d="M8.8 10.2c0-.3 0-.6-.1-.9H4.5v1.7h2.4c-.1.5-.4.9-.8 1.2v1.1h1.3c.8-.7 1.4-1.8 1.4-3.1z" fill="#4285F4"/>
-                        <path d="M4.5 14.3c1.1 0 2-.4 2.6-1l-1.3-1c-.3.2-.7.3-1.3.3-1 0-1.9-.7-2.2-1.6H1v1.1c.6 1.2 1.9 2.2 3.5 2.2z" fill="#34A853"/>
-                        <path d="M2.3 10.9c-.1-.3-.2-.6-.2-.9s.1-.6.2-.9V8H1c-.3.6-.5 1.2-.5 1.9s.2 1.3.5 1.9l1.3-1z" fill="#FBBC04"/>
-                        <path d="M4.5 7.5c.6 0 1.1.2 1.5.6l1.1-1.1C6.5 6.4 5.6 6 4.5 6 2.9 6 1.6 7 1 8.2l1.3 1c.3-1 1.2-1.7 2.2-1.7z" fill="#EA4335"/>
-                      </svg>
-                    </button>
-                  )}
+                  <label className="flex items-start gap-3 mb-6 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={acceptedConditions}
+                      onChange={(e) => setAcceptedConditions(e.target.checked)}
+                      className="mt-1 w-5 h-5 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
+                    />
+                    <span className="text-sm text-gray-700">
+                      J&apos;accepte les{' '}
+                      <button className="underline" style={{ fontWeight: 600 }}>
+                        conditions de réservation
+                      </button>
+                      .
+                    </span>
+                  </label>
 
-                  {paymentMethod === 'paypal' && (
-                    <button className="w-full bg-[#0070BA] text-white rounded-lg py-4 flex items-center justify-center gap-2 hover:bg-[#005A92] transition-colors">
-                      <svg className="h-6" viewBox="0 0 100 32" fill="white">
-                        <path d="M12.237 2.8H4.842a.8.8 0 00-.79.676L.856 26.264a.48.48 0 00.474.556h3.454a.8.8 0 00.79-.676l.858-5.435a.8.8 0 01.79-.676h1.822c3.791 0 5.982-1.834 6.555-5.468.262-1.588.003-2.835-.768-3.71-.848-.964-2.35-1.474-4.344-1.474zM13.092 12.3c-.297 1.947-1.786 1.947-3.226 1.947h-.818l.574-3.638a.48.48 0 01.474-.406h.398c1.039 0 2.019 0 2.526.591.304.355.397.881.297 1.506zm15.447-.051h-3.46a.48.48 0 00-.474.406l-.122.772-.193-.28c-.6-.87-1.937-1.162-3.268-1.162-3.056 0-5.665 2.316-6.172 5.564-.263 1.621.113 3.17 1.027 4.246.84 .99 2.037 1.4 3.464 1.4 2.45 0 3.805-1.574 3.805-1.574l-.123.77a.48.48 0 00.474.556h3.117a.8.8 0 00.79-.676l1.49-9.436a.48.48 0 00-.474-.556zm-4.81 5.423c-.264 1.564-1.514 2.615-3.11 2.615-.8 0-1.44-.258-1.847-.745-.403-.482-.555-1.17-.427-1.936.247-1.55 1.518-2.637 3.085-2.637.782 0 1.418.26 1.835.751.422.498.585 1.19.464 1.952zm17.335-5.423h-3.474a.8.8 0 00-.663.352l-3.827 5.637-1.621-5.41a.8.8 0 00-.764-.58h-3.413a.48.48 0 00-.454.633l3.056 8.968-2.873 4.056a.48.48 0 00.39.756h3.47a.8.8 0 00.66-.346l9.233-13.326a.48.48 0 00-.39-.756z"/>
-                        <path d="M79.457 2.8h-7.395a.8.8 0 00-.79.676l-3.196 20.288a.48.48 0 00.474.556h3.694a.56.56 0 00.553-.475l.908-5.753a.8.8 0 01.79-.676h1.822c3.791 0 5.982-1.834 6.555-5.468.262-1.588.003-2.835-.768-3.71-.848-.964-2.35-1.474-4.344-1.474zm.855 5.5c-.297 1.947-1.786 1.947-3.226 1.947h-.818l.574-3.638a.48.48 0 01.474-.406h.398c1.039 0 2.019 0 2.526.591.304.355.397.881.297 1.506zm15.447-.051h-3.46a.48.48 0 00-.474.406l-.122.772-.193-.28c-.6-.87-1.937-1.162-3.268-1.162-3.056 0-5.665 2.316-6.172 5.564-.263 1.621.113 3.17 1.027 4.246.84.99 2.037 1.4 3.464 1.4 2.45 0 3.805-1.574 3.805-1.574l-.123.77a.48.48 0 00.474.556h3.117a.8.8 0 00.79-.676l1.49-9.436a.48.48 0 00-.474-.556zm-4.81 5.423c-.264 1.564-1.514 2.615-3.11 2.615-.8 0-1.44-.258-1.847-.745-.403-.482-.555-1.17-.427-1.936.247-1.55 1.518-2.637 3.085-2.637.782 0 1.418.26 1.835.751.422.498.585 1.19.464 1.952z"/>
-                      </svg>
-                    </button>
-                  )}
-
-                  {paymentMethod === 'card' && (
-                    <button
-                      onClick={handleSubmitReservation}
-                      disabled={isSubmitting}
-                      className="w-full bg-[#000000] text-white rounded-lg py-4 flex items-center justify-center gap-2 hover:bg-[#222222] transition-colors text-base"
-                      style={{ fontWeight: 600, opacity: isSubmitting ? 0.7 : 1 }}
-                    >
-                      {isSubmitting ? 'Réservation en cours...' : 'Confirmer et payer'}
-                    </button>
-                  )}
+                  <button
+                    onClick={handleSubmitReservation}
+                    disabled={isSubmitting || !acceptedConditions}
+                    className="w-full bg-gray-900 text-white rounded-lg py-4 flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors text-base"
+                    style={{ fontWeight: 600, opacity: (isSubmitting || !acceptedConditions) ? 0.5 : 1 }}
+                  >
+                    {isSubmitting ? 'Réservation en cours...' : 'Réserver'}
+                  </button>
 
                   {reservationError && (
                     <p className="text-sm text-red-600 mt-3">{reservationError}</p>
@@ -527,7 +793,7 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
                   className="w-24 h-24 rounded-lg object-cover"
                 />
                 <div className="flex-1">
-                  <h3 className="text-base mb-2" style={{ fontWeight: 600 }}>
+                  <h3 className="text-lg mb-2" style={{ fontWeight: 600 }}>
                     {data.title}
                   </h3>
                   {data.rating != null && (
@@ -546,8 +812,8 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
                   Annulation gratuite
                 </h4>
                 <p className="text-sm text-gray-700">
-                  {data.checkIn
-                    ? `Annulez avant le ${new Date(new Date(data.checkIn).getTime() - 86400000).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} pour recevoir un remboursement intégral.`
+                  {checkInDate
+                    ? `Annulez avant le ${new Date(checkInDate.getTime() - 86400000).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} pour recevoir un remboursement intégral.`
                     : 'Obtenez un remboursement intégral si vous changez d\'avis.'
                   }{' '}
                   <button className="underline" style={{ fontWeight: 600 }}>
@@ -556,34 +822,111 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
                 </p>
               </div>
 
-              {/* Dates */}
-              <div className="flex items-center justify-between mb-4">
-                <div>
+              {/* Dates - inline editable */}
+              <div className="mb-4 relative" ref={calendarRef}>
+                <div className="flex items-center justify-between mb-2">
                   <h4 className="text-base" style={{ fontWeight: 600 }}>Dates</h4>
-                  <p className="text-sm text-gray-700">
-                    {data.checkInDisplay && data.checkOutDisplay
-                      ? `${data.checkInDisplay} - ${data.checkOutDisplay}`
-                      : `${data.checkIn} - ${data.checkOut}`}
-                  </p>
+                  <button
+                    onClick={() => setShowCalendar(!showCalendar)}
+                    className="text-base underline"
+                    style={{ fontWeight: 600 }}
+                  >
+                    Modifier
+                  </button>
                 </div>
-                <button onClick={onBack} className="text-base underline" style={{ fontWeight: 600 }}>
-                  Modifier
-                </button>
+                <p className="text-sm text-gray-700">
+                  {checkInDate && checkOutDate
+                    ? `${formatDateShort(checkInDate)} - ${formatDateShort(checkOutDate)}`
+                    : 'Sélectionnez vos dates'}
+                </p>
+
+                {showCalendar && (
+                  <div
+                    className="absolute left-0 right-0 bg-white rounded-2xl z-50 mt-2 p-6"
+                    style={{ boxShadow: 'rgba(0, 0, 0, 0.2) 0px 6px 20px', width: '100%' }}
+                  >
+                    {/* Date inputs */}
+                    <div className="border border-gray-300 rounded-lg mb-4">
+                      <div className="grid grid-cols-2 divide-x divide-gray-300">
+                        <div className="p-3">
+                          <label className="text-[10px] block mb-0.5" style={{ fontWeight: 700, letterSpacing: '0.05em' }}>ARRIVÉE</label>
+                          <span className="text-sm" style={{ color: '#222' }}>{checkInDate ? formatDateInput(checkInDate) : 'Ajouter'}</span>
+                        </div>
+                        <div className="p-3">
+                          <label className="text-[10px] block mb-0.5" style={{ fontWeight: 700, letterSpacing: '0.05em' }}>DÉPART</label>
+                          <span className="text-sm" style={{ color: '#222' }}>{checkOutDate ? formatDateInput(checkOutDate) : 'Ajouter'}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Calendar navigation */}
+                    <div className="flex items-center justify-between mb-4">
+                      <button
+                        onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1))}
+                        className="p-2 hover:bg-gray-100 rounded-full"
+                      >
+                        <ChevronLeft className="w-5 h-5" />
+                      </button>
+                      <h4 className="text-base" style={{ fontWeight: 600 }}>
+                        {MONTH_NAMES_FR[calendarMonth.getMonth()]} {calendarMonth.getFullYear()}
+                      </h4>
+                      <button
+                        onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1))}
+                        className="p-2 hover:bg-gray-100 rounded-full"
+                      >
+                        <ChevronRight className="w-5 h-5" />
+                      </button>
+                    </div>
+
+                    {renderMonth(calendarMonth.getFullYear(), calendarMonth.getMonth())}
+
+                    {/* Footer */}
+                    <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-200">
+                      <button
+                        onClick={() => { setCheckInDate(null); setCheckOutDate(null); }}
+                        className="text-sm underline"
+                        style={{ fontWeight: 600 }}
+                      >
+                        Effacer les dates
+                      </button>
+                      <button
+                        onClick={() => setShowCalendar(false)}
+                        className="px-6 py-2.5 bg-gray-900 text-white rounded-lg text-sm hover:bg-gray-800 transition-colors"
+                        style={{ fontWeight: 600 }}
+                      >
+                        Fermer
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Guests */}
-              <div className="flex items-center justify-between mb-6 pb-6 border-b border-gray-200">
+              {/* Guests - inline editable */}
+              <div className="flex items-center justify-between mb-6 pb-6 border-b border-gray-200 relative" ref={guestsPickerRef}>
                 <div>
                   <h4 className="text-base" style={{ fontWeight: 600 }}>Voyageurs</h4>
                   <p className="text-sm text-gray-700">
-                    {data.adults} adulte{data.adults > 1 ? 's' : ''}
-                    {data.children > 0 ? `, ${data.children} enfant${data.children > 1 ? 's' : ''}` : ''}
-                    {data.infants > 0 ? `, ${data.infants} bébé${data.infants > 1 ? 's' : ''}` : ''}
+                    {guests.adults} adulte{guests.adults > 1 ? 's' : ''}
+                    {guests.children > 0 ? `, ${guests.children} enfant${guests.children > 1 ? 's' : ''}` : ''}
+                    {guests.babies > 0 ? `, ${guests.babies} bébé${guests.babies > 1 ? 's' : ''}` : ''}
                   </p>
                 </div>
-                <button onClick={onBack} className="text-base underline" style={{ fontWeight: 600 }}>
+                <button
+                  onClick={() => setShowGuestsPicker(!showGuestsPicker)}
+                  className="text-base underline"
+                  style={{ fontWeight: 600 }}
+                >
                   Modifier
                 </button>
+                {showGuestsPicker && (
+                  <GuestsPicker
+                    onClose={() => setShowGuestsPicker(false)}
+                    onGuestsChange={setGuests}
+                    currentGuests={guests}
+                    maxCapacity={capacity}
+                    showCapacityInfo
+                  />
+                )}
               </div>
 
               {/* Price breakdown */}
@@ -592,7 +935,7 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
               </h4>
               <div className="space-y-3 mb-6 pb-6 border-b border-gray-200">
                 <div className="flex items-center justify-between text-base">
-                  <span className="underline">{data.nights} nuit{data.nights > 1 ? 's' : ''} x {Number(data.pricePerNight).toFixed(2)} C$</span>
+                  <span className="underline">{nights} nuit{nights > 1 ? 's' : ''} x {Number(pricePerNight).toFixed(2)} C$</span>
                   <span>{subtotal.toFixed(2)} C$</span>
                 </div>
                 {cleaningFee > 0 && (

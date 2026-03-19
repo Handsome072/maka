@@ -1,11 +1,53 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+export interface SavedPaymentMethod {
+  type: 'card';
+  brand: string;
+  last4: string;
+  expiry: string;
+  country: string;
+}
+
+const PAYMENT_METHODS_KEY = 'homiqio_payment_methods';
+
+export function getSavedPaymentMethods(): SavedPaymentMethod[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const data = localStorage.getItem(PAYMENT_METHODS_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch { return []; }
+}
+
+function savePaymentMethod(method: SavedPaymentMethod) {
+  const existing = getSavedPaymentMethods();
+  existing.push(method);
+  localStorage.setItem(PAYMENT_METHODS_KEY, JSON.stringify(existing));
+}
+
+function detectCardBrand(number: string): string {
+  const n = number.replace(/\s/g, '');
+  if (n.startsWith('4')) return 'Visa';
+  if (/^5[1-5]/.test(n) || /^2[2-7]/.test(n)) return 'Mastercard';
+  if (/^3[47]/.test(n)) return 'Amex';
+  return 'Carte';
+}
 
 export function ClientPayments() {
   const [paymentsTab, setPaymentsTab] = useState<'paiements' | 'versements' | 'frais'>('paiements');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [payoutStep, setPayoutStep] = useState<'none' | 'method' | 'owner' | 'details'>('none');
+  const [savedMethods, setSavedMethods] = useState<SavedPaymentMethod[]>([]);
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardExpiry, setCardExpiry] = useState('');
+  const [cardCvv, setCardCvv] = useState('');
+  const [cardPostal, setCardPostal] = useState('');
+  const [cardCountry, setCardCountry] = useState('Canada');
+
+  useEffect(() => {
+    setSavedMethods(getSavedPaymentMethods());
+  }, []);
 
   return (
     <div className="px-4 sm:px-6 lg:px-12 py-6 md:py-8 w-full">
@@ -65,6 +107,19 @@ export function ClientPayments() {
               <p className="text-xs md:text-sm text-gray-600 mb-6">
                 Ajoutez un mode de paiement à l'aide de notre système de paiement sécurisé, puis commencez à organiser votre prochain voyage.
               </p>
+              {savedMethods.length > 0 && (
+                <div className="space-y-3 mb-6">
+                  {savedMethods.map((m, i) => (
+                    <div key={i} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm" style={{ fontWeight: 600 }}>{m.brand}</span>
+                        <span className="text-sm text-gray-600">•••• {m.last4}</span>
+                        <span className="text-xs text-gray-500">{m.expiry}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
               <button
                 onClick={() => setShowPaymentModal(true)}
                 className="px-6 py-3 bg-gray-900 text-white rounded-lg text-sm transition-colors hover:bg-gray-800"
@@ -300,6 +355,8 @@ export function ClientPayments() {
                   </label>
                   <input
                     type="text"
+                    value={cardNumber}
+                    onChange={(e) => setCardNumber(e.target.value)}
                     placeholder="1234 5678 9012 3456"
                     className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                   />
@@ -313,6 +370,8 @@ export function ClientPayments() {
                     </label>
                     <input
                       type="text"
+                      value={cardExpiry}
+                      onChange={(e) => setCardExpiry(e.target.value)}
                       placeholder="MM/AA"
                       className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                     />
@@ -323,6 +382,8 @@ export function ClientPayments() {
                     </label>
                     <input
                       type="text"
+                      value={cardCvv}
+                      onChange={(e) => setCardCvv(e.target.value)}
                       placeholder="CVV"
                       className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                     />
@@ -336,6 +397,8 @@ export function ClientPayments() {
                   </label>
                   <input
                     type="text"
+                    value={cardPostal}
+                    onChange={(e) => setCardPostal(e.target.value)}
                     placeholder="75001"
                     className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                   />
@@ -346,11 +409,15 @@ export function ClientPayments() {
                   <label className="block text-xs mb-1.5 text-gray-700">
                     Pays/région
                   </label>
-                  <select className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900">
+                  <select
+                    value={cardCountry}
+                    onChange={(e) => setCardCountry(e.target.value)}
+                    className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                  >
+                    <option>Canada</option>
                     <option>France</option>
                     <option>Belgique</option>
                     <option>Suisse</option>
-                    <option>Canada</option>
                   </select>
                 </div>
               </div>
@@ -365,6 +432,25 @@ export function ClientPayments() {
                   Annuler
                 </button>
                 <button
+                  onClick={() => {
+                    const num = cardNumber.replace(/\s/g, '');
+                    if (num.length >= 4 && cardExpiry) {
+                      const method: SavedPaymentMethod = {
+                        type: 'card',
+                        brand: detectCardBrand(num),
+                        last4: num.slice(-4),
+                        expiry: cardExpiry,
+                        country: cardCountry,
+                      };
+                      savePaymentMethod(method);
+                      setSavedMethods(getSavedPaymentMethods());
+                      setCardNumber('');
+                      setCardExpiry('');
+                      setCardCvv('');
+                      setCardPostal('');
+                      setShowPaymentModal(false);
+                    }
+                  }}
                   className="px-6 py-2.5 bg-gray-900 text-white rounded-lg text-sm transition-colors hover:bg-gray-800"
                   style={{ fontWeight: 600 }}
                 >
