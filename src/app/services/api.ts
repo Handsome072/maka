@@ -3,6 +3,9 @@
  * Handles all HTTP requests to the Laravel API
  */
 
+// ⚠️ MODE DÉMO STATIQUE : voir data/demoListings.ts (publicListingsApi plus bas).
+import { DEMO_MODE, getDemoListings, getDemoListingDetail } from '../data/demoListings';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 // Token storage keys
@@ -438,13 +441,23 @@ export const listingsApi = {
 };
 
 // ─── Public Listings API (no auth required) ─────────────────────────────────
+//
+// ⚠️  MODE DÉMO STATIQUE — déconnecté de api-homiqio (voir data/demoListings.ts).
+//     Pour réactiver l'API réelle : mettre DEMO_MODE = false dans
+//     data/demoListings.ts. Les deux méthodes retomberont alors sur apiFetch.
 
 export const publicListingsApi = {
   getAll: async (): Promise<ListingsResponse> => {
+    if (DEMO_MODE) {
+      return { listings: getDemoListings() };
+    }
     return apiFetch<ListingsResponse>('/listings/public');
   },
 
   getOne: async (id: number): Promise<{ listing: ListingDetail }> => {
+    if (DEMO_MODE) {
+      return { listing: getDemoListingDetail(id) };
+    }
     return apiFetch<{ listing: ListingDetail }>(`/listings/public/${id}`);
   },
 };
