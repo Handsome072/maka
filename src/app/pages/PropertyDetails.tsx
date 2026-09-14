@@ -22,8 +22,8 @@ function formatMemberYears(memberSince: string): string {
   const start = new Date(memberSince);
   const now = new Date();
   const years = Math.floor((now.getTime() - start.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
-  if (years < 1) return "moins d'1 an sur HOMIQIO";
-  return `${years} an${years > 1 ? 's' : ''} sur HOMIQIO`;
+  if (years < 1) return "moins d'1 an sur Séjoura";
+  return `${years} an${years > 1 ? 's' : ''} sur Séjoura`;
 }
 
 function formatRelativeTime(dateStr: string): string {
@@ -73,9 +73,9 @@ function buildMapEmbedUrl(city?: string | null, country?: string | null): string
 }
 
 function formatPrice(price: string | number | null, _currency?: string): string {
-  if (!price) return '0 C$';
+  if (!price) return '0 €';
   const num = typeof price === 'string' ? parseFloat(price) : price;
-  return `${num.toFixed(0)} C$`;
+  return `${num.toFixed(0)} €`;
 }
 
 function formatRating(rating: number | null): string {
@@ -522,7 +522,7 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
   const description = listing.description || '';
   const aboutChalet = listing.about_chalet || '';
   const basePrice = listing.base_price ? parseFloat(listing.base_price) : 0;
-  const currency = listing.currency || 'CAD';
+  const currency = listing.currency || 'EUR';
   const cancellationPolicy = listing.cancellation_policy;
   const arrivalTime = listing.arrival_time || '14:00';
   const departureTime = listing.departure_time || '11:00';
@@ -837,7 +837,7 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
                   </div>
                   <div>
                     <h3 className="text-base mb-1" style={{ fontWeight: 600 }}>
-                      Ce logement fait partie des 10 % de logements préférés sur HOMIQIO
+                      Ce logement fait partie des 10 % de logements préférés sur Séjoura
                     </h3>
                     <p className="text-sm text-gray-600">
                       Ce logement est très bien classé, d&apos;après ses évaluations, ses commentaires et la fiabilité de l&apos;hôte pour répondre aux questions des voyageurs.
@@ -1192,7 +1192,7 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
                 <>
                   <h3 className="text-lg md:text-2xl mb-2 md:mb-3" style={{ fontWeight: 600 }}>Coup de cœur voyageurs</h3>
                   <p className="text-sm md:text-base text-gray-600 max-w-2xl mx-auto leading-relaxed px-4 md:px-0">
-                    Ce logement fait partie des <span style={{ fontWeight: 600 }}>10 % de logements préférés</span> sur HOMIQIO parmi les logements éligibles, à partir des évaluations, des commentaires et de la fiabilité des annonces selon les voyageurs.
+                    Ce logement fait partie des <span style={{ fontWeight: 600 }}>10 % de logements préférés</span> sur Séjoura parmi les logements éligibles, à partir des évaluations, des commentaires et de la fiabilité des annonces selon les voyageurs.
                   </p>
                 </>
               )}
@@ -1502,7 +1502,7 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
                   </svg>
                 </div>
                 <div className="text-sm text-gray-700 leading-relaxed">
-                  Afin de protéger votre paiement, utilisez toujours HOMIQIO pour envoyer de l&apos;argent et communiquer avec les hôtes.
+                  Afin de protéger votre paiement, utilisez toujours Séjoura pour envoyer de l&apos;argent et communiquer avec les hôtes.
                 </div>
               </div>
             </div>

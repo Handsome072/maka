@@ -108,7 +108,7 @@ export function CalendarStep() {
               <div key={i} className="border-b border-r border-gray-100 min-h-[100px] p-2 relative hover:bg-gray-50 cursor-pointer group transition-colors">
                 <span className="text-xs text-gray-400 absolute top-2 right-2">{i + 1}</span>
                 <div className="flex flex-col items-center justify-center h-full gap-1">
-                  <span className="text-sm font-medium text-gray-400 group-hover:text-black">C$120</span>
+                  <span className="text-sm font-medium text-gray-400 group-hover:text-black">120 €</span>
                 </div>
               </div>
             ))}

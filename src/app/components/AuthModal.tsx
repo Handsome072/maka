@@ -95,7 +95,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const getTitle = () => {
     switch (currentView) {
       case "email-entry":
-        return "Bienvenue sur HOMIQIO";
+        return "Bienvenue sur Séjoura";
       case "signup":
         return "Terminer l'inscription";
       case "login":

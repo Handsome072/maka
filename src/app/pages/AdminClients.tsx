@@ -306,7 +306,7 @@ export function AdminClients() {
               </div>
             </div>
             <div className="text-xs text-gray-500 mb-1" style={{ fontWeight: 500 }}>DEPENSES TOTALES</div>
-            <div className="text-2xl md:text-3xl" style={{ fontWeight: 600 }}>{totalSpentAll.toLocaleString('fr-FR')} $</div>
+            <div className="text-2xl md:text-3xl" style={{ fontWeight: 600 }}>{totalSpentAll.toLocaleString('fr-FR')} €</div>
           </div>
         </div>
 
@@ -401,10 +401,10 @@ export function AdminClients() {
                     className="px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111827] text-sm"
                   >
                     <option value="">Montant depense</option>
-                    <option value="0-1000">0 - 1 000 $</option>
-                    <option value="1000-5000">1 000 - 5 000 $</option>
-                    <option value="5000-10000">5 000 - 10 000 $</option>
-                    <option value="10000+">Plus de 10 000 $</option>
+                    <option value="0-1000">0 - 1 000 €</option>
+                    <option value="1000-5000">1 000 - 5 000 €</option>
+                    <option value="5000-10000">5 000 - 10 000 €</option>
+                    <option value="10000+">Plus de 10 000 €</option>
                   </select>
                   <select
                     value={dateFilter}

@@ -223,7 +223,7 @@ export function AdminSidebar() {
               HA
             </div>
             <div className="flex-1 text-left min-w-0">
-              <div className="text-sm truncate" style={{ fontWeight: 600 }}>HOMIQIO Admin</div>
+              <div className="text-sm truncate" style={{ fontWeight: 600 }}>Séjoura Admin</div>
               <div className="text-xs text-gray-500 truncate">admin@homiqio.com</div>
             </div>
             <ChevronUp className={`w-4 h-4 text-gray-400 transition-transform flex-shrink-0 ${showUserMenu ? '' : 'rotate-180'}`} />

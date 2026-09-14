@@ -41,7 +41,7 @@ export function ClientNotifications() {
                 Activité du compte et politiques
               </h3>
               <p className="text-xs md:text-sm mb-6" style={{ color: '#C13515' }}>
-                Confirmez votre réservation, vérifiez l'activité de votre compte et découvrez les politiques importantes de HOMIQIO.
+                Confirmez votre réservation, vérifiez l'activité de votre compte et découvrez les politiques importantes de Séjoura.
               </p>
 
               <div className="space-y-6">
@@ -156,13 +156,13 @@ export function ClientNotifications() {
               </div>
             </div>
 
-            {/* Actualités de HOMIQIO */}
+            {/* Actualités de Séjoura */}
             <div className="mb-12">
               <h3 className="text-base md:text-lg mb-4" style={{ fontWeight: 600, color: '#222222' }}>
-                Actualités de HOMIQIO
+                Actualités de Séjoura
               </h3>
               <p className="text-xs md:text-sm text-gray-600 mb-8 leading-relaxed">
-                Recevez les dernières actualités de HOMIQIO et dites-nous comment nous pouvons nous améliorer.
+                Recevez les dernières actualités de Séjoura et dites-nous comment nous pouvons nous améliorer.
               </p>
 
               <div className="space-y-6">

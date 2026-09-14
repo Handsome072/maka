@@ -71,7 +71,7 @@ export const MOCK_LISTINGS: CalendarListing[] = [
     city: 'Mont-Tremblant',
     basePrice: 350,
     weekendPrice: 420,
-    currency: 'CAD',
+    currency: 'EUR',
   },
   {
     id: 2,
@@ -79,7 +79,7 @@ export const MOCK_LISTINGS: CalendarListing[] = [
     city: 'Montréal',
     basePrice: 196,
     weekendPrice: 230,
-    currency: 'CAD',
+    currency: 'EUR',
   },
 ];
 

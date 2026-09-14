@@ -108,7 +108,7 @@ export function EmailSignupView({
           className="w-full h-16 rounded-xl border border-gray-300 px-4 text-base focus:outline-none focus:border-gray-900 transition-colors"
         />
         <p className="text-sm text-gray-600 leading-relaxed mt-3">
-          Vous devez avoir au moins 18 ans pour vous inscrire. Nous n'indiquerons pas la date de votre anniversaire aux autres utilisateurs Homiqio.
+          Vous devez avoir au moins 18 ans pour vous inscrire. Nous n'indiquerons pas la date de votre anniversaire aux autres utilisateurs Séjoura.
         </p>
       </div>
 
@@ -160,7 +160,7 @@ export function EmailSignupView({
           </button>
           {' '}et je reconnais avoir pris connaissance de la{' '}
           <button className="text-blue-600 underline hover:text-blue-700">
-            Politique de confidentialité d'Homiqio
+            Politique de confidentialité de Séjoura
           </button>
           .
         </p>
@@ -182,7 +182,7 @@ export function EmailSignupView({
       {/* Marketing Checkbox */}
       <div className="mb-6 p-4 bg-gray-50 rounded-xl">
         <p className="text-sm text-gray-700 leading-relaxed mb-4">
-          Homiqio vous enverra des offres réservées aux membres, des idées de voyages, des e-mails promotionnels et des notifications push. Vous pouvez désactiver cette option à tout moment dans les paramètres de votre compte ou directement à partir de la notification promotionnelle.
+          Séjoura vous enverra des offres réservées aux membres, des idées de voyages, des e-mails promotionnels et des notifications push. Vous pouvez désactiver cette option à tout moment dans les paramètres de votre compte ou directement à partir de la notification promotionnelle.
         </p>
 
         <label className="flex items-start gap-3 cursor-pointer">
@@ -193,7 +193,7 @@ export function EmailSignupView({
             className="mt-0.5 w-5 h-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
           />
           <span className="text-sm text-gray-700">
-            Je ne souhaite pas recevoir de messages promotionnels d'Homiqio.
+            Je ne souhaite pas recevoir de messages promotionnels de Séjoura.
           </span>
         </label>
       </div>

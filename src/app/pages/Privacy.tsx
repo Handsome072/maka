@@ -164,7 +164,7 @@ export function Privacy({ onNavigate }: PrivacyProps) {
             <ChevronRight className="w-4 h-4" style={{ color: '#717171' }} />
             <button className="hover:underline">Politique de confidentialité</button>
             <ChevronRight className="w-4 h-4" style={{ color: '#717171' }} />
-            <span style={{ color: '#717171' }}>Protection des données sur HOMIQIO</span>
+            <span style={{ color: '#717171' }}>Protection des données sur Séjoura</span>
           </nav>
 
           <div className="flex gap-12">
@@ -175,11 +175,11 @@ export function Privacy({ onNavigate }: PrivacyProps) {
               </p>
 
               <h1 className="text-[32px] mb-6" style={{ fontWeight: 600, color: '#222222', lineHeight: '1.2' }}>
-                Protection des données sur HOMIQIO
+                Protection des données sur Séjoura
               </h1>
 
               <p className="text-base mb-8" style={{ color: '#222222', lineHeight: '1.6' }}>
-                La Politique de confidentialité d'HOMIQIO décrit vos droits en matière de protection de la vie privée, le type de données personnelles collectées et la manière dont nous les utilisons et les communiquons.
+                La Politique de confidentialité de Séjoura décrit vos droits en matière de protection de la vie privée, le type de données personnelles collectées et la manière dont nous les utilisons et les communiquons.
               </p>
 
               {/* Politique de confidentialité section */}
@@ -188,7 +188,7 @@ export function Privacy({ onNavigate }: PrivacyProps) {
               </h2>
 
               <p className="text-base mb-8" style={{ color: '#222222', lineHeight: '1.6' }}>
-                Veuillez consulter les politiques de confidentialité supplémentaires en suivant les liens fournis dans les documents correspondants, par exemple celles relatives à certains services d'HOMIQIO qui peuvent s'appliquer à votre situation.
+                Veuillez consulter les politiques de confidentialité supplémentaires en suivant les liens fournis dans les documents correspondants, par exemple celles relatives à certains services de Séjoura qui peuvent s'appliquer à votre situation.
               </p>
 
               {/* Documents complémentaires */}
@@ -214,7 +214,7 @@ export function Privacy({ onNavigate }: PrivacyProps) {
                 </li>
                 <li className="text-base" style={{ color: '#222222', listStyleType: 'disc' }}>
                   <a href="#" className="underline hover:text-gray-600">
-                    Clients Entreprise et HOMIQIO for Work
+                    Clients Entreprise et Séjoura for Work
                   </a>
                 </li>
                 <li className="text-base" style={{ color: '#222222', listStyleType: 'disc' }}>
@@ -249,7 +249,7 @@ export function Privacy({ onNavigate }: PrivacyProps) {
                 </li>
                 <li className="text-base" style={{ color: '#222222', listStyleType: 'disc' }}>
                   <a href="#" className="underline hover:text-gray-600">
-                    Complément à la Politique de confidentialité pour l'HOMIQIO-friendly Marketplace
+                    Complément à la Politique de confidentialité pour la Séjoura-friendly Marketplace
                   </a>
                 </li>
                 <li className="text-base" style={{ color: '#222222', listStyleType: 'disc' }}>
@@ -259,18 +259,18 @@ export function Privacy({ onNavigate }: PrivacyProps) {
                 </li>
                 <li className="text-base" style={{ color: '#222222', listStyleType: 'disc' }}>
                   <a href="#" className="underline hover:text-gray-600">
-                    Complément à la Politique de confidentialité pour HOMIQIO Créateurs
+                    Complément à la Politique de confidentialité pour Séjoura Créateurs
                   </a>
                 </li>
               </ul>
 
               <p className="text-base mb-12" style={{ color: '#222222', lineHeight: '1.6' }}>
                 <a href="#" className="underline hover:text-gray-600" style={{ fontWeight: 600 }}>
-                  HOMIQIO.org
+                  Séjoura.org
                 </a>{' '}
-                est une entité distincte et indépendante d'HOMIQIO, Inc. Consultez la{' '}
+                est une entité distincte et indépendante de Séjoura, Inc. Consultez la{' '}
                 <a href="#" className="underline hover:text-gray-600">
-                  Politique de confidentialité d'HOMIQIO.org
+                  Politique de confidentialité de Séjoura.org
                 </a>
                 .
               </p>
@@ -293,7 +293,7 @@ export function Privacy({ onNavigate }: PrivacyProps) {
                       </a>
                     </h4>
                     <p className="text-sm" style={{ color: '#717171', lineHeight: '1.6' }}>
-                      Dernière mise à jour : 6 février 2025 HOMIQIO a pour objectif de créer des liens entre les personnes pour un monde plus ouvert et inclusif. A...
+                      Dernière mise à jour : 6 février 2025 Séjoura a pour objectif de créer des liens entre les personnes pour un monde plus ouvert et inclusif. A...
                     </p>
                   </div>
 
@@ -315,7 +315,7 @@ export function Privacy({ onNavigate }: PrivacyProps) {
                   {/* Article 2 */}
                   <div className="pb-8">
                     <p className="text-xs mb-2" style={{ color: '#717171' }}>
-                      Politique relative à la communauté HOMIQIO
+                      Politique relative à la communauté Séjoura
                     </p>
                     <h4 className="text-base mb-2 underline" style={{ fontWeight: 600, color: '#222222' }}>
                       <a href="#" className="hover:text-gray-600">
@@ -407,17 +407,17 @@ export function Privacy({ onNavigate }: PrivacyProps) {
               <ul className="space-y-3">
                 <li>
                   <a href="#" className="text-sm hover:underline" style={{ color: '#222222' }}>
-                    Mettez votre logement sur HOMIQIO
+                    Mettez votre logement sur Séjoura
                   </a>
                 </li>
                 <li>
                   <a href="#" className="text-sm hover:underline" style={{ color: '#222222' }}>
-                    Proposez votre expérience sur HOMIQIO
+                    Proposez votre expérience sur Séjoura
                   </a>
                 </li>
                 <li>
                   <a href="#" className="text-sm hover:underline" style={{ color: '#222222' }}>
-                    Proposez votre service sur HOMIQIO
+                    Proposez votre service sur Séjoura
                   </a>
                 </li>
                 <li>
@@ -458,10 +458,10 @@ export function Privacy({ onNavigate }: PrivacyProps) {
               </ul>
             </div>
 
-            {/* HOMIQIO */}
+            {/* Séjoura */}
             <div>
               <h3 className="text-xs mb-4" style={{ fontWeight: 600, color: '#222222' }}>
-                HOMIQIO
+                Séjoura
               </h3>
               <ul className="space-y-3">
                 <li>
@@ -491,7 +491,7 @@ export function Privacy({ onNavigate }: PrivacyProps) {
                 </li>
                 <li>
                   <a href="#" className="text-sm hover:underline" style={{ color: '#222222' }}>
-                    Séjours d'urgence HOMIQIO.org
+                    Séjours d'urgence Séjoura.org
                   </a>
                 </li>
               </ul>
@@ -503,7 +503,7 @@ export function Privacy({ onNavigate }: PrivacyProps) {
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               {/* Left - Copyright & Links */}
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 text-sm" style={{ color: '#222222' }}>
-                <span>© 2026 HOMIQIO, Inc.</span>
+                <span>© 2026 Séjoura, Inc.</span>
                 <span>·</span>
                 <a href="#" className="hover:underline">Confidentialité</a>
                 <span>·</span>

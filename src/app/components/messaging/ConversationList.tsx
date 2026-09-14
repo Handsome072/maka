@@ -194,7 +194,7 @@ export function ConversationList({
                         className="text-sm truncate"
                         style={{ fontWeight: isUnread ? 700 : 500, color: '#222222' }}
                       >
-                        {conv.is_admin_conversation ? 'Admin HOMIQIO' : `${other.first_name} ${other.last_name}`}
+                        {conv.is_admin_conversation ? 'Admin Séjoura' : `${other.first_name} ${other.last_name}`}
                       </h3>
                       <span className="text-xs ml-2 flex-shrink-0 group-hover:mr-6 transition-all" style={{ color: '#717171' }}>
                         {conv.last_message ? formatDate(conv.last_message.created_at) : ''}

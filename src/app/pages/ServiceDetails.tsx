@@ -14,37 +14,37 @@ export function ServiceDetails({ onBack }: ServiceDetailsProps) {
     {
       image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpdGFsaWFuJTIwZm9vZCUyMHBhc3RhfGVufDF8fHx8MTc2Nzg4NjQzNHww&ixlib=rb-4.1.0&q=80&w=1080',
       title: 'Expérience autour de la cuisine romaine',
-      price: '35 C$',
+      price: '35 €',
       description: 'Vous souhaitez profiter de l\'expérience d\'un chef privé à domicile sans dépenser beaucoup ? Cette option vous permet de choisir un plat parmi mes classiques romains, comme les spaghettis à la carbonara ou mon tiramisù...'
     },
     {
       image: 'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpdGFsaWFuJTIwY2hlZiUyMGNvb2tpbmd8ZW58MXx8fHwxNzY3ODg2NDM0fDA&ixlib=rb-4.1.0&q=80&w=1080',
       title: 'Menu de base : saveurs de Rome',
-      price: '65 C$',
+      price: '65 €',
       description: 'Chef privé romain qui apporte les saveurs traditionnelles dans les maisons et les BnB de Rome. Mon menu de base comprend quatre plats : bruschetta à la tomate, spaghetti à la carbonara, saltimbocca alla romana et tiramisù. Si...'
     },
     {
       image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkZXNzZXJ0JTIwcGFzdHJ5fGVufDF8fHx8MTc2Nzg4NjQzNXww&ixlib=rb-4.1.0&q=80&w=1080',
       title: 'Pâtes et dessert faits maison',
-      price: '65 C$',
+      price: '65 €',
       description: 'Apprenez l\'art des pâtes fraîches et d\'un dessert traditionnel fait maison, directement chez vous. Au lieu d\'aller dans des endroits bondés, de prendre des taxis et d\'attendre les autres, vous pouvez profiter de cette expérience...'
     },
     {
       image: 'https://images.unsplash.com/photo-1599974862459-7d7d536c7e8f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxoYWxsb3dlZW4lMjBwdW1wa2luJTIwZm9vZHxlbnwxfHx8fDE3Njc4ODY0MzV8MA&ixlib=rb-4.1.0&q=80&w=1080',
       title: 'Halloween à Rome',
-      price: '85 C$',
+      price: '85 €',
       description: 'Passez un merveilleux Halloween à Rome en famille ou entre amis, en dégustant des plats romains ou des plats de votre choix. Pendant que vous êtes à la maison, je viendrai vous préparer un délicieux dîner ou dîner'
     },
     {
       image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0aXJhbWlzdSUyMGRlc3NlcnR8ZW58MXx8fHwxNzY3ODg2NDM1fDA&ixlib=rb-4.1.0&q=80&w=1080',
       title: 'Menu de fruits de mer à la romaine',
-      price: '100 C$',
+      price: '100 €',
       description: 'Un voyage en quatre services dédié aux fruits de mer pour ceux qui veulent une expérience complète et raffinée. Du l\'entrée au dessert, chaque plat est préparé avec des ingrédients frais de saison inspirés de la tradition...'
     },
     {
       image: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaHJpc3RtYXMlMjBkaW5uZXIlMjBob2xpZGF5fGVufDF8fHx8MTc2Nzg4NjQzNnww&ixlib=rb-4.1.0&q=80&w=1080',
       title: 'Noël à Rome',
-      price: '100 C$',
+      price: '100 €',
       description: 'Célébrez Noël à Rome avec style et sans stress. Un chef privé préparera un déjeuner ou un dîner mémorable pour vous et vos proches. Choisissez parmi mes plats romains traditionnels, mes recettes de vacances classiques ou un...'
     }
   ];
@@ -165,7 +165,7 @@ export function ServiceDetails({ onBack }: ServiceDetailsProps) {
               <div className="flex items-center justify-between text-center fixed bottom-0 w-[350px] bg-white shadow-lg rounded-tl-3xl rounded-tr-3xl pt-4 px-4">
                 <div className="mb-4 flex flex-col items-start">
                   <div className="text-lg mb-1">
-                    <span style={{ fontWeight: 600 }}>À partir de 65 C$</span>
+                    <span style={{ fontWeight: 600 }}>À partir de 65 €</span>
                   </div>
                   <div className="text-sm text-gray-600">par voyageur</div>
                   <div className="text-sm text-gray-600">Annulation gratuite</div>
@@ -543,7 +543,7 @@ export function ServiceDetails({ onBack }: ServiceDetailsProps) {
               <div className="bg-gray-50 rounded-2xl px-8 py-6 mb-8">
                 <h3 className="text-[17px] mb-4 text-center" style={{ fontWeight: 600 }}>Envoyer un message à Carlo</h3>
                 <p className="text-sm text-gray-600 text-center leading-relaxed">
-                  Afin de protéger votre paiement, utilisez toujours HOMIQIO pour envoyer de l'argent et communiquer avec les hôtes.
+                  Afin de protéger votre paiement, utilisez toujours Séjoura pour envoyer de l'argent et communiquer avec les hôtes.
                 </p>
               </div>
             </div>

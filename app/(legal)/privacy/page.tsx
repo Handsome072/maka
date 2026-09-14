@@ -4,8 +4,8 @@ import { ChevronRight } from 'lucide-react';
 import { LegalFooter } from '@/app/components/LegalFooter';
 
 export const metadata: Metadata = {
-  title: 'Politique de Confidentialité | Homiqio',
-  description: 'Politique de confidentialité et politique cookies de la plateforme HOMIQIO',
+  title: 'Politique de Confidentialité | Séjoura',
+  description: 'Politique de confidentialité et politique cookies de la plateforme Séjoura',
 };
 
 export default function PrivacyPage() {
@@ -42,7 +42,7 @@ export default function PrivacyPage() {
                   1. IDENTITÉ DU RESPONSABLE DU TRAITEMENT
                 </h2>
                 <p className="text-base mb-4" style={{ color: '#222222', lineHeight: '1.6' }}>
-                  Les données personnelles collectées via la plateforme HOMIQIO sont traitées par :
+                  Les données personnelles collectées via la plateforme Séjoura sont traitées par :
                 </p>
                 <div className="text-base mb-4" style={{ color: '#222222', lineHeight: '1.6' }}>
                   <p style={{ fontWeight: 600 }}>WANDERLATE SASU</p>
@@ -52,7 +52,7 @@ export default function PrivacyPage() {
                   <p>TVA intracommunautaire : FR14991607656</p>
                 </div>
                 <p className="text-base" style={{ color: '#222222', lineHeight: '1.6' }}>
-                  HOMIQIO est une marque commerciale exploitée par WANDERLATE SASU.
+                  Séjoura est une marque commerciale exploitée par WANDERLATE SASU.
                 </p>
               </section>
 

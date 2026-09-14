@@ -273,7 +273,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
   });
 
   // 10. Pricing
-  const [currency, setCurrency] = useState('CAD (C$)');
+  const [currency, setCurrency] = useState('EUR');
   const [pricing, setPricing] = useState({
     base: '120',
     weekend: '',
@@ -761,7 +761,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
               </h2>
               <div className="space-y-4 text-[#717171] text-base leading-relaxed">
                 <p>Avant de commencer votre processus d'inscription, lire la note suivante.</p>
-                <p>Depuis 2015, HOMIQIO s'engage à améliorer les normes de gestion et la qualité des produits proposés.</p>
+                <p>Depuis 2015, Séjoura s'engage à améliorer les normes de gestion et la qualité des produits proposés.</p>
                 <ul className="list-disc pl-5 space-y-2">
                   <li>Des propriétaires sérieux, engagés à fournir un service de qualité.</li>
                   <li>Une propriété unique et distinguée.</li>
@@ -1518,9 +1518,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
                 <label className="block text-sm font-medium text-[#222222]">Sélectionnez la devise monétaire de votre pays *</label>
                 <div className="relative">
                   <select value={currency} onChange={(e) => setCurrency(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg appearance-none bg-white cursor-pointer focus:outline-none focus:border-black">
-                    <option value="CAD (C$)">CAD (C$)</option>
-                    <option value="USD ($)">USD ($)</option>
-                    <option value="EUR (€)">EUR (€)</option>
+                    <option value="EUR">EUR (€)</option>
                   </select>
                   <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
                 </div>
@@ -1534,17 +1532,17 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
                 </div>
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-[#222222]">Tarif d'une nuit de week-end</label>
-                  <input type="text" value={pricing.weekend} onChange={(e) => setPricing({...pricing, weekend: e.target.value})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" placeholder="CAD (C$)" />
+                  <input type="text" value={pricing.weekend} onChange={(e) => setPricing({...pricing, weekend: e.target.value})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" placeholder="EUR (€)" />
                   <p className="text-xs text-gray-500">Ce prix sera le prix par défaut pour le week-end.</p>
                 </div>
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-[#222222]">Tarif hebdomadaire</label>
-                  <input type="text" value={pricing.weekly} onChange={(e) => setPricing({...pricing, weekly: e.target.value})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" placeholder="CAD (C$)" />
+                  <input type="text" value={pricing.weekly} onChange={(e) => setPricing({...pricing, weekly: e.target.value})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" placeholder="EUR (€)" />
                   <p className="text-xs text-gray-500">Ce prix sera le tarif par défaut pour une période de 7 jours.</p>
                 </div>
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-[#222222]">Tarif mensuel</label>
-                  <input type="text" value={pricing.monthly} onChange={(e) => setPricing({...pricing, monthly: e.target.value})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" placeholder="CAD (C$)" />
+                  <input type="text" value={pricing.monthly} onChange={(e) => setPricing({...pricing, monthly: e.target.value})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" placeholder="EUR (€)" />
                   <p className="text-xs text-gray-500">Ce prix sera le tarif appliqué pour des périodes de 28 jours.</p>
                 </div>
               </div>
@@ -1571,7 +1569,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
                 </button>
                 {extraGuestFeeOpen && (
                   <div className="mt-4 pl-4 animate-in slide-in-from-top-2">
-                     <div className="space-y-2 max-w-xs"><label className="text-sm font-medium">Frais par invité</label><input type="text" placeholder="CAD (C$)" value={extraGuestFee} onChange={(e) => setExtraGuestFee(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" /></div>
+                     <div className="space-y-2 max-w-xs"><label className="text-sm font-medium">Frais par invité</label><input type="text" placeholder="EUR (€)" value={extraGuestFee} onChange={(e) => setExtraGuestFee(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" /></div>
                   </div>
                 )}
               </div>
@@ -1582,7 +1580,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
                 </button>
                 {petFeeOpen && (
                   <div className="mt-4 pl-4 animate-in slide-in-from-top-2">
-                     <div className="space-y-2 max-w-xs"><label className="text-sm font-medium">Frais par animal</label><input type="text" placeholder="CAD (C$)" value={petFee} onChange={(e) => setPetFee(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" /></div>
+                     <div className="space-y-2 max-w-xs"><label className="text-sm font-medium">Frais par animal</label><input type="text" placeholder="EUR (€)" value={petFee} onChange={(e) => setPetFee(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" /></div>
                   </div>
                 )}
               </div>
@@ -1699,7 +1697,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
                        <div key={i} className="border-b border-r border-gray-100 min-h-[100px] p-2 relative hover:bg-gray-50 cursor-pointer group transition-colors">
                           <span className="text-xs text-gray-400 absolute top-2 right-2">{i + 1}</span>
                           <div className="flex flex-col items-center justify-center h-full gap-1">
-                             <span className="text-sm font-medium text-gray-400 group-hover:text-black">C$120</span>
+                             <span className="text-sm font-medium text-gray-400 group-hover:text-black">120 €</span>
                           </div>
                        </div>
                      ))}
@@ -2174,7 +2172,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
                         {isSigned && <Check className="w-4 h-4 text-white" strokeWidth={3} />}
                       </div>
                       <div className="text-sm text-[#717171] leading-relaxed select-none" onClick={() => setIsSigned(!isSigned)}>
-                        Je certifie que toutes les informations fournies sont exactes et conformes à la réalité. Je comprends que toute fausse déclaration pourrait entraîner la suspension de mon annonce. J'accepte les conditions d'utilisation de HOMIQIO.
+                        Je certifie que toutes les informations fournies sont exactes et conformes à la réalité. Je comprends que toute fausse déclaration pourrait entraîner la suspension de mon annonce. J'accepte les conditions d'utilisation de Séjoura.
                       </div>
                    </label>
                 </div>
@@ -2389,22 +2387,22 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
                 <div className="grid grid-cols-2 gap-4">
                    <div className="space-y-2">
                      <label className="text-sm font-bold text-[#222222]">Tarif de base *</label>
-                     <input type="text" placeholder="CAD (C$)" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
+                     <input type="text" placeholder="EUR (€)" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
                      <p className="text-[10px] text-gray-400">Ce prix sera le tarif par défaut pour chaque nuit.</p>
                    </div>
                    <div className="space-y-2">
                      <label className="text-sm font-bold text-[#222222]">Tarif d'une nuit de week-end</label>
-                     <input type="text" placeholder="CAD (C$)" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
+                     <input type="text" placeholder="EUR (€)" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
                      <p className="text-[10px] text-gray-400">Ce prix sera le prix par défaut pour le week-end.</p>
                    </div>
                    <div className="space-y-2">
                      <label className="text-sm font-bold text-[#222222]">Tarif hebdomadaire</label>
-                     <input type="text" placeholder="CAD (C$)" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
+                     <input type="text" placeholder="EUR (€)" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
                      <p className="text-[10px] text-gray-400">Ce prix sera le tarif par défaut pour une période de 7 jours.</p>
                    </div>
                    <div className="space-y-2">
                      <label className="text-sm font-bold text-[#222222]">Tarif mensuel</label>
-                     <input type="text" placeholder="CAD (C$)" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
+                     <input type="text" placeholder="EUR (€)" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
                      <p className="text-[10px] text-gray-400">Ce prix sera le tarif appliqué pour des périodes de 28 jours.</p>
                    </div>
                 </div>

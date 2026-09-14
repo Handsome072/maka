@@ -55,7 +55,7 @@ export function HostSettings() {
 
   // Preferences
   const [prefLanguage, setPrefLanguage] = useState('fr');
-  const [prefCurrency, setPrefCurrency] = useState('CAD');
+  const [prefCurrency, setPrefCurrency] = useState('EUR');
   const [prefTimezone, setPrefTimezone] = useState('America/Montreal');
   const [savingPreferences, setSavingPreferences] = useState(false);
 
@@ -83,7 +83,7 @@ export function HostSettings() {
       setAddressCountry(res.user.address_country || '');
       setNotifications(res.user.notification_preferences || DEFAULT_NOTIFICATIONS);
       setPrefLanguage(res.user.preferred_language || 'fr');
-      setPrefCurrency(res.user.preferred_currency || 'CAD');
+      setPrefCurrency(res.user.preferred_currency || 'EUR');
       setPrefTimezone(res.user.timezone || 'America/Montreal');
     } catch {
       showToast('error', 'Impossible de charger le profil.');
@@ -486,7 +486,6 @@ export function HostSettings() {
                       onChange={e => setPrefCurrency(e.target.value)}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111827]"
                     >
-                      <option value="CAD">CAD (C$)</option>
                       <option value="EUR">EUR (€)</option>
                       <option value="USD">USD ($)</option>
                       <option value="GBP">GBP (£)</option>

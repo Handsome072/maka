@@ -15,7 +15,7 @@ export function LocalLawsStep() {
         <p>
           La plupart des villes réglementent le partage de logement et les codes applicables de différents endroits (droit de l'urbanisme, plan d'occupation des sols, code du bâtiment, règlement de zonage, etc.) Le plus souvent, vous devez vous enregistrer et obtenir une autorisation avant de pouvoir louer votre chalet ou accepter des voyageurs. Vous pouvez également être responsable de la collecte et du versement de certaines taxes. Dans certains endroits, les locations à court terme sont totalement interdites.
         </p>
-        <p>Vous êtes responsable de votre propre décision de louer ou de réserver un chalet, il vous incombe donc de connaître les règles applicables avant d'utiliser HOMIQIO.</p>
+        <p>Vous êtes responsable de votre propre décision de louer ou de réserver un chalet, il vous incombe donc de connaître les règles applicables avant d'utiliser Séjoura.</p>
         <p>Pour commencer, nous vous proposons quelques ressources utiles dans la section «Réglementation de votre ville».</p>
         <p>En acceptant nos conditions générales et en publiant une annonce, vous vous engagez à respecter les lois et règlements de votre pays.</p>
       </div>

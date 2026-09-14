@@ -44,8 +44,8 @@ export function IdentityVerification({ onNavigate, listingTitle = 'Maison hôte 
         <header className="sticky top-0 bg-white border-b border-gray-100 px-8 py-4 flex items-center justify-between z-20">
           <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
             <img
-              src="/logo.png"
-              alt="HOMIQIO Logo"
+              src="/sejoura_logo.png"
+              alt="Séjoura Logo"
               className="w-[120px] h-auto"
             />
           </button>
@@ -170,8 +170,8 @@ export function IdentityVerification({ onNavigate, listingTitle = 'Maison hôte 
         <header className="sticky top-0 bg-white border-b border-gray-100 px-8 py-4 flex items-center justify-between z-20">
           <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
             <img
-              src="/logo.png"
-              alt="HOMIQIO Logo"
+              src="/sejoura_logo.png"
+              alt="Séjoura Logo"
               className="w-[120px] h-auto"
             />
           </button>
@@ -252,8 +252,8 @@ export function IdentityVerification({ onNavigate, listingTitle = 'Maison hôte 
         <header className="sticky top-0 bg-white border-b border-gray-100 px-8 py-4 flex items-center justify-between z-20">
           <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
             <img
-              src="/logo.png"
-              alt="HOMIQIO Logo"
+              src="/sejoura_logo.png"
+              alt="Séjoura Logo"
               className="w-[120px] h-auto"
             />
           </button>
@@ -306,7 +306,7 @@ export function IdentityVerification({ onNavigate, listingTitle = 'Maison hôte 
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <h3 className="text-base" style={{ fontWeight: 600, color: '#222222' }}>
-                    Prendre une photo avec l'application mobile HOMIQIO
+                    Prendre une photo avec l'application mobile Séjoura
                   </h3>
                 </div>
                 <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ml-4 ${
@@ -355,8 +355,8 @@ export function IdentityVerification({ onNavigate, listingTitle = 'Maison hôte 
       <header className="sticky top-0 bg-white border-b border-gray-100 px-8 py-4 flex items-center justify-between z-20">
         <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
           <img
-            src="/logo.png"
-            alt="HOMIQIO Logo"
+            src="/sejoura_logo.png"
+            alt="Séjoura Logo"
             className="w-[120px] h-auto"
           />
         </button>

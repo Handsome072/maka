@@ -98,7 +98,7 @@ export function CompanyInfo({ onNavigate }: CompanyInfoProps) {
               <p className="mb-4" style={{ fontWeight: 600 }}>
                 Fournisseur du site web et interlocuteur unique des destinataires du service conformément à l'article 12 du DSA :
               </p>
-              <p className="mb-4">HOMIQIO Ireland UC, private unlimited company</p>
+              <p className="mb-4">Séjoura Ireland UC, private unlimited company</p>
               
               <div className="mb-4">
                 <p style={{ fontWeight: 600 }}>Siège social :</p>
@@ -131,25 +131,25 @@ export function CompanyInfo({ onNavigate }: CompanyInfoProps) {
                 </a>
               </p>
               <p className="mb-4">
-                <strong>Assistance HOMIQIO :</strong>{' '}
+                <strong>Assistance Séjoura :</strong>{' '}
                 <a href="https://www.homiqio.fr/help/contact_us" className="text-[#10B981] underline hover:opacity-80">
                   https://www.homiqio.fr/help/contact_us
                 </a>
               </p>
 
               <p className="mb-4">
-                HOMIQIO Ireland UC agit en qualité d'intermédiaire technique et n'intervient pas dans le choix des contenus mis en ligne par ses utilisateurs. Plus d'informations dans nos{' '}
+                Séjoura Ireland UC agit en qualité d'intermédiaire technique et n'intervient pas dans le choix des contenus mis en ligne par ses utilisateurs. Plus d'informations dans nos{' '}
                 <a href="#" className="text-[#10B981] underline hover:opacity-80">
                   Conditions de service
                 </a>
               </p>
 
               <p className="mb-4">
-                <strong>Prestataire technique (hébergeur du site web) :</strong> HOMIQIO utilise les services cloud d'Amazon Web Services pour héberger son site web. Le siège social d'Amazon Web Services est situé à l'adresse suivante : Amazon Web Services, Inc, 410 Terry Avenue North Seattle, WA 98109-5210, États-Unis.
+                <strong>Prestataire technique (hébergeur du site web) :</strong> Séjoura utilise les services cloud d'Amazon Web Services pour héberger son site web. Le siège social d'Amazon Web Services est situé à l'adresse suivante : Amazon Web Services, Inc, 410 Terry Avenue North Seattle, WA 98109-5210, États-Unis.
               </p>
 
               <p className="mb-6">
-                Veuillez noter qu'HOMIQIO Ireland UC ne s'engage pas à passer par un dispositif alternatif de résolution des litiges avec les consommateurs, et n'est pas tenu de le faire.
+                Veuillez noter que Séjoura Ireland UC ne s'engage pas à passer par un dispositif alternatif de résolution des litiges avec les consommateurs, et n'est pas tenu de le faire.
               </p>
             </section>
 
@@ -159,7 +159,7 @@ export function CompanyInfo({ onNavigate }: CompanyInfoProps) {
                 Partie contractante relative aux services de paiement destinés aux utilisateurs dont le lieu de résidence se trouve au Royaume-Uni, en Suisse ou en Russie :
               </p>
               <div className="mb-4">
-                <p>HOMIQIO Payments UK Ltd.</p>
+                <p>Séjoura Payments UK Ltd.</p>
                 <p>280 Bishopsgate</p>
                 <p>Londres</p>
                 <p>EC2M 4AG</p>
@@ -173,7 +173,7 @@ export function CompanyInfo({ onNavigate }: CompanyInfoProps) {
                 <strong>Conseil d'administration :</strong> Quent Rickerby, Bart Rubin, David Coleman
               </p>
               <p className="mb-6">
-                HOMIQIO Payments UK Ltd. est autorisé et régulé par l'Autorité de bonne conduite financière (Financial Conduct Authority) en tant qu'établissement de monnaie électronique sous la référence 900596.
+                Séjoura Payments UK Ltd. est autorisé et régulé par l'Autorité de bonne conduite financière (Financial Conduct Authority) en tant qu'établissement de monnaie électronique sous la référence 900596.
               </p>
             </section>
 
@@ -183,7 +183,7 @@ export function CompanyInfo({ onNavigate }: CompanyInfoProps) {
                 Partie contractante relative aux services de paiement destinés aux utilisateurs dont le lieu de résidence se trouve dans l'Espace économique européen :
               </p>
               <div className="mb-4">
-                <p>HOMIQIO Payments Luxembourg S.A.</p>
+                <p>Séjoura Payments Luxembourg S.A.</p>
                 <p>4, rue Henri Schnadt</p>
                 <p>L-2530 Luxembourg</p>
                 <p>Luxembourg</p>
@@ -196,7 +196,7 @@ export function CompanyInfo({ onNavigate }: CompanyInfoProps) {
                 <strong>Conseil d'administration :</strong> Thomas Belousek, Marc Hemmerling, Bart Rubin, Amit Singh
               </p>
               <p className="mb-6">
-                HOMIQIO Payments Luxembourg S.A. est autorisée et régulée par la Commission de Surveillance du Secteur Financier (« CSSF ») sous le numéro de référence Z21.
+                Séjoura Payments Luxembourg S.A. est autorisée et régulée par la Commission de Surveillance du Secteur Financier (« CSSF ») sous le numéro de référence Z21.
               </p>
             </section>
 
@@ -240,7 +240,7 @@ export function CompanyInfo({ onNavigate }: CompanyInfoProps) {
             <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
               <path d="M16 1.5C11.5 1.5 7.5 4 5.5 7.5C3.5 11 3 15 4.5 19C6 23 9.5 26.5 13 28.5C14 29 15 29.5 16 29.5C17 29.5 18 29 19 28.5C22.5 26.5 26 23 27.5 19C29 15 28.5 11 26.5 7.5C24.5 4 20.5 1.5 16 1.5ZM16 20C13.8 20 12 18.2 12 16C12 13.8 13.8 12 16 12C18.2 12 20 13.8 20 16C20 18.2 18.2 20 16 20Z" fill="#222222" />
             </svg>
-            <span>© 2026 HOMIQIO, Inc. All rights reserved.</span>
+            <span>© 2026 Séjoura, Inc. All rights reserved.</span>
           </div>
         </div>
       </footer>

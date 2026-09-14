@@ -142,7 +142,7 @@ export function ClientSecurity() {
                   className="w-4 h-4 md:w-5 md:h-5 text-gray-900 focus:ring-2 focus:ring-gray-900 flex-shrink-0"
                 />
                 <span className="text-sm" style={{ color: '#222222' }}>
-                  Je n'utilise plus HOMIQIO.
+                  Je n'utilise plus Séjoura.
                 </span>
               </label>
 
@@ -153,7 +153,7 @@ export function ClientSecurity() {
                   className="w-4 h-4 md:w-5 md:h-5 text-gray-900 focus:ring-2 focus:ring-gray-900 flex-shrink-0"
                 />
                 <span className="text-sm" style={{ color: '#222222' }}>
-                  J'utilise un autre compte HOMIQIO.
+                  J'utilise un autre compte Séjoura.
                 </span>
               </label>
 

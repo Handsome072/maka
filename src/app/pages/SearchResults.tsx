@@ -292,11 +292,11 @@ function PropertyCard({ property }: { property: Property }) {
         <div className="flex items-baseline gap-1.5">
           {property.originalPrice && (
             <span className="text-[15px] line-through" style={{ color: '#717171' }}>
-              {property.originalPrice} C$
+              {property.originalPrice} €
             </span>
           )}
           <span className="text-[15px]" style={{ fontWeight: 600, color: '#222222' }}>
-            {property.price} C$
+            {property.price} €
           </span>
           <span className="text-[15px]" style={{ color: '#717171' }}>
             par mois
@@ -351,8 +351,8 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
               className="flex items-center gap-1 flex-shrink-0 hover:opacity-80 transition-opacity duration-200 border-0"
             >
               <img
-                src="/logo.png"
-                alt="HOMIQIO Logo"
+                src="/sejoura_logo.png"
+                alt="Séjoura Logo"
                 className="w-[150px] h-auto border-0"
               />
             </button>
@@ -554,17 +554,17 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
                 <ul className="space-y-3">
                   <li>
                     <a href="#" className="text-[14px] hover:underline" style={{ color: '#222222' }}>
-                      Mettez votre logement sur HOMIQIO
+                      Mettez votre logement sur Séjoura
                     </a>
                   </li>
                   <li>
                     <a href="#" className="text-[14px] hover:underline" style={{ color: '#222222' }}>
-                      Proposez votre expérience sur HOMIQIO
+                      Proposez votre expérience sur Séjoura
                     </a>
                   </li>
                   <li>
                     <a href="#" className="text-[14px] hover:underline" style={{ color: '#222222' }}>
-                      Proposez votre service sur HOMIQIO
+                      Proposez votre service sur Séjoura
                     </a>
                   </li>
                   <li>
@@ -605,10 +605,10 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
                 </ul>
               </div>
 
-              {/* HOMIQIO */}
+              {/* Séjoura */}
               <div>
                 <h3 className="text-[14px] mb-4" style={{ fontWeight: 600, color: '#222222' }}>
-                  HOMIQIO
+                  Séjoura
                 </h3>
                 <ul className="space-y-3">
                   <li>
@@ -638,7 +638,7 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
                   </li>
                   <li>
                     <a href="#" className="text-[14px] hover:underline" style={{ color: '#222222' }}>
-                      Séjours d'urgence HOMIQIO.org
+                      Séjours d'urgence Séjoura.org
                     </a>
                   </li>
                 </ul>
@@ -648,7 +648,7 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
             {/* Footer bottom */}
             <div className="border-t border-gray-200 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-4 text-[14px]" style={{ color: '#222222' }}>
-                <span>© 2025 HOMIQIO, Inc.</span>
+                <span>© 2025 Séjoura, Inc.</span>
                 <span>·</span>
                 <a href="#" className="hover:underline">Confidentialité</a>
                 <span>·</span>
@@ -666,7 +666,7 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
                   Français (FR)
                 </button>
                 <button className="flex items-center gap-2 text-[14px] hover:underline" style={{ fontWeight: 600, color: '#222222' }}>
-                  C$ CAD
+                  € EUR
                 </button>
                 <div className="flex items-center gap-3">
                   <a href="#" className="hover:opacity-70 transition-opacity">

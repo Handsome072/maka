@@ -17,7 +17,7 @@ export function ImportIcalModal() {
           <button onClick={() => setIsImportModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full"><X className="w-5 h-5" /></button>
         </div>
         <div className="p-8 space-y-8">
-          <p className="text-[#222222] font-medium">Quelle plateforme de réservation souhaitez-vous importer dans HOMIQIO?</p>
+          <p className="text-[#222222] font-medium">Quelle plateforme de réservation souhaitez-vous importer dans Séjoura?</p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               { name: 'Booking.com', bg: 'bg-[#003580]', color: 'text-white', icon: 'B.' },

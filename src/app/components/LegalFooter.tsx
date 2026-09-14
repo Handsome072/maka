@@ -34,7 +34,7 @@ export function LegalFooter({ activePage }: LegalFooterProps) {
               Accueil de voyageurs
             </h3>
             <ul className="space-y-3">
-              <li><a href="#" className="text-sm text-[#222222] hover:underline">Mettez votre logement sur HOMIQIO</a></li>
+              <li><a href="#" className="text-sm text-[#222222] hover:underline">Mettez votre logement sur Séjoura</a></li>
               <li><a href="#" className="text-sm text-[#222222] hover:underline">AirCover pour les hôtes</a></li>
               <li><a href="#" className="text-sm text-[#222222] hover:underline">Ressources pour les hôtes</a></li>
               <li><a href="#" className="text-sm text-[#222222] hover:underline">Forum de la communauté</a></li>
@@ -43,10 +43,10 @@ export function LegalFooter({ activePage }: LegalFooterProps) {
             </ul>
           </div>
 
-          {/* HOMIQIO */}
+          {/* Séjoura */}
           <div>
             <h3 className="text-sm mb-4 text-[#222222]" style={{ fontWeight: 600 }}>
-              HOMIQIO
+              Séjoura
             </h3>
             <ul className="space-y-3">
               <li><a href="#" className="text-sm text-[#222222] hover:underline">Newsroom</a></li>
@@ -63,7 +63,7 @@ export function LegalFooter({ activePage }: LegalFooterProps) {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Left - Copyright & Links */}
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 text-sm text-[#222222]">
-              <span>© 2026 HOMIQIO, Inc.</span>
+              <span>© 2026 Séjoura, Inc.</span>
               <span className="hidden md:inline">·</span>
               {activePage === "privacy" ? (
                 <span style={{ fontWeight: 600 }}>Confidentialité</span>
@@ -100,8 +100,8 @@ export function LegalFooter({ activePage }: LegalFooterProps) {
 
               {/* Currency */}
               <button className="flex items-center gap-1 text-sm hover:underline" style={{ fontWeight: 600 }}>
-                <span>C$</span>
-                <span>CAD</span>
+                <span>€</span>
+                <span>EUR</span>
               </button>
 
               {/* Social Icons */}

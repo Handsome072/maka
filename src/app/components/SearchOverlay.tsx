@@ -79,8 +79,8 @@ export function SearchOverlay({
                 className="flex items-center gap-1 flex-shrink-0 relative z-10 border-0"
               >
                 <img
-                  src="/logo.png"
-                  alt="HOMIQIO Logo"
+                  src="/sejoura_logo.png"
+                  alt="Séjoura Logo"
                   className="w-[150px] h-auto border-0"
                 />
               </Link>

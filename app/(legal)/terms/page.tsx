@@ -4,8 +4,8 @@ import { ChevronRight } from 'lucide-react';
 import { LegalFooter } from '@/app/components/LegalFooter';
 
 export const metadata: Metadata = {
-  title: 'Conditions Générales | Homiqio',
-  description: 'Conditions Générales d\'Utilisation et de Réservation de la plateforme HOMIQIO',
+  title: 'Conditions Générales | Séjoura',
+  description: 'Conditions Générales d\'Utilisation et de Réservation de la plateforme Séjoura',
 };
 
 export default function TermsPage() {
@@ -42,7 +42,7 @@ export default function TermsPage() {
                   ARTICLE 1 – IDENTITÉ DE L'EXPLOITANT
                 </h2>
                 <p className="text-base mb-4" style={{ color: '#222222', lineHeight: '1.6' }}>
-                  La plateforme HOMIQIO est exploitée par :
+                  La plateforme Séjoura est exploitée par :
                 </p>
                 <div className="text-base mb-4" style={{ color: '#222222', lineHeight: '1.6' }}>
                   <p style={{ fontWeight: 600 }}>WANDERLATE SASU</p>
@@ -52,7 +52,7 @@ export default function TermsPage() {
                   <p>TVA intracommunautaire : FR14991607656</p>
                 </div>
                 <p className="text-base" style={{ color: '#222222', lineHeight: '1.6' }}>
-                  HOMIQIO est une marque commerciale exploitée par WANDERLATE SASU.
+                  Séjoura est une marque commerciale exploitée par WANDERLATE SASU.
                 </p>
               </section>
 
@@ -62,7 +62,7 @@ export default function TermsPage() {
                   ARTICLE 2 – OBJET DES CGU
                 </h2>
                 <p className="text-base mb-4" style={{ color: '#222222', lineHeight: '1.6' }}>
-                  Les présentes Conditions Générales d'Utilisation ont pour objet de définir les modalités et conditions d'accès, de navigation et d'utilisation de la plateforme HOMIQIO.
+                  Les présentes Conditions Générales d'Utilisation ont pour objet de définir les modalités et conditions d'accès, de navigation et d'utilisation de la plateforme Séjoura.
                 </p>
                 <p className="text-base" style={{ color: '#222222', lineHeight: '1.6' }}>
                   Toute utilisation de la plateforme implique l'acceptation pleine, entière et sans réserve des présentes CGU par l'utilisateur.
@@ -75,7 +75,7 @@ export default function TermsPage() {
                   ARTICLE 3 – DÉFINITIONS
                 </h2>
                 <ul className="pl-6" style={{ color: '#222222', lineHeight: '1.6' }}>
-                  <li style={{ listStyleType: 'disc' }}><strong>Plateforme :</strong> le site internet, l'application mobile et les services numériques HOMIQIO</li>
+                  <li style={{ listStyleType: 'disc' }}><strong>Plateforme :</strong> le site internet, l'application mobile et les services numériques Séjoura</li>
                   <li style={{ listStyleType: 'disc' }}><strong>Utilisateur :</strong> toute personne accédant à la plateforme</li>
                   <li style={{ listStyleType: 'disc' }}><strong>Client :</strong> utilisateur effectuant une réservation</li>
                   <li style={{ listStyleType: 'disc' }}><strong>Hébergeur :</strong> professionnel ou particulier proposant un hébergement via la plateforme</li>

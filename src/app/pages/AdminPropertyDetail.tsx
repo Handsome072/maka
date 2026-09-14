@@ -129,7 +129,7 @@ export function AdminPropertyDetail() {
 
   const formatPrice = (price: string | null | undefined) => {
     if (!price) return '--';
-    return `${Number(price).toFixed(0)} C$`;
+    return `${Number(price).toFixed(0)} €`;
   };
 
   if (loading) {

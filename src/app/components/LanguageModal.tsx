@@ -79,7 +79,7 @@ export function LanguageModal({
   const [selectedLanguage, setSelectedLanguage] =
     useState("Français");
   const [selectedCurrency, setSelectedCurrency] = useState(
-    "Dollar américain",
+    "Euro",
   );
 
   if (!isOpen) return null;

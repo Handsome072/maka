@@ -5,7 +5,7 @@
 
 set -e
 
-echo "🚀 Démarrage du déploiement HOMIQIO vers o2switch..."
+echo "🚀 Démarrage du déploiement Séjoura vers o2switch..."
 
 # Couleurs pour les messages
 GREEN='\033[0;32m'

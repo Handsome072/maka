@@ -1,5 +1,5 @@
 /**
- * API Service for HOMIQIO Backend
+ * API Service for Séjoura Backend
  * Handles all HTTP requests to the Laravel API
  */
 

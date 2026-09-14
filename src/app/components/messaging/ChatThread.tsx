@@ -100,7 +100,7 @@ export function ChatThread({
         )}
         <div className="flex-1 min-w-0">
           <h3 className="text-base truncate" style={{ fontWeight: 600, color: '#222222' }}>
-            {isAdminConversation ? 'Admin HOMIQIO' : `${other.first_name} ${other.last_name}`}
+            {isAdminConversation ? 'Admin Séjoura' : `${other.first_name} ${other.last_name}`}
           </h3>
           <p className="text-xs truncate" style={{ color: '#717171' }}>
             {isAdminConversation ? 'Support plateforme' : (conversation.reservation?.listing?.title || conversation.listing?.title || 'Message direct')}
@@ -148,7 +148,7 @@ export function ChatThread({
                           {isAdminMsg && !isMe && (
                             <div className="flex items-center gap-1 px-4 pt-2">
                               <ShieldAlert className="w-3 h-3 text-indigo-200" />
-                              <span className="text-[10px] text-indigo-200" style={{ fontWeight: 600 }}>ADMIN HOMIQIO</span>
+                              <span className="text-[10px] text-indigo-200" style={{ fontWeight: 600 }}>ADMIN SÉJOURA</span>
                             </div>
                           )}
 

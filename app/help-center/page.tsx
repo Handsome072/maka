@@ -19,12 +19,12 @@ export default function HelpCenterPage() {
 
     const guideCards = [
         {
-            title: "Premiers pas en tant que voyageur sur HOMIQIO",
+            title: "Premiers pas en tant que voyageur sur Séjoura",
             imageSrc: "/assets/help_getting_started.png",
             alt: "Voyageur avec carte",
         },
         {
-            title: "Utilisez les fonctionnalités de recherche afin de trouver un hébergement sur HOMIQIO",
+            title: "Utilisez les fonctionnalités de recherche afin de trouver un hébergement sur Séjoura",
             imageSrc: "/assets/help_reservation.png",
             alt: "Recherche d'hébergement",
         },
@@ -34,7 +34,7 @@ export default function HelpCenterPage() {
             alt: "Bouclier AirCover",
         },
         {
-            title: "Vérifiez et modifiez vos informations personnelles sur votre compte HOMIQIO",
+            title: "Vérifiez et modifiez vos informations personnelles sur votre compte Séjoura",
             imageSrc: "/assets/help_community.png",
             alt: "Informations personnelles",
         }
@@ -139,7 +139,7 @@ export default function HelpCenterPage() {
                                 La vérification de votre identité n'est pas terminée
                             </h3>
                             <p className="text-gray-500 text-sm leading-relaxed">
-                                Cette procédure nous permet de confirmer votre identité. Elle sert à garantir la sécurité de la plate-forme HOMIQIO.
+                                Cette procédure nous permet de confirmer votre identité. Elle sert à garantir la sécurité de la plate-forme Séjoura.
                             </p>
                         </div>
                         {/* Lien Rapide Card */}

@@ -94,7 +94,7 @@ export function HostCalendar() {
       )
     );
     toast.success(
-      `Prix mis à jour : ${price} $ pour ${selectedDates.size} date${selectedDates.size > 1 ? 's' : ''}`
+      `Prix mis à jour : ${price} € pour ${selectedDates.size} date${selectedDates.size > 1 ? 's' : ''}`
     );
   }, [panelPrice, selectedDates]);
 

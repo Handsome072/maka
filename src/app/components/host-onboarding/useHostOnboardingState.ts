@@ -121,7 +121,7 @@ export function useHostOnboardingState({
   });
 
   // 10. Pricing
-  const [currency, setCurrency] = useState('CAD (C$)');
+  const [currency, setCurrency] = useState('EUR');
   const [pricing, setPricing] = useState({
     base: '120',
     weekend: '',

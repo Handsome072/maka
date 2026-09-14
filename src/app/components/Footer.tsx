@@ -70,7 +70,7 @@ export function Footer({ onNavigate }: FooterProps) {
             <ul className="space-y-3">
               <li>
                 <a href="#" className="text-sm text-[#222222] hover:underline">
-                  Mettez votre logement sur HOMIQIO
+                  Mettez votre logement sur Séjoura
                 </a>
               </li>
               <li>
@@ -101,13 +101,13 @@ export function Footer({ onNavigate }: FooterProps) {
             </ul>
           </div>
 
-          {/* HOMIQIO */}
+          {/* Séjoura */}
           <div>
             <h3
               className="text-sm mb-4 text-[#222222]"
               style={{ fontWeight: 600 }}
             >
-              HOMIQIO
+              Séjoura
             </h3>
             <ul className="space-y-3">
               <li>
@@ -144,7 +144,7 @@ export function Footer({ onNavigate }: FooterProps) {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Left - Copyright & Links */}
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 text-sm text-[#222222]">
-              <span>© 2026 HOMIQIO, Inc.</span>
+              <span>© 2026 Séjoura, Inc.</span>
               <span className="hidden md:inline">·</span>
               <Link href="/privacy" className="hover:underline">
                 Confidentialité
@@ -179,8 +179,8 @@ export function Footer({ onNavigate }: FooterProps) {
                 className="flex items-center gap-1 text-sm hover:underline"
                 style={{ fontWeight: 600 }}
               >
-                <span>C$</span>
-                <span>CAD</span>
+                <span>€</span>
+                <span>EUR</span>
               </button>
 
               {/* Social Icons */}

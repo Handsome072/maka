@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { LegalFooter } from '@/app/components/LegalFooter';
 
 export const metadata: Metadata = {
-  title: 'Fonctionnement du site | Homiqio',
-  description: 'Comprendre le fonctionnement de la plateforme HOMIQIO et le classement des annonces',
+  title: 'Fonctionnement du site | Séjoura',
+  description: 'Comprendre le fonctionnement de la plateforme Séjoura et le classement des annonces',
 };
 
 export default function HowItWorksPage() {
@@ -21,11 +21,11 @@ export default function HowItWorksPage() {
             {/* Section 1 */}
             <section>
               <h2 className="text-base mb-4" style={{ fontWeight: 700, color: '#484848' }}>
-                QU'EST-CE QU'HOMIQIO ?
+                QU'EST-CE QU'Séjoura ?
               </h2>
               <div className="space-y-4 text-base" style={{ color: '#484848', lineHeight: '1.6' }}>
                 <p>
-                  La Plateforme HOMIQIO est une place de marché en ligne qui permet aux utilisateurs enregistrés (les <strong>« Membres »</strong>) et à certains tiers qui proposent des services (les Membres et tiers qui proposent des services sont des <strong>« Hôtes »</strong> et les services qu'ils proposent sont des <strong>« Services d'Hôte »</strong>) de publier ces Services d'Hôte sur la Plateforme HOMIQIO (les <strong>« Annonces »</strong>) et de communiquer et traiter directement avec des Membres qui souhaitent réserver ces Services d'Hôte (les Membres qui utilisent des Services d'Hôte sont des <strong>« Voyageurs »</strong>). Les Services d'Hôte peuvent comprendre la location de logements pour des vacances ou autre usage (les <strong>« Hébergements »</strong>), des activités sur une ou plusieurs journées dans différentes catégories (les <strong>« Expériences »</strong>), un accès à des événements et lieux uniques (les <strong>« Événements »</strong>), ainsi que d'autres services variés, en lien ou non avec les voyages.
+                  La Plateforme Séjoura est une place de marché en ligne qui permet aux utilisateurs enregistrés (les <strong>« Membres »</strong>) et à certains tiers qui proposent des services (les Membres et tiers qui proposent des services sont des <strong>« Hôtes »</strong> et les services qu'ils proposent sont des <strong>« Services d'Hôte »</strong>) de publier ces Services d'Hôte sur la Plateforme Séjoura (les <strong>« Annonces »</strong>) et de communiquer et traiter directement avec des Membres qui souhaitent réserver ces Services d'Hôte (les Membres qui utilisent des Services d'Hôte sont des <strong>« Voyageurs »</strong>). Les Services d'Hôte peuvent comprendre la location de logements pour des vacances ou autre usage (les <strong>« Hébergements »</strong>), des activités sur une ou plusieurs journées dans différentes catégories (les <strong>« Expériences »</strong>), un accès à des événements et lieux uniques (les <strong>« Événements »</strong>), ainsi que d'autres services variés, en lien ou non avec les voyages.
                 </p>
                 <p>Vous devez créer un compte pour pouvoir publier une Annonce.</p>
               </div>
@@ -34,7 +34,7 @@ export default function HowItWorksPage() {
             {/* Section 2 */}
             <section>
               <h2 className="text-base mb-4" style={{ fontWeight: 700, color: '#484848' }}>
-                QUI PEUT DEVENIR HÔTE SUR HOMIQIO (LOGEMENTS) ?
+                QUI PEUT DEVENIR HÔTE SUR SÉJOURA (LOGEMENTS) ?
               </h2>
               <div className="space-y-4 text-base" style={{ color: '#484848', lineHeight: '1.6' }}>
                 <p>
@@ -61,11 +61,11 @@ export default function HowItWorksPage() {
             {/* Section 3 */}
             <section>
               <h2 className="text-base mb-4" style={{ fontWeight: 700, color: '#484848' }}>
-                QUI PEUT PUBLIER UNE EXPÉRIENCE SUR HOMIQIO ?
+                QUI PEUT PUBLIER UNE EXPÉRIENCE SUR SÉJOURA ?
               </h2>
               <div className="space-y-4 text-base" style={{ color: '#484848', lineHeight: '1.6' }}>
                 <p>
-                  Les expériences HOMIQIO sont des activités créées et animées par des passionnés. Chaque expérience est examinée pour s'assurer qu'elle respecte trois critères de qualité :
+                  Les expériences Séjoura sont des activités créées et animées par des passionnés. Chaque expérience est examinée pour s'assurer qu'elle respecte trois critères de qualité :
                 </p>
                 <ul className="space-y-3 pl-6">
                   <li style={{ listStyleType: 'disc' }}><strong>Expertise</strong> : les hôtes sont bien informés et passionnés.</li>
@@ -83,7 +83,7 @@ export default function HowItWorksPage() {
               <div className="space-y-4 text-base" style={{ color: '#484848', lineHeight: '1.6' }}>
                 <p>Votre inscription et la mise en ligne de votre logement sont gratuites.</p>
                 <p>
-                  Pour vous aider à utiliser au mieux la plateforme HOMIQIO, y compris des services tels que l'assistance client 24h/24 et le traitement des cartes de crédit, nous facturons des frais de service lorsqu'une réservation est confirmée.
+                  Pour vous aider à utiliser au mieux la plateforme Séjoura, y compris des services tels que l'assistance client 24h/24 et le traitement des cartes de crédit, nous facturons des frais de service lorsqu'une réservation est confirmée.
                 </p>
               </div>
             </section>
@@ -95,7 +95,7 @@ export default function HowItWorksPage() {
               </h2>
               <div className="space-y-4 text-base" style={{ color: '#484848', lineHeight: '1.6' }}>
                 <p>
-                  Tous les services de paiement liés à votre utilisation de la Plateforme HOMIQIO vous sont fournis par une ou plusieurs entités HOMIQIO Payments, comme le prévoient les Conditions de Service relatives aux paiements.
+                  Tous les services de paiement liés à votre utilisation de la Plateforme Séjoura vous sont fournis par une ou plusieurs entités Séjoura Payments, comme le prévoient les Conditions de Service relatives aux paiements.
                 </p>
                 <p>
                   Nous acceptons différents modes de paiement en fonction du pays dans lequel se trouve votre compte.
@@ -122,7 +122,7 @@ export default function HowItWorksPage() {
               </h2>
               <div className="space-y-4 text-base" style={{ color: '#484848', lineHeight: '1.6' }}>
                 <p>
-                  Le Centre de résolution vous permet de demander ou d'envoyer de l'argent dans le cadre de votre voyage HOMIQIO.
+                  Le Centre de résolution vous permet de demander ou d'envoyer de l'argent dans le cadre de votre voyage Séjoura.
                 </p>
                 <p>
                   En tant que voyageur, vous disposez de 60 jours après la date de votre départ du logement pour soumettre une demande dans le Centre de résolution.

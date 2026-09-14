@@ -37,7 +37,7 @@ export function ReservationModeStep() {
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1"><span className="font-medium text-[#222222]">Demande de réservation</span><Info className="w-4 h-4 text-gray-400" /></div>
-              <p className="text-[#717171] text-sm leading-relaxed">Les locations seront approuvées par l'équipe de HOMIQIO. Il est essentiel de maintenir vos calendriers de disponibilité à jour en tout temps.</p>
+              <p className="text-[#717171] text-sm leading-relaxed">Les locations seront approuvées par l'équipe de Séjoura. Il est essentiel de maintenir vos calendriers de disponibilité à jour en tout temps.</p>
             </div>
           </label>
           <label className="flex items-start gap-4 cursor-pointer group opacity-75">

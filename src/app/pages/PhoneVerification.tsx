@@ -53,8 +53,8 @@ export function PhoneVerification({ onNavigate }: PhoneVerificationProps) {
         <header className="sticky top-0 bg-white border-b border-gray-100 px-8 py-4 flex items-center justify-between z-20">
           <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
             <img
-              src="/logo.png"
-              alt="HOMIQIO Logo"
+              src="/sejoura_logo.png"
+              alt="Séjoura Logo"
               className="w-[120px] h-auto"
             />
           </button>
@@ -151,8 +151,8 @@ export function PhoneVerification({ onNavigate }: PhoneVerificationProps) {
       <header className="sticky top-0 bg-white border-b border-gray-100 px-8 py-4 flex items-center justify-between z-20">
         <button onClick={() => onNavigate('logements')} className="hover:opacity-70 transition-opacity">
           <img
-            src="/logo.png"
-            alt="HOMIQIO Logo"
+            src="/sejoura_logo.png"
+            alt="Séjoura Logo"
             className="w-[120px] h-auto"
           />
         </button>
@@ -177,7 +177,7 @@ export function PhoneVerification({ onNavigate }: PhoneVerificationProps) {
           </p>
 
           <p className="text-base mb-8" style={{ color: '#222222' }}>
-            Saisissez le code à 4 chiffres que HOMIQIO vient d'envoyer au {getFormattedPhoneNumber()} :
+            Saisissez le code à 4 chiffres que Séjoura vient d'envoyer au {getFormattedPhoneNumber()} :
           </p>
 
           {/* Verification Code Inputs */}

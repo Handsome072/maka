@@ -263,7 +263,7 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
     nights: 0,
     pricePerNight: 0,
     priceBreakdown: null,
-    currency: 'CAD',
+    currency: 'EUR',
     hostName: '',
     hostPhoto: '',
     hostSince: '',
@@ -329,8 +329,8 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
         <div className="max-w-[1480px] mx-auto px-6 md:px-10 lg:px-20 py-5">
           <div className="flex items-center justify-center">
             <img
-              src="/logo.png"
-              alt="HOMIQIO Logo"
+              src="/sejoura_logo.png"
+              alt="Séjoura Logo"
               className="w-[150px] h-auto"
             />
           </div>
@@ -383,7 +383,7 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
                     />
                     <div className="flex-1">
                       <p className="text-base mb-1" style={{ fontWeight: 600 }}>
-                        Payer {total.toFixed(2)} C$ maintenant
+                        Payer {total.toFixed(2)} € maintenant
                       </p>
                     </div>
                   </label>
@@ -402,7 +402,7 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
                         Payer une partie maintenant et l'autre plus tard
                       </p>
                       <p className="text-sm text-gray-600">
-                        {(total / 2).toFixed(2)} C$ maintenant, {(total / 2).toFixed(2)} C$ à payer le 25 mars. Pas de frais supplémentaires.{' '}
+                        {(total / 2).toFixed(2)} € maintenant, {(total / 2).toFixed(2)} € à payer le 25 mars. Pas de frais supplémentaires.{' '}
                         <button className="underline" style={{ fontWeight: 600 }}>
                           Plus d'informations
                         </button>
@@ -424,7 +424,7 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
 
               {isStepCompleted(1) && !isStepEditing(1) && (
                 <p className="text-base">
-                  Payer {total.toFixed(2)} C$ maintenant
+                  Payer {total.toFixed(2)} € maintenant
                 </p>
               )}
             </div>
@@ -935,39 +935,39 @@ export function BookingRequest({ onBack, bookingData }: BookingRequestProps) {
               </h4>
               <div className="space-y-3 mb-6 pb-6 border-b border-gray-200">
                 <div className="flex items-center justify-between text-base">
-                  <span className="underline">{nights} nuit{nights > 1 ? 's' : ''} x {Number(pricePerNight).toFixed(2)} C$</span>
-                  <span>{subtotal.toFixed(2)} C$</span>
+                  <span className="underline">{nights} nuit{nights > 1 ? 's' : ''} x {Number(pricePerNight).toFixed(2)} €</span>
+                  <span>{subtotal.toFixed(2)} €</span>
                 </div>
                 {cleaningFee > 0 && (
                   <div className="flex items-center justify-between text-base">
                     <span className="underline">Frais de ménage</span>
-                    <span>{cleaningFee.toFixed(2)} C$</span>
+                    <span>{cleaningFee.toFixed(2)} €</span>
                   </div>
                 )}
                 {extraGuestFee > 0 && (
                   <div className="flex items-center justify-between text-base">
                     <span className="underline">Frais de voyageur supplémentaire</span>
-                    <span>{extraGuestFee.toFixed(2)} C$</span>
+                    <span>{extraGuestFee.toFixed(2)} €</span>
                   </div>
                 )}
                 {petFee > 0 && (
                   <div className="flex items-center justify-between text-base">
                     <span className="underline">Frais d&apos;animaux</span>
-                    <span>{petFee.toFixed(2)} C$</span>
+                    <span>{petFee.toFixed(2)} €</span>
                   </div>
                 )}
                 {serviceFee > 0 && (
                   <div className="flex items-center justify-between text-base">
-                    <span className="underline">Frais de service HOMIQIO</span>
-                    <span>{serviceFee.toFixed(2)} C$</span>
+                    <span className="underline">Frais de service Séjoura</span>
+                    <span>{serviceFee.toFixed(2)} €</span>
                   </div>
                 )}
               </div>
 
               {/* Total */}
               <div className="flex items-center justify-between mb-2">
-                <span className="text-base" style={{ fontWeight: 600 }}>Total {data.currency || 'CAD'}</span>
-                <span className="text-base" style={{ fontWeight: 600 }}>{total.toFixed(2)} C$</span>
+                <span className="text-base" style={{ fontWeight: 600 }}>Total {data.currency || 'EUR'}</span>
+                <span className="text-base" style={{ fontWeight: 600 }}>{total.toFixed(2)} €</span>
               </div>
 
               {/* Warning */}

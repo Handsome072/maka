@@ -1,4 +1,4 @@
-# Commandes Docker — Projet Homiqio
+# Commandes Docker — Projet Séjoura
 
 > **Deux projets à lancer séparément :**
 > - `api-homiqio/` → Laravel + MySQL + Redis (backend)

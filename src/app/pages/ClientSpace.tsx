@@ -73,8 +73,8 @@ export function ClientSpace({ onNavigate, initialSection = 'reservations' }: Cli
             className="flex items-center gap-1 flex-shrink-0 border-0 hover:opacity-80 transition-opacity"
           >
             <img
-              src="/logo.png"
-              alt="HOMIQIO Logo"
+              src="/sejoura_logo.png"
+              alt="Séjoura Logo"
               className="w-[150px] h-auto border-0"
             />
           </button>
@@ -87,7 +87,7 @@ export function ClientSpace({ onNavigate, initialSection = 'reservations' }: Cli
               Faites vérifier votre identité pour effectuer une réservation ou accueillir des voyageurs
             </h1>
             <p className="text-center text-sm text-gray-600 mb-8">
-              Nous demandons aux utilisateurs de faire vérifier leur identité pour assurer la sécurité de la communauté HOMIQIO.
+              Nous demandons aux utilisateurs de faire vérifier leur identité pour assurer la sécurité de la communauté Séjoura.
             </p>
 
             {/* Icône de profil */}
@@ -507,7 +507,7 @@ export function ClientSpace({ onNavigate, initialSection = 'reservations' }: Cli
                 <option>Andson Rajsona</option>
               </select>
               <p className="text-xs text-gray-500 mt-2">
-                Choisissez parmi les personnes que vous avez ajoutées sur votre compte HOMIQIO.{' '}
+                Choisissez parmi les personnes que vous avez ajoutées sur votre compte Séjoura.{' '}
                 <a href="#" className="underline">En savoir plus</a>
               </p>
             </div>
@@ -858,7 +858,7 @@ export function ClientSpace({ onNavigate, initialSection = 'reservations' }: Cli
                           </svg>
                           <span className="text-[10px] text-white opacity-90 whitespace-nowrap font-medium">TOTAL / MOIS</span>
                         </div>
-                        <span className="text-lg text-white font-bold">700 C$</span>
+                        <span className="text-lg text-white font-bold">700 €</span>
                       </div>
 
                       <button
@@ -951,7 +951,7 @@ export function ClientSpace({ onNavigate, initialSection = 'reservations' }: Cli
                               </svg>
                               <span className="text-[10px] text-white opacity-90 whitespace-nowrap font-medium">TOTAL / MOIS</span>
                             </div>
-                            <span className="text-lg text-white font-bold">700 C$</span>
+                            <span className="text-lg text-white font-bold">700 €</span>
                           </div>
                         </div>
                       </div>
@@ -1037,7 +1037,7 @@ export function ClientSpace({ onNavigate, initialSection = 'reservations' }: Cli
                           </svg>
                           <span className="text-[10px] text-white opacity-90 whitespace-nowrap font-medium">TOTAL / MOIS</span>
                         </div>
-                        <span className="text-lg text-white font-bold">700 C$</span>
+                        <span className="text-lg text-white font-bold">700 €</span>
                       </div>
                     </div>
                   </div>
@@ -1347,7 +1347,7 @@ export function ClientSpace({ onNavigate, initialSection = 'reservations' }: Cli
                           Numéro de téléphone
                         </h4>
                         <p className={`text-sm ${editingOfficialName || editingPreferredName || editingEmail ? 'text-gray-400' : 'text-gray-600'}`}>
-                          Ajoutez un numéro pour que les voyageurs confirmés et HOMIQIO puissent vous joindre. Vous pouvez ajouter d'autres numéros et choisir leur utilisation.
+                          Ajoutez un numéro pour que les voyageurs confirmés et Séjoura puissent vous joindre. Vous pouvez ajouter d'autres numéros et choisir leur utilisation.
                         </p>
                       </div>
                       <button
@@ -1846,7 +1846,7 @@ export function ClientSpace({ onNavigate, initialSection = 'reservations' }: Cli
                         Activité du compte et politiques
                       </h3>
                       <p className="text-sm mb-6" style={{ color: '#C13515' }}>
-                        Confirmez votre réservation, vérifiez l'activité de votre compte et découvrez les politiques importantes de HOMIQIO.
+                        Confirmez votre réservation, vérifiez l'activité de votre compte et découvrez les politiques importantes de Séjoura.
                       </p>
 
                       <div className="space-y-6">
@@ -1961,13 +1961,13 @@ export function ClientSpace({ onNavigate, initialSection = 'reservations' }: Cli
                       </div>
                     </div>
 
-                    {/* Actualités de HOMIQIO */}
+                    {/* Actualités de Séjoura */}
                     <div className="mb-12">
                       <h3 className="text-lg md:text-xl mb-4" style={{ fontWeight: 600, color: '#222222' }}>
-                        Actualités de HOMIQIO
+                        Actualités de Séjoura
                       </h3>
                       <p className="text-sm text-gray-600 mb-8 leading-relaxed">
-                        Recevez les dernières actualités de HOMIQIO et dites-nous comment nous pouvons nous améliorer.
+                        Recevez les dernières actualités de Séjoura et dites-nous comment nous pouvons nous améliorer.
                       </p>
 
                       <div className="space-y-6">
@@ -2099,10 +2099,10 @@ export function ClientSpace({ onNavigate, initialSection = 'reservations' }: Cli
                       </button>
                     </div>
 
-                    {/* Crédit cadeau HOMIQIO */}
+                    {/* Crédit cadeau Séjoura */}
                     <div>
                       <h3 className="text-lg md:text-xl mb-6" style={{ fontWeight: 600, color: '#222222' }}>
-                        Crédit cadeau HOMIQIO
+                        Crédit cadeau Séjoura
                       </h3>
                       <button className="px-6 py-3 bg-gray-900 text-white rounded-lg text-base transition-colors hover:bg-gray-800" style={{ fontWeight: 600 }}>
                         Ajouter une carte cadeau
@@ -2199,7 +2199,7 @@ export function ClientSpace({ onNavigate, initialSection = 'reservations' }: Cli
                               </span>
                             </div>
                             <p className="text-sm leading-relaxed" style={{ color: '#717171' }}>
-                              HOMIQIO déduit 15,5 % de chaque versement. Les frais de service ne sont jamais facturés aux voyageurs : le prix que vous fixez correspond au prix payé par les voyageurs.
+                              Séjoura déduit 15,5 % de chaque versement. Les frais de service ne sont jamais facturés aux voyageurs : le prix que vous fixez correspond au prix payé par les voyageurs.
                             </p>
                           </div>
                         </label>
@@ -2221,14 +2221,14 @@ export function ClientSpace({ onNavigate, initialSection = 'reservations' }: Cli
                               </span>
                             </div>
                             <p className="text-sm leading-relaxed" style={{ color: '#717171' }}>
-                              HOMIQIO déduit 3 % de vos revenus. Les voyageurs paient des frais de service de 14,1 à 16,5 %, en plus de tout montant facturé par les hôtes, dont le prix par nuit, les frais de ménage et les frais pour les animaux.
+                              Séjoura déduit 3 % de vos revenus. Les voyageurs paient des frais de service de 14,1 à 16,5 %, en plus de tout montant facturé par les hôtes, dont le prix par nuit, les frais de ménage et les frais pour les animaux.
                             </p>
                           </div>
                         </label>
                       </div>
 
                       <p className="text-sm mb-6" style={{ color: '#C13515' }}>
-                        Pour les logements situés au Brésil, HOMIQIO déduit 16 % de frais d'hôte pour les frais uniques et 4 % pour les frais partagés.
+                        Pour les logements situés au Brésil, Séjoura déduit 16 % de frais d'hôte pour les frais uniques et 4 % pour les frais partagés.
                       </p>
 
                       {/* Encart avec icône */}
@@ -2500,7 +2500,7 @@ export function ClientSpace({ onNavigate, initialSection = 'reservations' }: Cli
                     className="w-5 h-5 text-gray-900 focus:ring-2 focus:ring-gray-900"
                   />
                   <span className="text-base" style={{ color: '#222222' }}>
-                    Je n'utilise plus HOMIQIO.
+                    Je n'utilise plus Séjoura.
                   </span>
                 </label>
 
@@ -2511,7 +2511,7 @@ export function ClientSpace({ onNavigate, initialSection = 'reservations' }: Cli
                     className="w-5 h-5 text-gray-900 focus:ring-2 focus:ring-gray-900"
                   />
                   <span className="text-base" style={{ color: '#222222' }}>
-                    J'utilise un autre compte HOMIQIO.
+                    J'utilise un autre compte Séjoura.
                   </span>
                 </label>
 

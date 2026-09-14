@@ -1,7 +1,7 @@
 
-  # HOMIQIO
+  # Séjoura
 
-  This is the HOMIQIO application - a platform for property rentals, experiences, and services.
+  This is the Séjoura application - a platform for property rentals, experiences, and services.
 
   ## Running the code
 

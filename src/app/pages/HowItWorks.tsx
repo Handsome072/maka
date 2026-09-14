@@ -44,7 +44,7 @@ export function HowItWorks({ onNavigate }: HowItWorksProps) {
                 />
               </svg>
               <span className="text-base" style={{ fontWeight: 600, color: '#222222' }}>
-                homiqio
+                Séjoura
               </span>
             </button>
 
@@ -99,11 +99,11 @@ export function HowItWorks({ onNavigate }: HowItWorksProps) {
             {/* Section 1 */}
             <section>
               <h2 className="text-base mb-4" style={{ fontWeight: 700, color: '#484848' }}>
-                QU'EST-CE QU'HOMIQIO ?
+                QU'EST-CE QU'Séjoura ?
               </h2>
               <div className="space-y-4 text-base" style={{ color: '#484848', lineHeight: '1.6' }}>
                 <p>
-                  La Plateforme HOMIQIO est une place de marché en ligne qui permet aux utilisateurs enregistrés (les <strong>« Membres »</strong>) et à certains tiers qui proposent des services (les Membres et tiers qui proposent des services sont des <strong>« Hôtes »</strong> et les services qu'ils proposent sont des <strong>« Services d'Hôte »</strong>) de publier ces Services d'Hôte sur la Plateforme HOMIQIO (les <strong>« Annonces »</strong>) et de communiquer et traiter directement avec des Membres qui souhaitent réserver ces Services d'Hôte (les Membres qui utilisent des Services d'Hôte sont des <strong>« Voyageurs »</strong>). Les Services d'Hôte peuvent comprendre la location de logements pour des vacances ou autre usage (les <strong>« Hébergements »</strong>), des activités sur une ou plusieurs journées dans différentes catégories (les <strong>« Expériences »</strong>), un accès à des événements et lieux uniques (les <strong>« Événements »</strong>), ainsi que d'autres services variés, en lien ou non avec les voyages.
+                  La Plateforme Séjoura est une place de marché en ligne qui permet aux utilisateurs enregistrés (les <strong>« Membres »</strong>) et à certains tiers qui proposent des services (les Membres et tiers qui proposent des services sont des <strong>« Hôtes »</strong> et les services qu'ils proposent sont des <strong>« Services d'Hôte »</strong>) de publier ces Services d'Hôte sur la Plateforme Séjoura (les <strong>« Annonces »</strong>) et de communiquer et traiter directement avec des Membres qui souhaitent réserver ces Services d'Hôte (les Membres qui utilisent des Services d'Hôte sont des <strong>« Voyageurs »</strong>). Les Services d'Hôte peuvent comprendre la location de logements pour des vacances ou autre usage (les <strong>« Hébergements »</strong>), des activités sur une ou plusieurs journées dans différentes catégories (les <strong>« Expériences »</strong>), un accès à des événements et lieux uniques (les <strong>« Événements »</strong>), ainsi que d'autres services variés, en lien ou non avec les voyages.
                 </p>
                 <p>Vous devez créer un compte pour pouvoir publier une Annonce.</p>
               </div>
@@ -112,14 +112,14 @@ export function HowItWorks({ onNavigate }: HowItWorksProps) {
             {/* Section 2 */}
             <section>
               <h2 className="text-base mb-4" style={{ fontWeight: 700, color: '#484848' }}>
-                QUI PEUT DEVENIR HÔTE SUR HOMIQIO (LOGEMENTS) ?
+                QUI PEUT DEVENIR HÔTE SUR SÉJOURA (LOGEMENTS) ?
               </h2>
               <div className="space-y-4 text-base" style={{ color: '#484848', lineHeight: '1.6' }}>
                 <p>
                   Pratiquement tout le monde peut devenir hôte, que vous soyez un professionnel ou un non-professionnel. Votre inscription et la mise en ligne de votre logement sont gratuites. Les logements disponibles sur le site sont aussi variés que les hôtes qui les publient.
                 </p>
                 <p>
-                  Vous pouvez publier une annonce pour votre logement dans presque tous les pays du monde. Bien que nous souhaiterions faire d'HOMIQIO un lieu d'échange mondial, nous sommes soumis aux lois internationales qui limitent l'utilisation de notre site aux résidents de certains pays. Par conséquent, nos services ne sont donc pas accessibles en Crimée, en Iran, en Syrie et en Corée du Nord.
+                  Vous pouvez publier une annonce pour votre logement dans presque tous les pays du monde. Bien que nous souhaiterions faire de Séjoura un lieu d'échange mondial, nous sommes soumis aux lois internationales qui limitent l'utilisation de notre site aux résidents de certains pays. Par conséquent, nos services ne sont donc pas accessibles en Crimée, en Iran, en Syrie et en Corée du Nord.
                 </p>
                 <p>Pour proposer des séjours agréables et adaptés aux voyageurs, nous demandons à tous les hôtes de respecter 4 critères de base :</p>
                 <ul className="space-y-3 pl-6">
@@ -145,20 +145,20 @@ export function HowItWorks({ onNavigate }: HowItWorksProps) {
             {/* Section 3 */}
             <section>
               <h2 className="text-base mb-4" style={{ fontWeight: 700, color: '#484848' }}>
-                QUI PEUT PUBLIER UNE EXPÉRIENCE SUR HOMIQIO ?
+                QUI PEUT PUBLIER UNE EXPÉRIENCE SUR SÉJOURA ?
               </h2>
               <div className="space-y-4 text-base" style={{ color: '#484848', lineHeight: '1.6' }}>
                 <p>
-                  Les expériences HOMIQIO sont des activités créées et animées par des passionnés. Les expériences durent quelques heures en moyenne. Il peut s'agir d'un simple atelier ou d'une longue randonnée en montagne. Elles s'adressent à tout le monde, quels que soient vos centres d'intérêt ou votre niveau.
+                  Les expériences Séjoura sont des activités créées et animées par des passionnés. Les expériences durent quelques heures en moyenne. Il peut s'agir d'un simple atelier ou d'une longue randonnée en montagne. Elles s'adressent à tout le monde, quels que soient vos centres d'intérêt ou votre niveau.
                 </p>
                 <p>
-                  <strong>Pour les hôtes :</strong> Il n'est pas nécessaire de partager votre logement sur HOMIQIO pour pouvoir organiser une expérience.
+                  <strong>Pour les hôtes :</strong> Il n'est pas nécessaire de partager votre logement sur Séjoura pour pouvoir organiser une expérience.
                 </p>
                 <p>
-                  <strong>Pour les voyageurs :</strong> Il n'est pas nécessaire de séjourner dans un logement HOMIQIO pour pouvoir réserver une expérience.
+                  <strong>Pour les voyageurs :</strong> Il n'est pas nécessaire de séjourner dans un logement Séjoura pour pouvoir réserver une expérience.
                 </p>
                 <p>
-                  Chaque expérience proposée à HOMIQIO est examinée pour s'assurer qu'elle respecte trois critères de qualité : l'expertise, l'accès privilégié et la relation. Ces critères nous aident à garantir que les attentes des voyageurs sont satisfaites.
+                  Chaque expérience proposée à Séjoura est examinée pour s'assurer qu'elle respecte trois critères de qualité : l'expertise, l'accès privilégié et la relation. Ces critères nous aident à garantir que les attentes des voyageurs sont satisfaites.
                 </p>
                 <ul className="space-y-3 pl-6">
                   <li style={{ listStyleType: 'disc' }}>
@@ -172,7 +172,7 @@ export function HowItWorks({ onNavigate }: HowItWorksProps) {
                   </li>
                 </ul>
                 <p>
-                  Pour en savoir plus sur ces critères de qualité, veuillez lire notre article de blog concernant les trois piliers d'une expérience de qualité. Les expériences ne satisfaisant pas aux critères ci-dessus peuvent être supprimées d'HOMIQIO.
+                  Pour en savoir plus sur ces critères de qualité, veuillez lire notre article de blog concernant les trois piliers d'une expérience de qualité. Les expériences ne satisfaisant pas aux critères ci-dessus peuvent être supprimées de Séjoura.
                 </p>
                 <p>
                   Toutes les expériences et les hôtes qui les proposent doivent se conformer à nos Conditions générales et Conditions supplémentaires applicables aux hôtes proposant des expériences. Voici quelques-unes de ces exigences supplémentaires :
@@ -182,13 +182,13 @@ export function HowItWorks({ onNavigate }: HowItWorksProps) {
                     <strong>Précision</strong> : les hôtes doivent décrire leur expérience de manière exhaustive et précise, en y incluant le récapitulatif, la date et l'heure, le lieu de rendez-vous, les éléments fournis aux voyageurs, etc.
                   </li>
                   <li style={{ listStyleType: 'disc' }}>
-                    <strong>Périodes d'exclusivité</strong> : dès qu'un hôte propose une expérience sur HOMIQIO pour une heure et une date précise, seuls les voyageurs d'HOMIQIO peuvent y participer.
+                    <strong>Périodes d'exclusivité</strong> : dès qu'un hôte propose une expérience sur Séjoura pour une heure et une date précise, seuls les voyageurs de Séjoura peuvent y participer.
                   </li>
                   <li style={{ listStyleType: 'disc' }}>
                     <strong>Engagement relatif aux réservations</strong> : les hôtes doivent honorer toutes leurs réservations, même si elles ne concernent qu'une seule personne, sauf en cas d'annulation consécutive à un cas de force majeure. Un nombre trop faible de participants n'est pas une circonstance valable actuellement pour annuler.
                   </li>
                   <li style={{ listStyleType: 'disc' }}>
-                    <strong>Note minimum des voyageurs</strong> : les expériences ayant reçu trop de mauvaises évaluations (1, 2 ou 3 étoiles) dans les commentaires ou avec une évaluation moyenne inférieure ou égale à 4,7 peuvent être supprimées d'HOMIQIO. En savoir plus sur les évaluations et commentaires sur les expériences.
+                    <strong>Note minimum des voyageurs</strong> : les expériences ayant reçu trop de mauvaises évaluations (1, 2 ou 3 étoiles) dans les commentaires ou avec une évaluation moyenne inférieure ou égale à 4,7 peuvent être supprimées de Séjoura. En savoir plus sur les évaluations et commentaires sur les expériences.
                   </li>
                 </ul>
                 <p>
@@ -200,17 +200,17 @@ export function HowItWorks({ onNavigate }: HowItWorksProps) {
             {/* Section 4 */}
             <section>
               <h2 className="text-base mb-4" style={{ fontWeight: 700, color: '#484848' }}>
-                EST-CE QU'HOMIQIO PEUT DÉSACTIVER MON ANNONCE OU MON COMPTE ?
+                EST-CE QUE SÉJOURA PEUT DÉSACTIVER MON ANNONCE OU MON COMPTE ?
               </h2>
               <div className="space-y-4 text-base" style={{ color: '#484848', lineHeight: '1.6' }}>
                 <p>
-                  HOMIQIO peut limiter, suspendre ou désactiver votre compte, conformément à ses Conditions générales, notamment les articles 5 relatif au contenu et 15 relatif à la Durée et Résiliation, Suspension et autres Mesures.
+                  Séjoura peut limiter, suspendre ou désactiver votre compte, conformément à ses Conditions générales, notamment les articles 5 relatif au contenu et 15 relatif à la Durée et Résiliation, Suspension et autres Mesures.
                 </p>
                 <p>
-                  HOMIQIO peut supprimer ou désactiver l'accès à tout Contenu des Membres qui est contraire au droit applicable, aux présentes Conditions ou aux Politiques ou Normes en vigueur d'HOMIQIO, ou potentiellement nuisibles ou inacceptables pour HOMIQIO, ses Membres, des tiers ou des biens. Pour plus d'informations, nous vous recommandons de visiter la page Pourquoi mon annonce a été désactivée de notre centre d'aide.
+                  Séjoura peut supprimer ou désactiver l'accès à tout Contenu des Membres qui est contraire au droit applicable, aux présentes Conditions ou aux Politiques ou Normes en vigueur de Séjoura, ou potentiellement nuisibles ou inacceptables pour Séjoura, ses Membres, des tiers ou des biens. Pour plus d'informations, nous vous recommandons de visiter la page Pourquoi mon annonce a été désactivée de notre centre d'aide.
                 </p>
                 <p>
-                  Votre compte peut être désactivé lors d'un examen des comptes HOMIQIO. Ces examens s'inscrivent dans le cadre d'efforts visant à faire respecter les Valeurs de la communauté HOMIQIO (tranquillité d'esprit, sécurité, respect, authenticité, fiabilité), ses Conditions générales, les lois et règlements applicables et à instaurer un climat de confiance mutuelle. Votre compte peut également être désactivé ou suspendu à la suite d'un problème signalé à notre équipe d'assistance utilisateurs. La sécurité est prise très au sérieux chez HOMIQIO, et si une violation des Valeurs de la communauté est signalée, nous mènerons une enquête sur ce signalement et prendrons les mesures appropriées.
+                  Votre compte peut être désactivé lors d'un examen des comptes Séjoura. Ces examens s'inscrivent dans le cadre d'efforts visant à faire respecter les Valeurs de la communauté Séjoura (tranquillité d'esprit, sécurité, respect, authenticité, fiabilité), ses Conditions générales, les lois et règlements applicables et à instaurer un climat de confiance mutuelle. Votre compte peut également être désactivé ou suspendu à la suite d'un problème signalé à notre équipe d'assistance utilisateurs. La sécurité est prise très au sérieux chez Séjoura, et si une violation des Valeurs de la communauté est signalée, nous mènerons une enquête sur ce signalement et prendrons les mesures appropriées.
                 </p>
                 <p>
                   Votre compte peut être provisoirement désactivé en raison de votre taux de réponse ou de votre taux d'acceptation. Pour réactiver votre compte dans ce cas, suivez les étapes indiquées dans l'e-mail que vous avez reçu.
@@ -228,7 +228,7 @@ export function HowItWorks({ onNavigate }: HowItWorksProps) {
               </h2>
               <div className="space-y-4 text-base" style={{ color: '#484848', lineHeight: '1.6' }}>
                 <p>
-                  Le but de l'algorithme du classement des annonces sur HOMIQIO est simple : aider les voyageurs à trouver le logement parfait pour leur séjour, et les hôtes à trouver les voyageurs qui conviennent à leur logement. Nous tenons compte de près de 100 facteurs différents pour chaque recherche d'annonce.
+                  Le but de l'algorithme du classement des annonces sur Séjoura est simple : aider les voyageurs à trouver le logement parfait pour leur séjour, et les hôtes à trouver les voyageurs qui conviennent à leur logement. Nous tenons compte de près de 100 facteurs différents pour chaque recherche d'annonce.
                 </p>
                 <p>
                   La liste exacte des facteurs pris en compte reste confidentielle, mais voici les grandes catégories de facteurs qui affectent le classement :
@@ -248,10 +248,10 @@ export function HowItWorks({ onNavigate }: HowItWorksProps) {
                   Nous améliorons notre système constamment afin de permettre aux hôtes et voyageurs d'obtenir les meilleurs résultats possibles sur notre plateforme ; ces facteurs peuvent donc faire l'objet de modifications et de tests. Si vous souhaitez en savoir plus, nous vous recommandons de prendre connaissance de la page dédiée de notre centre d'aide.
                 </p>
                 <p>
-                  A l'heure actuelle, il n'est pas possible pour un Hôte de rémunérer HOMIQIO pour que son Annonce soit mieux classée dans les résultats de recherche.
+                  A l'heure actuelle, il n'est pas possible pour un Hôte de rémunérer Séjoura pour que son Annonce soit mieux classée dans les résultats de recherche.
                 </p>
                 <p>
-                  Certaines Annonces sont gérées par des filiales d'HOMIQIO, telles que Luckey dédiée aux services de conciergerie dans certaines régions), Luxury Retreats (dédiée aux prestations haut de gamme) ou HotelTonight qui propose des réservations de chambres d'hôtels notamment en dernière minute.
+                  Certaines Annonces sont gérées par des filiales de Séjoura, telles que Luckey dédiée aux services de conciergerie dans certaines régions), Luxury Retreats (dédiée aux prestations haut de gamme) ou HotelTonight qui propose des réservations de chambres d'hôtels notamment en dernière minute.
                 </p>
               </div>
             </section>
@@ -264,10 +264,10 @@ export function HowItWorks({ onNavigate }: HowItWorksProps) {
               <div className="space-y-4 text-base" style={{ color: '#484848', lineHeight: '1.6' }}>
                 <p>Votre inscription et la mise en ligne de votre logement sont gratuites.</p>
                 <p>
-                  Pour vous aider à utiliser au mieux la plateforme HOMIQIO, y compris des services tels que l'assistance client 24h/24 et le traitement des cartes de crédit, nous facturons des frais de service lorsqu'une réservation est confirmée. Les frais de service applicables sont communiqués à l'Hôte avant qu'il ne publie une Annonce ou au Voyageur avant qu'il ne réserve.
+                  Pour vous aider à utiliser au mieux la plateforme Séjoura, y compris des services tels que l'assistance client 24h/24 et le traitement des cartes de crédit, nous facturons des frais de service lorsqu'une réservation est confirmée. Les frais de service applicables sont communiqués à l'Hôte avant qu'il ne publie une Annonce ou au Voyageur avant qu'il ne réserve.
                 </p>
                 <p>
-                  HOMIQIO applique des frais de service aux voyageurs et/ou aux hôtes. Pour davantage d'informations sur nos frais de service, nous vous invitons à consulter la page dédiée de notre centre d'aide.
+                  Séjoura applique des frais de service aux voyageurs et/ou aux hôtes. Pour davantage d'informations sur nos frais de service, nous vous invitons à consulter la page dédiée de notre centre d'aide.
                 </p>
               </div>
             </section>
@@ -279,10 +279,10 @@ export function HowItWorks({ onNavigate }: HowItWorksProps) {
               </h2>
               <div className="space-y-4 text-base" style={{ color: '#484848', lineHeight: '1.6' }}>
                 <p>
-                  Tous les services de paiement liés à votre utilisation de la Plateforme HOMIQIO vous sont fournis par une ou plusieurs entités HOMIQIO Payments, comme le prévoient les Conditions de Service relatives aux paiements.
+                  Tous les services de paiement liés à votre utilisation de la Plateforme Séjoura vous sont fournis par une ou plusieurs entités Séjoura Payments, comme le prévoient les Conditions de Service relatives aux paiements.
                 </p>
                 <h3 style={{ fontWeight: 600, color: '#484848' }}>
-                  Quels sont les modes de paiement acceptés par HOMIQIO ?
+                  Quels sont les modes de paiement acceptés par Séjoura ?
                 </h3>
                 <p>
                   Nous acceptons différents modes de paiement en fonction du pays dans lequel se trouve votre compte. Ainsi, en plus des principales cartes de crédit et de débit, certaines options de paiement sont disponibles dans certains pays ou sur des plateformes spécifiques (comme sur application sous iOS ou Android).
@@ -318,7 +318,7 @@ export function HowItWorks({ onNavigate }: HowItWorksProps) {
                   Notre Assurance Hôte, d'autre part, est conçue pour protéger les hôtes contre des réclamations de tiers en cas de blessures physiques ou de sinistre dans le logement et protège contre les dommages survenant dans les espaces communs hors du logement. Pour en savoir plus, rendez-vous sur la page Assurance Hôte.
                 </p>
                 <p>
-                  La Garantie Hôte HOMIQIO et l'Assurance Hôte HOMIQIO vous fournissent une protection de base pour les dommages et les responsabilités désignés. Cependant, elles ne remplacent ni l'assurance habitation (locataire ou propriétaire), ni votre assurance responsabilité civile. Vous devrez peut-être satisfaire à d'autres obligations en matière d'assurance.
+                  La Garantie Hôte Séjoura et l'Assurance Hôte Séjoura vous fournissent une protection de base pour les dommages et les responsabilités désignés. Cependant, elles ne remplacent ni l'assurance habitation (locataire ou propriétaire), ni votre assurance responsabilité civile. Vous devrez peut-être satisfaire à d'autres obligations en matière d'assurance.
                 </p>
               </div>
             </section>
@@ -333,7 +333,7 @@ export function HowItWorks({ onNavigate }: HowItWorksProps) {
                   Qu'est-ce que le centre de résolution ?
                 </h3>
                 <p>
-                  Le Centre de résolution vous permet de demander ou d'envoyer de l'argent dans le cadre de votre voyage HOMIQIO. Pour ouvrir une demande de remboursement ou de paiement, allez sur www.homiqio.fr/resolutions.
+                  Le Centre de résolution vous permet de demander ou d'envoyer de l'argent dans le cadre de votre voyage Séjoura. Pour ouvrir une demande de remboursement ou de paiement, allez sur www.homiqio.fr/resolutions.
                 </p>
                 <p>
                   En tant que voyageur, vous disposez de 60 jours après la date de votre départ du logement pour soumettre une demande dans le Centre de résolution.
@@ -342,10 +342,10 @@ export function HowItWorks({ onNavigate }: HowItWorksProps) {
                   En tant qu'hôte, si vous souhaitez demander une retenue sur la caution, vous devez envoyer votre demande via le Centre de résolution dans un délai de 14 jours après le départ du voyageur ou avant la date d'arrivée de vos prochains voyageurs, si celle-ci a lieu dans les 14 jours.
                 </p>
                 <h3 style={{ fontWeight: 600, color: '#484848' }}>
-                  Demande d'assistance à HOMIQIO
+                  Demande d'assistance à Séjoura
                 </h3>
                 <p>
-                  Si vous ne parvenez pas à trouver un accord, vous pouvez solliciter HOMIQIO pour prendre une décision finale 72 heures après ouverture de votre demande. Pour faire intervenir HOMIQIO :
+                  Si vous ne parvenez pas à trouver un accord, vous pouvez solliciter Séjoura pour prendre une décision finale 72 heures après ouverture de votre demande. Pour faire intervenir Séjoura :
                 </p>
                 <ol className="space-y-2 pl-6">
                   <li style={{ listStyleType: 'decimal' }}>
@@ -358,11 +358,11 @@ export function HowItWorks({ onNavigate }: HowItWorksProps) {
                     Sélectionnez la bonne réservation.
                   </li>
                   <li style={{ listStyleType: 'decimal' }}>
-                    Cliquez sur Faire intervenir HOMIQIO.
+                    Cliquez sur Faire intervenir Séjoura.
                   </li>
                 </ol>
                 <p>
-                  Lorsque vous faites intervenir HOMIQIO, notre équipe est prévenue et un membre dédié prend en charge votre dossier. Il examine les informations que vous aurez fournies, vous et votre hôte ou voyageur, avant de prendre sa décision finale. Dans certains cas, il se peut que nous devions vous contacter pour rassembler des informations supplémentaires avant de pouvoir prendre notre décision.
+                  Lorsque vous faites intervenir Séjoura, notre équipe est prévenue et un membre dédié prend en charge votre dossier. Il examine les informations que vous aurez fournies, vous et votre hôte ou voyageur, avant de prendre sa décision finale. Dans certains cas, il se peut que nous devions vous contacter pour rassembler des informations supplémentaires avant de pouvoir prendre notre décision.
                 </p>
                 <p>
                   <strong>Remarque :</strong> dans certains cas, vous devez ajouter un mode de paiement avant d'envoyer de l'argent ou de faire une demande via le Centre de résolution.
@@ -377,7 +377,7 @@ export function HowItWorks({ onNavigate }: HowItWorksProps) {
       <footer className="border-t border-gray-100 mt-16">
         <div className="px-6 lg:px-20 py-6">
           <div className="flex items-center justify-center gap-6 text-sm" style={{ color: '#484848' }}>
-            <span>© 2026 HOMIQIO, Inc.</span>
+            <span>© 2026 Séjoura, Inc.</span>
             <span>·</span>
             <button onClick={() => onNavigate('privacy')} className="hover:underline">
               Confidentialité

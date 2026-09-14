@@ -282,7 +282,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
           {/* Logo */}
           <div className="mb-8">
             <Image
-              src="/logoIcon.png"
+              src="/sejoura_icon.png"
               alt="Logo"
               width={40}
               height={40}
@@ -1334,7 +1334,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
         {/* Header */}
         <header className="px-8 py-6 flex items-center justify-between border-t-0 border-b border-gray-200">
           <Image
-            src="/logoIcon.png"
+            src="/sejoura_icon.png"
             alt="Logo"
             width={48}
             height={48}
@@ -1497,7 +1497,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
         {/* Header */}
         <header className="px-8 py-6 flex items-center justify-between border-t-0 border-b border-gray-200">
           <Image
-            src="/logoIcon.png"
+            src="/sejoura_icon.png"
             alt="Logo"
             width={48}
             height={48}
@@ -1615,7 +1615,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
         {/* Header */}
         <header className="px-8 py-6 flex items-center justify-between border-t-0 border-b border-gray-200">
           <Image
-            src="/logoIcon.png"
+            src="/sejoura_icon.png"
             alt="Logo"
             width={48}
             height={48}
@@ -3354,7 +3354,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                     className="text-sm hover:underline inline-flex items-center gap-1"
                     style={{ color: '#222222', fontWeight: 400 }}
                   >
-                    Vous gagnez {youEarn.toFixed(0)}$
+                    Vous gagnez {youEarn.toFixed(0)} €
                     <svg
                       className={`w-3 h-3 transition-transform ${showPricingBreakdown ? 'rotate-180' : ''}`}
                       viewBox="0 0 24 24"
@@ -3383,7 +3383,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                           Frais de service ({serviceFeePercentage} %)
                         </span>
                         <span className="text-sm md:text-base" style={{ color: '#222222', fontWeight: 600 }}>
-                          -{serviceFee.toFixed(0)} C$
+                          -{serviceFee.toFixed(0)} €
                         </span>
                       </div>
                       <div className="border-t border-gray-300 pt-3 flex justify-between items-center">
@@ -3391,7 +3391,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
                           Vous gagnez
                         </span>
                         <span className="text-sm md:text-base" style={{ color: '#222222', fontWeight: 600 }}>
-                          {youEarn.toFixed(0)} C$
+                          {youEarn.toFixed(0)} €
                         </span>
                       </div>
                     </div>

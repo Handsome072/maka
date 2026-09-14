@@ -156,7 +156,7 @@ export function AdminProperties() {
 
   const formatPrice = (price: string | null, _currency: string) => {
     if (!price) return '--';
-    return `${Number(price).toFixed(0)} C$`;
+    return `${Number(price).toFixed(0)} €`;
   };
 
   return (
@@ -316,9 +316,9 @@ export function AdminProperties() {
                       className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111827]/20 text-sm"
                     >
                       <option value="all">Tous</option>
-                      <option value="0-100">0 - 100$</option>
-                      <option value="100-200">100 - 200$</option>
-                      <option value="200-300">200 - 300$</option>
+                      <option value="0-100">0 - 100 €</option>
+                      <option value="100-200">100 - 200 €</option>
+                      <option value="200-300">200 - 300 €</option>
                       <option value="300+">300+$</option>
                     </select>
                   </div>

@@ -113,7 +113,7 @@ export function HostSidebar({ activePage }: HostSidebarProps) {
       >
         <div className="p-6 border-b border-gray-200">
           <Link href="/" className="flex items-center gap-2">
-            <img src="/logoIcon.png" alt="HOMIQIO" className="w-8 h-8 object-contain" />
+            <img src="/sejoura_icon.png" alt="Séjoura" className="w-8 h-8 object-contain" />
             <span className="text-lg" style={{ fontWeight: 600 }}>Mode hôte</span>
           </Link>
         </div>

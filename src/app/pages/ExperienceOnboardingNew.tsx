@@ -482,8 +482,8 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
         <header className="px-8 py-6 flex items-center justify-between border-b border-gray-200">
           <button onClick={() => onNavigate('annonces')} className="hover:opacity-70 transition-opacity">
             <img
-              src="/logo.png"
-              alt="HOMIQIO Logo"
+              src="/sejoura_logo.png"
+              alt="Séjoura Logo"
               className="w-[120px] h-auto"
             />
           </button>

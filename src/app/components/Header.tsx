@@ -56,14 +56,14 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
               >
                 {/* Logo complet visible pour S >= 950 */}
                 <img
-                  src="/logo.png"
-                  alt="HOMIQIO Logo"
+                  src="/sejoura_logo.png"
+                  alt="Séjoura Logo"
                   className="hidden min-[950px]:block w-[150px] h-auto border-0"
                 />
                 {/* Icône seule visible pour S < 950 */}
                 <img
-                  src="/logoIcon.png"
-                  alt="HOMIQIO"
+                  src="/sejoura_icon.png"
+                  alt="Séjoura"
                   className="block min-[950px]:hidden w-[40px] h-auto border-0"
                 />
               </Link>

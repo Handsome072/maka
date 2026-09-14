@@ -194,7 +194,7 @@ const payoutData = [
 const ITEMS_PER_PAGE = 8;
 
 function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('fr-CA', { style: 'currency', currency: 'CAD' }).format(amount);
+  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount);
 }
 
 function formatDate(dateStr: string): string {

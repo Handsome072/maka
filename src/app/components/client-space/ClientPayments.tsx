@@ -129,10 +129,10 @@ export function ClientPayments() {
               </button>
             </div>
 
-            {/* Crédit cadeau HOMIQIO */}
+            {/* Crédit cadeau Séjoura */}
             <div>
               <h3 className="text-base md:text-lg mb-6" style={{ fontWeight: 600, color: '#222222' }}>
-                Crédit cadeau HOMIQIO
+                Crédit cadeau Séjoura
               </h3>
               <button className="px-6 py-3 bg-gray-900 text-white rounded-lg text-sm transition-colors hover:bg-gray-800" style={{ fontWeight: 600 }}>
                 Ajouter une carte cadeau
@@ -229,7 +229,7 @@ export function ClientPayments() {
                       </span>
                     </div>
                     <p className="text-xs md:text-sm leading-relaxed" style={{ color: '#717171' }}>
-                      HOMIQIO déduit 15,5 % de chaque versement. Les frais de service ne sont jamais facturés aux voyageurs : le prix que vous fixez correspond au prix payé par les voyageurs.
+                      Séjoura déduit 15,5 % de chaque versement. Les frais de service ne sont jamais facturés aux voyageurs : le prix que vous fixez correspond au prix payé par les voyageurs.
                     </p>
                   </div>
                 </label>
@@ -251,14 +251,14 @@ export function ClientPayments() {
                       </span>
                     </div>
                     <p className="text-xs md:text-sm leading-relaxed" style={{ color: '#717171' }}>
-                      HOMIQIO déduit 3 % de vos revenus. Les voyageurs paient des frais de service de 14,1 à 16,5 %, en plus de tout montant facturé par les hôtes, dont le prix par nuit, les frais de ménage et les frais pour les animaux.
+                      Séjoura déduit 3 % de vos revenus. Les voyageurs paient des frais de service de 14,1 à 16,5 %, en plus de tout montant facturé par les hôtes, dont le prix par nuit, les frais de ménage et les frais pour les animaux.
                     </p>
                   </div>
                 </label>
               </div>
 
               <p className="text-xs md:text-sm mb-6" style={{ color: '#C13515' }}>
-                Pour les logements situés au Brésil, HOMIQIO déduit 16 % de frais d'hôte pour les frais uniques et 4 % pour les frais partagés.
+                Pour les logements situés au Brésil, Séjoura déduit 16 % de frais d'hôte pour les frais uniques et 4 % pour les frais partagés.
               </p>
 
               {/* Encart avec icône */}

@@ -42,7 +42,7 @@ const MOCK_SUMMARY: RevenueSummary = {
   revenue_this_year: 18750.50,
   revenue_total: 42680.00,
   revenue_estimated: 8500.00,
-  currency: 'CAD',
+  currency: 'EUR',
 };
 
 const MOCK_CHART: RevenueChartResponse = {
@@ -84,7 +84,7 @@ const MOCK_UPCOMING: Payout[] = [
     gross_amount: 2450,
     commission_amount: 367.50,
     net_amount: 2082.50,
-    currency: 'CAD',
+    currency: 'EUR',
     status: 'scheduled',
     scheduled_date: '2026-03-30',
     paid_date: null,
@@ -97,7 +97,7 @@ const MOCK_UPCOMING: Payout[] = [
     gross_amount: 1750,
     commission_amount: 262.50,
     net_amount: 1487.50,
-    currency: 'CAD',
+    currency: 'EUR',
     status: 'pending',
     scheduled_date: '2026-03-21',
     paid_date: null,
@@ -110,7 +110,7 @@ const MOCK_UPCOMING: Payout[] = [
     gross_amount: 2800,
     commission_amount: 420,
     net_amount: 2380,
-    currency: 'CAD',
+    currency: 'EUR',
     status: 'pending',
     scheduled_date: '2026-04-05',
     paid_date: null,
@@ -123,7 +123,7 @@ const MOCK_UPCOMING: Payout[] = [
     gross_amount: 1200,
     commission_amount: 180,
     net_amount: 1020,
-    currency: 'CAD',
+    currency: 'EUR',
     status: 'pending',
     scheduled_date: '2026-04-16',
     paid_date: null,
@@ -139,7 +139,7 @@ const MOCK_HISTORY: Payout[] = [
     gross_amount: 720,
     commission_amount: 108,
     net_amount: 612,
-    currency: 'CAD',
+    currency: 'EUR',
     status: 'paid',
     scheduled_date: '2026-02-15',
     paid_date: '2026-02-15',
@@ -152,7 +152,7 @@ const MOCK_HISTORY: Payout[] = [
     gross_amount: 3150,
     commission_amount: 472.50,
     net_amount: 2677.50,
-    currency: 'CAD',
+    currency: 'EUR',
     status: 'paid',
     scheduled_date: '2026-02-09',
     paid_date: '2026-02-09',
@@ -165,7 +165,7 @@ const MOCK_HISTORY: Payout[] = [
     gross_amount: 980,
     commission_amount: 147,
     net_amount: 833,
-    currency: 'CAD',
+    currency: 'EUR',
     status: 'paid',
     scheduled_date: '2026-01-21',
     paid_date: '2026-01-21',
@@ -178,7 +178,7 @@ const MOCK_HISTORY: Payout[] = [
     gross_amount: 2100,
     commission_amount: 315,
     net_amount: 1785,
-    currency: 'CAD',
+    currency: 'EUR',
     status: 'paid',
     scheduled_date: '2025-12-28',
     paid_date: '2025-12-28',
@@ -191,7 +191,7 @@ const MOCK_HISTORY: Payout[] = [
     gross_amount: 3500,
     commission_amount: 525,
     net_amount: 2975,
-    currency: 'CAD',
+    currency: 'EUR',
     status: 'paid',
     scheduled_date: '2025-11-23',
     paid_date: '2025-11-23',
@@ -215,7 +215,7 @@ const MOCK_PAYOUT_DETAIL: PayoutDetail = {
   commission_amount: 367.50,
   taxes: 48.90,
   net_amount: 2033.60,
-  currency: 'CAD',
+  currency: 'EUR',
   status: 'scheduled',
   scheduled_date: '2026-03-30',
   paid_date: null,
@@ -225,8 +225,8 @@ const MOCK_PAYOUT_DETAIL: PayoutDetail = {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function formatCurrency(amount: number, currency = 'CAD'): string {
-  return new Intl.NumberFormat('fr-CA', { style: 'currency', currency }).format(amount);
+function formatCurrency(amount: number, currency = 'EUR'): string {
+  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency }).format(amount);
 }
 
 function formatDate(dateStr: string | null): string {
@@ -405,7 +405,7 @@ export function HostRevenues() {
                   <BarChart data={chartData} barSize={chartView === 'monthly' ? 32 : 48}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
                     <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#717171' }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fontSize: 12, fill: '#717171' }} axisLine={false} tickLine={false} tickFormatter={v => `${v} $`} />
+                    <YAxis tick={{ fontSize: 12, fill: '#717171' }} axisLine={false} tickLine={false} tickFormatter={v => `${v} €`} />
                     <Tooltip
                       formatter={(value: number) => [formatCurrency(value), 'Revenu net']}
                       contentStyle={{ borderRadius: 8, border: '1px solid #E5E7EB', fontSize: 13 }}

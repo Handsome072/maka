@@ -25,7 +25,7 @@ export function SignatureStep() {
               {isSigned && <Check className="w-4 h-4 text-white" strokeWidth={3} />}
             </div>
             <div className="text-sm text-[#717171] leading-relaxed select-none" onClick={() => setIsSigned(!isSigned)}>
-              Je certifie que toutes les informations fournies sont exactes et conformes à la réalité. Je comprends que toute fausse déclaration pourrait entraîner la suspension de mon annonce. J'accepte les conditions d'utilisation de HOMIQIO.
+              Je certifie que toutes les informations fournies sont exactes et conformes à la réalité. Je comprends que toute fausse déclaration pourrait entraîner la suspension de mon annonce. J'accepte les conditions d'utilisation de Séjoura.
             </div>
           </label>
         </div>

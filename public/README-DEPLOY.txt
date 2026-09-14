@@ -1,5 +1,5 @@
 ╔═══════════════════════════════════════════════════════════════╗
-║                    HOMIQIO - FICHIERS DE PRODUCTION           ║
+║                    Séjoura - FICHIERS DE PRODUCTION           ║
 ║                    Déployé sur: https://homiqio.com           ║
 ╚═══════════════════════════════════════════════════════════════╝
 
@@ -7,7 +7,7 @@
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Ce dossier contient les fichiers statiques générés par Next.js pour
-le site HOMIQIO. Tous les fichiers doivent être uploadés à la racine
+le site Séjoura. Tous les fichiers doivent être uploadés à la racine
 du dossier homiqio.com sur le serveur o2switch.
 
 🔧 FICHIERS IMPORTANTS
@@ -19,7 +19,7 @@ index.html          → Page d'accueil
 _next/              → Fichiers JavaScript et CSS de Next.js
 assets/             → Images et ressources
 favicon.ico         → Icône du site
-logo.png            → Logo HOMIQIO
+logo.png            → Logo Séjoura
 *.html              → Pages du site
 
 ⚠️  IMPORTANT

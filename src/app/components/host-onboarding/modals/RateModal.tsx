@@ -46,22 +46,22 @@ export function RateModal() {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-bold text-[#222222]">Tarif de base *</label>
-              <input type="text" placeholder="CAD (C$)" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
+              <input type="text" placeholder="EUR (€)" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
               <p className="text-[10px] text-gray-400">Ce prix sera le tarif par défaut pour chaque nuit.</p>
             </div>
             <div className="space-y-2">
               <label className="text-sm font-bold text-[#222222]">Tarif d'une nuit de week-end</label>
-              <input type="text" placeholder="CAD (C$)" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
+              <input type="text" placeholder="EUR (€)" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
               <p className="text-[10px] text-gray-400">Ce prix sera le prix par défaut pour le week-end.</p>
             </div>
             <div className="space-y-2">
               <label className="text-sm font-bold text-[#222222]">Tarif hebdomadaire</label>
-              <input type="text" placeholder="CAD (C$)" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
+              <input type="text" placeholder="EUR (€)" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
               <p className="text-[10px] text-gray-400">Ce prix sera le tarif par défaut pour une période de 7 jours.</p>
             </div>
             <div className="space-y-2">
               <label className="text-sm font-bold text-[#222222]">Tarif mensuel</label>
-              <input type="text" placeholder="CAD (C$)" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
+              <input type="text" placeholder="EUR (€)" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
               <p className="text-[10px] text-gray-400">Ce prix sera le tarif appliqué pour des périodes de 28 jours.</p>
             </div>
           </div>

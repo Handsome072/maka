@@ -17,7 +17,7 @@ export function AcceptanceConditionStep() {
         </h2>
         <div className="space-y-4 text-[#717171] text-base leading-relaxed">
           <p>Avant de commencer votre processus d'inscription, lire la note suivante.</p>
-          <p>Depuis 2015, HOMIQIO s'engage à améliorer les normes de gestion et la qualité des produits proposés.</p>
+          <p>Depuis 2015, Séjoura s'engage à améliorer les normes de gestion et la qualité des produits proposés.</p>
           <ul className="list-disc pl-5 space-y-2">
             <li>Des propriétaires sérieux, engagés à fournir un service de qualité.</li>
             <li>Une propriété unique et distinguée.</li>

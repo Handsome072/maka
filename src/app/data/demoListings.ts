@@ -34,7 +34,7 @@ interface DemoBase {
   province: string;
   cover: string;         // photo Unsplash (= image du carrousel Home)
   host: string;          // prénom de l'hôte
-  price: number;         // prix de base / nuit (C$)
+  price: number;         // prix de base / nuit (€)
   rating: number;
   capacity: number;
   bedrooms: number;
@@ -116,7 +116,7 @@ function buildListing(b: DemoBase): Listing {
     capacity: b.capacity,
     bathrooms: b.bathrooms,
     base_price: String(b.price),
-    currency: 'CAD',
+    currency: 'EUR',
     cancellation_policy: 'flexible',
     reservation_mode: 'instant',
     host_photo_url: u(HOST_PHOTOS[b.host] || HOST_PHOTOS.Emily, 200),

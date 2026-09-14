@@ -36,7 +36,7 @@ export function FeesStep() {
           </button>
           {extraGuestFeeOpen && (
             <div className="mt-4 pl-4 animate-in slide-in-from-top-2">
-              <div className="space-y-2 max-w-xs"><label className="text-sm font-medium">Frais par invité</label><input type="text" placeholder="CAD (C$)" value={extraGuestFee} onChange={(e) => setExtraGuestFee(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" /></div>
+              <div className="space-y-2 max-w-xs"><label className="text-sm font-medium">Frais par invité</label><input type="text" placeholder="EUR (€)" value={extraGuestFee} onChange={(e) => setExtraGuestFee(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" /></div>
             </div>
           )}
         </div>
@@ -47,7 +47,7 @@ export function FeesStep() {
           </button>
           {petFeeOpen && (
             <div className="mt-4 pl-4 animate-in slide-in-from-top-2">
-              <div className="space-y-2 max-w-xs"><label className="text-sm font-medium">Frais par animal</label><input type="text" placeholder="CAD (C$)" value={petFee} onChange={(e) => setPetFee(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" /></div>
+              <div className="space-y-2 max-w-xs"><label className="text-sm font-medium">Frais par animal</label><input type="text" placeholder="EUR (€)" value={petFee} onChange={(e) => setPetFee(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" /></div>
             </div>
           )}
         </div>
