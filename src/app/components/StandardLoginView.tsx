@@ -44,10 +44,10 @@ export function StandardLoginView({
 
     return (
         <div className="flex flex-col">
-            <h2 className="text-3xl font-bold text-gray-900 mb-3 tracking-tight">
+            <h1 className="text-3xl font-bold text-gray-900 mb-3 tracking-tight">
                 Se connecter
-            </h2>
-            <p className="text-gray-500 text-base mb-8">
+            </h1>
+            <p className="text-gray-500 text-base mb-6">
                 Veuillez entrer vos informations
             </p>
 
@@ -105,7 +105,7 @@ export function StandardLoginView({
                 </div>
             </div>
 
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-6">
                 <label className="flex items-center cursor-pointer group">
                     <input
                         type="checkbox"
@@ -135,7 +135,7 @@ export function StandardLoginView({
 
             <button
                 onClick={onGoogleLogin}
-                className="w-full h-12 border border-gray-200 rounded-xl flex items-center justify-center gap-3 hover:bg-gray-50 transition-all mb-8"
+                className="w-full h-12 border border-gray-200 rounded-xl flex items-center justify-center gap-3 hover:bg-gray-50 transition-all mb-6"
             >
                 <svg width="20" height="20" viewBox="0 0 24 24">
                     <path
@@ -163,7 +163,7 @@ export function StandardLoginView({
                     Pas encore de compte ?{" "}
                     <button
                         onClick={onSignupClick}
-                        className="text-black font-semibold hover:underline decoration-2 underline-offset-2 transition-all"
+                        className="text-sm text-black font-semibold hover:underline decoration-2 underline-offset-2 transition-all"
                     >
                         S'inscrire
                     </button>

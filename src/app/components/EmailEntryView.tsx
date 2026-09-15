@@ -64,7 +64,7 @@ export function EmailEntryView({
 
       <p className="text-xs text-gray-500 mb-8">
         Vous recevrez les confirmations par e-mail.{" "}
-        <button className="underline font-medium text-gray-700 hover:text-black transition-colors">
+        <button className="text-xs underline font-medium text-gray-700 hover:text-black transition-colors">
           Confidentialité
         </button>
       </p>

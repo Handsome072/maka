@@ -17,6 +17,10 @@ interface EmailSignupViewProps {
   error?: string | null;
 }
 
+const labelClass = "block text-sm font-medium text-gray-900 mb-1.5";
+const inputClass = "w-full h-12 rounded-xl border border-gray-200 px-4 text-base focus:outline-none focus:border-gray-900 transition-colors placeholder:text-gray-400";
+const termsLinkClass = "text-xs text-left text-blue-600 underline hover:text-blue-700";
+
 export function EmailSignupView({
   firstName,
   setFirstName,
@@ -61,142 +65,129 @@ export function EmailSignupView({
         </div>
       )}
 
-      {/* Official Name Label */}
-      <div className="mb-8">
-        <p className="text-base mb-4" style={{ fontWeight: 600 }}>
-          Nom officiel
-        </p>
-
-        {/* First Name Input */}
-        <div className="mb-3">
+      {/* Official name */}
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label htmlFor="signup-first-name" className={labelClass}>
+            Prénom
+          </label>
           <input
+            id="signup-first-name"
             type="text"
+            autoComplete="given-name"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
-            placeholder="Prénom sur la pièce d'identité"
-            className="w-full h-16 rounded-xl border border-gray-300 px-4 text-base focus:outline-none focus:border-gray-900 transition-colors"
+            className={inputClass}
           />
         </div>
-
-        {/* Last Name Input */}
-        <div className="mb-3">
+        <div>
+          <label htmlFor="signup-last-name" className={labelClass}>
+            Nom
+          </label>
           <input
+            id="signup-last-name"
             type="text"
+            autoComplete="family-name"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
-            placeholder="Nom sur la pièce d'identité"
-            className="w-full h-16 rounded-xl border border-gray-300 px-4 text-base focus:outline-none focus:border-gray-900 transition-colors"
+            className={inputClass}
           />
         </div>
-
-        {/* Helper Text */}
-        <p className="text-sm text-gray-600 leading-relaxed">
-          Assurez-vous que le nom correspond à celui qui figure sur votre pièce d'identité.
-        </p>
       </div>
 
-      {/* Birth Date */}
-      <div className="mb-8">
-        <p className="text-base mb-4" style={{ fontWeight: 600 }}>
-          Date de naissance
-        </p>
+      {/* Birth date and email */}
+      <div className="grid gap-3 mt-3 sm:grid-cols-[minmax(0,5fr)_minmax(0,8fr)]">
+        <div>
+          <label htmlFor="signup-birth-date" className={labelClass}>
+            Date de naissance
+          </label>
+          <input
+            id="signup-birth-date"
+            type="date"
+            autoComplete="bday"
+            value={birthDate}
+            onChange={(e) => setBirthDate(e.target.value)}
+            max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}
+            className={inputClass}
+          />
+        </div>
+        <div>
+          <label htmlFor="signup-email" className={labelClass}>
+            Adresse e-mail
+          </label>
+          <input
+            id="signup-email"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (emailError) setEmailError("");
+            }}
+            className={`w-full h-12 rounded-xl border px-4 text-base focus:outline-none focus:ring-0 transition-all placeholder:text-gray-400 ${
+              emailError
+                ? "border-red-500 focus:border-red-500 bg-red-50"
+                : "border-gray-200 focus:border-gray-900"
+            }`}
+          />
+        </div>
+      </div>
+
+      {emailError && (
+        <div className="flex items-center gap-2 mt-2 text-red-600 text-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+          <span>{emailError}</span>
+        </div>
+      )}
+
+      {/* Helper Text */}
+      <p className="mt-2 text-xs text-gray-500 leading-relaxed">
+        Nom tel qu'indiqué sur votre pièce d'identité. 18 ans minimum&nbsp;; votre date de naissance reste privée. Un e-mail de vérification vous sera envoyé.
+      </p>
+
+      {/* Marketing Checkbox */}
+      <label className="mt-4 flex items-start gap-3 cursor-pointer">
         <input
-          type="date"
-          value={birthDate}
-          onChange={(e) => setBirthDate(e.target.value)}
-          max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}
-          className="w-full h-16 rounded-xl border border-gray-300 px-4 text-base focus:outline-none focus:border-gray-900 transition-colors"
+          type="checkbox"
+          checked={!receiveMarketing}
+          onChange={(e) => setReceiveMarketing(!e.target.checked)}
+          className="mt-0.5 w-4 h-4 shrink-0 rounded border-gray-300 text-black focus:ring-0 focus:ring-offset-0"
         />
-        <p className="text-sm text-gray-600 leading-relaxed mt-3">
-          Vous devez avoir au moins 18 ans pour vous inscrire. Nous n'indiquerons pas la date de votre anniversaire aux autres utilisateurs Séjoura.
-        </p>
-      </div>
-
-      {/* Email */}
-      <div className="mb-8">
-        <p className="text-base mb-4" style={{ fontWeight: 600 }}>
-          Coordonnées
-        </p>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            if (emailError) setEmailError("");
-          }}
-          placeholder="Adresse e-mail"
-          className={`w-full h-16 rounded-xl border px-4 text-base focus:outline-none focus:ring-0 transition-all ${
-            emailError 
-              ? "border-red-500 focus:border-red-500 bg-red-50" 
-              : "border-gray-300 focus:border-gray-900"
-          }`}
-        />
-        {emailError && (
-          <div className="flex items-center gap-2 mt-2 text-red-600 text-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
-            <span>{emailError}</span>
-          </div>
-        )}
-        <p className="text-sm text-gray-600 leading-relaxed mt-3">
-          Nous vous enverrons un e-mail de vérification pour confirmer votre adresse.
-        </p>
-      </div>
-
-      {/* Terms and Conditions */}
-      <div className="mb-6 p-4 bg-gray-50 rounded-xl">
-        <p className="text-sm text-gray-700 leading-relaxed">
-          En cliquant sur{' '}
-          <span style={{ fontWeight: 600 }}>Accepter et continuer</span>, j'accepte les{' '}
-          <button className="text-blue-600 underline hover:text-blue-700">
-            Conditions générales
-          </button>
-          , les{' '}
-          <button className="text-blue-600 underline hover:text-blue-700">
-            Conditions de service relatives aux paiements
-          </button>
-          , la{' '}
-          <button className="text-blue-600 underline hover:text-blue-700">
-            Politique de non-discrimination
-          </button>
-          {' '}et je reconnais avoir pris connaissance de la{' '}
-          <button className="text-blue-600 underline hover:text-blue-700">
-            Politique de confidentialité de Séjoura
-          </button>
-          .
-        </p>
-      </div>
+        <span className="text-xs text-gray-600 leading-relaxed">
+          Je ne souhaite pas recevoir d'offres, d'idées de voyage ni de messages promotionnels de Séjoura (modifiable à tout moment dans mon compte).
+        </span>
+      </label>
 
       {/* Accept Button */}
       <button
         onClick={handleAccept}
         disabled={!isFormValid || isLoading}
-        className="w-full rounded-xl text-white text-base py-4 hover:opacity-90 transition-opacity mb-6 disabled:opacity-50 disabled:cursor-not-allowed"
-        style={{
-          backgroundColor: "#000000",
-          fontWeight: 600,
-        }}
+        className="mt-5 w-full h-12 bg-black text-white rounded-xl font-semibold text-base hover:bg-gray-800 transition-all transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isLoading ? "Inscription en cours..." : "Accepter et continuer"}
       </button>
 
-      {/* Marketing Checkbox */}
-      <div className="mb-6 p-4 bg-gray-50 rounded-xl">
-        <p className="text-sm text-gray-700 leading-relaxed mb-4">
-          Séjoura vous enverra des offres réservées aux membres, des idées de voyages, des e-mails promotionnels et des notifications push. Vous pouvez désactiver cette option à tout moment dans les paramètres de votre compte ou directement à partir de la notification promotionnelle.
-        </p>
-
-        <label className="flex items-start gap-3 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={!receiveMarketing}
-            onChange={(e) => setReceiveMarketing(!e.target.checked)}
-            className="mt-0.5 w-5 h-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
-          />
-          <span className="text-sm text-gray-700">
-            Je ne souhaite pas recevoir de messages promotionnels de Séjoura.
-          </span>
-        </label>
-      </div>
+      {/* Terms and Conditions */}
+      <p className="mt-4 text-xs text-gray-500 leading-relaxed">
+        En cliquant sur{' '}
+        <span className="font-semibold text-gray-700">Accepter et continuer</span>, j'accepte les{' '}
+        <button type="button" className={termsLinkClass}>
+          Conditions générales
+        </button>
+        , les{' '}
+        <button type="button" className={termsLinkClass}>
+          Conditions de service relatives aux paiements
+        </button>
+        , la{' '}
+        <button type="button" className={termsLinkClass}>
+          Politique de non-discrimination
+        </button>
+        {' '}et je reconnais avoir pris connaissance de la{' '}
+        <button type="button" className={termsLinkClass}>
+          Politique de confidentialité de Séjoura
+        </button>
+        .
+      </p>
     </>
   );
 }

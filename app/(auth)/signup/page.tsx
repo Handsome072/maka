@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { useAuth } from "@/app/context/AuthContext";
+import { AuthShell } from "@/app/components/AuthShell";
 import { EmailEntryView } from "@/app/components/EmailEntryView";
 import { EmailSignupView } from "@/app/components/EmailSignupView";
 
@@ -53,70 +54,66 @@ export default function InscriptionPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-      <div className="w-full max-w-lg mx-auto">
-        <div className="bg-white rounded-3xl p-10 md:p-12 shadow-lg border border-gray-100">
-          <div className="flex items-center mb-8">
-            {currentView === "signup" && (
-              <button
-                onClick={() => setCurrentView("email-entry")}
-                className="mr-4 p-1 hover:bg-gray-100 rounded-lg transition-colors"
-                aria-label="Retour"
-              >
-                <ChevronLeft className="w-6 h-6 text-gray-900" />
-              </button>
-            )}
-            <h1 className="text-2xl font-bold text-gray-900">{getTitle()}</h1>
-          </div>
-
-          {currentView === "email-entry" && (
-            <>
-              <EmailEntryView
-                email={email}
-                setEmail={setEmail}
-                onContinue={() => setCurrentView("signup")}
-                onSocialLogin={handleSocialLogin}
-                onPhoneLogin={() => {
-                  console.log("Phone login clicked");
-                }}
-              />
-              <div className="text-center mt-6">
-                <span className="text-sm text-gray-500">
-                  Déjà un compte ?{" "}
-                  <button
-                    onClick={() => {
-                      clearError();
-                      router.push("/login");
-                    }}
-                    className="text-black font-semibold hover:underline decoration-2 underline-offset-2 transition-all"
-                  >
-                    Se connecter
-                  </button>
-                </span>
-              </div>
-            </>
-          )}
-
-          {currentView === "signup" && (
-            <EmailSignupView
-              firstName={firstName}
-              setFirstName={setFirstName}
-              lastName={lastName}
-              setLastName={setLastName}
-              birthDate={birthDate}
-              setBirthDate={setBirthDate}
-              email={email}
-              setEmail={setEmail}
-              receiveMarketing={receiveMarketing}
-              setReceiveMarketing={setReceiveMarketing}
-              onAccept={handleSignupComplete}
-              onBack={() => setCurrentView("email-entry")}
-              isLoading={isLoading}
-              error={error}
-            />
-          )}
-        </div>
+    <AuthShell>
+      <div className={`flex items-center ${currentView === "signup" ? "mb-5" : "mb-3"}`}>
+        {currentView === "signup" && (
+          <button
+            onClick={() => setCurrentView("email-entry")}
+            className="mr-3 -ml-1 p-1 hover:bg-gray-100 rounded-lg transition-colors"
+            aria-label="Retour"
+          >
+            <ChevronLeft className="w-6 h-6 text-gray-900" />
+          </button>
+        )}
+        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{getTitle()}</h1>
       </div>
-    </div>
+
+      {currentView === "email-entry" && (
+        <>
+          <EmailEntryView
+            email={email}
+            setEmail={setEmail}
+            onContinue={() => setCurrentView("signup")}
+            onSocialLogin={handleSocialLogin}
+            onPhoneLogin={() => {
+              console.log("Phone login clicked");
+            }}
+          />
+          <div className="text-center mt-8">
+            <span className="text-sm text-gray-500">
+              Déjà un compte ?{" "}
+              <button
+                onClick={() => {
+                  clearError();
+                  router.push("/login");
+                }}
+                className="text-sm text-black font-semibold hover:underline decoration-2 underline-offset-2 transition-all"
+              >
+                Se connecter
+              </button>
+            </span>
+          </div>
+        </>
+      )}
+
+      {currentView === "signup" && (
+        <EmailSignupView
+          firstName={firstName}
+          setFirstName={setFirstName}
+          lastName={lastName}
+          setLastName={setLastName}
+          birthDate={birthDate}
+          setBirthDate={setBirthDate}
+          email={email}
+          setEmail={setEmail}
+          receiveMarketing={receiveMarketing}
+          setReceiveMarketing={setReceiveMarketing}
+          onAccept={handleSignupComplete}
+          onBack={() => setCurrentView("email-entry")}
+          isLoading={isLoading}
+          error={error}
+        />
+      )}
+    </AuthShell>
   );
 }
