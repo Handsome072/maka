@@ -6,6 +6,7 @@ node_modules/
 out/
 
 # Environment files
+.env.local
 .env.development.local
 .env.test.local
 .env.production.local
@@ -39,3 +40,6 @@ homiqio-deploy.zip
 .ftpconfig
 .ftppass
 config.bat
+
+# Markdown (les .md déjà suivis restent versionnés)
+*.md
