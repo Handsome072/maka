@@ -1,10 +1,9 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  // Configure for static export - generates static HTML files
-  output: 'export',
+  // Server build (Vercel): the app/api routes replace the former Laravel API
 
-  // Disable image optimization for static export
+  // Images are served as-is, like the former static export
   images: {
     unoptimized: true,
   },

@@ -1,18 +1,30 @@
 /**
  * API Service for Séjoura Backend
- * Handles all HTTP requests to the Laravel API
+ * Handles all HTTP requests to the Next.js API routes (app/api), backed by Supabase
  */
 
+import type { Session } from '@supabase/supabase-js';
 // ⚠️ MODE DÉMO STATIQUE : voir data/demoListings.ts (publicListingsApi plus bas).
 import { DEMO_MODE, getDemoListings, getDemoListingDetail } from '../data/demoListings';
+import { getSupabase, UPLOADS_BUCKET } from './supabaseClient';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 // Token storage keys
 const TOKEN_KEY = 'homiqio_auth_token';
 
 /**
+ * Build the URL of an endpoint (next.config uses trailingSlash: true, so routes end with "/")
+ */
+function apiUrl(endpoint: string): string {
+  const [path, query] = endpoint.split('?');
+  const withSlash = path.endsWith('/') ? path : `${path}/`;
+  return `${API_BASE_URL}${withSlash}${query !== undefined ? `?${query}` : ''}`;
+}
+
+/**
  * Get the stored authentication token
+ * (copy of the Supabase access token, kept for synchronous checks)
  */
 export function getAuthToken(): string | null {
   if (typeof window === 'undefined') return null;
@@ -29,12 +41,38 @@ export function setAuthToken(token: string): void {
 }
 
 /**
- * Remove the authentication token
+ * Remove the authentication token and close the Supabase session in this browser
  */
 export function removeAuthToken(): void {
   if (typeof window !== 'undefined') {
     localStorage.removeItem(TOKEN_KEY);
+    void getSupabase().auth.signOut({ scope: 'local' });
   }
+}
+
+function storeSession(session: Session | null): void {
+  if (session) {
+    setAuthToken(session.access_token);
+  } else if (typeof window !== 'undefined') {
+    localStorage.removeItem(TOKEN_KEY);
+  }
+}
+
+/**
+ * Current access token; Supabase refreshes it when it has expired
+ */
+async function getAccessToken(): Promise<string | null> {
+  if (typeof window === 'undefined') return null;
+  const { data } = await getSupabase().auth.getSession();
+  storeSession(data.session);
+  return data.session?.access_token ?? null;
+}
+
+function apiError(message: string, status: number, data: unknown = { message }): Error {
+  const error = new Error(message);
+  (error as any).status = status;
+  (error as any).data = data;
+  return error;
 }
 
 /**
@@ -44,8 +82,8 @@ async function apiFetch<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const token = getAuthToken();
-  
+  const token = await getAccessToken();
+
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
@@ -56,21 +94,103 @@ async function apiFetch<T>(
     (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+  const response = await fetch(apiUrl(endpoint), {
     ...options,
     headers,
   });
 
-  const data = await response.json();
+  const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    const error = new Error(data.message || 'Une erreur est survenue');
-    (error as any).status = response.status;
-    (error as any).data = data;
-    throw error;
+    throw apiError(data.message || 'Une erreur est survenue', response.status, data);
   }
 
   return data as T;
+}
+
+/**
+ * Open the Supabase session in this browser with an email and password
+ */
+async function openSession(email: string, password: string): Promise<string> {
+  const { data, error } = await getSupabase().auth.signInWithPassword({ email, password });
+  if (error || !data.session) {
+    throw apiError(error?.message || 'Identifiants incorrects.', error?.status || 401);
+  }
+  storeSession(data.session);
+  return data.session.access_token;
+}
+
+// ─── Direct image uploads ─────────────────────────────────────────────────────
+//
+// Vercel refuses request bodies above 4.5 MB, so images are sent straight to Supabase Storage
+// through a signed URL; the API routes then receive the returned "storage:" reference.
+
+// SVG is refused, like the Laravel 12 "image" rule
+const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/bmp'];
+
+async function uploadImage(file: Blob): Promise<string> {
+  const { path, token, ref } = await apiFetch<{ path: string; token: string; ref: string }>('/uploads/sign', {
+    method: 'POST',
+    body: JSON.stringify({ content_type: file.type, size: file.size }),
+  });
+
+  const { error } = await getSupabase()
+    .storage.from(UPLOADS_BUCKET)
+    .uploadToSignedUrl(path, token, file, { contentType: file.type });
+
+  if (error) {
+    throw apiError(error.message || 'Erreur lors de l\'upload', 500);
+  }
+  return ref;
+}
+
+/**
+ * Same checks as the former Laravel rules "image|max:<kilobytes>", done before uploading
+ */
+function checkImageFile(file: File, field: string, maxKilobytes: number): void {
+  if (!IMAGE_TYPES.includes(file.type)) {
+    const message = `The ${field} field must be an image.`;
+    throw apiError(message, 422, { message, errors: { [field]: [message] } });
+  }
+  if (file.size / 1024 > maxKilobytes) {
+    const message = `The ${field} field must not be greater than ${maxKilobytes} kilobytes.`;
+    throw apiError(message, 422, { message, errors: { [field]: [message] } });
+  }
+}
+
+/**
+ * Replace base64 photos of a listing payload by storage references
+ */
+async function uploadListingPhotos(
+  data: Record<string, unknown>,
+  fields: Array<'host_photo' | 'chalet_photos'>
+): Promise<Record<string, unknown>> {
+  const upload = async (value: unknown): Promise<unknown> => {
+    if (typeof value !== 'string' || !value.startsWith('data:image/')) return value;
+    const blob = await (await fetch(value)).blob();
+    return IMAGE_TYPES.includes(blob.type) ? uploadImage(blob) : value;
+  };
+
+  const payload = { ...data };
+
+  if (fields.includes('host_photo')) {
+    payload.host_photo = await upload(payload.host_photo);
+  }
+
+  if (fields.includes('chalet_photos') && Array.isArray(payload.chalet_photos)) {
+    const photos = payload.chalet_photos as unknown[];
+    const uploaded: unknown[] = new Array(photos.length);
+    // Keep the photo order, 4 uploads at a time
+    for (let i = 0; i < photos.length; i += 4) {
+      const batch = await Promise.all(photos.slice(i, i + 4).map(upload));
+      batch.forEach((ref, offset) => {
+        uploaded[i + offset] = ref;
+      });
+    }
+    payload.chalet_photos = uploaded;
+  }
+
+  return payload;
 }
 
 // API Response types
@@ -163,23 +283,44 @@ export const authApi = {
    * Login user
    */
   login: async (email: string, password: string): Promise<AuthResponse> => {
-    const response = await apiFetch<AuthResponse>('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    });
-    setAuthToken(response.token);
-    return response;
+    // The session is opened by Supabase Auth in the browser
+    const { data, error } = await getSupabase().auth.signInWithPassword({ email, password });
+
+    if (error || !data.session) {
+      const status = error?.status ?? 0;
+      if (status === 0 || status === 429 || status >= 500) {
+        throw apiError(error?.message || 'Une erreur est survenue', status || 500);
+      }
+      // Ask the API for the exact error (validation, password not set yet, wrong credentials)
+      await apiFetch<AuthResponse>('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      });
+      throw apiError('Identifiants incorrects.', 401);
+    }
+
+    storeSession(data.session);
+
+    try {
+      const { user } = await apiFetch<UserResponse>('/auth/user');
+      return { message: 'Connexion réussie.', user, token: data.session.access_token };
+    } catch (err) {
+      removeAuthToken();
+      throw err;
+    }
   },
 
   /**
    * Logout user
    */
   logout: async (): Promise<MessageResponse> => {
-    const response = await apiFetch<MessageResponse>('/auth/logout', {
-      method: 'POST',
-    });
-    removeAuthToken();
-    return response;
+    try {
+      return await apiFetch<MessageResponse>('/auth/logout', {
+        method: 'POST',
+      });
+    } finally {
+      removeAuthToken();
+    }
   },
 
   /**
@@ -200,12 +341,12 @@ export const authApi = {
    * Set password after email verification
    */
   setPassword: async (token: string, password: string, password_confirmation: string): Promise<AuthResponse> => {
-    const response = await apiFetch<AuthResponse>('/auth/set-password', {
+    const response = await apiFetch<Omit<AuthResponse, 'token'>>('/auth/set-password', {
       method: 'POST',
       body: JSON.stringify({ token, password, password_confirmation }),
     });
-    setAuthToken(response.token);
-    return response;
+    const accessToken = await openSession(response.user.email, password);
+    return { ...response, token: accessToken };
   },
 
   /**
@@ -236,12 +377,13 @@ export const authApi = {
     password: string,
     password_confirmation: string
   ): Promise<AuthResponse> => {
-    const response = await apiFetch<AuthResponse>('/auth/reset-password', {
+    // The API resets the password and revokes every session; a new one is opened here
+    const response = await apiFetch<Omit<AuthResponse, 'token'>>('/auth/reset-password', {
       method: 'POST',
       body: JSON.stringify({ email, token, password, password_confirmation }),
     });
-    setAuthToken(response.token);
-    return response;
+    const accessToken = await openSession(response.user.email, password);
+    return { ...response, token: accessToken };
   },
 
   /**
@@ -400,9 +542,10 @@ export const listingsApi = {
    * Create a new listing (full 24-step onboarding payload + base64 photos)
    */
   createListing: async (data: Record<string, unknown>): Promise<ListingResponse> => {
+    const payload = await uploadListingPhotos(data, ['host_photo', 'chalet_photos']);
     return apiFetch<ListingResponse>('/listings', {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: JSON.stringify(payload),
     });
   },
 
@@ -424,9 +567,11 @@ export const listingsApi = {
    * Update an existing listing
    */
   updateListing: async (id: number, data: Record<string, unknown>): Promise<ListingResponse> => {
+    // Only a new host photo is taken into account on update
+    const payload = await uploadListingPhotos(data, ['host_photo']);
     return apiFetch<ListingResponse>(`/listings/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(data),
+      body: JSON.stringify(payload),
     });
   },
 
@@ -682,10 +827,10 @@ export const adminPaymentsApi = {
   },
 
   exportCSV: async (params?: Record<string, string>): Promise<Blob> => {
-    const token = getAuthToken();
+    const token = await getAccessToken();
     const query = new URLSearchParams(params);
     const qs = query.toString();
-    const response = await fetch(`${API_BASE_URL}/admin/payments/export${qs ? `?${qs}` : ''}`, {
+    const response = await fetch(apiUrl(`/admin/payments/export${qs ? `?${qs}` : ''}`), {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Accept': 'text/csv',
@@ -781,24 +926,17 @@ export const userProfileApi = {
   },
 
   uploadPhoto: async (file: File): Promise<{ message: string; profile_photo_url: string }> => {
-    const token = getAuthToken();
-    const formData = new FormData();
-    formData.append('photo', file);
+    checkImageFile(file, 'photo', 5120);
+    const photo = await uploadImage(file);
 
-    const response = await fetch(`${API_BASE_URL}/user/profile/photo`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json',
-      },
-      body: formData,
-    });
-
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || 'Erreur lors de l\'upload');
+    try {
+      return await apiFetch<{ message: string; profile_photo_url: string }>('/user/profile/photo', {
+        method: 'POST',
+        body: JSON.stringify({ photo }),
+      });
+    } catch (err: any) {
+      throw new Error(err.message || 'Erreur lors de l\'upload');
     }
-    return data;
   },
 
   getPublicProfile: async (): Promise<{ profile: PublicProfile }> => {
@@ -944,25 +1082,17 @@ export const messagesApi = {
    * Send an image message
    */
   sendImage: async (conversationId: number, file: File, text?: string): Promise<SendMessageResponse> => {
-    const token = getAuthToken();
-    const formData = new FormData();
-    formData.append('image', file);
-    if (text) formData.append('text', text);
+    try {
+      checkImageFile(file, 'image', 10240);
+      const image = await uploadImage(file);
 
-    const response = await fetch(`${API_BASE_URL}/conversations/${conversationId}/messages/image`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json',
-      },
-      body: formData,
-    });
-
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || 'Erreur lors de l\'envoi de l\'image');
+      return await apiFetch<SendMessageResponse>(`/conversations/${conversationId}/messages/image`, {
+        method: 'POST',
+        body: JSON.stringify(text ? { image, text } : { image }),
+      });
+    } catch (err: any) {
+      throw new Error(err.message || 'Erreur lors de l\'envoi de l\'image');
     }
-    return data;
   },
 
   /**
@@ -1128,12 +1258,12 @@ export const hostRevenueApi = {
   },
 
   exportCSV: async (params?: { year?: number; month?: number }): Promise<Blob> => {
-    const token = getAuthToken();
+    const token = await getAccessToken();
     const query = new URLSearchParams();
     if (params?.year) query.append('year', String(params.year));
     if (params?.month) query.append('month', String(params.month));
     const qs = query.toString();
-    const response = await fetch(`${API_BASE_URL}/host/revenues/export${qs ? `?${qs}` : ''}`, {
+    const response = await fetch(apiUrl(`/host/revenues/export${qs ? `?${qs}` : ''}`), {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Accept': 'text/csv',
