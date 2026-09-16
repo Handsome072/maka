@@ -21,8 +21,10 @@ function smtp(): Transporter {
 export async function sendMail(to: string, subject: string, html: string): Promise<void> {
   await smtp().sendMail({
     from: {
-      name: process.env.MAIL_FROM_NAME ?? 'Séjoura API',
-      address: process.env.SMTP_FROM ?? process.env.SMTP_USER ?? '',
+      // Adresse affichée aux destinataires : la boîte de marque, pas le compte SMTP.
+      // MAIL_FROM permet de la changer ; SMTP_FROM n'est plus utilisé pour l'affichage.
+      name: process.env.MAIL_FROM_NAME ?? 'Séjoura',
+      address: process.env.MAIL_FROM ?? 'contact@sejoura.com',
     },
     replyTo: process.env.MAIL_REPLY_TO ?? process.env.SMTP_FROM,
     to,
