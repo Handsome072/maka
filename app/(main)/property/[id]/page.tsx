@@ -1,14 +1,11 @@
 import { PropertyDetailsClient } from './PropertyDetailsClient';
 
 /**
- * Generate static params for property pages.
- * With output: 'export', we pre-generate pages for a range of IDs.
- * Actual data is fetched client-side via API.
+ * Aucune page générée au build : chaque logement est rendu à sa première visite puis mis en cache.
+ * Les données sont chargées dans le navigateur via l'API.
  */
 export function generateStaticParams() {
-  return Array.from({ length: 500 }, (_, i) => ({
-    id: String(i + 1),
-  }));
+  return [];
 }
 
 interface Props {

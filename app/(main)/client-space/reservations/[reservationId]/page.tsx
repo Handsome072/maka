@@ -1,13 +1,11 @@
 import { ReservationDetailClient } from './ReservationDetailClient';
 
 /**
- * Generate static params for reservation detail pages
- * These IDs correspond to mock reservations
+ * Aucune page générée au build : chaque réservation est rendue à sa première visite puis mise en cache.
+ * Le HTML est le même pour tous (les données sont chargées dans le navigateur), rien de personnel n'est mis en cache.
  */
 export function generateStaticParams() {
-  return Array.from({ length: 5000 }, (_, i) => ({
-    reservationId: String(i + 1),
-  }));
+  return [];
 }
 
 /**
@@ -16,4 +14,3 @@ export function generateStaticParams() {
 export default function ReservationDetailPage() {
   return <ReservationDetailClient />;
 }
-

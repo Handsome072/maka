@@ -1,9 +1,8 @@
 import { AdminHostProfile } from '@/app/pages/AdminHostProfile';
 
+/** Aucune page générée au build : rendue à la première visite puis mise en cache (données chargées dans le navigateur). */
 export function generateStaticParams() {
-  // Pre-generate pages for a range of host IDs to support static export
-  // The AdminHostProfile component fetches data client-side via API
-  return Array.from({ length: 500 }, (_, i) => ({ id: String(i + 1) }));
+  return [];
 }
 
 export default function AdminHostProfilePage() {

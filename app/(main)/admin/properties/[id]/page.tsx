@@ -1,7 +1,8 @@
 import { AdminPropertyDetail } from '@/app/pages/AdminPropertyDetail';
 
+/** Aucune page générée au build : rendue à la première visite puis mise en cache (données chargées dans le navigateur). */
 export function generateStaticParams() {
-  return Array.from({ length: 500 }, (_, i) => ({ id: String(i + 1) }));
+  return [];
 }
 
 export default function AdminPropertyDetailPage() {
