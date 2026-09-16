@@ -47,6 +47,55 @@ function fallbackLink(url: string): string {
                   </table>`;
 }
 
+/** Encadré « Adresse à confirmer ». */
+function addressBlock(email: string): string {
+  return `
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                      <td style="background:#EAF6F7;border-radius:10px;padding:12px 16px;font-family:${FONT};font-size:13px;line-height:20px;color:#5A6B71;">
+                        Adresse à confirmer<br>
+                        <span style="font-size:15px;font-weight:600;color:#17252A;">${email}</span>
+                      </td>
+                    </tr>
+                  </table>`;
+}
+
+/** Une étape numérotée du parcours d'inscription. */
+function stepRow(number: string, title: string, detail: string, current: boolean, last = false): string {
+  const size = current ? '30px' : '28px';
+  const pad = last ? '0' : '18px';
+  const badge = current
+    ? 'background:#0A6B78;color:#FFFFFF;'
+    : 'border:1px solid #BFDDE2;background:#EAF6F7;color:#0A6B78;';
+  return `
+                    <tr>
+                      <td width="44" valign="top" style="padding:0 0 ${pad};">
+                        <div style="width:${size};height:${size};border-radius:15px;${badge}text-align:center;font-family:${TITLE_FONT};font-size:14px;line-height:${size};font-weight:600;">${number}</div>
+                      </td>
+                      <td valign="top" style="padding:3px 0 ${pad};font-family:${FONT};">
+                        <div style="font-size:15px;line-height:22px;font-weight:600;color:#17252A;">${title}</div>
+                        <div style="font-size:14px;line-height:21px;color:#5A6B71;">${detail}</div>
+                      </td>
+                    </tr>`;
+}
+
+/** Bloc « Votre inscription en 3 étapes ». */
+function stepsBlock(rows: string): string {
+  return `
+              <tr>
+                <td class="px" style="padding:36px 48px 0;">
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                      <td style="border-top:1px solid #E1EAEC;padding-top:28px;font-family:${FONT};font-size:11px;line-height:16px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#0A6B78;">Votre inscription en 3 étapes</td>
+                    </tr>
+                  </table>
+
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:18px;">${rows}
+                  </table>
+                </td>
+              </tr>`;
+}
+
 function layout(options: {
   origin: string;
   title: string;
@@ -142,7 +191,94 @@ ${content}
 </html>`;
 }
 
-/** Email de bienvenue envoyé à l'inscription (et à chaque renvoi du lien). */
+/** Inscription, étape 1 : lien vers le formulaire final (adresse encore libre). */
+export function signupLinkMail(recipientEmail: string, completeUrl: string): { subject: string; html: string } {
+  const url = escapeHtml(completeUrl);
+  const origin = siteOrigin(completeUrl);
+  const email = escapeHtml(recipientEmail);
+
+  return {
+    subject: 'Continuez votre inscription sur Séjoura',
+    html: layout({
+      origin,
+      title: 'Continuez votre inscription sur Séjoura',
+      preheader: 'Confirmez votre adresse pour créer votre compte. Lien valable 24 heures.',
+      tag: 'Inscription',
+      hero: true,
+      footerNote: `Vous recevez cet e-mail car une inscription a été demandée avec l'adresse ${email}.`,
+      content: `
+              <tr>
+                <td class="px" style="padding:36px 48px 0;">
+                  <h1 class="h1" style="margin:0 0 14px;font-family:${TITLE_FONT};font-size:30px;line-height:38px;font-weight:700;color:#17252A;">Confirmez votre adresse e-mail</h1>
+                  <p style="margin:0 0 24px;font-family:${FONT};font-size:16px;line-height:26px;color:#46575D;">Vous avez demandé à créer un compte Séjoura avec cette adresse. Confirmez-la en cliquant sur le bouton&nbsp;: vous pourrez ensuite indiquer votre nom, votre date de naissance et choisir votre mot de passe.</p>
+${addressBlock(email)}
+${button(url, 'Continuer mon inscription')}
+                </td>
+              </tr>
+${stepsBlock(
+  stepRow('1', 'Confirmer votre adresse e-mail', 'Un clic sur le bouton ci-dessus suffit.', true) +
+    stepRow('2', 'Compléter votre profil', 'Prénom, nom, date de naissance et mot de passe.', false) +
+    stepRow('3', 'Réserver votre premier séjour', 'Parcourez les logements, expériences et services proposés par nos hôtes.', false, true),
+)}
+
+              <tr>
+                <td class="px" style="padding:32px 48px 40px;">
+${fallbackLink(url)}
+                  <p style="margin:16px 0 0;font-family:${FONT};font-size:13px;line-height:20px;color:#5A6B71;">Ce lien est valable 24&nbsp;heures et ne sert qu'une seule fois. Vous n'êtes pas à l'origine de cette demande&nbsp;? Ignorez ce message&nbsp;: aucun compte ne sera créé.</p>
+                </td>
+              </tr>`,
+    }),
+  };
+}
+
+/** Inscription demandée avec l'adresse d'un compte déjà actif. */
+export function existingAccountMail(
+  recipientEmail: string,
+  loginUrl: string,
+  forgotPasswordUrl: string,
+): { subject: string; html: string } {
+  const login = escapeHtml(loginUrl);
+  const forgot = escapeHtml(forgotPasswordUrl);
+  const origin = siteOrigin(loginUrl);
+  const email = escapeHtml(recipientEmail);
+
+  return {
+    subject: 'Vous avez déjà un compte Séjoura',
+    html: layout({
+      origin,
+      title: 'Vous avez déjà un compte Séjoura',
+      preheader: 'Connectez-vous avec cette adresse, ou choisissez un nouveau mot de passe.',
+      tag: 'Votre compte',
+      footerNote: `Vous recevez cet e-mail car une inscription a été demandée avec l'adresse ${email}.`,
+      content: `
+              <tr>
+                <td class="px" style="padding:40px 48px 0;">
+                  <h1 class="h1" style="margin:0 0 14px;font-family:${TITLE_FONT};font-size:30px;line-height:38px;font-weight:700;color:#17252A;">Vous avez déjà un compte Séjoura</h1>
+                  <p style="margin:0;font-family:${FONT};font-size:16px;line-height:26px;color:#46575D;">Une inscription vient d'être demandée avec <strong style="color:#17252A;">${email}</strong>, mais un compte existe déjà pour cette adresse. Il vous suffit de vous connecter.</p>
+${button(login, 'Se connecter')}
+                  <p style="margin:20px 0 0;font-family:${FONT};font-size:14px;line-height:22px;color:#46575D;">Mot de passe oublié&nbsp;? <a href="${forgot}" style="color:#0A6B78;font-weight:600;">Choisissez-en un nouveau</a>.</p>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="px" style="padding:28px 48px 40px;">
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                      <td style="background:#F5F9F9;border-radius:12px;padding:14px 16px;font-family:${FONT};font-size:13px;line-height:20px;color:#5A6B71;">
+                        Vous n'êtes pas à l'origine de cette demande&nbsp;? Ignorez ce message&nbsp;: votre compte n'a pas été modifié.
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>`,
+    }),
+  };
+}
+
+/**
+ * Ancien parcours : lien de vérification d'une inscription créée avant l'inscription par e-mail seul
+ * (utilisé par le renvoi du lien pour ces comptes).
+ */
 export function verifyEmailMail(
   firstName: string,
   verificationUrl: string,
@@ -152,33 +288,6 @@ export function verifyEmailMail(
   const origin = siteOrigin(verificationUrl);
   const name = escapeHtml(firstName);
   const email = escapeHtml(recipientEmail);
-
-  const addressBlock = email
-    ? `
-                  <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                    <tr>
-                      <td style="background:#EAF6F7;border-radius:10px;padding:12px 16px;font-family:${FONT};font-size:13px;line-height:20px;color:#5A6B71;">
-                        Adresse à confirmer<br>
-                        <span style="font-size:15px;font-weight:600;color:#17252A;">${email}</span>
-                      </td>
-                    </tr>
-                  </table>`
-    : '';
-
-  const step = (number: string, title: string, detail: string, current: boolean, last = false) => `
-                    <tr>
-                      <td width="44" valign="top" style="padding:0 0 ${last ? '0' : '18px'};">
-                        <div style="width:${current ? '30px' : '28px'};height:${current ? '30px' : '28px'};border-radius:15px;${
-                          current
-                            ? 'background:#0A6B78;color:#FFFFFF;'
-                            : 'border:1px solid #BFDDE2;background:#EAF6F7;color:#0A6B78;'
-                        }text-align:center;font-family:${TITLE_FONT};font-size:14px;line-height:${current ? '30px' : '28px'};font-weight:600;">${number}</div>
-                      </td>
-                      <td valign="top" style="padding:3px 0 ${last ? '0' : '18px'};font-family:${FONT};">
-                        <div style="font-size:15px;line-height:22px;font-weight:600;color:#17252A;">${title}</div>
-                        <div style="font-size:14px;line-height:21px;color:#5A6B71;">${detail}</div>
-                      </td>
-                    </tr>`;
 
   return {
     subject: 'Bienvenue sur Séjoura, confirmez votre adresse e-mail',
@@ -196,23 +305,15 @@ export function verifyEmailMail(
                 <td class="px" style="padding:36px 48px 0;">
                   <h1 class="h1" style="margin:0 0 14px;font-family:${TITLE_FONT};font-size:30px;line-height:38px;font-weight:700;color:#17252A;">Bienvenue sur Séjoura, ${name}</h1>
                   <p style="margin:0 0 24px;font-family:${FONT};font-size:16px;line-height:26px;color:#46575D;">Merci d'avoir créé votre compte. Confirmez votre adresse e-mail pour l'activer&nbsp;: vous choisirez ensuite votre mot de passe, puis vous pourrez réserver logements, expériences et services.</p>
-${addressBlock}
+${email ? addressBlock(email) : ''}
 ${button(url, 'Confirmer mon adresse e-mail')}
                 </td>
               </tr>
-
-              <tr>
-                <td class="px" style="padding:36px 48px 0;">
-                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                    <tr>
-                      <td style="border-top:1px solid #E1EAEC;padding-top:28px;font-family:${FONT};font-size:11px;line-height:16px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#0A6B78;">Votre inscription en 3 étapes</td>
-                    </tr>
-                  </table>
-
-                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:18px;">${step('1', 'Confirmer votre adresse e-mail', 'Un clic sur le bouton ci-dessus suffit.', true)}${step('2', 'Créer votre mot de passe', "La page s'ouvre automatiquement après la confirmation.", false)}${step('3', 'Réserver votre premier séjour', 'Parcourez les logements, expériences et services proposés par nos hôtes.', false, true)}
-                  </table>
-                </td>
-              </tr>
+${stepsBlock(
+  stepRow('1', 'Confirmer votre adresse e-mail', 'Un clic sur le bouton ci-dessus suffit.', true) +
+    stepRow('2', 'Créer votre mot de passe', "La page s'ouvre automatiquement après la confirmation.", false) +
+    stepRow('3', 'Réserver votre premier séjour', 'Parcourez les logements, expériences et services proposés par nos hôtes.', false, true),
+)}
 
               <tr>
                 <td class="px" style="padding:32px 48px 40px;">

@@ -1,8 +1,8 @@
 import { X, ChevronLeft } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
 import { EmailEntryView } from "./EmailEntryView";
-import { EmailSignupView } from "./EmailSignupView";
 import { StandardLoginView } from "./StandardLoginView";
 
 interface AuthModalProps {
@@ -10,20 +10,17 @@ interface AuthModalProps {
   onClose: () => void;
 }
 
-type AuthView = "email-entry" | "signup" | "login" | "forgot-password";
+type AuthView = "email-entry" | "login" | "forgot-password";
 
 export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
-  const { login } = useAuth();
-  
+  const router = useRouter();
+  const { login, loginWithUser, requestSignup, error, clearError, isLoading } = useAuth();
+
   const [currentView, setCurrentView] = useState<AuthView>("login");
   const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [birthDate, setBirthDate] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [receiveMarketing, setReceiveMarketing] = useState(true);
+  const [signupSending, setSignupSending] = useState(false);
+  const [signupError, setSignupError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -45,37 +42,27 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     if (!isOpen) {
       setCurrentView("login");
       setEmail("");
-      setFirstName("");
-      setLastName("");
-      setBirthDate("");
-      setPassword("");
-      setShowPassword(false);
-      setReceiveMarketing(true);
+      setSignupSending(false);
+      setSignupError(null);
     }
   }, [isOpen]);
 
   if (!isOpen) return null;
 
-  const handleLogin = (userEmail: string) => {
-    login({
-      name: "User",
-      email: userEmail,
-      avatar: undefined,
-    });
-    onClose();
-  };
-
-  const handleGoogleLogin = () => {
-    login({
-      name: "Google User",
-      email: "user@gmail.com",
-      avatar: undefined,
-    });
-    onClose();
+  const handleLogin = async (userEmail: string, password: string) => {
+    try {
+      clearError();
+      await login(userEmail, password);
+      onClose();
+    } catch {
+      // Error is handled by context and shown in the login view
+    }
   };
 
   const handleSocialLogin = (provider: string) => {
-    login({
+    // For now, use mock data for social login (same as the login and signup pages)
+    // TODO: Implement real OAuth flow
+    loginWithUser({
       name: `${provider} User`,
       email: `user@${provider}.com`,
       avatar: undefined,
@@ -83,21 +70,28 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     onClose();
   };
 
-  const handleSignupComplete = () => {
-    login({
-      name: `${firstName} ${lastName}`,
-      email: email,
-      avatar: undefined,
-    });
-    onClose();
+  // Même parcours que la page d'inscription : envoi du lien, puis écran « Consultez votre boîte mail »
+  const handleSignupRequest = async () => {
+    setSignupError(null);
+    setSignupSending(true);
+    try {
+      const sentTo = await requestSignup(email.trim());
+      onClose();
+      router.push(`/check-email?email=${encodeURIComponent(sentTo)}`);
+    } catch (err: any) {
+      setSignupError(
+        err?.status === 422
+          ? "Veuillez entrer une adresse e-mail valide."
+          : "Impossible d'envoyer l'e-mail pour le moment. Réessayez dans quelques instants.",
+      );
+      setSignupSending(false);
+    }
   };
 
   const getTitle = () => {
     switch (currentView) {
       case "email-entry":
-        return "Bienvenue sur Séjoura";
-      case "signup":
-        return "Terminer l'inscription";
+        return "Inscription";
       case "login":
         return "Connexion";
       case "forgot-password":
@@ -107,7 +101,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     }
   };
 
-  const showBackButton = currentView === "signup" || currentView === "email-entry";
+  const showBackButton = currentView === "email-entry";
 
   return (
     <div
@@ -136,9 +130,9 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
           ) : (
             <div className="w-10" />
           )}
-          
+
           <h2 className="text-base font-semibold text-gray-900">{getTitle()}</h2>
-          
+
           <button
             onClick={onClose}
             className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-full transition-all"
@@ -153,91 +147,35 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
           {currentView === "login" && (
             <StandardLoginView
               onLogin={handleLogin}
-              onGoogleLogin={handleGoogleLogin}
-              onSignupClick={() => setCurrentView("email-entry")}
-              onForgotPasswordClick={() => setCurrentView("forgot-password")}
+              onGoogleLogin={() => handleSocialLogin("google")}
+              onSignupClick={() => {
+                clearError();
+                setCurrentView("email-entry");
+              }}
+              onForgotPasswordClick={() => {
+                onClose();
+                router.push("/login?forgot=1");
+              }}
+              isLoading={isLoading}
+              error={error}
             />
           )}
 
           {currentView === "email-entry" && (
             <EmailEntryView
               email={email}
-              setEmail={setEmail}
-              onContinue={() => setCurrentView("signup")}
-              onSocialLogin={handleSocialLogin}
-              onPhoneLogin={() => {
-                // Handle phone login
-                console.log("Phone login clicked");
+              setEmail={(value) => {
+                setEmail(value);
+                if (signupError) setSignupError(null);
               }}
+              onContinue={handleSignupRequest}
+              onSocialLogin={handleSocialLogin}
+              isLoading={signupSending}
+              error={signupError}
             />
-          )}
-
-          {currentView === "signup" && (
-            <EmailSignupView
-              firstName={firstName}
-              setFirstName={setFirstName}
-              lastName={lastName}
-              setLastName={setLastName}
-              birthDate={birthDate}
-              setBirthDate={setBirthDate}
-              email={email}
-              setEmail={setEmail}
-              password={password}
-              setPassword={setPassword}
-              showPassword={showPassword}
-              setShowPassword={setShowPassword}
-              receiveMarketing={receiveMarketing}
-              setReceiveMarketing={setReceiveMarketing}
-              onAccept={handleSignupComplete}
-              onBack={() => setCurrentView("email-entry")}
-            />
-          )}
-
-          {currentView === "forgot-password" && (
-            <div className="flex flex-col h-full">
-              <div className="mb-8">
-                <h3 className="text-[22px] font-semibold text-gray-900 mb-2">
-                  Réinitialiser votre mot de passe
-                </h3>
-                <p className="text-gray-500 text-sm">
-                  Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.
-                </p>
-              </div>
-
-              <div className="space-y-4 mb-6">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Adresse e-mail"
-                  className="w-full h-14 rounded-xl border border-gray-200 px-4 text-base focus:outline-none focus:border-black transition-colors bg-gray-50/50"
-                />
-              </div>
-
-              <button
-                onClick={() => {
-                  // Handle password reset
-                  console.log("Password reset for:", email);
-                  setCurrentView("login");
-                }}
-                className="w-full bg-black text-white h-14 rounded-xl font-semibold text-base hover:bg-gray-800 transition-colors mb-6"
-              >
-                Envoyer le lien
-              </button>
-
-              <div className="mt-auto pt-6 border-t border-gray-100 text-center">
-                <button
-                  onClick={() => setCurrentView("login")}
-                  className="text-black font-semibold hover:underline"
-                >
-                  Retour à la connexion
-                </button>
-              </div>
-            </div>
           )}
         </div>
       </div>
     </div>
   );
 }
-

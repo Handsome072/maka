@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/context/AuthContext";
 import { AuthShell } from "@/app/components/AuthShell";
@@ -17,6 +17,15 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [forgotPasswordMessage, setForgotPasswordMessage] = useState("");
   const [forgotPasswordLoading, setForgotPasswordLoading] = useState(false);
+
+  // Lien « Mot de passe oublié » reçu par e-mail : ouvre directement la réinitialisation
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("forgot") === "1") {
+      setCurrentView("forgot-password");
+      setEmail(params.get("email") ?? "");
+    }
+  }, []);
 
   const handleLogin = async (userEmail: string, password: string) => {
     try {
@@ -103,11 +112,13 @@ export default function LoginPage() {
               </p>
 
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-900 mb-2">
+                <label htmlFor="forgot-email" className="block text-sm font-medium text-gray-900 mb-2">
                   Adresse e-mail
                 </label>
                 <input
+                  id="forgot-email"
                   type="email"
+                  autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full h-12 rounded-xl border border-gray-200 px-4 text-base focus:outline-none focus:border-gray-900 focus:ring-0 transition-all placeholder:text-gray-400"

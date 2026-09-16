@@ -1,25 +1,31 @@
 'use client';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft } from "lucide-react";
 import { useAuth } from "@/app/context/AuthContext";
 import { AuthShell } from "@/app/components/AuthShell";
 import { EmailEntryView } from "@/app/components/EmailEntryView";
-import { EmailSignupView } from "@/app/components/EmailSignupView";
 
-type AuthView = "email-entry" | "signup";
+function signupErrorMessage(err: any): string {
+  if (err?.status === 422) {
+    return "Veuillez entrer une adresse e-mail valide.";
+  }
+  return "Impossible d'envoyer l'e-mail pour le moment. Réessayez dans quelques instants.";
+}
 
 export default function InscriptionPage() {
   const router = useRouter();
-  const { register, loginWithUser, error, clearError, isLoading } = useAuth();
+  const { requestSignup, loginWithUser, clearError } = useAuth();
 
-  const [currentView, setCurrentView] = useState<AuthView>("email-entry");
   const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [birthDate, setBirthDate] = useState("");
-  const [receiveMarketing, setReceiveMarketing] = useState(true);
+  const [isSending, setIsSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Adresse pré-remplie en revenant de « Modifier l'adresse e-mail »
+  useEffect(() => {
+    const initial = new URLSearchParams(window.location.search).get("email");
+    if (initial) setEmail(initial);
+  }, []);
 
   const handleSocialLogin = (provider: string) => {
     // For now, use mock data for social login
@@ -32,88 +38,49 @@ export default function InscriptionPage() {
     router.push("/");
   };
 
-  const handleSignupComplete = async () => {
+  const handleContinue = async () => {
+    setError(null);
+    setIsSending(true);
     try {
-      clearError();
-      const userEmail = await register({
-        first_name: firstName,
-        last_name: lastName,
-        email: email,
-        birth_date: birthDate || undefined,
-        receive_marketing: receiveMarketing,
-      });
-      // Redirect to check-email page with the email
-      router.push(`/check-email?email=${encodeURIComponent(userEmail)}`);
-    } catch {
-      // Error is handled by context
+      const sentTo = await requestSignup(email.trim());
+      router.push(`/check-email?email=${encodeURIComponent(sentTo)}`);
+    } catch (err: any) {
+      setError(signupErrorMessage(err));
+      setIsSending(false);
     }
-  };
-
-  const getTitle = () => {
-    return "Inscription";
   };
 
   return (
     <AuthShell>
-      <div className={`flex items-center ${currentView === "signup" ? "mb-5" : "mb-3"}`}>
-        {currentView === "signup" && (
+      <h1 className="text-3xl font-bold text-gray-900 tracking-tight mb-3">Inscription</h1>
+
+      <EmailEntryView
+        email={email}
+        setEmail={(value) => {
+          setEmail(value);
+          if (error) setError(null);
+        }}
+        onContinue={handleContinue}
+        onSocialLogin={handleSocialLogin}
+        isLoading={isSending}
+        error={error}
+      />
+
+      <div className="text-center mt-8">
+        <span className="text-sm text-gray-500">
+          Déjà un compte ?{" "}
           <button
-            onClick={() => setCurrentView("email-entry")}
-            className="mr-3 -ml-1 p-1 hover:bg-gray-100 rounded-lg transition-colors"
-            aria-label="Retour"
-          >
-            <ChevronLeft className="w-6 h-6 text-gray-900" />
-          </button>
-        )}
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{getTitle()}</h1>
-      </div>
-
-      {currentView === "email-entry" && (
-        <>
-          <EmailEntryView
-            email={email}
-            setEmail={setEmail}
-            onContinue={() => setCurrentView("signup")}
-            onSocialLogin={handleSocialLogin}
-            onPhoneLogin={() => {
-              console.log("Phone login clicked");
+            type="button"
+            onClick={() => {
+              clearError();
+              router.push("/login");
             }}
-          />
-          <div className="text-center mt-8">
-            <span className="text-sm text-gray-500">
-              Déjà un compte ?{" "}
-              <button
-                onClick={() => {
-                  clearError();
-                  router.push("/login");
-                }}
-                className="text-sm text-black font-semibold hover:underline decoration-2 underline-offset-2 transition-all"
-              >
-                Se connecter
-              </button>
-            </span>
-          </div>
-        </>
-      )}
-
-      {currentView === "signup" && (
-        <EmailSignupView
-          firstName={firstName}
-          setFirstName={setFirstName}
-          lastName={lastName}
-          setLastName={setLastName}
-          birthDate={birthDate}
-          setBirthDate={setBirthDate}
-          email={email}
-          setEmail={setEmail}
-          receiveMarketing={receiveMarketing}
-          setReceiveMarketing={setReceiveMarketing}
-          onAccept={handleSignupComplete}
-          onBack={() => setCurrentView("email-entry")}
-          isLoading={isLoading}
-          error={error}
-        />
-      )}
+            className="text-sm text-black font-semibold hover:underline decoration-2 underline-offset-2 transition-all"
+          >
+            Se connecter
+          </button>
+        </span>
+      </div>
     </AuthShell>
   );
 }

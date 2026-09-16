@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
-import { authApi, User as ApiUser, getAuthToken, removeAuthToken, setAuthToken } from '../services/api';
+import { authApi, User as ApiUser, CompleteSignupData, getAuthToken, removeAuthToken, setAuthToken } from '../services/api';
 
 // User interface that includes both old format (for backward compatibility) and new API format
 export interface User {
@@ -22,13 +22,8 @@ interface AuthContextType {
   error: string | null;
   login: (email: string, password: string) => Promise<User>;
   loginWithUser: (user: User) => void; // For social login backward compatibility
-  register: (data: {
-    first_name: string;
-    last_name: string;
-    email: string;
-    birth_date?: string;
-    receive_marketing?: boolean;
-  }) => Promise<string>; // Returns email for redirect
+  requestSignup: (email: string) => Promise<string>; // Returns the email the link was sent to
+  completeSignup: (data: CompleteSignupData) => Promise<User>;
   setPassword: (token: string, password: string, passwordConfirmation: string) => Promise<void>;
   logout: () => Promise<void>;
   clearError: () => void;
@@ -113,26 +108,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
   }, []);
 
-  const register = useCallback(async (data: {
-    first_name: string;
-    last_name: string;
-    email: string;
-    birth_date?: string;
-    receive_marketing?: boolean;
-  }): Promise<string> => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await authApi.register(data);
-      // Do NOT log in the user - they need to verify email first
-      return response.email;
-    } catch (err: any) {
-      const message = err.data?.message || err.message || 'Erreur lors de l\'inscription';
-      setError(message);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
+  // Signup step 1: the pages keep their own sending state, so the global isLoading is left untouched
+  const requestSignup = useCallback(async (email: string): Promise<string> => {
+    const response = await authApi.requestSignup(email);
+    return response.email;
+  }, []);
+
+  // Signup step 2: account created from the emailed link, session opened in this browser
+  const completeSignup = useCallback(async (data: CompleteSignupData): Promise<User> => {
+    const response = await authApi.completeSignup(data);
+    const userData = apiUserToUser(response.user);
+    setUser(userData);
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
+    return userData;
   }, []);
 
   const setPassword = useCallback(async (token: string, password: string, passwordConfirmation: string) => {
@@ -189,7 +177,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         error,
         login,
         loginWithUser,
-        register,
+        requestSignup,
+        completeSignup,
         setPassword,
         logout,
         clearError,

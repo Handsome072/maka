@@ -246,6 +246,21 @@ export interface RegisterResponse {
   email: string;
 }
 
+export interface SignupLinkResponse {
+  status: 'valid';
+  email: string;
+}
+
+export interface CompleteSignupData {
+  token: string;
+  first_name: string;
+  last_name: string;
+  birth_date: string;
+  password: string;
+  password_confirmation: string;
+  receive_marketing: boolean;
+}
+
 export interface VerifyEmailResponse {
   message: string;
   password_setup_token: string;
@@ -263,20 +278,43 @@ export interface UserResponse {
 // Auth API functions
 export const authApi = {
   /**
-   * Register a new user (email-first flow - no password)
+   * Signup step 1: email only. The API emails a link to finish the signup,
+   * or a "you already have an account" email; the response is the same in both cases.
    */
-  register: async (data: {
-    first_name: string;
-    last_name: string;
-    email: string;
-    birth_date?: string;
-    receive_marketing?: boolean;
-  }): Promise<RegisterResponse> => {
+  requestSignup: async (email: string): Promise<RegisterResponse> => {
     return apiFetch<RegisterResponse>('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  },
+
+  /**
+   * Check the link received by email before showing the final signup form.
+   * Errors carry data.status: 'invalid' (400), 'expired' (410) or 'used' (409).
+   */
+  checkSignupToken: async (token: string): Promise<SignupLinkResponse> => {
+    return apiFetch<SignupLinkResponse>('/auth/signup-token', {
+      method: 'POST',
+      body: JSON.stringify({ token }),
+    });
+  },
+
+  /**
+   * Signup step 2: create the account from the link, then open the session in this browser
+   */
+  completeSignup: async (data: CompleteSignupData): Promise<AuthResponse> => {
+    const response = await apiFetch<Omit<AuthResponse, 'token'>>('/auth/complete-signup', {
       method: 'POST',
       body: JSON.stringify(data),
     });
-    // Note: No token is returned - user must verify email first
+    try {
+      const accessToken = await openSession(response.user.email, data.password);
+      return { ...response, token: accessToken };
+    } catch {
+      // The account exists: the person can still sign in from the login page
+      const message = 'Votre compte a été créé. Connectez-vous pour continuer.';
+      throw apiError(message, 409, { status: 'used', email: response.user.email, message });
+    }
   },
 
   /**

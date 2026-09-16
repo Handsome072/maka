@@ -3,13 +3,15 @@ import { ROUTES } from "../config/routes";
 
 interface AuthShellProps {
   children: React.ReactNode;
+  /** Formulaire plus large sur grand écran (formulaire final d'inscription, plus dense). */
+  wide?: boolean;
 }
 
 /**
  * Mise en page des écrans d'authentification : visuel de marque à gauche
  * (écrans larges uniquement) et formulaire centré à droite.
  */
-export function AuthShell({ children }: AuthShellProps) {
+export function AuthShell({ children, wide = false }: AuthShellProps) {
   return (
     <div className="min-h-screen bg-white lg:grid lg:grid-cols-2 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
       {/* Visuel de marque */}
@@ -55,10 +57,10 @@ export function AuthShell({ children }: AuthShellProps) {
         </div>
 
         <div className="flex flex-1 items-center justify-center py-4 sm:py-8 [@media(max-height:700px)]:py-3">
-          <div className="w-full max-w-[460px] 2xl:max-w-[500px]">{children}</div>
+          <div className={`w-full max-w-[460px] ${wide ? "lg:max-w-[520px]" : "2xl:max-w-[500px]"}`}>{children}</div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-gray-400">
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-gray-400 [@media(max-height:620px)]:hidden">
           <span>© Séjoura</span>
           <Link href={ROUTES.PRIVACY} className="hover:text-gray-700 transition-colors">
             Confidentialité
