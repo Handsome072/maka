@@ -1,4 +1,4 @@
-/** Modèles d'email repris des vues Blade resources/views/emails de Laravel. */
+/** Modèles d'email Séjoura : HTML en tableaux et styles en ligne, pour les logiciels de messagerie. */
 
 function escapeHtml(value: string): string {
   return value
@@ -9,142 +9,256 @@ function escapeHtml(value: string): string {
     .replace(/'/g, '&#039;');
 }
 
-const baseStyles = `
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            background-color: #ffffff;
-            border-radius: 12px;
-            padding: 40px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        .logo { text-align: center; margin-bottom: 30px; }
-        .logo h1 { color: #000; font-size: 28px; font-weight: 700; margin: 0; }
-        h2 { color: #000; font-size: 24px; margin-bottom: 20px; }
-        p { color: #555; font-size: 16px; margin-bottom: 20px; }
-        .button {
-            display: inline-block;
-            background-color: #000;
-            color: #fff !important;
-            text-decoration: none;
-            padding: 14px 30px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 16px;
-            margin: 20px 0;
-        }
-        .button:hover { background-color: #333; }
-        .footer {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-            font-size: 14px;
-            color: #888;
-            text-align: center;
-        }
-        .link-fallback { font-size: 12px; color: #888; word-break: break-all; }
-        .warning { background: #fff8e1; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 4px; font-size: 14px; color: #92400e; }`;
+/** Origine du site, déduite du lien d'action, pour les images et les liens du pied de page. */
+function siteOrigin(actionUrl: string): string {
+  try {
+    return new URL(actionUrl).origin;
+  } catch {
+    return (process.env.FRONTEND_URL ?? '').replace(/\/$/, '');
+  }
+}
 
-function layout(title: string, content: string): string {
+const FONT = "Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif";
+const TITLE_FONT = "Poppins,'Segoe UI',Arial,sans-serif";
+const CONTACT_EMAIL = process.env.MAIL_REPLY_TO ?? 'contact@sejoura.com';
+
+/** Bouton d'action : cellule colorée + lien, pour rester cliquable partout. */
+function button(url: string, label: string): string {
+  return `
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:28px;">
+                    <tr>
+                      <td class="btn-cell" align="center" style="background:#0A6B78;border-radius:12px;">
+                        <a class="btn-link" href="${url}" style="display:inline-block;padding:16px 30px;font-family:${FONT};font-size:16px;line-height:20px;font-weight:600;color:#FFFFFF;text-decoration:none;border-radius:12px;">${label}</a>
+                      </td>
+                    </tr>
+                  </table>`;
+}
+
+/** Lien de secours, à copier-coller si le bouton ne fonctionne pas. */
+function fallbackLink(url: string): string {
+  return `
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                      <td style="background:#F5F9F9;border-radius:12px;padding:16px 18px;font-family:${FONT};font-size:13px;line-height:20px;color:#5A6B71;">
+                        Le bouton ne fonctionne pas&nbsp;? Copiez ce lien dans votre navigateur&nbsp;:<br>
+                        <a href="${url}" style="color:#0A6B78;word-break:break-all;">${url}</a>
+                      </td>
+                    </tr>
+                  </table>`;
+}
+
+function layout(options: {
+  origin: string;
+  title: string;
+  preheader: string;
+  tag: string;
+  hero?: boolean;
+  content: string;
+  footerNote: string;
+}): string {
+  const { origin, title, preheader, tag, hero = false, content, footerNote } = options;
+
+  const heroRow = hero
+    ? `
+              <tr>
+                <td style="padding:0;"><img src="${origin}/email/welcome-hero.jpg" width="600" alt="" style="display:block;width:100%;max-width:600px;height:auto;border:0;border-radius:18px 18px 0 0;background:#5EC6D8;"></td>
+              </tr>`
+    : '';
+
   return `<!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${title}</title>
-    <style>${baseStyles}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+<title>${title}</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; padding: 0; background: #EEF4F5; -webkit-text-size-adjust: 100%; }
+  a { color: #0A6B78; }
+  @media (max-width: 620px) {
+    .container { width: 100% !important; }
+    .px { padding-left: 24px !important; padding-right: 24px !important; }
+    .h1 { font-size: 25px !important; line-height: 33px !important; }
+    .btn-cell, .btn-link { display: block !important; width: 100% !important; text-align: center !important; }
+    .tag { display: none !important; }
+  }
+</style>
 </head>
-<body>
-    <div class="container">
-        <div class="logo">
-            <h1>Séjoura</h1>
-        </div>
+<body style="margin:0;padding:0;background:#EEF4F5;">
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#EEF4F5;">${preheader}&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#EEF4F5;">
+  <tr>
+    <td align="center" style="padding:32px 12px 40px;">
+      <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;">
+
+        <tr>
+          <td class="px" style="padding:0 8px 20px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td align="left" valign="middle"><img src="${origin}/email/logo.png" width="128" alt="Séjoura" style="display:block;width:128px;height:auto;border:0;"></td>
+                <td class="tag" align="right" valign="middle" style="font-family:${FONT};font-size:11px;line-height:16px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#5A6B71;">${tag}</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="background:#FFFFFF;border-radius:18px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${heroRow}
 ${content}
-        <div class="footer">
-            <p>
-                © ${new Date().getFullYear()} Séjoura. Tous droits réservés.<br>
-                Cet email a été envoyé automatiquement, merci de ne pas y répondre.
-            </p>
-        </div>
-    </div>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="px" style="padding:28px 48px 0;font-family:${FONT};font-size:14px;line-height:22px;color:#46575D;">
+            Une question&nbsp;? Répondez simplement à cet e-mail ou écrivez-nous à <a href="mailto:${CONTACT_EMAIL}" style="color:#0A6B78;font-weight:600;text-decoration:none;">${CONTACT_EMAIL}</a>.
+          </td>
+        </tr>
+
+        <tr>
+          <td class="px" style="padding:24px 48px 0;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="border-top:1px solid #D6E2E4;padding-top:22px;font-family:${FONT};font-size:12px;line-height:19px;color:#7A898E;">
+                  <img src="${origin}/email/icon.png" width="24" height="24" alt="" style="display:block;width:24px;height:24px;border:0;margin:0 0 10px;">
+                  <span style="font-weight:600;color:#46575D;">Séjoura</span> · Logements, expériences et services<br>
+                  <a href="${origin}/privacy/" style="color:#7A898E;">Confidentialité</a> &nbsp;·&nbsp; <a href="${origin}/terms/" style="color:#7A898E;">Conditions générales</a><br>
+                  ${footerNote}<br>
+                  © ${new Date().getFullYear()} Séjoura
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
 </body>
 </html>`;
 }
 
-export function verifyEmailMail(firstName: string, verificationUrl: string): { subject: string; html: string } {
+/** Email de bienvenue envoyé à l'inscription (et à chaque renvoi du lien). */
+export function verifyEmailMail(
+  firstName: string,
+  verificationUrl: string,
+  recipientEmail = '',
+): { subject: string; html: string } {
   const url = escapeHtml(verificationUrl);
+  const origin = siteOrigin(verificationUrl);
+  const name = escapeHtml(firstName);
+  const email = escapeHtml(recipientEmail);
+
+  const addressBlock = email
+    ? `
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                      <td style="background:#EAF6F7;border-radius:10px;padding:12px 16px;font-family:${FONT};font-size:13px;line-height:20px;color:#5A6B71;">
+                        Adresse à confirmer<br>
+                        <span style="font-size:15px;font-weight:600;color:#17252A;">${email}</span>
+                      </td>
+                    </tr>
+                  </table>`
+    : '';
+
+  const step = (number: string, title: string, detail: string, current: boolean, last = false) => `
+                    <tr>
+                      <td width="44" valign="top" style="padding:0 0 ${last ? '0' : '18px'};">
+                        <div style="width:${current ? '30px' : '28px'};height:${current ? '30px' : '28px'};border-radius:15px;${
+                          current
+                            ? 'background:#0A6B78;color:#FFFFFF;'
+                            : 'border:1px solid #BFDDE2;background:#EAF6F7;color:#0A6B78;'
+                        }text-align:center;font-family:${TITLE_FONT};font-size:14px;line-height:${current ? '30px' : '28px'};font-weight:600;">${number}</div>
+                      </td>
+                      <td valign="top" style="padding:3px 0 ${last ? '0' : '18px'};font-family:${FONT};">
+                        <div style="font-size:15px;line-height:22px;font-weight:600;color:#17252A;">${title}</div>
+                        <div style="font-size:14px;line-height:21px;color:#5A6B71;">${detail}</div>
+                      </td>
+                    </tr>`;
+
   return {
-    subject: 'Vérifiez votre adresse email - Séjoura',
-    html: layout(
-      'Vérifiez votre email - Séjoura',
-      `
-        <h2>Bonjour ${escapeHtml(firstName)},</h2>
+    subject: 'Bienvenue sur Séjoura, confirmez votre adresse e-mail',
+    html: layout({
+      origin,
+      title: 'Bienvenue sur Séjoura',
+      preheader: "Plus qu'une étape pour activer votre compte et réserver votre premier séjour.",
+      tag: "Confirmation d'inscription",
+      hero: true,
+      footerNote: email
+        ? `Vous recevez cet e-mail car un compte Séjoura vient d'être créé avec l'adresse ${email}.`
+        : "Vous recevez cet e-mail car un compte Séjoura vient d'être créé avec cette adresse.",
+      content: `
+              <tr>
+                <td class="px" style="padding:36px 48px 0;">
+                  <h1 class="h1" style="margin:0 0 14px;font-family:${TITLE_FONT};font-size:30px;line-height:38px;font-weight:700;color:#17252A;">Bienvenue sur Séjoura, ${name}</h1>
+                  <p style="margin:0 0 24px;font-family:${FONT};font-size:16px;line-height:26px;color:#46575D;">Merci d'avoir créé votre compte. Confirmez votre adresse e-mail pour l'activer&nbsp;: vous choisirez ensuite votre mot de passe, puis vous pourrez réserver logements, expériences et services.</p>
+${addressBlock}
+${button(url, 'Confirmer mon adresse e-mail')}
+                </td>
+              </tr>
 
-        <p>
-            Merci de vous être inscrit sur Séjoura ! Pour finaliser votre inscription
-            et accéder à toutes les fonctionnalités, veuillez vérifier votre adresse email.
-        </p>
+              <tr>
+                <td class="px" style="padding:36px 48px 0;">
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                      <td style="border-top:1px solid #E1EAEC;padding-top:28px;font-family:${FONT};font-size:11px;line-height:16px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#0A6B78;">Votre inscription en 3 étapes</td>
+                    </tr>
+                  </table>
 
-        <p style="text-align: center;">
-            <a href="${url}" class="button">
-                Vérifier mon email
-            </a>
-        </p>
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:18px;">${step('1', 'Confirmer votre adresse e-mail', 'Un clic sur le bouton ci-dessus suffit.', true)}${step('2', 'Créer votre mot de passe', "La page s'ouvre automatiquement après la confirmation.", false)}${step('3', 'Réserver votre premier séjour', 'Parcourez les logements, expériences et services proposés par nos hôtes.', false, true)}
+                  </table>
+                </td>
+              </tr>
 
-        <p>
-            Si le bouton ne fonctionne pas, copiez et collez le lien suivant dans votre navigateur :
-        </p>
-        <p class="link-fallback">
-            ${url}
-        </p>
-
-        <p>
-            Ce lien expirera dans 24 heures. Si vous n'avez pas créé de compte sur Séjoura,
-            vous pouvez ignorer cet email.
-        </p>
-`,
-    ),
+              <tr>
+                <td class="px" style="padding:32px 48px 40px;">
+${fallbackLink(url)}
+                  <p style="margin:16px 0 0;font-family:${FONT};font-size:13px;line-height:20px;color:#5A6B71;">Ce lien est personnel et ne sert qu'une seule fois. Vous n'êtes pas à l'origine de cette inscription&nbsp;? Ignorez ce message&nbsp;: l'adresse ne sera pas confirmée.</p>
+                </td>
+              </tr>`,
+    }),
   };
 }
 
+/** Email de réinitialisation du mot de passe (lien valable 60 minutes, voir reset-password). */
 export function resetPasswordMail(firstName: string, resetUrl: string): { subject: string; html: string } {
   const url = escapeHtml(resetUrl);
+  const origin = siteOrigin(resetUrl);
+  const name = escapeHtml(firstName);
+
   return {
     subject: 'Réinitialisation de votre mot de passe - Séjoura',
-    html: layout(
-      'Réinitialisation de mot de passe - Séjoura',
-      `
-        <h2>Bonjour ${escapeHtml(firstName)},</h2>
+    html: layout({
+      origin,
+      title: 'Réinitialisation de mot de passe - Séjoura',
+      preheader: 'Choisissez un nouveau mot de passe : le lien est valable 60 minutes.',
+      tag: 'Sécurité du compte',
+      footerNote: 'Vous recevez cet e-mail car une réinitialisation a été demandée pour ce compte Séjoura.',
+      content: `
+              <tr>
+                <td class="px" style="padding:40px 48px 0;">
+                  <h1 class="h1" style="margin:0 0 14px;font-family:${TITLE_FONT};font-size:30px;line-height:38px;font-weight:700;color:#17252A;">Bonjour ${name},</h1>
+                  <p style="margin:0 0 24px;font-family:${FONT};font-size:16px;line-height:26px;color:#46575D;">Vous avez demandé la réinitialisation de votre mot de passe Séjoura. Choisissez-en un nouveau avec le bouton ci-dessous.</p>
+${button(url, 'Choisir un nouveau mot de passe')}
+                </td>
+              </tr>
 
-        <p>
-            Vous avez demandé la réinitialisation de votre mot de passe Séjoura.
-            Cliquez sur le bouton ci-dessous pour choisir un nouveau mot de passe.
-        </p>
-
-        <p style="text-align: center;">
-            <a href="${url}" class="button">
-                Réinitialiser mon mot de passe
-            </a>
-        </p>
-
-        <p>
-            Si le bouton ne fonctionne pas, copiez et collez le lien suivant dans votre navigateur :
-        </p>
-        <p class="link-fallback">${url}</p>
-
-        <div class="warning">
-            ⚠️ Ce lien est valable pendant <strong>60 minutes</strong>.
-            Si vous n'avez pas demandé cette réinitialisation, ignorez cet email — votre mot de passe ne sera pas modifié.
-        </div>
-`,
-    ),
+              <tr>
+                <td class="px" style="padding:32px 48px 40px;">
+${fallbackLink(url)}
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:16px;">
+                    <tr>
+                      <td style="background:#FFF6E5;border-left:4px solid #E5A82E;border-radius:8px;padding:14px 16px;font-family:${FONT};font-size:13px;line-height:20px;color:#6E4500;">
+                        Ce lien est valable <strong>60 minutes</strong>. Si vous n'avez pas demandé cette réinitialisation, ignorez cet e-mail&nbsp;: votre mot de passe restera inchangé.
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>`,
+    }),
   };
 }

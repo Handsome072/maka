@@ -24,6 +24,7 @@ export async function sendMail(to: string, subject: string, html: string): Promi
       name: process.env.MAIL_FROM_NAME ?? 'Séjoura API',
       address: process.env.SMTP_FROM ?? process.env.SMTP_USER ?? '',
     },
+    replyTo: process.env.MAIL_REPLY_TO ?? process.env.SMTP_FROM,
     to,
     subject,
     html,

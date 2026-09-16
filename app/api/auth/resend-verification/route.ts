@@ -17,7 +17,11 @@ export const POST = route(async (req) => {
   const verificationToken = randomString(64);
   must(await db().from('users').update({ email_verification_token: verificationToken }).eq('id', user.id));
 
-  const mail = verifyEmailMail(user.first_name, `${frontendUrl(req)}/verify-email?token=${verificationToken}`);
+  const mail = verifyEmailMail(
+    user.first_name,
+    `${frontendUrl(req)}/verify-email?token=${verificationToken}`,
+    user.email,
+  );
   await sendMail(user.email, mail.subject, mail.html);
 
   return json({ message: 'Email de vérification envoyé.' });

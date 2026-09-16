@@ -63,7 +63,11 @@ export const POST = route(async (req) => {
     throw error;
   }
 
-  const mail = verifyEmailMail(user.first_name, `${frontendUrl(req)}/verify-email?token=${verificationToken}`);
+  const mail = verifyEmailMail(
+    user.first_name,
+    `${frontendUrl(req)}/verify-email?token=${verificationToken}`,
+    user.email,
+  );
   await sendMail(user.email, mail.subject, mail.html);
 
   return json(
