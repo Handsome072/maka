@@ -8,7 +8,7 @@ import type { Session } from '@supabase/supabase-js';
 import { DEMO_MODE, getDemoListings, getDemoListingDetail } from '../data/demoListings';
 import { getSupabase, UPLOADS_BUCKET } from './supabaseClient';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
+const API_BASE_URL = '/api';
 
 // Token storage keys
 const TOKEN_KEY = 'homiqio_auth_token';

@@ -181,8 +181,8 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
       {children}
       {showHeaderFooter && <Footer onNavigate={handleNavigate} />}
 
-          {/* Mobile Navigation - visible only for S < 745 */}
-      {showHeaderFooter && (
+          {/* Mobile Navigation - visible only for S < 745 ; masquée sur une annonce, où la barre « Réserver » prend sa place (comme Airbnb) */}
+      {showHeaderFooter && !pathname?.startsWith('/property/') && (
         <MobileNav
           onSearchClick={() => setShowMobileSearch(true)}
           onFavoritesClick={() => { }}

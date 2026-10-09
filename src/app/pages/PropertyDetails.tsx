@@ -1,10 +1,12 @@
-import { Heart, Share, Star, ChevronRight, ChevronLeft, ChevronDown, ChevronUp } from 'lucide-react';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { Heart, Share, Star, ChevronRight, ChevronLeft, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 import { ImageCarouselModal } from '../components/ImageCarouselModal';
 import { ListingDetail, reviewsApi, messagesApi, reservationsApi, PriceBreakdown } from '../services/api';
 import { BED_TYPE_LABELS } from '../components/host-onboarding/constants';
 import { useAuth } from '../context/AuthContext';
-import { GuestsPicker } from '../components/GuestsPicker';
+import { BookingGuestsDropdown, formatGuestsLabel, StayGuests } from '../components/booking/BookingGuestsDropdown';
+import { DateRangeCalendar } from '../components/booking/DateRangeCalendar';
+import { toYmd, useStayDates } from '../components/booking/useStayDates';
 
 // ─── Helper functions ────────────────────────────────────────────────────────
 
@@ -72,42 +74,12 @@ function buildMapEmbedUrl(city?: string | null, country?: string | null): string
   return `https://maps.google.com/maps?q=${query}&z=12&output=embed&hl=fr`;
 }
 
-function formatPrice(price: string | number | null, _currency?: string): string {
-  if (!price) return '0 €';
-  const num = typeof price === 'string' ? parseFloat(price) : price;
-  return `${num.toFixed(0)} €`;
-}
-
 function formatRating(rating: number | null): string {
   if (!rating) return '0';
   return rating.toFixed(2).replace('.', ',');
 }
 
-const MONTH_NAMES_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 const MONTH_SHORT_FR = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
-const DAY_NAMES_FR = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
-
-function getDaysInMonth(year: number, month: number): (Date | null)[] {
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
-  const daysInMonth = lastDay.getDate();
-  const startingDayOfWeek = (firstDay.getDay() + 6) % 7; // Monday = 0
-
-  const days: (Date | null)[] = [];
-  for (let i = 0; i < startingDayOfWeek; i++) days.push(null);
-  for (let i = 1; i <= daysInMonth; i++) days.push(new Date(year, month, i));
-  return days;
-}
-
-function isSameDay(a: Date | null, b: Date | null): boolean {
-  if (!a || !b) return false;
-  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
-}
-
-function isInDateRange(day: Date, start: Date | null, end: Date | null): boolean {
-  if (!start || !end) return false;
-  return day.getTime() > start.getTime() && day.getTime() < end.getTime();
-}
 
 function formatDateShort(date: Date): string {
   return `${date.getDate()} ${MONTH_SHORT_FR[date.getMonth()]} ${date.getFullYear()}`;
@@ -120,15 +92,27 @@ function formatDateInput(date: Date | null): string {
   return `${d}/${m}/${date.getFullYear()}`;
 }
 
-function nightsBetween(start: Date, end: Date): number {
-  return Math.max(0, Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)));
+/** « 21–23 oct. » ou « 28 oct. – 3 nov. » */
+function formatStayRange(start: Date, end: Date): string {
+  if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
+    return `${start.getDate()}–${end.getDate()} ${MONTH_SHORT_FR[start.getMonth()]}`;
+  }
+  return `${start.getDate()} ${MONTH_SHORT_FR[start.getMonth()]} – ${end.getDate()} ${MONTH_SHORT_FR[end.getMonth()]}`;
 }
 
-function formatDateApi(date: Date): string {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
+const euros = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
+
+/** Total affiché en titre : « 412 € », ou « 412,20 € » quand il y a des centimes. */
+function formatTotal(amount: number): string {
+  return new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: Number.isInteger(amount) ? 0 : 2,
+  }).format(amount);
+}
+
+function firstOfMonth(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth(), 1);
 }
 
 // ─── Amenity icon mapping ────────────────────────────────────────────────────
@@ -264,6 +248,49 @@ function RatingCategoryIcon({ index }: { index: number }) {
   return <div className="w-6 h-6 text-gray-700">{icons[index]}</div>;
 }
 
+// ─── Champ ARRIVÉE / DÉPART du calendrier de réservation ──────────────────────
+
+interface PopoverDateFieldProps {
+  label: string;
+  value: string;
+  active: boolean;
+  disabled?: boolean;
+  onFocus: () => void;
+  onClear: () => void;
+}
+
+function PopoverDateField({ label, value, active, disabled, onFocus, onClear }: PopoverDateFieldProps) {
+  return (
+    <div
+      role="button"
+      tabIndex={disabled ? -1 : 0}
+      aria-disabled={disabled}
+      onClick={() => !disabled && onFocus()}
+      onKeyDown={(e) => { if (!disabled && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); onFocus(); } }}
+      className={`relative min-w-0 px-3 pt-2.5 pb-2 rounded-lg ${
+        active ? 'ring-2 ring-[#222] bg-white z-[1]' : disabled ? 'bg-[#EBEBEB] cursor-not-allowed' : 'cursor-pointer hover:bg-[#F7F7F7]'
+      }`}
+    >
+      <div className={`text-[10px] uppercase ${disabled ? 'text-[#B0B0B0]' : 'text-[#222]'}`} style={{ fontWeight: 800, letterSpacing: '0.04em' }}>
+        {label}
+      </div>
+      <div className={`text-sm truncate ${value ? 'pr-6 text-[#222]' : disabled ? 'text-[#B0B0B0]' : 'text-[#6A6A6A]'}`}>
+        {value || (active ? 'JJ/MM/AAAA' : 'Ajouter une date')}
+      </div>
+      {value && (
+        <button
+          type="button"
+          aria-label={`Effacer : ${label}`}
+          onClick={(e) => { e.stopPropagation(); onClear(); }}
+          className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full flex items-center justify-center text-[#222] hover:bg-[#EBEBEB]"
+        >
+          <X className="w-3.5 h-3.5" strokeWidth={3} />
+        </button>
+      )}
+    </div>
+  );
+}
+
 // ─── Main Component ──────────────────────────────────────────────────────────
 
 interface PropertyDetailsProps {
@@ -293,23 +320,24 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
   const [messageError, setMessageError] = useState<string | null>(null);
 
   // Booking state
-  const [checkInDate, setCheckInDate] = useState<Date | null>(null);
-  const [checkOutDate, setCheckOutDate] = useState<Date | null>(null);
-  const [guests, setGuests] = useState({ adults: 1, children: 0, babies: 0, pets: 0 });
+  const minStay = Math.max(1, parseInt(listing.min_stay ?? '', 10) || 1);
+  const maxStayRaw = parseInt(listing.max_stay ?? '', 10) || 0;
+  const maxStay = maxStayRaw >= minStay ? maxStayRaw : 0;
+  const stay = useStayDates(listing.id, minStay, maxStay);
+  const { checkIn: checkInDate, checkOut: checkOutDate, nights } = stay;
+  const [guests, setGuests] = useState<StayGuests>({ adults: 1, children: 0, babies: 0, pets: 0 });
   const [showGuestsPicker, setShowGuestsPicker] = useState(false);
-  const [calendarMonth, setCalendarMonth] = useState(() => {
-    const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), 1);
-  });
+  const [calendarMonth, setCalendarMonth] = useState(() => firstOfMonth(new Date()));
+  const [showDatesPopover, setShowDatesPopover] = useState(false);
+  const [popoverMonth, setPopoverMonth] = useState(() => firstOfMonth(new Date()));
+  const [showPriceDetail, setShowPriceDetail] = useState(false);
   const [priceBreakdown, setPriceBreakdown] = useState<PriceBreakdown | null>(null);
   const [priceLoading, setPriceLoading] = useState(false);
-  const [showBadgeCalendar, setShowBadgeCalendar] = useState(false);
-  const [badgeCalendarMonth, setBadgeCalendarMonth] = useState(() => {
-    const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), 1);
-  });
+  const [dateBoxWidth, setDateBoxWidth] = useState(0);
   const guestsPickerRef = useRef<HTMLDivElement>(null);
-  const badgeCalendarRef = useRef<HTMLDivElement>(null);
+  const datesPopoverRef = useRef<HTMLDivElement>(null);
+  const dateBoxRef = useRef<HTMLDivElement>(null);
+  const priceDetailRef = useRef<HTMLDivElement>(null);
 
   const sleepScrollRef = useRef<HTMLDivElement>(null);
   const [canScrollSleepLeft, setCanScrollSleepLeft] = useState(false);
@@ -348,142 +376,89 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
     });
   };
 
-  // ─── Calendar date picking ─────────────────────────────────────────────────
-  const handleDateClick = useCallback((day: Date) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    if (day < today) return;
+  // ─── Dates & voyageurs ────────────────────────────────────────────────────
+  const openDatesPopover = (field: 'checkIn' | 'checkOut') => {
+    stay.setFocus(field === 'checkOut' && checkInDate ? 'checkOut' : 'checkIn');
+    setPopoverMonth(firstOfMonth(checkInDate ?? new Date()));
+    setDateBoxWidth(dateBoxRef.current?.offsetWidth ?? 0);
+    setShowGuestsPicker(false);
+    setShowPriceDetail(false);
+    setShowDatesPopover(true);
+  };
 
-    if (!checkInDate || (checkInDate && checkOutDate)) {
-      setCheckInDate(day);
-      setCheckOutDate(null);
-      setPriceBreakdown(null);
-    } else if (checkInDate && !checkOutDate) {
-      if (day <= checkInDate) {
-        setCheckInDate(day);
-        setCheckOutDate(null);
-        setPriceBreakdown(null);
-      } else {
-        setCheckOutDate(day);
-      }
+  const selectDayInPopover = (day: Date) => {
+    if (stay.select(day)) {
+      // Séjour complet : comme sur Airbnb le calendrier se ferme, le calendrier de la page suit
+      setShowDatesPopover(false);
+      setCalendarMonth(popoverMonth);
     }
-  }, [checkInDate, checkOutDate]);
+  };
 
-  const clearDates = useCallback(() => {
-    setCheckInDate(null);
-    setCheckOutDate(null);
-    setPriceBreakdown(null);
-  }, []);
-
-  const nights = checkInDate && checkOutDate ? nightsBetween(checkInDate, checkOutDate) : 0;
   const totalVoyageurs = guests.adults + guests.children;
-  const voyageursLabel = `${totalVoyageurs} voyageur${totalVoyageurs > 1 ? 's' : ''}`;
+  const voyageursLabel = formatGuestsLabel(guests);
+  const minStayText = `Durée minimale du séjour : ${minStay} nuit${minStay > 1 ? 's' : ''}`;
 
-  // Fetch price when dates & guests change
+  // Prix recalculé par le serveur (qui fait foi) à chaque changement de dates ou de voyageurs.
+  // Une réponse arrivée après un changement plus récent est ignorée, sinon elle écraserait le bon prix.
   useEffect(() => {
     if (!checkInDate || !checkOutDate) {
       setPriceBreakdown(null);
+      setPriceLoading(false);
       return;
     }
+    let stale = false;
     setPriceLoading(true);
     reservationsApi.calculatePrice({
       listing_id: listing.id,
-      check_in: formatDateApi(checkInDate),
-      check_out: formatDateApi(checkOutDate),
+      check_in: toYmd(checkInDate),
+      check_out: toYmd(checkOutDate),
       adults: guests.adults,
       children: guests.children,
       pets: guests.pets,
     })
-      .then(setPriceBreakdown)
-      .catch(() => setPriceBreakdown(null))
-      .finally(() => setPriceLoading(false));
+      .then((breakdown) => { if (!stale) setPriceBreakdown(breakdown); })
+      .catch(() => { if (!stale) setPriceBreakdown(null); })
+      .finally(() => { if (!stale) setPriceLoading(false); });
+    return () => {
+      stale = true;
+    };
   }, [checkInDate, checkOutDate, guests.adults, guests.children, guests.pets, listing.id]);
 
-  // Close guests picker on outside click
+  const priceLines: [string, number][] = priceBreakdown
+    ? [
+        [`${priceBreakdown.nights} nuit${priceBreakdown.nights > 1 ? 's' : ''} x ${euros.format(priceBreakdown.price_per_night)}`, priceBreakdown.base_total],
+        ...([
+          ['Frais de ménage', priceBreakdown.cleaning_fee],
+          ['Frais de voyageur supplémentaire', priceBreakdown.extra_guest_fee],
+          ["Frais d'animaux", priceBreakdown.pet_fee],
+          ['Frais de service Séjoura', priceBreakdown.service_fee],
+        ] as [string, number][]).filter(([, amount]) => amount > 0),
+      ]
+    : [];
+
+  // Fermeture des fenêtres du bloc de réservation au clic extérieur ou avec Échap
   useEffect(() => {
+    const open: [boolean, { current: HTMLDivElement | null }, (v: boolean) => void][] = [
+      [showGuestsPicker, guestsPickerRef, setShowGuestsPicker],
+      [showDatesPopover, datesPopoverRef, setShowDatesPopover],
+      [showPriceDetail, priceDetailRef, setShowPriceDetail],
+    ];
+    if (!open.some(([isOpen]) => isOpen)) return;
     const handleClickOutside = (e: MouseEvent) => {
-      if (guestsPickerRef.current && !guestsPickerRef.current.contains(e.target as Node)) {
-        setShowGuestsPicker(false);
+      for (const [isOpen, ref, setOpen] of open) {
+        if (isOpen && ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
       }
     };
-    if (showGuestsPicker) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }
-  }, [showGuestsPicker]);
-
-  // Close badge calendar on outside click
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (badgeCalendarRef.current && !badgeCalendarRef.current.contains(e.target as Node)) {
-        setShowBadgeCalendar(false);
-      }
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') open.forEach(([, , setOpen]) => setOpen(false));
     };
-    if (showBadgeCalendar) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }
-  }, [showBadgeCalendar]);
-
-  // Sync badge calendar month with main calendar
-  useEffect(() => {
-    setBadgeCalendarMonth(calendarMonth);
-  }, [calendarMonth]);
-
-  // ─── Calendar render helper ───────────────────────────────────────────────
-  const renderMonth = useCallback((year: number, month: number) => {
-    const days = getDaysInMonth(year, month);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    return (
-      <div>
-        <div className="grid grid-cols-7 gap-2 mb-2">
-          {DAY_NAMES_FR.map((day, i) => (
-            <div key={i} className="text-center text-xs text-gray-600 py-2" style={{ fontWeight: 600 }}>
-              {day}
-            </div>
-          ))}
-        </div>
-        <div className="grid grid-cols-7 gap-0">
-          {days.map((day, i) => {
-            if (!day) return <div key={i} className="aspect-square" />;
-
-            const isPast = day < today;
-            const isStart = isSameDay(day, checkInDate);
-            const isEnd = isSameDay(day, checkOutDate);
-            const inRange = isInDateRange(day, checkInDate, checkOutDate);
-            const isSelected = isStart || isEnd;
-
-            return (
-              <div
-                key={i}
-                className="aspect-square flex items-center justify-center relative"
-                style={{
-                  backgroundColor: inRange ? '#f0f0f0' : 'transparent',
-                }}
-              >
-                <button
-                  onClick={() => !isPast && handleDateClick(day)}
-                  disabled={isPast}
-                  className={`w-10 h-10 flex items-center justify-center text-sm rounded-full transition-colors ${
-                    isSelected
-                      ? 'bg-gray-900 text-white'
-                      : isPast
-                        ? 'text-gray-300 cursor-not-allowed'
-                        : 'hover:bg-gray-100 cursor-pointer'
-                  }`}
-                  style={{ fontWeight: isSelected ? 600 : 400 }}
-                >
-                  {day.getDate()}
-                </button>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    );
-  }, [checkInDate, checkOutDate, handleDateClick]);
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [showGuestsPicker, showDatesPopover, showPriceDetail]);
 
   // Derive data from listing
   const images = listing.photos?.map(p => p.url) || [];
@@ -556,8 +531,8 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
     image: images[0],
     rating: reviewsSummary.average_rating,
     location: reviewsSummary.is_guest_favorite ? "Coup de cœur voyageurs" : location,
-    checkIn: checkInDate ? formatDateApi(checkInDate) : '',
-    checkOut: checkOutDate ? formatDateApi(checkOutDate) : '',
+    checkIn: checkInDate ? toYmd(checkInDate) : '',
+    checkOut: checkOutDate ? toYmd(checkOutDate) : '',
     checkInDisplay: checkInDate ? formatDateShort(checkInDate) : '',
     checkOutDisplay: checkOutDate ? formatDateShort(checkOutDate) : '',
     adults: guests.adults,
@@ -590,7 +565,7 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
       />
 
       {/* Main Content */}
-      <div className="bg-white min-h-screen pb-24 md:pb-0">
+      <div className="bg-white min-h-screen pb-24 lg:pb-0">
         {/* Mobile Header */}
         <div className="md:hidden fixed top-0 left-0 right-0 z-50 flex justify-between items-center p-4 pointer-events-none">
           <button
@@ -880,56 +855,34 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
 
               {/* Calendar Section */}
               <div id="booking-calendar" className="py-8 border-t border-gray-200">
-                <h3 className="text-xl mb-2" style={{ fontWeight: 600 }}>
-                  {nights > 0 ? `${nights} nuit${nights > 1 ? 's' : ''} à ${listing.city || 'destination'}` : `Sélectionnez vos dates`}
+                <h3 className="text-[22px] leading-tight text-[#222] mb-2" style={{ fontWeight: 600 }}>
+                  {nights > 0
+                    ? `${nights} nuit${nights > 1 ? 's' : ''} à ${listing.city || 'destination'}`
+                    : stay.selectingCheckOut ? 'Sélectionnez la date de départ' : 'Sélectionnez la date d\'arrivée'}
                 </h3>
-                <p className="text-sm text-gray-600 mb-6">
+                <p className="text-sm text-[#6A6A6A] mb-6">
                   {checkInDate && checkOutDate
                     ? `${formatDateShort(checkInDate)} - ${formatDateShort(checkOutDate)}`
-                    : 'Ajoutez vos dates de voyage pour obtenir le prix exact'}
+                    : minStay > 1 ? minStayText : 'Ajoutez vos dates de voyage pour obtenir le prix exact'}
                 </p>
 
-                <div className="border border-gray-200 rounded-xl p-6">
-                  <div className="flex items-center justify-between mb-6">
+                <div className="w-full md:w-fit">
+                  <DateRangeCalendar
+                    month={calendarMonth}
+                    onMonthChange={setCalendarMonth}
+                    checkIn={checkInDate}
+                    checkOut={checkOutDate}
+                    selectingCheckOut={stay.selectingCheckOut}
+                    isSelectable={stay.isSelectable}
+                    onSelect={stay.select}
+                  />
+                  <div className="flex justify-end mt-4">
                     <button
-                      onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1))}
-                      className="p-2 hover:bg-gray-100 rounded-full"
+                      type="button"
+                      onClick={stay.clear}
+                      className="text-sm text-[#222] underline px-2.5 py-2 -mr-2.5 rounded-lg hover:bg-[#F7F7F7]"
+                      style={{ fontWeight: 600 }}
                     >
-                      <ChevronLeft className="w-5 h-5" />
-                    </button>
-                    <div className="flex gap-12">
-                      <h4 className="text-base" style={{ fontWeight: 600 }}>
-                        {MONTH_NAMES_FR[calendarMonth.getMonth()]} {calendarMonth.getFullYear()}
-                      </h4>
-                      <h4 className="text-base" style={{ fontWeight: 600 }}>
-                        {MONTH_NAMES_FR[(calendarMonth.getMonth() + 1) % 12]} {calendarMonth.getMonth() === 11 ? calendarMonth.getFullYear() + 1 : calendarMonth.getFullYear()}
-                      </h4>
-                    </div>
-                    <button
-                      onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1))}
-                      className="p-2 hover:bg-gray-100 rounded-full"
-                    >
-                      <ChevronRight className="w-5 h-5" />
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-12">
-                    <div>
-                      {renderMonth(calendarMonth.getFullYear(), calendarMonth.getMonth())}
-                    </div>
-                    <div>
-                      {renderMonth(
-                        calendarMonth.getMonth() === 11 ? calendarMonth.getFullYear() + 1 : calendarMonth.getFullYear(),
-                        (calendarMonth.getMonth() + 1) % 12
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center gap-2 mt-6 pt-6 border-t border-gray-200">
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <button onClick={clearDates} className="text-sm underline" style={{ fontWeight: 600 }}>
                       Effacer les dates
                     </button>
                   </div>
@@ -940,239 +893,234 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
             {/* Right Column - Reservation Card */}
             <div className="hidden lg:block lg:col-span-1">
               <div className="sticky top-24">
-                <div className="border border-gray-200 rounded-2xl p-6 shadow-xl relative">
+                {/* Rare badge */}
+                {reviewsSummary.is_guest_favorite && (
+                  <div
+                    className="flex items-center gap-3 mb-6 px-6 py-4 rounded-xl border border-[#DDDDDD]"
+                    style={{ boxShadow: 'rgba(0, 0, 0, 0.12) 0px 6px 16px' }}
+                  >
+                    <svg className="w-6 h-6 shrink-0 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                    <p className="text-sm text-[#222]" style={{ fontWeight: 600 }}>
+                      Perle rare ! Les réservations pour ce logement sont fréquentes.
+                    </p>
+                  </div>
+                )}
+
+                <div
+                  className="rounded-xl border border-[#DDDDDD] p-6 bg-white"
+                  style={{ boxShadow: 'rgba(0, 0, 0, 0.12) 0px 6px 16px' }}
+                >
                   {/* Price */}
-                  <div className="flex items-baseline gap-1 mb-4">
-                    {priceBreakdown ? (
-                      <>
-                        <span className="text-2xl" style={{ fontWeight: 600 }}>{formatPrice(priceBreakdown.total, currency)}</span>
-                        <span className="text-base text-gray-600">pour {nights} nuit{nights > 1 ? 's' : ''}</span>
-                      </>
+                  <div ref={priceDetailRef} className="relative mb-6">
+                    {checkInDate && checkOutDate && priceBreakdown ? (
+                      <button
+                        type="button"
+                        onClick={() => setShowPriceDetail((open) => !open)}
+                        aria-expanded={showPriceDetail}
+                        aria-busy={priceLoading}
+                        className={`text-[22px] leading-tight text-[#222] underline underline-offset-2 text-left transition-opacity ${priceLoading ? 'opacity-40' : ''}`}
+                        style={{ fontWeight: 600 }}
+                      >
+                        {formatTotal(priceBreakdown.total)} au total
+                      </button>
+                    ) : checkInDate && checkOutDate && priceLoading ? (
+                      <div className="h-7 w-48 rounded-md bg-[#EBEBEB] animate-pulse" aria-label="Calcul du prix" />
                     ) : (
-                      <>
-                        <span className="text-2xl" style={{ fontWeight: 600 }}>{formatPrice(basePrice, currency)}</span>
-                        <span className="text-base text-gray-600">/ nuit</span>
-                      </>
+                      <h3 className="text-[22px] leading-tight text-[#222]" style={{ fontWeight: 600 }}>
+                        Indiquez vos dates pour afficher les prix
+                      </h3>
+                    )}
+
+                    {showPriceDetail && priceBreakdown && (
+                      <div
+                        className="absolute left-0 top-full mt-3 z-40 bg-white rounded-2xl p-6"
+                        style={{ width: 'calc(100% + 24px)', boxShadow: 'rgba(0, 0, 0, 0.28) 0px 8px 28px' }}
+                      >
+                        <div className="flex items-center justify-between mb-5">
+                          <h4 className="text-base text-[#222]" style={{ fontWeight: 600 }}>Détail du prix</h4>
+                          <button
+                            type="button"
+                            aria-label="Fermer"
+                            onClick={() => setShowPriceDetail(false)}
+                            className="w-8 h-8 -mr-2 rounded-full flex items-center justify-center hover:bg-[#F7F7F7]"
+                          >
+                            <X className="w-4 h-4" strokeWidth={2.5} />
+                          </button>
+                        </div>
+                        <div className="space-y-3 text-sm text-[#222]">
+                          {priceLines.map(([label, amount]) => (
+                            <div key={label} className="flex justify-between gap-4">
+                              <span>{label}</span>
+                              <span className="whitespace-nowrap">{euros.format(amount)}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="flex justify-between gap-4 pt-4 mt-4 border-t border-[#DDDDDD] text-base text-[#222]" style={{ fontWeight: 600 }}>
+                          <span>Total</span>
+                          <span className="whitespace-nowrap">{euros.format(priceBreakdown.total)}</span>
+                        </div>
+                      </div>
                     )}
                   </div>
 
-                  {/* Rare badge */}
-                  {reviewsSummary.is_guest_favorite && (
-                    <div className="flex items-start gap-2 mb-6 p-3 bg-green-50 rounded-lg">
-                      <div className="text-green-600 mt-0.5">
-                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
+                  {/* Dates & voyageurs */}
+                  <div ref={dateBoxRef} className="relative mb-4">
+                    <div className="rounded-lg border border-[#B0B0B0]">
+                      <div className="grid grid-cols-2">
+                        <button
+                          type="button"
+                          onClick={() => openDatesPopover('checkIn')}
+                          className="min-w-0 text-left px-3 pt-2.5 pb-2 border-r border-[#B0B0B0] rounded-tl-lg hover:bg-[#F7F7F7]"
+                        >
+                          <div className="text-[10px] uppercase text-[#222]" style={{ fontWeight: 800, letterSpacing: '0.04em' }}>Arrivée</div>
+                          <div className={`text-sm truncate ${checkInDate ? 'text-[#222]' : 'text-[#6A6A6A]'}`}>
+                            {checkInDate ? formatDateInput(checkInDate) : 'Ajouter une date'}
+                          </div>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => openDatesPopover('checkOut')}
+                          className="min-w-0 text-left px-3 pt-2.5 pb-2 rounded-tr-lg hover:bg-[#F7F7F7]"
+                        >
+                          <div className="text-[10px] uppercase text-[#222]" style={{ fontWeight: 800, letterSpacing: '0.04em' }}>Départ</div>
+                          <div className={`text-sm truncate ${checkOutDate ? 'text-[#222]' : 'text-[#6A6A6A]'}`}>
+                            {checkOutDate ? formatDateInput(checkOutDate) : 'Ajouter une date'}
+                          </div>
+                        </button>
                       </div>
-                      <div className="flex-1">
-                        <p className="text-sm" style={{ fontWeight: 600 }}>
-                          Perle rare ! Les réservations pour ce logement sont fréquentes.
-                        </p>
+                      <div ref={guestsPickerRef} className="relative border-t border-[#B0B0B0]">
+                        <button
+                          type="button"
+                          onClick={() => setShowGuestsPicker((open) => !open)}
+                          aria-expanded={showGuestsPicker}
+                          className={`relative w-full flex items-center justify-between gap-2 text-left px-3 pt-2.5 pb-2 ${
+                            showGuestsPicker ? 'rounded-lg ring-2 ring-[#222] bg-white' : 'rounded-b-lg hover:bg-[#F7F7F7]'
+                          }`}
+                        >
+                          <div className="min-w-0">
+                            <div className="text-[10px] uppercase text-[#222]" style={{ fontWeight: 800, letterSpacing: '0.04em' }}>Voyageurs</div>
+                            <div className="text-sm text-[#222] truncate">{voyageursLabel}</div>
+                          </div>
+                          {showGuestsPicker ? <ChevronUp className="w-5 h-5 shrink-0" /> : <ChevronDown className="w-5 h-5 shrink-0" />}
+                        </button>
+                        {showGuestsPicker && (
+                          <BookingGuestsDropdown
+                            guests={guests}
+                            onChange={setGuests}
+                            capacity={capacity}
+                            onClose={() => setShowGuestsPicker(false)}
+                          />
+                        )}
                       </div>
                     </div>
-                  )}
 
-                  {/* Date inputs */}
-                  <div className="border border-gray-300 rounded-lg mb-4">
-                    <div className="grid grid-cols-2 divide-x divide-gray-300">
+                    {/* Calendrier ouvert par-dessus la carte, ses champs ARRIVÉE/DÉPART alignés sur ceux de la carte */}
+                    {showDatesPopover && (
                       <div
-                        className="p-3 cursor-pointer hover:bg-gray-50"
-                        onClick={() => setShowBadgeCalendar(true)}
+                        ref={datesPopoverRef}
+                        className="absolute z-40 bg-white rounded-2xl px-8 pt-6 pb-4"
+                        style={{ top: -24, right: -32, boxShadow: 'rgba(0, 0, 0, 0.2) 0px 6px 20px' }}
                       >
-                        <label className="text-xs block mb-1" style={{ fontWeight: 600 }}>ARRIVÉE</label>
-                        <span className="text-sm">{checkInDate ? formatDateInput(checkInDate) : 'Ajouter'}</span>
-                      </div>
-                      <div
-                        className="p-3 cursor-pointer hover:bg-gray-50"
-                        onClick={() => setShowBadgeCalendar(true)}
-                      >
-                        <label className="text-xs block mb-1" style={{ fontWeight: 600 }}>DÉPART</label>
-                        <span className="text-sm">{checkOutDate ? formatDateInput(checkOutDate) : 'Ajouter'}</span>
-                      </div>
-                    </div>
-                    <div className="border-t border-gray-300 p-3 relative" ref={guestsPickerRef}>
-                      <label className="text-xs block mb-1" style={{ fontWeight: 600 }}>VOYAGEURS</label>
-                      <button
-                        onClick={() => setShowGuestsPicker(!showGuestsPicker)}
-                        className="text-sm w-full text-left flex items-center justify-between"
-                      >
-                        <span>{voyageursLabel}</span>
-                        {showGuestsPicker ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                      </button>
-                      {showGuestsPicker && (
-                        <GuestsPicker
-                          onClose={() => setShowGuestsPicker(false)}
-                          onGuestsChange={setGuests}
-                          currentGuests={guests}
-                          maxCapacity={capacity}
-                          showCapacityInfo
-                        />
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Reserve button */}
-                  <button
-                    onClick={() => {
-                      if (!checkInDate || !checkOutDate) {
-                        setShowBadgeCalendar(true);
-                        return;
-                      }
-                      onBook?.(bookingData);
-                    }}
-                    disabled={priceLoading}
-                    className="w-full py-3 rounded-full text-white text-base mb-4 transition-colors hover:opacity-90"
-                    style={{
-                      fontWeight: 600,
-                      backgroundColor: '#000000',
-                      opacity: priceLoading ? 0.7 : 1,
-                    }}
-                  >
-                    Réserver
-                  </button>
-
-                  <p className="text-center text-sm text-gray-600 mb-2">
-                    Aucun montant ne vous sera débité pour le moment
-                  </p>
-
-                  {/* Report listing */}
-                  <div className="mt-4 pt-4 border-t border-gray-200">
-                    <button className="flex items-center gap-2 text-sm underline mx-auto">
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
-                      </svg>
-                      Signaler cette annonce
-                    </button>
-                  </div>
-                </div>
-
-                {/* Badge Calendar Popup */}
-                {showBadgeCalendar && (
-                  <div
-                    ref={badgeCalendarRef}
-                    className="absolute left-0 right-0 bg-white rounded-2xl z-50 mt-2"
-                    style={{
-                      boxShadow: 'rgba(0, 0, 0, 0.2) 0px 6px 20px',
-                      width: '400px',
-                      marginLeft: '-90px',
-                      top: '50px',
-                    }}
-                  >
-                    <div className="p-6">
-                      {/* Header: nights + date inputs */}
-                      <div className="flex items-start justify-between mb-6">
-                        <div>
-                          <h3 className="text-xl" style={{ fontWeight: 600 }}>
-                            {nights > 0 ? `${nights} nuit${nights > 1 ? 's' : ''}` : 'Sélectionnez vos dates'}
-                          </h3>
-                          {checkInDate && checkOutDate && (
-                            <p className="text-sm text-gray-500 mt-1">
-                              {formatDateShort(checkInDate)} - {formatDateShort(checkOutDate)}
+                        <div className="flex items-start justify-between gap-6 mb-6">
+                          <div className="min-w-0">
+                            <h3 className="text-[22px] leading-tight text-[#222]" style={{ fontWeight: 600 }}>
+                              {nights > 0 ? `${nights} nuit${nights > 1 ? 's' : ''}` : 'Sélectionnez les dates'}
+                            </h3>
+                            <p className="text-sm text-[#6A6A6A] mt-2">
+                              {checkInDate && checkOutDate
+                                ? `${formatDateShort(checkInDate)} - ${formatDateShort(checkOutDate)}`
+                                : checkInDate && minStay > 1 ? minStayText : 'Ajoutez vos dates de voyage pour connaître le prix exact'}
                             </p>
-                          )}
-                        </div>
-
-                        {/* ARRIVÉE / DÉPART inputs */}
-                        <div className="border border-gray-300 rounded-lg overflow-hidden" style={{ width: '300px' }}>
-                          <div className="grid grid-cols-2 divide-x divide-gray-300">
-                            <div className="p-3 relative">
-                              <label className="text-[10px] block mb-0.5" style={{ fontWeight: 700, letterSpacing: '0.05em' }}>ARRIVÉE</label>
-                              <span className="text-sm" style={{ color: '#222' }}>{checkInDate ? formatDateInput(checkInDate) : 'Ajouter'}</span>
-                              {checkInDate && (
-                                <button
-                                  onClick={(e) => { e.stopPropagation(); setCheckInDate(null); setCheckOutDate(null); setPriceBreakdown(null); }}
-                                  className="absolute top-2 right-2 p-1 hover:bg-gray-100 rounded-full"
-                                >
-                                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                  </svg>
-                                </button>
-                              )}
-                            </div>
-                            <div className="p-3 relative">
-                              <label className="text-[10px] block mb-0.5" style={{ fontWeight: 700, letterSpacing: '0.05em' }}>DÉPART</label>
-                              <span className="text-sm" style={{ color: '#222' }}>{checkOutDate ? formatDateInput(checkOutDate) : 'Ajouter'}</span>
-                              {checkOutDate && (
-                                <button
-                                  onClick={(e) => { e.stopPropagation(); setCheckOutDate(null); setPriceBreakdown(null); }}
-                                  className="absolute top-2 right-2 p-1 hover:bg-gray-100 rounded-full"
-                                >
-                                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                  </svg>
-                                </button>
-                              )}
-                            </div>
+                          </div>
+                          <div className="shrink-0 grid grid-cols-2 rounded-lg border border-[#B0B0B0]" style={{ width: dateBoxWidth || 316 }}>
+                            <PopoverDateField
+                              label="Arrivée"
+                              value={formatDateInput(checkInDate)}
+                              active={!stay.selectingCheckOut}
+                              onFocus={() => stay.setFocus('checkIn')}
+                              onClear={stay.clear}
+                            />
+                            <PopoverDateField
+                              label="Départ"
+                              value={formatDateInput(checkOutDate)}
+                              active={stay.selectingCheckOut}
+                              disabled={!checkInDate}
+                              onFocus={() => stay.setFocus('checkOut')}
+                              onClear={stay.clearCheckOut}
+                            />
                           </div>
                         </div>
-                      </div>
 
-                      {/* Calendar navigation */}
-                      <div className="flex items-center justify-between mb-4">
-                        <button
-                          onClick={() => setBadgeCalendarMonth(new Date(badgeCalendarMonth.getFullYear(), badgeCalendarMonth.getMonth() - 1, 1))}
-                          className="p-2 hover:bg-gray-100 rounded-full"
-                        >
-                          <ChevronLeft className="w-5 h-5" />
-                        </button>
-                        <div className="flex gap-16">
-                          <h4 className="text-base" style={{ fontWeight: 600 }}>
-                            {MONTH_NAMES_FR[badgeCalendarMonth.getMonth()]} {badgeCalendarMonth.getFullYear()}
-                          </h4>
-                          <h4 className="text-base" style={{ fontWeight: 600 }}>
-                            {MONTH_NAMES_FR[(badgeCalendarMonth.getMonth() + 1) % 12]} {badgeCalendarMonth.getMonth() === 11 ? badgeCalendarMonth.getFullYear() + 1 : badgeCalendarMonth.getFullYear()}
-                          </h4>
-                        </div>
-                        <button
-                          onClick={() => setBadgeCalendarMonth(new Date(badgeCalendarMonth.getFullYear(), badgeCalendarMonth.getMonth() + 1, 1))}
-                          className="p-2 hover:bg-gray-100 rounded-full"
-                        >
-                          <ChevronRight className="w-5 h-5" />
-                        </button>
-                      </div>
+                        <DateRangeCalendar
+                          month={popoverMonth}
+                          onMonthChange={setPopoverMonth}
+                          checkIn={checkInDate}
+                          checkOut={checkOutDate}
+                          selectingCheckOut={stay.selectingCheckOut}
+                          isSelectable={stay.isSelectable}
+                          onSelect={selectDayInPopover}
+                        />
 
-                      {/* Two-month calendar */}
-                      <div className="grid grid-cols-2 gap-8">
-                        <div>
-                          {renderMonth(badgeCalendarMonth.getFullYear(), badgeCalendarMonth.getMonth())}
-                        </div>
-                        <div>
-                          {renderMonth(
-                            badgeCalendarMonth.getMonth() === 11 ? badgeCalendarMonth.getFullYear() + 1 : badgeCalendarMonth.getFullYear(),
-                            (badgeCalendarMonth.getMonth() + 1) % 12
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Footer: keyboard icon + clear dates + close */}
-                      <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
-                        <svg className="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center justify-end gap-2 mt-4">
                           <button
-                            onClick={() => { clearDates(); }}
-                            className="text-sm underline"
+                            type="button"
+                            onClick={stay.clear}
+                            className="text-sm text-[#222] underline px-2.5 py-2 rounded-lg hover:bg-[#F7F7F7]"
                             style={{ fontWeight: 600 }}
                           >
                             Effacer les dates
                           </button>
                           <button
+                            type="button"
                             onClick={() => {
-                              setShowBadgeCalendar(false);
-                              // Sync main calendar
-                              setCalendarMonth(badgeCalendarMonth);
+                              setShowDatesPopover(false);
+                              setCalendarMonth(popoverMonth);
                             }}
-                            className="px-6 py-2.5 bg-gray-900 text-white rounded-lg text-sm hover:bg-gray-800 transition-colors"
+                            className="text-sm text-white bg-[#222] hover:bg-black px-4 py-2 rounded-lg"
                             style={{ fontWeight: 600 }}
                           >
                             Fermer
                           </button>
                         </div>
                       </div>
-                    </div>
+                    )}
                   </div>
-                )}
+
+                  {/* Reserve button */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!checkInDate || !checkOutDate) {
+                        openDatesPopover(checkInDate ? 'checkOut' : 'checkIn');
+                        return;
+                      }
+                      onBook?.(bookingData);
+                    }}
+                    disabled={!!checkInDate && !!checkOutDate && priceLoading}
+                    className="w-full py-3.5 rounded-full text-white text-base transition-opacity hover:opacity-90 disabled:opacity-70 disabled:cursor-wait"
+                    style={{ fontWeight: 600, backgroundColor: '#000000' }}
+                  >
+                    {checkInDate && checkOutDate ? 'Réserver' : 'Vérifier la disponibilité'}
+                  </button>
+
+                  {checkInDate && checkOutDate && (
+                    <p className="text-center text-sm text-[#222] mt-4">
+                      Aucun montant ne vous sera débité pour le moment
+                    </p>
+                  )}
+                </div>
+
+                {/* Report listing */}
+                <div className="mt-6 flex justify-center">
+                  <button type="button" className="flex items-center gap-2 text-sm text-[#6A6A6A] underline">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                    </svg>
+                    Signaler cette annonce
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -1573,31 +1521,37 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
 
       </div>
 
-      {/* Sticky Bottom Bar - Mobile Only */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 pb-6 z-40 md:hidden flex justify-between items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-        <div>
-          <div className="flex items-baseline gap-1">
-            <span className="font-bold text-lg">{formatPrice(priceBreakdown?.price_per_night ?? basePrice, currency)}</span>
-            <span className="text-gray-600 text-sm"> / nuit</span>
-          </div>
-          {checkInDate && checkOutDate && (
-            <div className="text-xs underline font-semibold mt-0.5">
-              {checkInDate.getDate()}-{checkOutDate.getDate()} {MONTH_SHORT_FR[checkInDate.getMonth()]}
-            </div>
+      {/* Sticky Bottom Bar - Mobile & tablette (la carte de réservation n'apparaît qu'à partir de lg) */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-6 pt-4 pb-6 z-40 lg:hidden flex justify-between items-center gap-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+        <div className="min-w-0">
+          {checkInDate && checkOutDate ? (
+            <>
+              {priceBreakdown ? (
+                <div className={`text-base text-[#222] underline transition-opacity ${priceLoading ? 'opacity-40' : ''}`} style={{ fontWeight: 600 }}>
+                  {formatTotal(priceBreakdown.total)} au total
+                </div>
+              ) : priceLoading ? (
+                <div className="h-5 w-32 rounded bg-[#EBEBEB] animate-pulse" aria-label="Calcul du prix" />
+              ) : null}
+              <div className="text-sm text-[#222] mt-0.5">{formatStayRange(checkInDate, checkOutDate)}</div>
+            </>
+          ) : (
+            <div className="text-sm text-[#222] max-w-[8.5rem] leading-snug" style={{ fontWeight: 600 }}>Ajoutez des dates pour voir les prix</div>
           )}
         </div>
         <button
+          type="button"
           onClick={() => {
             if (!checkInDate || !checkOutDate) {
-              const calSection = document.getElementById('booking-calendar');
-              calSection?.scrollIntoView({ behavior: 'smooth' });
+              document.getElementById('booking-calendar')?.scrollIntoView({ behavior: 'smooth' });
               return;
             }
             onBook?.(bookingData);
           }}
-          className="bg-black text-white px-8 py-3 rounded-lg font-semibold text-base hover:opacity-90 transition-opacity"
+          disabled={!!checkInDate && !!checkOutDate && priceLoading}
+          className="shrink-0 bg-black text-white px-5 py-3 rounded-full font-semibold text-[15px] hover:opacity-90 transition-opacity disabled:opacity-70"
         >
-          Réserver
+          {checkInDate && checkOutDate ? 'Réserver' : 'Vérifier la disponibilité'}
         </button>
       </div>
       {/* Message Host Modal */}
