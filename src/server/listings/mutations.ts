@@ -1,3 +1,4 @@
+import { normalizeCancellationPolicy } from '@/shared/booking';
 import {
   LISTING_FILLABLE,
   LISTING_HOST_PROTECTED,
@@ -62,7 +63,7 @@ export function buildListingStoreAttributes(data: Row, userId: number, now: stri
     security_deposit: data.security_deposit ?? 0,
     extra_guest_fee: truthyOrNull('extra_guest_fee'),
     pet_fee: truthyOrNull('pet_fee'),
-    cancellation_policy: value('cancellation_policy'),
+    cancellation_policy: normalizeCancellationPolicy(data.cancellation_policy) ?? value('cancellation_policy'),
     tax_registration: value('tax_registration'),
     taxes_included: value('taxes_included'),
     accepted_local_laws: data.accepted_local_laws ?? false,
@@ -90,7 +91,8 @@ export function fillListingForUpdate(data: Row, listing: Row): { filled: Row; di
       continue;
     }
     if (LISTING_FILLABLE.has(key) && !LISTING_HOST_PROTECTED.has(key)) {
-      filled[key] = value;
+      // « Modérée » ou « Stricte » envoyés par d'anciens écrans : stockés sous la forme moderate / strict
+      filled[key] = key === 'cancellation_policy' ? (normalizeCancellationPolicy(value) ?? value) : value;
     }
   }
 

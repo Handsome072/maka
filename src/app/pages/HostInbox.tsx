@@ -21,6 +21,12 @@ export function HostInbox() {
 
   // Selected conversation
   const [selectedConversationId, setSelectedConversationId] = useState<number | null>(null);
+
+  // Lien « Écrire au voyageur » d'une réservation : /annonces/inbox?conversation=ID ouvre la conversation
+  useEffect(() => {
+    const id = Number(new URLSearchParams(window.location.search).get('conversation'));
+    if (Number.isInteger(id) && id > 0) setSelectedConversationId(id);
+  }, []);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loadingMessages, setLoadingMessages] = useState(false);
 
@@ -248,7 +254,7 @@ export function HostInbox() {
 
         {/* Reservation Info Panel */}
         {selectedConversation && (
-          <ReservationInfo reservation={selectedConversation.reservation} listing={selectedConversation.listing} />
+          <ReservationInfo reservation={selectedConversation.reservation} listing={selectedConversation.listing} viewerRole="host" />
         )}
       </div>
     </div>

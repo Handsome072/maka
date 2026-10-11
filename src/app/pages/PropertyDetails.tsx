@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { BookingGuestsDropdown, formatGuestsLabel, StayGuests } from '../components/booking/BookingGuestsDropdown';
 import { DateRangeCalendar } from '../components/booking/DateRangeCalendar';
 import { toYmd, useStayDates } from '../components/booking/useStayDates';
+import { CANCELLATION_POLICY_LABELS, CANCELLATION_POLICY_RULES, normalizeCancellationPolicy } from '@/shared/booking';
 
 // ─── Helper functions ────────────────────────────────────────────────────────
 
@@ -323,7 +324,10 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
   const minStay = Math.max(1, parseInt(listing.min_stay ?? '', 10) || 1);
   const maxStayRaw = parseInt(listing.max_stay ?? '', 10) || 0;
   const maxStay = maxStayRaw >= minStay ? maxStayRaw : 0;
-  const stay = useStayDates(listing.id, minStay, maxStay);
+  const stay = useStayDates(listing.id, minStay, maxStay, {
+    arrivalDays: listing.arrival_days,
+    departureDays: listing.departure_days,
+  });
   const { checkIn: checkInDate, checkOut: checkOutDate, nights } = stay;
   const [guests, setGuests] = useState<StayGuests>({ adults: 1, children: 0, babies: 0, pets: 0 });
   const [showGuestsPicker, setShowGuestsPicker] = useState(false);
@@ -499,6 +503,7 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
   const basePrice = listing.base_price ? parseFloat(listing.base_price) : 0;
   const currency = listing.currency || 'EUR';
   const cancellationPolicy = listing.cancellation_policy;
+  const normalizedPolicy = normalizeCancellationPolicy(cancellationPolicy);
   const arrivalTime = listing.arrival_time || '14:00';
   const departureTime = listing.departure_time || '11:00';
   const host = listing.host;
@@ -1470,15 +1475,16 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
                 </svg>
                 <h4 className="text-base" style={{ fontWeight: 600 }}>Conditions d&apos;annulation</h4>
               </div>
-              <p className="text-sm mb-3 text-[#6C6C6C]">
-                {cancellationPolicy
-                  ? `Politique d'annulation : ${cancellationPolicy}. Consultez les conditions complètes de cet hôte pour en savoir plus.`
-                  : 'Consultez les conditions complètes de cet hôte pour en savoir plus.'
-                }
-              </p>
-              <button className="text-sm underline" style={{ fontWeight: 600 }}>
-                En savoir plus
-              </button>
+              {normalizedPolicy ? (
+                <div className="text-sm text-[#6C6C6C] space-y-1">
+                  <p>Politique {CANCELLATION_POLICY_LABELS[normalizedPolicy].toLowerCase()}.</p>
+                  {CANCELLATION_POLICY_RULES[normalizedPolicy].map((rule) => (
+                    <p key={rule}>{rule}</p>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-[#6C6C6C]">Les conditions d&apos;annulation sont précisées avant la réservation.</p>
+              )}
             </div>
 
             {/* House Rules */}

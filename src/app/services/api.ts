@@ -3,6 +3,7 @@
  * Handles all HTTP requests to the Next.js API routes (app/api), backed by Supabase
  */
 
+import type { RefundBreakdown } from '@/shared/booking';
 import type { Session } from '@supabase/supabase-js';
 // ⚠️ MODE DÉMO STATIQUE : voir data/demoListings.ts (publicListingsApi plus bas).
 import { DEMO_MODE, getDemoListings, getDemoListingDetail } from '../data/demoListings';
@@ -1003,7 +1004,7 @@ export interface ConversationReservation {
   check_in: string;
   check_out: string;
   guests_count: number;
-  status: 'pending' | 'confirmed' | 'active' | 'completed' | 'cancelled';
+  status: ReservationStatus;
   listing: {
     id: number;
     title: string;
@@ -1044,6 +1045,8 @@ export interface ChatMessage {
   image_url: string | null;
   read_at: string | null;
   created_at: string;
+  /** Événement de la réservation, affiché au centre de la conversation. */
+  is_system?: boolean;
 }
 
 export interface ChatMessagesResponse {
@@ -1763,6 +1766,36 @@ export interface PriceBreakdown {
   currency: string;
 }
 
+export type ReservationStatus =
+  | 'awaiting_payment'
+  | 'pending'
+  | 'confirmed'
+  | 'active'
+  | 'completed'
+  | 'cancelled'
+  | 'declined'
+  | 'expired';
+
+/** Paiement en ligne : null pour une réservation sans paiement en ligne. */
+export type PaymentStatus = 'awaiting' | 'authorized' | 'paid' | 'released' | 'refunded' | 'partially_refunded';
+
+/** Versement à l'hôte (manuel, suivi par Séjoura). */
+export interface ReservationPayout {
+  id: number;
+  net_amount: string;
+  status: 'pending' | 'scheduled' | 'paid' | 'failed';
+  scheduled_date: string | null;
+  paid_date: string | null;
+  reference: string | null;
+}
+
+/** Réponse de l'aperçu d'annulation (GET …/cancel). */
+export type CancellationCheck =
+  | { allowed: true; kind: 'withdraw'; refund: null }
+  | { allowed: true; kind: 'cancel'; refund: RefundBreakdown }
+  | { allowed: false; message: string };
+export type ReservationPhase = 'pending' | 'upcoming' | 'ongoing' | 'past' | 'cancelled' | 'declined' | 'expired';
+
 export interface ReservationData {
   id: number;
   guest_id: number;
@@ -1777,12 +1810,62 @@ export interface ReservationData {
   nights_count: number;
   price_per_night: string;
   cleaning_fee: string | null;
+  extra_guest_fee: string | null;
+  pet_fee: string | null;
   service_fee: string | null;
   total_price: string;
   currency: string;
-  status: string;
+  status: ReservationStatus;
+  /** Statut croisé avec les dates : à venir, en cours, terminée… */
+  phase: ReservationPhase;
+  confirmation_code: string;
+  reservation_mode: 'request' | 'instant' | null;
+  cancellation_policy: string | null;
   guest_message: string | null;
-  listing?: Listing;
+  cancellation_reason: string | null;
+  expires_at: string | null;
+  confirmed_at: string | null;
+  declined_at: string | null;
+  cancelled_at: string | null;
+  cancelled_by: 'guest' | 'host' | 'admin' | null;
+  /** Montant remboursable selon la politique, fixé à l'annulation. */
+  refund_amount: string | null;
+  payment_status: PaymentStatus | null;
+  amount_paid: string | null;
+  amount_refunded: string | null;
+  paid_at: string | null;
+  /** Versement à l'hôte : renseigné pour l'hôte seulement. */
+  payout: ReservationPayout | null;
+  viewer_role: 'guest' | 'host';
+  conversation_id: number | null;
+  listing: {
+    id: number;
+    title: string;
+    city: string | null;
+    province: string | null;
+    country: string | null;
+    cover_photo_url: string | null;
+    arrival_time: string | null;
+    departure_time: string | null;
+    /** Adresse exacte et instructions d'arrivée : null tant que la réservation n'est pas confirmée. */
+    full_address: string | null;
+    street: string | null;
+    postal_code: string | null;
+    checkin_method: string | null;
+    checkin_instructions: string | null;
+  } | null;
+  host: { id: number; first_name: string; profile_photo_url: string | null; member_since: string | null } | null;
+  guest: {
+    id: number;
+    first_name: string;
+    /** Vu par l'hôte : null tant que la réservation n'est pas confirmée. */
+    last_name: string | null;
+    profile_photo_url: string | null;
+    /** Vu par l'hôte, une fois la réservation confirmée. */
+    phone: string | null;
+    identity_verified: boolean;
+    member_since: string | null;
+  } | null;
   created_at: string;
   updated_at: string;
 }
@@ -1822,8 +1905,8 @@ export const reservationsApi = {
     infants?: number;
     pets?: number;
     guest_message?: string;
-  }): Promise<{ message: string; reservation: ReservationData }> => {
-    return apiFetch<{ message: string; reservation: ReservationData }>('/reservations', {
+  }): Promise<{ message: string; reservation: ReservationData; checkout?: { client_secret: string } }> => {
+    return apiFetch<{ message: string; reservation: ReservationData; checkout?: { client_secret: string } }>('/reservations', {
       method: 'POST',
       body: JSON.stringify(data),
     });
@@ -1835,5 +1918,166 @@ export const reservationsApi = {
 
   getOne: async (id: number): Promise<{ reservation: ReservationData }> => {
     return apiFetch<{ reservation: ReservationData }>(`/reservations/${id}`);
+  },
+
+  /** Avant d'annuler : possible ou non, et remboursement selon la politique. */
+  cancelPreview: async (id: number): Promise<CancellationCheck> => {
+    return apiFetch<CancellationCheck>(`/reservations/${id}/cancel`);
+  },
+
+  /** Retour du paiement Stripe : termine la réservation si ce n'est pas déjà fait. */
+  syncPayment: async (
+    id: number,
+  ): Promise<{ state: 'finalized' | 'already' | 'open' | 'expired' | 'orphan'; reservation: ReservationData | null }> => {
+    return apiFetch(`/reservations/${id}/payment`, { method: 'POST' });
+  },
+
+  /** Le voyageur retire sa demande en attente, ou annule sa réservation confirmée avant l'arrivée. */
+  cancel: async (id: number, reason?: string): Promise<{ message: string; reservation: ReservationData }> => {
+    return apiFetch<{ message: string; reservation: ReservationData }>(`/reservations/${id}/cancel`, {
+      method: 'POST',
+      body: JSON.stringify({ reason }),
+    });
+  },
+
+  /**
+   * Annonce telle qu'enregistrée en base, même en mode démo : la réservation applique ses vraies règles
+   * (mode, capacité, durées, jours d'arrivée, politique d'annulation).
+   */
+  getBookableListing: async (id: number): Promise<{ listing: ListingDetail }> => {
+    return apiFetch<{ listing: ListingDetail }>(`/listings/public/${id}`);
+  },
+};
+
+// ─── Host reservations & calendar ────────────────────────────────────────────
+
+export const hostReservationsApi = {
+  /** Réservations des logements de l'hôte connecté. */
+  getAll: async (): Promise<{ listings: { id: number; title: string | null }[]; reservations: ReservationData[] }> => {
+    return apiFetch('/host/reservations');
+  },
+
+  /** Demandes qui attendent une réponse (pastille du menu). */
+  pendingCount: async (): Promise<{ pending_count: number }> => {
+    return apiFetch('/host/reservations/pending-count');
+  },
+
+  accept: async (id: number, message?: string): Promise<{ message: string; reservation: ReservationData }> => {
+    return apiFetch(`/host/reservations/${id}/accept`, {
+      method: 'POST',
+      body: JSON.stringify({ message }),
+    });
+  },
+
+  decline: async (
+    id: number,
+    data: { reason?: string; message?: string },
+  ): Promise<{ message: string; reservation: ReservationData }> => {
+    return apiFetch(`/host/reservations/${id}/decline`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  cancelPreview: async (id: number): Promise<CancellationCheck> => {
+    return apiFetch(`/host/reservations/${id}/cancel`);
+  },
+
+  /** L'hôte annule une réservation confirmée avant l'arrivée ; le voyageur est remboursé intégralement. */
+  cancel: async (
+    id: number,
+    data: { reason: string; message?: string },
+  ): Promise<{ message: string; reservation: ReservationData }> => {
+    return apiFetch(`/host/reservations/${id}/cancel`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+};
+
+// ─── Admin reservations ──────────────────────────────────────────────────────
+
+export interface AdminReservationPerson {
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string | null;
+  profile_photo_url: string | null;
+}
+
+/** Réservation vue par l'administration : coordonnées complètes du voyageur et de l'hôte. */
+export interface AdminReservation
+  extends Omit<ReservationData, 'listing' | 'host' | 'guest' | 'viewer_role'> {
+  listing: {
+    id: number;
+    title: string | null;
+    city: string | null;
+    province: string | null;
+    full_address: string | null;
+    cover_photo_url: string | null;
+  } | null;
+  host: AdminReservationPerson | null;
+  guest: AdminReservationPerson | null;
+  stripe_payment_intent_id: string | null;
+}
+
+export const adminReservationsApi = {
+  getAll: async (): Promise<{ reservations: AdminReservation[] }> => {
+    return apiFetch('/admin/reservations');
+  },
+
+  getOne: async (id: number): Promise<{ reservation: AdminReservation }> => {
+    return apiFetch(`/admin/reservations/${id}`);
+  },
+
+  cancelPreview: async (id: number): Promise<CancellationCheck> => {
+    return apiFetch(`/admin/reservations/${id}/cancel`);
+  },
+
+  /** Versement à l'hôte effectué (virement manuel), avec sa référence. */
+  markPayoutPaid: async (payoutId: number, reference?: string): Promise<{ message: string }> => {
+    return apiFetch(`/admin/payouts/${payoutId}/paid`, {
+      method: 'POST',
+      body: JSON.stringify({ reference }),
+    });
+  },
+
+  /** Annulation par l'équipe Séjoura : motif transmis aux deux parties, voyageur remboursé intégralement. */
+  cancel: async (id: number, reason: string): Promise<{ message: string; reservation: AdminReservation }> => {
+    return apiFetch(`/admin/reservations/${id}/cancel`, {
+      method: 'POST',
+      body: JSON.stringify({ reason }),
+    });
+  },
+};
+
+export interface HostCalendarData {
+  listings: { id: number; title: string | null; city: string | null; status: string; base_price: number; currency: string }[];
+  listing_id: number | null;
+  reservations: {
+    id: number;
+    guest_first_name: string | null;
+    check_in: string;
+    check_out: string;
+    status: ReservationStatus;
+    guests_count: number;
+  }[];
+  blocked_dates: string[];
+}
+
+export const hostCalendarApi = {
+  /** Réservations et nuits bloquées d'un logement sur [from, to) ; sans listingId, le premier logement. */
+  get: async (params: { listingId?: number | null; from: string; to: string }): Promise<HostCalendarData> => {
+    const query = new URLSearchParams({ from: params.from, to: params.to });
+    if (params.listingId) query.set('listing_id', String(params.listingId));
+    return apiFetch(`/host/calendar?${query.toString()}`);
+  },
+
+  setBlocked: async (listingId: number, dates: string[], blocked: boolean): Promise<{ message: string }> => {
+    return apiFetch('/host/calendar', {
+      method: 'POST',
+      body: JSON.stringify({ listing_id: listingId, dates, blocked }),
+    });
   },
 };
