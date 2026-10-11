@@ -1,18 +1,23 @@
 import { ymd } from '@/server/format';
 import { input, json, route } from '@/server/http';
 import { DAY_MS, parseCarbon, startOfDayUtc, type Row } from '@/server/listings';
+import { blockedNights, expireStaleRequests } from '@/server/reservations';
 import { db, fetchAll } from '@/server/supabase';
 import { validate } from '@/server/validation';
+import { BLOCKING_STATUSES } from '@/shared/booking';
 
 export const dynamic = 'force-dynamic';
 
-/** ReservationController::checkAvailability — dates déjà réservées dans l'intervalle demandé (public). */
+/** ReservationController::checkAvailability — nuits réservées, demandées ou bloquées par l'hôte dans l'intervalle (public). */
 export const POST = route(async (req) => {
   const validated = await validate(await input(req), {
     listing_id: 'required|exists:listings,id',
     check_in: 'required|date',
     check_out: 'required|date|after:check_in',
   });
+
+  // Une demande restée sans réponse au-delà de son échéance libère ses dates
+  await expireStaleRequests({ listingId: Number(validated.listing_id) });
 
   const checkIn = parseCarbon(validated.check_in);
   const checkOut = parseCarbon(validated.check_out);
@@ -29,7 +34,7 @@ export const POST = route(async (req) => {
       .from('reservations')
       .select('id, check_in, check_out')
       .eq('listing_id', validated.listing_id)
-      .in('status', ['pending', 'confirmed', 'active'])
+      .in('status', BLOCKING_STATUSES)
       .lt('check_in', ymd(checkInUpperBound))
       .gt('check_out', ymd(checkIn))
       .order('id'),
@@ -47,6 +52,11 @@ export const POST = route(async (req) => {
       cursor += DAY_MS;
     }
   }
+
+  // Nuits bloquées par l'hôte dans son calendrier
+  conflictingDates.push(
+    ...(await blockedNights(Number(validated.listing_id), ymd(checkIn) as string, ymd(checkInUpperBound) as string)),
+  );
 
   const dates = [...new Set(conflictingDates)].sort();
 

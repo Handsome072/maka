@@ -56,7 +56,7 @@ export async function setArchived(conversation: ConversationBase, userId: number
 
 /** Message::create([...]) ; le rôle de l'expéditeur sert à formatMessage (c'est l'utilisateur courant). */
 export async function createMessage(
-  attributes: { conversation_id: number; sender_id: number; text: string | null; image_path?: string },
+  attributes: { conversation_id: number; sender_id: number; text: string | null; image_path?: string; is_system?: boolean },
   senderRole: string,
 ): Promise<MessageRecord> {
   const now = freshTimestamp();

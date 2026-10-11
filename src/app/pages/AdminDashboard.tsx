@@ -1,14 +1,44 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Search, TrendingUp, Users, Home, DollarSign, Bell } from 'lucide-react';
 import { AdminSidebar } from '@/app/components/AdminSidebar';
+import { adminReservationsApi, type ReservationPhase } from '@/app/services/api';
+import { ReservationStatusBadge } from '@/app/components/booking/ReservationStatusBadge';
+import { formatMoney } from '@/app/components/booking/format';
+
+type RecentBooking = { key: number; id: string; client: string; logement: string; date: string; montant: string; phase: ReservationPhase };
 
 export function AdminDashboard() {
-  const recentBookings = [
-    { id: '#12345', client: 'Jean Dupont', logement: 'Villa Toscane', date: '15/03/2025', montant: '1 250 €', statut: 'CONFIRMÉE' },
-    { id: '#12344', client: 'Marie Martin', logement: 'Appartement Paris', date: '14/03/2025', montant: '690 €', statut: 'EN ATTENTE' },
-    { id: '#12343', client: 'Pierre Durand', logement: 'Chalet Alpes', date: '13/03/2025', montant: '2 300 €', statut: 'CONFIRMÉE' },
-  ];
+  const router = useRouter();
+  // Les 5 dernières réservations créées
+  const [recentBookings, setRecentBookings] = useState<RecentBooking[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    adminReservationsApi
+      .getAll()
+      .then((res) => {
+        if (cancelled) return;
+        setRecentBookings(
+          res.reservations.slice(0, 5).map((r) => ({
+            key: r.id,
+            id: r.confirmation_code,
+            client: r.guest ? `${r.guest.first_name} ${r.guest.last_name ?? ''}`.trim() : '—',
+            logement: r.listing?.title ?? '—',
+            date: new Date(r.created_at).toLocaleDateString('fr-FR'),
+            montant: formatMoney(r.total_price, r.currency),
+            phase: r.phase,
+          })),
+        );
+      })
+      .catch(() => !cancelled && setRecentBookings([]));
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -99,10 +129,14 @@ export function AdminDashboard() {
         <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg md:text-xl" style={{ fontWeight: 600 }}>Réservations récentes</h2>
-            <button className="text-sm text-[#111827] hover:underline" style={{ fontWeight: 500 }}>
+            <Link href="/admin/reservations" className="text-sm text-[#111827] hover:underline" style={{ fontWeight: 500 }}>
               Voir tout
-            </button>
+            </Link>
           </div>
+
+          {recentBookings !== null && recentBookings.length === 0 && (
+            <p className="text-sm text-gray-500 py-6 text-center">Aucune réservation pour le moment.</p>
+          )}
 
           {/* Desktop Table View */}
           <div className="hidden lg:block overflow-x-auto">
@@ -118,21 +152,19 @@ export function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {recentBookings.map((booking) => (
-                  <tr key={booking.id} className="border-b border-gray-100 hover:bg-gray-50">
+                {(recentBookings ?? []).map((booking) => (
+                  <tr
+                    key={booking.key}
+                    onClick={() => router.push(`/admin/reservations?id=${booking.key}`)}
+                    className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
+                  >
                     <td className="py-4 px-4 text-sm">{booking.id}</td>
                     <td className="py-4 px-4 text-sm">{booking.client}</td>
                     <td className="py-4 px-4 text-sm">{booking.logement}</td>
                     <td className="py-4 px-4 text-sm">{booking.date}</td>
                     <td className="py-4 px-4 text-sm" style={{ fontWeight: 600 }}>{booking.montant}</td>
                     <td className="py-4 px-4">
-                      <span className={`inline-block px-3 py-1 rounded-full text-xs ${
-                        booking.statut === 'CONFIRMÉE' 
-                          ? 'bg-green-100 text-green-700' 
-                          : 'bg-yellow-100 text-yellow-700'
-                      }`} style={{ fontWeight: 600 }}>
-                        {booking.statut}
-                      </span>
+                      <ReservationStatusBadge phase={booking.phase} />
                     </td>
                   </tr>
                 ))}
@@ -142,17 +174,15 @@ export function AdminDashboard() {
 
           {/* Mobile Card View */}
           <div className="lg:hidden space-y-3">
-            {recentBookings.map((booking) => (
-              <div key={booking.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+            {(recentBookings ?? []).map((booking) => (
+              <Link
+                key={booking.key}
+                href={`/admin/reservations?id=${booking.key}`}
+                className="block border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
+              >
                 <div className="flex items-start justify-between mb-3">
-                  <span className="text-sm" style={{ fontWeight: 600, color: '#111827' }}>{booking.id}</span>
-                  <span className={`inline-block px-2.5 py-1 rounded-full text-xs ${
-                    booking.statut === 'CONFIRMÉE' 
-                      ? 'bg-green-100 text-green-700' 
-                      : 'bg-yellow-100 text-yellow-700'
-                  }`} style={{ fontWeight: 600 }}>
-                    {booking.statut}
-                  </span>
+                  <span className="text-sm font-mono" style={{ fontWeight: 600, color: '#111827' }}>{booking.id}</span>
+                  <ReservationStatusBadge phase={booking.phase} />
                 </div>
                 
                 <div className="space-y-2">
@@ -173,7 +203,7 @@ export function AdminDashboard() {
                     <span className="text-base" style={{ fontWeight: 600, color: '#111827' }}>{booking.montant}</span>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

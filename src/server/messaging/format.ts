@@ -17,11 +17,13 @@ export type MessageRecord = {
   image_path: string | null;
   read_at: string | null;
   created_at: string;
+  /** Événement de la réservation (demande envoyée, acceptée…), pas un message écrit. */
+  is_system?: boolean;
   /** sender:id,first_name,last_name,role */
   sender?: { role: string | null } | null;
 };
 
-export const MESSAGE_COLUMNS = 'id, conversation_id, sender_id, text, image_path, read_at, created_at';
+export const MESSAGE_COLUMNS = 'id, conversation_id, sender_id, text, image_path, read_at, created_at, is_system';
 
 /** Colonnes d'un message avec le rôle de l'expéditeur (loadMissing('sender')). */
 export const MESSAGE_SELECT = `${MESSAGE_COLUMNS}, sender:users!messages_sender_id_fkey(role)`;
@@ -42,6 +44,7 @@ export function formatMessage(msg: MessageRecord) {
     image_url: messageImageUrl(msg.image_path),
     read_at: iso8601(msg.read_at),
     created_at: iso8601(msg.created_at),
+    is_system: Boolean(msg.is_system),
   };
 }
 

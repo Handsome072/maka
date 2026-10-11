@@ -194,17 +194,20 @@ export function listingAttributeEquivalent(key: string, next: unknown, original:
 
 // ─── Reservation ───────────────────────────────────────────────────────────────
 
-/** Colonnes de la table reservations dans l'ordre de MySQL (SELECT *). */
+/** Colonnes de la table reservations dans l'ordre de MySQL (SELECT *), puis celles du parcours de réservation. */
 export const RESERVATION_COLUMNS = [
   'id', 'guest_id', 'listing_id', 'check_in', 'check_out', 'guests_count', 'adults', 'children', 'infants', 'pets',
   'status', 'total_price', 'service_fee', 'cleaning_fee', 'nights_count', 'price_per_night', 'currency',
   'guest_message', 'cancellation_reason', 'created_at', 'updated_at',
+  'confirmation_code', 'reservation_mode', 'cancellation_policy', 'extra_guest_fee', 'pet_fee',
+  'expires_at', 'confirmed_at', 'declined_at', 'cancelled_at', 'cancelled_by', 'refund_amount',
+  'payment_status', 'amount_paid', 'amount_refunded', 'paid_at',
 ] as const;
 
 const RESERVATION_DATE = new Set(['check_in', 'check_out']);
 const RESERVATION_INTEGER = new Set(['adults', 'children', 'infants', 'pets', 'nights_count']);
-const RESERVATION_DECIMAL = new Set(['price_per_night', 'cleaning_fee', 'service_fee', 'total_price']);
-const RESERVATION_DATETIME = new Set(['created_at', 'updated_at']);
+const RESERVATION_DECIMAL = new Set(['price_per_night', 'cleaning_fee', 'service_fee', 'total_price', 'extra_guest_fee', 'pet_fee', 'refund_amount', 'amount_paid', 'amount_refunded']);
+const RESERVATION_DATETIME = new Set(['created_at', 'updated_at', 'expires_at', 'confirmed_at', 'declined_at', 'cancelled_at', 'paid_at']);
 
 export function castReservationAttribute(key: string, value: unknown): unknown {
   if (value === null || value === undefined) {

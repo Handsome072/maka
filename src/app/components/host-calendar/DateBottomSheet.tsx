@@ -7,40 +7,15 @@ import {
   DrawerTitle,
   DrawerDescription,
 } from '@/app/components/ui/drawer';
-import { PanelContent } from './DateSidePanel';
-import type { CalendarDate, CalendarReservation } from './types';
+import { PanelContent, type PanelContentProps } from './DateSidePanel';
 
-interface DateBottomSheetProps {
+interface DateBottomSheetProps extends PanelContentProps {
   isOpen: boolean;
   onClose: () => void;
-  selectedDates: Set<string>;
-  calendarDates: CalendarDate[];
-  reservations: CalendarReservation[];
-  basePrice: number;
-  currency: string;
-  panelPrice: string;
-  onPanelPriceChange: (value: string) => void;
-  onApplyPrice: () => void;
-  onResetPrice: () => void;
-  onBlock: () => void;
-  onUnblock: () => void;
 }
 
-export function DateBottomSheet({
-  isOpen,
-  onClose,
-  selectedDates,
-  calendarDates,
-  reservations,
-  basePrice,
-  currency,
-  panelPrice,
-  onPanelPriceChange,
-  onApplyPrice,
-  onResetPrice,
-  onBlock,
-  onUnblock,
-}: DateBottomSheetProps) {
+export function DateBottomSheet({ isOpen, onClose, ...contentProps }: DateBottomSheetProps) {
+  const { selectedDates } = contentProps;
   return (
     <div className="lg:hidden">
       <Drawer open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -54,19 +29,7 @@ export function DateBottomSheet({
             </DrawerDescription>
           </DrawerHeader>
           <div className="px-4 pb-6 overflow-y-auto max-h-[60vh]">
-            <PanelContent
-              selectedDates={selectedDates}
-              calendarDates={calendarDates}
-              reservations={reservations}
-              basePrice={basePrice}
-              currency={currency}
-              panelPrice={panelPrice}
-              onPanelPriceChange={onPanelPriceChange}
-              onApplyPrice={onApplyPrice}
-              onResetPrice={onResetPrice}
-              onBlock={onBlock}
-              onUnblock={onUnblock}
-            />
+            <PanelContent {...contentProps} />
           </div>
         </DrawerContent>
       </Drawer>

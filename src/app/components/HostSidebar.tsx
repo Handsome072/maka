@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { ROUTES } from '../config/routes';
 import { useAuth } from '../context/AuthContext';
-import { messagesApi } from '../services/api';
+import { hostReservationsApi, messagesApi } from '../services/api';
 
 type HostPage = 'host-dashboard' | 'host-reservations' | 'host-calendar' | 'annonces' | 'messages' | 'host-revenues';
 
@@ -18,6 +18,7 @@ export function HostSidebar({ activePage }: HostSidebarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [pendingRequests, setPendingRequests] = useState(0);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
@@ -46,6 +47,23 @@ export function HostSidebar({ activePage }: HostSidebarProps) {
     return () => {
       clearInterval(interval);
       window.removeEventListener('unread-count-changed', fetchUnread);
+    };
+  }, [user]);
+
+  // Demandes de réservation qui attendent une réponse (24 h pour répondre)
+  useEffect(() => {
+    if (!user) return;
+    const fetchPending = () => {
+      hostReservationsApi.pendingCount()
+        .then(res => setPendingRequests(res.pending_count))
+        .catch(() => {});
+    };
+    fetchPending();
+    const interval = setInterval(fetchPending, 60000);
+    window.addEventListener('host-reservations-changed', fetchPending);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('host-reservations-changed', fetchPending);
     };
   }, [user]);
 
@@ -141,6 +159,15 @@ export function HostSidebar({ activePage }: HostSidebarProps) {
                       {item.id === 'messages' && unreadCount > 0 && (
                         <span className="bg-red-500 text-white text-xs rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5" style={{ fontWeight: 600 }}>
                           {unreadCount > 99 ? '99+' : unreadCount}
+                        </span>
+                      )}
+                      {item.id === 'host-reservations' && pendingRequests > 0 && (
+                        <span
+                          className="bg-amber-500 text-white text-xs rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5"
+                          style={{ fontWeight: 600 }}
+                          title="Demandes à traiter"
+                        >
+                          {pendingRequests > 99 ? '99+' : pendingRequests}
                         </span>
                       )}
                     </Link>

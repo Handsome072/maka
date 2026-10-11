@@ -1,13 +1,17 @@
+import Link from 'next/link';
 import { CalendarDays, Users, MessageSquare } from 'lucide-react';
 import type { ConversationReservation } from '@/app/services/api';
 
 interface ReservationInfoProps {
   reservation: ConversationReservation | null;
   listing?: { id: number; title: string; photo_url: string | null } | null;
+  /** Côté de la conversation : le lien mène à la page de réservation de l'hôte ou du voyageur. */
+  viewerRole?: 'host' | 'guest';
 }
 
 function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString('fr-FR', {
+  // Date de séjour « AAAA-MM-JJ » : lue en heure locale pour ne pas reculer d'un jour à l'ouest de l'UTC
+  return new Date(`${dateString.slice(0, 10)}T00:00:00`).toLocaleDateString('fr-FR', {
     weekday: 'short',
     day: 'numeric',
     month: 'short',
@@ -21,9 +25,11 @@ const STATUS_LABELS: Record<string, { label: string; color: string; bg: string }
   active: { label: 'En cours', color: '#1E40AF', bg: '#DBEAFE' },
   completed: { label: 'Terminée', color: '#374151', bg: '#F3F4F6' },
   cancelled: { label: 'Annulée', color: '#991B1B', bg: '#FEE2E2' },
+  declined: { label: 'Refusée', color: '#991B1B', bg: '#FEE2E2' },
+  expired: { label: 'Expirée', color: '#4B5563', bg: '#F3F4F6' },
 };
 
-export function ReservationInfo({ reservation, listing }: ReservationInfoProps) {
+export function ReservationInfo({ reservation, listing, viewerRole = 'guest' }: ReservationInfoProps) {
   // Direct message (no reservation)
   if (!reservation) {
     const directListing = listing;
@@ -133,6 +139,18 @@ export function ReservationInfo({ reservation, listing }: ReservationInfoProps) 
             </div>
           </div>
         </div>
+
+        <Link
+          href={
+            viewerRole === 'host'
+              ? `/annonces/reservations/${reservation.id}`
+              : `/client-space/reservations/${reservation.id}`
+          }
+          className="block w-full text-center py-2.5 rounded-lg border border-gray-300 text-sm hover:bg-gray-50 transition-colors"
+          style={{ fontWeight: 600, color: '#222222' }}
+        >
+          {viewerRole === 'host' && reservation.status === 'pending' ? 'Répondre à la demande' : 'Voir la réservation'}
+        </Link>
       </div>
     </div>
   );
