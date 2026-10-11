@@ -1,395 +1,557 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import {
-  Search, Eye, Edit, Filter, Download, X, ChevronLeft, ChevronRight,
-  CheckCircle, Clock, XCircle, CalendarDays, Home, DollarSign, TrendingUp,
-  AlertTriangle, Ban, RefreshCw, Shield, UserX, ArrowLeft, CreditCard,
-  Calendar, User, MapPin, Phone, Mail, MessageSquare, MoreHorizontal
+  Search, Eye, Filter, Download, X, ChevronLeft, ChevronRight, CheckCircle, Clock, XCircle,
+  CalendarDays, Home, DollarSign, TrendingUp, Ban, ArrowLeft, Mail, Phone, MessageSquare, Users,
 } from 'lucide-react';
 import { AdminSidebar } from '@/app/components/AdminSidebar';
+import { adminReservationsApi, type AdminReservation, type CancellationCheck, type ReservationPhase } from '@/app/services/api';
+import { ReservationStatusBadge } from '@/app/components/booking/ReservationStatusBadge';
+import { formatDateTime, formatGuestsDetail, formatMoney, hostAmount } from '@/app/components/booking/format';
+import { CANCELLATION_POLICY_LABELS, normalizeCancellationPolicy, TRIP_PHASE_LABELS } from '@/shared/booking';
 
-// ── Types ────────────────────────────────────────────────────────────────────
+const ITEMS_PER_PAGE = 10;
 
-type ReservationStatus = 'Confirmee' | 'En attente' | 'En cours' | 'Terminee' | 'Annulee' | 'Litige';
-type PaymentStatus = 'Paye' | 'En attente' | 'Rembourse' | 'Echoue' | 'Partiel';
+const PAYMENT_LABELS: Record<string, string> = {
+  awaiting: 'Paiement en cours',
+  authorized: 'Carte autorisée',
+  paid: 'Payé',
+  released: 'Autorisation annulée',
+  partially_refunded: 'Remboursé en partie',
+  refunded: 'Remboursé',
+};
 
-interface Reservation {
-  id: string;
-  propertyPhoto: string;
-  propertyName: string;
-  propertyId: number;
-  host: { name: string; avatar: string; id: number; email: string; phone: string };
-  guest: { name: string; avatar: string; id: number; email: string; phone: string };
-  checkIn: string;
-  checkOut: string;
-  nights: number;
-  totalAmount: number;
-  commission: number;
-  status: ReservationStatus;
-  paymentStatus: PaymentStatus;
-  createdAt: string;
-}
-
-// ── Mock Data ────────────────────────────────────────────────────────────────
-
-const reservations: Reservation[] = [
-  {
-    id: 'RES-2401', propertyPhoto: '/images/properties/villa-toscane.jpg', propertyName: 'Villa Toscane', propertyId: 1,
-    host: { name: 'Jean Dupont', avatar: 'JD', id: 1, email: 'jean.dupont@email.com', phone: '+33 6 12 34 56 78' },
-    guest: { name: 'Alexandre Leroy', avatar: 'AL', id: 10, email: 'alex.leroy@email.com', phone: '+33 6 98 76 54 32' },
-    checkIn: '2025-03-15', checkOut: '2025-03-22', nights: 7, totalAmount: 1750, commission: 262.50,
-    status: 'Confirmee', paymentStatus: 'Paye', createdAt: '2025-02-28'
-  },
-  {
-    id: 'RES-2402', propertyPhoto: '/images/properties/apt-paris.jpg', propertyName: 'Appartement Paris 8e', propertyId: 2,
-    host: { name: 'Marie Simon', avatar: 'MS', id: 2, email: 'marie.simon@email.com', phone: '+33 6 11 22 33 44' },
-    guest: { name: 'Camille Bernard', avatar: 'CB', id: 11, email: 'camille.bernard@email.com', phone: '+33 6 55 66 77 88' },
-    checkIn: '2025-03-20', checkOut: '2025-03-27', nights: 7, totalAmount: 840, commission: 126,
-    status: 'En attente', paymentStatus: 'En attente', createdAt: '2025-03-01'
-  },
-  {
-    id: 'RES-2403', propertyPhoto: '/images/properties/chalet-alpes.jpg', propertyName: 'Chalet des Alpes', propertyId: 3,
-    host: { name: 'Pierre Laurent', avatar: 'PL', id: 3, email: 'pierre.laurent@email.com', phone: '+33 6 22 33 44 55' },
-    guest: { name: 'Lucas Bouchard', avatar: 'LB', id: 12, email: 'lucas.bouchard@email.com', phone: '+33 6 44 55 66 77' },
-    checkIn: '2025-03-10', checkOut: '2025-03-17', nights: 7, totalAmount: 1260, commission: 189,
-    status: 'En cours', paymentStatus: 'Paye', createdAt: '2025-02-20'
-  },
-  {
-    id: 'RES-2404', propertyPhoto: '/images/properties/studio-moderne.jpg', propertyName: 'Studio Moderne Centre', propertyId: 4,
-    host: { name: 'Sophie Martin', avatar: 'SM', id: 4, email: 'sophie.martin@email.com', phone: '+33 6 33 44 55 66' },
-    guest: { name: 'Sophie Moreau', avatar: 'SO', id: 13, email: 'sophie.moreau@email.com', phone: '+33 6 77 88 99 00' },
-    checkIn: '2025-02-05', checkOut: '2025-02-12', nights: 7, totalAmount: 595, commission: 89.25,
-    status: 'Terminee', paymentStatus: 'Paye', createdAt: '2025-01-20'
-  },
-  {
-    id: 'RES-2405', propertyPhoto: '/images/properties/maison-mer.jpg', propertyName: 'Maison Bord de Mer', propertyId: 5,
-    host: { name: 'Thomas Dubois', avatar: 'TD', id: 5, email: 'thomas.dubois@email.com', phone: '+33 6 44 55 66 77' },
-    guest: { name: 'Thomas Petit', avatar: 'TP', id: 14, email: 'thomas.petit@email.com', phone: '+33 6 88 99 00 11' },
-    checkIn: '2025-02-25', checkOut: '2025-03-04', nights: 7, totalAmount: 2240, commission: 336,
-    status: 'Annulee', paymentStatus: 'Rembourse', createdAt: '2025-02-10'
-  },
-  {
-    id: 'RES-2406', propertyPhoto: '/images/properties/apt-centre.jpg', propertyName: 'Appartement Centre Historique', propertyId: 6,
-    host: { name: 'Lucie Bernard', avatar: 'LB', id: 6, email: 'lucie.bernard@email.com', phone: '+33 6 55 66 77 88' },
-    guest: { name: 'Julie Martin', avatar: 'JM', id: 15, email: 'julie.martin@email.com', phone: '+33 6 99 00 11 22' },
-    checkIn: '2025-03-28', checkOut: '2025-04-04', nights: 7, totalAmount: 665, commission: 99.75,
-    status: 'Confirmee', paymentStatus: 'Paye', createdAt: '2025-03-02'
-  },
-  {
-    id: 'RES-2407', propertyPhoto: '/images/properties/villa-luxe.jpg', propertyName: 'Villa Luxe Croisette', propertyId: 7,
-    host: { name: 'Antoine Moreau', avatar: 'AM', id: 7, email: 'antoine.moreau@email.com', phone: '+33 6 66 77 88 99' },
-    guest: { name: 'Marc Rousseau', avatar: 'MR', id: 16, email: 'marc.rousseau@email.com', phone: '+33 6 00 11 22 33' },
-    checkIn: '2025-04-12', checkOut: '2025-04-19', nights: 7, totalAmount: 3150, commission: 472.50,
-    status: 'En attente', paymentStatus: 'En attente', createdAt: '2025-03-05'
-  },
-  {
-    id: 'RES-2408', propertyPhoto: '/images/properties/studio-cosy.jpg', propertyName: 'Studio Cosy Capitole', propertyId: 8,
-    host: { name: 'Camille Leroy', avatar: 'CL', id: 8, email: 'camille.leroy@email.com', phone: '+33 6 77 88 99 00' },
-    guest: { name: 'Claire Lefebvre', avatar: 'CL', id: 17, email: 'claire.lefebvre@email.com', phone: '+33 6 11 22 33 44' },
-    checkIn: '2025-02-18', checkOut: '2025-02-25', nights: 7, totalAmount: 455, commission: 68.25,
-    status: 'Litige', paymentStatus: 'Partiel', createdAt: '2025-02-01'
-  },
-  {
-    id: 'RES-2409', propertyPhoto: '/images/properties/loft-industrial.jpg', propertyName: 'Loft Industriel', propertyId: 9,
-    host: { name: 'Jean Dupont', avatar: 'JD', id: 1, email: 'jean.dupont@email.com', phone: '+33 6 12 34 56 78' },
-    guest: { name: 'Emma Girard', avatar: 'EG', id: 18, email: 'emma.girard@email.com', phone: '+33 6 22 33 44 55' },
-    checkIn: '2025-03-01', checkOut: '2025-03-05', nights: 4, totalAmount: 560, commission: 84,
-    status: 'Terminee', paymentStatus: 'Paye', createdAt: '2025-02-15'
-  },
-  {
-    id: 'RES-2410', propertyPhoto: '/images/properties/maison-campagne.jpg', propertyName: 'Maison de Campagne', propertyId: 10,
-    host: { name: 'Marie Simon', avatar: 'MS', id: 2, email: 'marie.simon@email.com', phone: '+33 6 11 22 33 44' },
-    guest: { name: 'Paul Renaud', avatar: 'PR', id: 19, email: 'paul.renaud@email.com', phone: '+33 6 33 44 55 66' },
-    checkIn: '2025-04-01', checkOut: '2025-04-08', nights: 7, totalAmount: 1225, commission: 183.75,
-    status: 'Confirmee', paymentStatus: 'Paye', createdAt: '2025-03-04'
-  },
-  {
-    id: 'RES-2411', propertyPhoto: '/images/properties/chalet-savoie.jpg', propertyName: 'Chalet Savoyard', propertyId: 11,
-    host: { name: 'Pierre Laurent', avatar: 'PL', id: 3, email: 'pierre.laurent@email.com', phone: '+33 6 22 33 44 55' },
-    guest: { name: 'Nathalie Duval', avatar: 'ND', id: 20, email: 'nathalie.duval@email.com', phone: '+33 6 44 55 66 77' },
-    checkIn: '2025-03-08', checkOut: '2025-03-15', nights: 7, totalAmount: 1540, commission: 231,
-    status: 'En cours', paymentStatus: 'Paye', createdAt: '2025-02-22'
-  },
-  {
-    id: 'RES-2412', propertyPhoto: '/images/properties/apt-riviera.jpg', propertyName: 'Appartement Riviera', propertyId: 12,
-    host: { name: 'Sophie Martin', avatar: 'SM', id: 4, email: 'sophie.martin@email.com', phone: '+33 6 33 44 55 66' },
-    guest: { name: 'Hugo Lambert', avatar: 'HL', id: 21, email: 'hugo.lambert@email.com', phone: '+33 6 55 66 77 88' },
-    checkIn: '2025-02-14', checkOut: '2025-02-17', nights: 3, totalAmount: 1140, commission: 171,
-    status: 'Annulee', paymentStatus: 'Echoue', createdAt: '2025-01-30'
-  },
+const STATUS_PILLS: { key: 'all' | ReservationPhase; label: string }[] = [
+  { key: 'all', label: 'Toutes' },
+  { key: 'pending', label: 'En attente' },
+  { key: 'upcoming', label: 'À venir' },
+  { key: 'ongoing', label: 'En cours' },
+  { key: 'past', label: 'Terminées' },
+  { key: 'cancelled', label: 'Annulées' },
+  { key: 'declined', label: 'Refusées' },
+  { key: 'expired', label: 'Expirées' },
 ];
 
-// ── Component ────────────────────────────────────────────────────────────────
+/** Séjours confirmés (à venir, en cours ou passés) : ceux qui comptent dans les montants. */
+const CONFIRMED_PHASES: ReservationPhase[] = ['upcoming', 'ongoing', 'past'];
+
+function amount(value: string | null | undefined): number {
+  const parsed = parseFloat(value ?? '');
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function fullName(person: AdminReservation['guest']): string {
+  return person ? `${person.first_name} ${person.last_name ?? ''}`.trim() : '—';
+}
+
+function initials(person: AdminReservation['guest']): string {
+  return person ? `${person.first_name.charAt(0)}${(person.last_name ?? '').charAt(0)}`.toUpperCase() : '?';
+}
+
+function formatDay(date: string): string {
+  return new Date(`${date.slice(0, 10)}T00:00:00Z`).toLocaleDateString('fr-FR', {
+    timeZone: 'UTC',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+
+function Avatar({ person, size = 'w-8 h-8' }: { person: AdminReservation['guest']; size?: string }) {
+  if (person?.profile_photo_url) {
+    return <img src={person.profile_photo_url} alt={person.first_name} className={`${size} rounded-full object-cover flex-shrink-0`} />;
+  }
+  return (
+    <div className={`${size} bg-[#111827] rounded-full flex items-center justify-center text-white text-xs flex-shrink-0`} style={{ fontWeight: 600 }}>
+      {initials(person)}
+    </div>
+  );
+}
+
+/** Export CSV (séparateur « ; » et BOM pour Excel en français). */
+function exportCsv(rows: AdminReservation[]) {
+  const header = [
+    'N°', 'Statut', 'Logement', 'Voyageur', 'E-mail voyageur', 'Hôte', 'E-mail hôte', 'Arrivée', 'Départ',
+    'Nuits', 'Voyageurs', 'Total', 'Frais de service', 'Montant hôte', 'Remboursable', 'Créée le',
+  ];
+  const lines = rows.map((r) => [
+    r.confirmation_code,
+    TRIP_PHASE_LABELS[r.phase],
+    r.listing?.title ?? '',
+    fullName(r.guest),
+    r.guest?.email ?? '',
+    fullName(r.host),
+    r.host?.email ?? '',
+    r.check_in.slice(0, 10),
+    r.check_out.slice(0, 10),
+    String(r.nights_count),
+    String(r.guests_count),
+    r.total_price,
+    r.service_fee ?? '',
+    hostAmount(r).toFixed(2),
+    r.refund_amount ?? '',
+    r.created_at.slice(0, 10),
+  ]);
+  const csv = [header, ...lines]
+    .map((line) => line.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(';'))
+    .join('\r\n');
+  const blob = new Blob([`﻿${csv}`], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `reservations-${new Date().toISOString().slice(0, 10)}.csv`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
 
 export function AdminReservations() {
-  // List state
+  const [reservations, setReservations] = useState<AdminReservation[] | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  // Liste
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [paymentFilter, setPaymentFilter] = useState<string>('all');
-  const [hostFilter, setHostFilter] = useState<string>('all');
-  const [guestFilter, setGuestFilter] = useState<string>('all');
-  const [dateFilter, setDateFilter] = useState<string>('all');
-  const [amountFilter, setAmountFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | ReservationPhase>('all');
+  const [hostFilter, setHostFilter] = useState('all');
+  const [guestFilter, setGuestFilter] = useState('all');
+  const [dateFilter, setDateFilter] = useState('all');
+  const [amountFilter, setAmountFilter] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
 
-  // Detail / modals state
-  const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
-  const [showCancelModal, setShowCancelModal] = useState<string | null>(null);
-  const [showRefundModal, setShowRefundModal] = useState<string | null>(null);
-  const [showFraudModal, setShowFraudModal] = useState<string | null>(null);
+  // Détail et annulation
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [cancelOpen, setCancelOpen] = useState(false);
+  const [cancelPreview, setCancelPreview] = useState<CancellationCheck | null>(null);
   const [cancelReason, setCancelReason] = useState('');
-  const [refundAmount, setRefundAmount] = useState('');
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState<string | null>(null);
+  const [payoutFilter, setPayoutFilter] = useState('all');
+  const [payoutReference, setPayoutReference] = useState('');
+  const [markingPaid, setMarkingPaid] = useState(false);
+  const [payoutError, setPayoutError] = useState<string | null>(null);
 
-  // ── Derived data ───────────────────────────────────────────────────────────
+  useEffect(() => {
+    let cancelled = false;
+    adminReservationsApi
+      .getAll()
+      .then((res) => {
+        if (cancelled) return;
+        setReservations(res.reservations);
+        // Lien direct : /admin/reservations?id=12
+        const id = Number(new URLSearchParams(window.location.search).get('id'));
+        if (Number.isInteger(id) && res.reservations.some((r) => r.id === id)) setSelectedId(id);
+      })
+      .catch(() => !cancelled && setLoadError('Impossible de charger les réservations.'));
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const all = useMemo(() => reservations ?? [], [reservations]);
+  const selected = all.find((r) => r.id === selectedId) ?? null;
 
   const hosts = useMemo(() => {
     const unique = new Map<number, string>();
-    reservations.forEach(r => unique.set(r.host.id, r.host.name));
-    return Array.from(unique.entries()).sort((a, b) => a[1].localeCompare(b[1]));
-  }, []);
+    all.forEach((r) => r.host && unique.set(r.host.id, fullName(r.host)));
+    return [...unique.entries()].sort((a, b) => a[1].localeCompare(b[1]));
+  }, [all]);
 
   const guests = useMemo(() => {
     const unique = new Map<number, string>();
-    reservations.forEach(r => unique.set(r.guest.id, r.guest.name));
-    return Array.from(unique.entries()).sort((a, b) => a[1].localeCompare(b[1]));
-  }, []);
+    all.forEach((r) => r.guest && unique.set(r.guest.id, fullName(r.guest)));
+    return [...unique.entries()].sort((a, b) => a[1].localeCompare(b[1]));
+  }, [all]);
 
   const filtered = useMemo(() => {
-    return reservations.filter(r => {
-      if (searchQuery) {
-        const q = searchQuery.toLowerCase();
-        if (
-          !r.id.toLowerCase().includes(q) &&
-          !r.propertyName.toLowerCase().includes(q) &&
-          !r.guest.name.toLowerCase().includes(q) &&
-          !r.host.name.toLowerCase().includes(q)
-        ) return false;
+    const q = searchQuery.trim().toLowerCase();
+    const now = new Date();
+    const thisMonth = now.toISOString().slice(0, 7);
+    const nextMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1)).toISOString().slice(0, 7);
+    const today = now.toISOString().slice(0, 10);
+    return all.filter((r) => {
+      if (q) {
+        const haystack = [
+          r.confirmation_code, r.listing?.title, fullName(r.guest), r.guest?.email, fullName(r.host), r.host?.email,
+        ].join(' ').toLowerCase();
+        if (!haystack.includes(q)) return false;
       }
-      if (statusFilter !== 'all' && r.status !== statusFilter) return false;
-      if (paymentFilter !== 'all' && r.paymentStatus !== paymentFilter) return false;
-      if (hostFilter !== 'all' && r.host.id !== Number(hostFilter)) return false;
-      if (guestFilter !== 'all' && r.guest.id !== Number(guestFilter)) return false;
-      if (amountFilter !== 'all') {
-        if (amountFilter === '0-500' && r.totalAmount > 500) return false;
-        if (amountFilter === '500-1000' && (r.totalAmount < 500 || r.totalAmount > 1000)) return false;
-        if (amountFilter === '1000-2000' && (r.totalAmount < 1000 || r.totalAmount > 2000)) return false;
-        if (amountFilter === '2000+' && r.totalAmount < 2000) return false;
-      }
-      if (dateFilter !== 'all') {
-        const now = new Date();
-        const checkIn = new Date(r.checkIn);
-        if (dateFilter === 'this-month' && (checkIn.getMonth() !== now.getMonth() || checkIn.getFullYear() !== now.getFullYear())) return false;
-        if (dateFilter === 'next-month') {
-          const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-          if (checkIn.getMonth() !== nextMonth.getMonth() || checkIn.getFullYear() !== nextMonth.getFullYear()) return false;
-        }
-        if (dateFilter === 'past' && checkIn >= now) return false;
-        if (dateFilter === 'upcoming' && checkIn < now) return false;
-      }
+      if (statusFilter !== 'all' && r.phase !== statusFilter) return false;
+      if (hostFilter !== 'all' && r.host?.id !== Number(hostFilter)) return false;
+      if (guestFilter !== 'all' && r.guest?.id !== Number(guestFilter)) return false;
+      if (payoutFilter === 'to-pay' && !(r.payout && r.payout.status !== 'paid')) return false;
+      if (payoutFilter === 'paid' && r.payout?.status !== 'paid') return false;
+      const total = amount(r.total_price);
+      if (amountFilter === '0-500' && total > 500) return false;
+      if (amountFilter === '500-1000' && (total < 500 || total > 1000)) return false;
+      if (amountFilter === '1000-2000' && (total < 1000 || total > 2000)) return false;
+      if (amountFilter === '2000+' && total < 2000) return false;
+      const checkIn = r.check_in.slice(0, 10);
+      if (dateFilter === 'this-month' && checkIn.slice(0, 7) !== thisMonth) return false;
+      if (dateFilter === 'next-month' && checkIn.slice(0, 7) !== nextMonth) return false;
+      if (dateFilter === 'past' && checkIn >= today) return false;
+      if (dateFilter === 'upcoming' && checkIn < today) return false;
       return true;
     });
-  }, [searchQuery, statusFilter, paymentFilter, hostFilter, guestFilter, dateFilter, amountFilter]);
+  }, [all, searchQuery, statusFilter, hostFilter, guestFilter, dateFilter, amountFilter, payoutFilter]);
 
-  const totalPages = Math.ceil(filtered.length / itemsPerPage);
-  const paginated = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+  const paginated = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
-  const stats = useMemo(() => ({
-    total: reservations.length,
-    confirmee: reservations.filter(r => r.status === 'Confirmee').length,
-    enAttente: reservations.filter(r => r.status === 'En attente').length,
-    enCours: reservations.filter(r => r.status === 'En cours').length,
-    terminee: reservations.filter(r => r.status === 'Terminee').length,
-    annulee: reservations.filter(r => r.status === 'Annulee').length,
-    litige: reservations.filter(r => r.status === 'Litige').length,
-    totalRevenue: reservations.reduce((sum, r) => sum + r.totalAmount, 0),
-    totalCommission: reservations.reduce((sum, r) => sum + r.commission, 0),
-  }), []);
+  const stats = useMemo(() => {
+    const confirmed = all.filter((r) => CONFIRMED_PHASES.includes(r.phase));
+    const counts: Record<string, number> = { all: all.length };
+    all.forEach((r) => (counts[r.phase] = (counts[r.phase] ?? 0) + 1));
+    const toPay = all.filter((r) => r.payout && r.payout.status !== 'paid');
+    return {
+      counts,
+      confirmedTotal: confirmed.reduce((sum, r) => sum + amount(r.total_price), 0),
+      serviceFees: confirmed.reduce((sum, r) => sum + amount(r.service_fee), 0),
+      payoutsToPay: toPay.length,
+      payoutsToPayTotal: toPay.reduce((sum, r) => sum + amount(r.payout?.net_amount), 0),
+    };
+  }, [all]);
 
-  const activeFiltersCount = [statusFilter, paymentFilter, hostFilter, guestFilter, dateFilter, amountFilter]
-    .filter(f => f !== 'all').length;
+  const activeFiltersCount = [hostFilter, guestFilter, dateFilter, amountFilter, payoutFilter].filter((f) => f !== 'all').length;
 
   const clearFilters = () => {
     setStatusFilter('all');
-    setPaymentFilter('all');
     setHostFilter('all');
     setGuestFilter('all');
     setDateFilter('all');
     setAmountFilter('all');
+    setPayoutFilter('all');
     setSearchQuery('');
     setCurrentPage(1);
   };
 
-  // ── Helpers ────────────────────────────────────────────────────────────────
-
-  const getStatusConfig = (status: ReservationStatus) => {
-    switch (status) {
-      case 'Confirmee': return { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200', icon: CheckCircle, dot: 'bg-emerald-500' };
-      case 'En attente': return { bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200', icon: Clock, dot: 'bg-amber-500' };
-      case 'En cours': return { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200', icon: CalendarDays, dot: 'bg-blue-500' };
-      case 'Terminee': return { bg: 'bg-gray-100', text: 'text-gray-700', border: 'border-gray-200', icon: CheckCircle, dot: 'bg-gray-500' };
-      case 'Annulee': return { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200', icon: XCircle, dot: 'bg-red-500' };
-      case 'Litige': return { bg: 'bg-purple-50', text: 'text-purple-700', border: 'border-purple-200', icon: AlertTriangle, dot: 'bg-purple-500' };
+  const openCancel = async (id: number) => {
+    setCancelOpen(true);
+    setCancelPreview(null);
+    setCancelReason('');
+    setCancelError(null);
+    try {
+      setCancelPreview(await adminReservationsApi.cancelPreview(id));
+    } catch (err) {
+      setCancelError(err instanceof Error ? err.message : "Impossible de vérifier l'annulation.");
     }
   };
 
-  const getPaymentConfig = (status: PaymentStatus) => {
-    switch (status) {
-      case 'Paye': return { bg: 'bg-emerald-50', text: 'text-emerald-700' };
-      case 'En attente': return { bg: 'bg-amber-50', text: 'text-amber-700' };
-      case 'Rembourse': return { bg: 'bg-blue-50', text: 'text-blue-700' };
-      case 'Echoue': return { bg: 'bg-red-50', text: 'text-red-700' };
-      case 'Partiel': return { bg: 'bg-orange-50', text: 'text-orange-700' };
+  const submitCancel = async () => {
+    if (!selected || !cancelReason.trim()) return;
+    setCancelling(true);
+    setCancelError(null);
+    try {
+      const res = await adminReservationsApi.cancel(selected.id, cancelReason.trim());
+      setReservations((prev) => (prev ?? []).map((r) => (r.id === res.reservation.id ? res.reservation : r)));
+      setCancelOpen(false);
+    } catch (err) {
+      setCancelError(err instanceof Error ? err.message : "L'annulation a échoué.");
+    } finally {
+      setCancelling(false);
     }
   };
 
-  const formatDate = (dateStr: string) => {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+  const markPayoutPaid = async () => {
+    if (!selected?.payout) return;
+    setMarkingPaid(true);
+    setPayoutError(null);
+    try {
+      const reference = payoutReference.trim() || undefined;
+      await adminReservationsApi.markPayoutPaid(selected.payout.id, reference);
+      const paidDate = new Date().toISOString().slice(0, 10);
+      setReservations((prev) =>
+        (prev ?? []).map((r) =>
+          r.id === selected.id && r.payout
+            ? { ...r, payout: { ...r.payout, status: 'paid', paid_date: paidDate, reference: reference ?? null } }
+            : r,
+        ),
+      );
+      setPayoutReference('');
+    } catch (err) {
+      setPayoutError(err instanceof Error ? err.message : "Le versement n'a pas pu être enregistré.");
+    } finally {
+      setMarkingPaid(false);
+    }
   };
 
-  const formatDateShort = (dateStr: string) => {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
-  };
+  const shell = (content: React.ReactNode) => (
+    <div className="min-h-screen bg-gray-50/50">
+      <AdminSidebar />
+      <main className="lg:ml-[280px] p-4 md:p-6 lg:p-8">{content}</main>
+    </div>
+  );
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount);
-  };
+  if (loadError || reservations === null) {
+    return shell(
+      <div className="mt-16 lg:mt-0">
+        <h1 className="text-2xl md:text-3xl mb-6" style={{ fontWeight: 600 }}>Gestion des réservations</h1>
+        {loadError ? (
+          <p className="text-sm text-red-600">{loadError}</p>
+        ) : (
+          <div className="flex justify-center py-24">
+            <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
+          </div>
+        )}
+      </div>,
+    );
+  }
 
-  // ── Detail View ────────────────────────────────────────────────────────────
+  // ── Détail ────────────────────────────────────────────────────────────────
 
-  if (selectedReservation) {
-    const r = selectedReservation;
-    const statusConfig = getStatusConfig(r.status);
-    const paymentConfig = getPaymentConfig(r.paymentStatus);
-    const StatusIcon = statusConfig.icon;
+  if (selected) {
+    const r = selected;
+    const currency = r.currency;
+    const nights = r.nights_count;
+    const policy = normalizeCancellationPolicy(r.cancellation_policy);
+    const cancellable = r.phase === 'pending' || r.phase === 'upcoming' || r.phase === 'ongoing';
+    const cancelledBy = { guest: 'par le voyageur', host: "par l'hôte", admin: "par l'équipe Séjoura" } as const;
 
-    const timeline = [
-      { date: r.createdAt, label: 'Reservation creee', icon: CalendarDays, color: 'text-gray-500' },
-      ...(r.paymentStatus === 'Paye' || r.paymentStatus === 'Partiel' ? [{ date: r.createdAt, label: 'Paiement recu', icon: CreditCard, color: 'text-emerald-500' }] : []),
-      ...(r.status === 'Confirmee' || r.status === 'En cours' || r.status === 'Terminee' ? [{ date: r.createdAt, label: 'Reservation confirmee', icon: CheckCircle, color: 'text-emerald-500' }] : []),
-      ...(r.status === 'En cours' ? [{ date: r.checkIn, label: 'Check-in effectue', icon: Home, color: 'text-blue-500' }] : []),
-      ...(r.status === 'Terminee' ? [
-        { date: r.checkIn, label: 'Check-in effectue', icon: Home, color: 'text-blue-500' },
-        { date: r.checkOut, label: 'Check-out effectue', icon: Home, color: 'text-gray-500' },
-      ] : []),
-      ...(r.status === 'Annulee' ? [{ date: r.createdAt, label: 'Reservation annulee', icon: XCircle, color: 'text-red-500' }] : []),
-      ...(r.status === 'Litige' ? [{ date: r.createdAt, label: 'Litige ouvert', icon: AlertTriangle, color: 'text-purple-500' }] : []),
+    const timeline: { date: string; label: string; icon: typeof CalendarDays; color: string }[] = [
+      { date: r.created_at, label: r.reservation_mode === 'instant' ? 'Réservation instantanée' : 'Demande envoyée', icon: CalendarDays, color: 'text-gray-500' },
     ];
+    if (r.confirmed_at) timeline.push({ date: r.confirmed_at, label: r.reservation_mode === 'instant' ? 'Confirmée' : "Acceptée par l'hôte", icon: CheckCircle, color: 'text-emerald-500' });
+    if (r.declined_at) timeline.push({ date: r.declined_at, label: "Refusée par l'hôte", icon: XCircle, color: 'text-red-500' });
+    if (r.phase === 'expired' && r.expires_at) timeline.push({ date: r.expires_at, label: 'Expirée sans réponse', icon: Clock, color: 'text-gray-500' });
+    if (r.cancelled_at) timeline.push({ date: r.cancelled_at, label: `Annulée ${r.cancelled_by ? cancelledBy[r.cancelled_by] : ''}`, icon: Ban, color: 'text-red-500' });
+    if (r.phase === 'ongoing' || r.phase === 'past') timeline.push({ date: r.check_in, label: 'Arrivée', icon: Home, color: 'text-blue-500' });
+    if (r.phase === 'past') timeline.push({ date: r.check_out, label: 'Départ', icon: Home, color: 'text-gray-500' });
+
+    const priceLines: [string, number][] = [
+      [`${formatMoney(r.price_per_night, currency)} x ${nights} nuit${nights > 1 ? 's' : ''}`, amount(r.price_per_night) * nights],
+      ['Frais de ménage', amount(r.cleaning_fee)],
+      ['Voyageurs supplémentaires', amount(r.extra_guest_fee)],
+      ['Animaux', amount(r.pet_fee)],
+    ];
+
+    const personCard = (title: string, person: AdminReservation['guest'], profileHref: string | null) => (
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6">
+        <h2 className="text-sm text-gray-500 uppercase tracking-wider mb-4" style={{ fontWeight: 600 }}>{title}</h2>
+        <div className="flex items-center gap-3 mb-4">
+          <Avatar person={person} size="w-11 h-11" />
+          <div>
+            <div className="text-sm" style={{ fontWeight: 600 }}>{fullName(person)}</div>
+            {person && <div className="text-xs text-gray-500">Compte #{person.id}</div>}
+          </div>
+        </div>
+        {person && (
+          <div className="space-y-2.5">
+            <a href={`mailto:${person.email}`} className="flex items-center gap-2.5 text-sm text-gray-600 hover:text-gray-900">
+              <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <span className="truncate">{person.email}</span>
+            </a>
+            {person.phone && (
+              <div className="flex items-center gap-2.5 text-sm text-gray-600">
+                <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                {person.phone}
+              </div>
+            )}
+          </div>
+        )}
+        {profileHref && (
+          <div className="mt-4 pt-4 border-t border-gray-100">
+            <Link href={profileHref} className="block w-full px-3 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-xs text-center" style={{ fontWeight: 500 }}>
+              Voir le profil
+            </Link>
+          </div>
+        )}
+      </div>
+    );
 
     return (
       <div className="min-h-screen bg-gray-50/50">
         <AdminSidebar />
         <main className="lg:ml-[280px] p-4 md:p-6 lg:p-8">
-          {/* Back button + header */}
           <div className="mb-6 mt-16 lg:mt-0">
-            <button onClick={() => setSelectedReservation(null)} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors mb-4">
+            <button onClick={() => setSelectedId(null)} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors mb-4">
               <ArrowLeft className="w-4 h-4" />
-              Retour aux reservations
+              Retour aux réservations
             </button>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <div className="flex items-center gap-3 mb-1">
-                  <h1 className="text-2xl md:text-3xl" style={{ fontWeight: 600 }}>#{r.id}</h1>
-                  <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs ${statusConfig.bg} ${statusConfig.text}`} style={{ fontWeight: 600 }}>
-                    <StatusIcon className="w-3.5 h-3.5" />
-                    {r.status}
-                  </span>
+                  <h1 className="text-2xl md:text-3xl font-mono" style={{ fontWeight: 600 }}>{r.confirmation_code}</h1>
+                  <ReservationStatusBadge phase={r.phase} />
                 </div>
-                <p className="text-sm text-gray-500">Creee le {formatDate(r.createdAt)}</p>
+                <p className="text-sm text-gray-500">Créée le {formatDateTime(r.created_at)}</p>
               </div>
-              <div className="flex items-center gap-2 flex-wrap">
-                {r.status !== 'Annulee' && r.status !== 'Terminee' && (
-                  <button onClick={() => setShowCancelModal(r.id)} className="px-4 py-2.5 border border-red-200 text-red-600 rounded-xl hover:bg-red-50 transition-colors flex items-center gap-2 text-sm" style={{ fontWeight: 500 }}>
-                    <Ban className="w-4 h-4" />
-                    Annuler
-                  </button>
-                )}
-                {r.paymentStatus === 'Paye' && (
-                  <button onClick={() => { setShowRefundModal(r.id); setRefundAmount(String(r.totalAmount)); }} className="px-4 py-2.5 border border-blue-200 text-blue-600 rounded-xl hover:bg-blue-50 transition-colors flex items-center gap-2 text-sm" style={{ fontWeight: 500 }}>
-                    <RefreshCw className="w-4 h-4" />
-                    Rembourser
-                  </button>
-                )}
-                <button onClick={() => setShowFraudModal(r.id)} className="px-4 py-2.5 border border-orange-200 text-orange-600 rounded-xl hover:bg-orange-50 transition-colors flex items-center gap-2 text-sm" style={{ fontWeight: 500 }}>
-                  <Shield className="w-4 h-4" />
-                  Fraude
+              {cancellable && (
+                <button
+                  onClick={() => openCancel(r.id)}
+                  className="px-4 py-2.5 border border-red-200 text-red-600 rounded-xl hover:bg-red-50 transition-colors flex items-center gap-2 text-sm self-start"
+                  style={{ fontWeight: 500 }}
+                >
+                  <Ban className="w-4 h-4" />
+                  {r.phase === 'pending' ? 'Annuler la demande' : 'Annuler la réservation'}
                 </button>
-              </div>
+              )}
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left column */}
             <div className="lg:col-span-2 space-y-6">
-              {/* Reservation info */}
+              {/* Séjour */}
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6">
-                <h2 className="text-lg mb-5" style={{ fontWeight: 600 }}>Informations reservation</h2>
+                <h2 className="text-lg mb-5" style={{ fontWeight: 600 }}>Séjour</h2>
                 <div className="flex items-center gap-4 mb-5 pb-5 border-b border-gray-100">
-                  <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center text-gray-400 flex-shrink-0">
-                    <Home className="w-6 h-6" />
-                  </div>
+                  {r.listing?.cover_photo_url ? (
+                    <img src={r.listing.cover_photo_url} alt="" className="w-16 h-16 rounded-xl object-cover flex-shrink-0" />
+                  ) : (
+                    <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center text-gray-400 flex-shrink-0">
+                      <Home className="w-6 h-6" />
+                    </div>
+                  )}
                   <div className="min-w-0">
-                    <div className="text-sm mb-0.5 truncate" style={{ fontWeight: 600 }}>{r.propertyName}</div>
-                    <div className="text-xs text-gray-500">Logement #{r.propertyId}</div>
+                    {r.listing ? (
+                      <Link href={`/admin/properties/${r.listing.id}`} className="text-sm mb-0.5 truncate block hover:underline" style={{ fontWeight: 600 }}>
+                        {r.listing.title}
+                      </Link>
+                    ) : (
+                      <div className="text-sm" style={{ fontWeight: 600 }}>Logement supprimé</div>
+                    )}
+                    <div className="text-xs text-gray-500">
+                      {r.listing?.full_address || [r.listing?.city, r.listing?.province].filter(Boolean).join(', ')}
+                    </div>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   <div>
-                    <div className="text-xs text-gray-500 mb-1">Check-in</div>
-                    <div className="text-sm" style={{ fontWeight: 600 }}>{formatDate(r.checkIn)}</div>
+                    <div className="text-xs text-gray-500 mb-1">Arrivée</div>
+                    <div className="text-sm" style={{ fontWeight: 600 }}>{formatDay(r.check_in)}</div>
                   </div>
                   <div>
-                    <div className="text-xs text-gray-500 mb-1">Check-out</div>
-                    <div className="text-sm" style={{ fontWeight: 600 }}>{formatDate(r.checkOut)}</div>
+                    <div className="text-xs text-gray-500 mb-1">Départ</div>
+                    <div className="text-sm" style={{ fontWeight: 600 }}>{formatDay(r.check_out)}</div>
                   </div>
                   <div>
                     <div className="text-xs text-gray-500 mb-1">Nuits</div>
-                    <div className="text-sm" style={{ fontWeight: 600 }}>{r.nights} nuits</div>
+                    <div className="text-sm" style={{ fontWeight: 600 }}>{nights}</div>
                   </div>
                   <div>
-                    <div className="text-xs text-gray-500 mb-1">Date reservation</div>
-                    <div className="text-sm" style={{ fontWeight: 600 }}>{formatDate(r.createdAt)}</div>
+                    <div className="text-xs text-gray-500 mb-1">Voyageurs</div>
+                    <div className="text-sm" style={{ fontWeight: 600 }}>{formatGuestsDetail(r)}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-500 mb-1">Mode</div>
+                    <div className="text-sm" style={{ fontWeight: 600 }}>{r.reservation_mode === 'instant' ? 'Instantanée' : 'Sur demande'}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-500 mb-1">Annulation</div>
+                    <div className="text-sm" style={{ fontWeight: 600 }}>{policy ? CANCELLATION_POLICY_LABELS[policy] : '—'}</div>
                   </div>
                 </div>
               </div>
 
-              {/* Payment details */}
+              {/* Montants */}
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6">
                 <div className="flex items-center justify-between mb-5">
-                  <h2 className="text-lg" style={{ fontWeight: 600 }}>Details du paiement</h2>
-                  <span className={`inline-flex items-center px-3 py-1 rounded-lg text-xs ${paymentConfig.bg} ${paymentConfig.text}`} style={{ fontWeight: 600 }}>
-                    {r.paymentStatus}
-                  </span>
+                  <h2 className="text-lg" style={{ fontWeight: 600 }}>Montants</h2>
+                  {r.stripe_payment_intent_id ? (
+                    <a
+                      href={`https://dashboard.stripe.com/${r.stripe_payment_intent_id.startsWith('pi_') && process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.startsWith('pk_test') ? 'test/' : ''}payments/${r.stripe_payment_intent_id}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-xs underline text-gray-600"
+                    >
+                      {PAYMENT_LABELS[r.payment_status ?? 'awaiting']} · voir dans Stripe
+                    </a>
+                  ) : (
+                    <span className="text-xs text-gray-500">Sans paiement en ligne</span>
+                  )}
                 </div>
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between py-2">
-                    <span className="text-sm text-gray-600">Montant total</span>
-                    <span className="text-sm" style={{ fontWeight: 600 }}>{formatCurrency(r.totalAmount)}</span>
-                  </div>
-                  <div className="flex items-center justify-between py-2">
-                    <span className="text-sm text-gray-600">Commission plateforme (15%)</span>
-                    <span className="text-sm text-emerald-600" style={{ fontWeight: 600 }}>{formatCurrency(r.commission)}</span>
+                  {priceLines
+                    .filter(([, value], index) => index === 0 || value > 0)
+                    .map(([label, value]) => (
+                      <div key={label} className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600">{label}</span>
+                        <span className="text-sm">{formatMoney(value, currency)}</span>
+                      </div>
+                    ))}
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Frais de service Séjoura</span>
+                    <span className="text-sm text-emerald-600" style={{ fontWeight: 600 }}>{formatMoney(r.service_fee, currency)}</span>
                   </div>
                   <div className="border-t border-gray-100 pt-3 flex items-center justify-between">
-                    <span className="text-sm" style={{ fontWeight: 600 }}>Revenu hote</span>
-                    <span className="text-base" style={{ fontWeight: 600 }}>{formatCurrency(r.totalAmount - r.commission)}</span>
+                    <span className="text-sm" style={{ fontWeight: 600 }}>Total voyageur</span>
+                    <span className="text-base" style={{ fontWeight: 600 }}>{formatMoney(r.total_price, currency)}</span>
                   </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Montant hôte</span>
+                    <span className="text-sm" style={{ fontWeight: 600 }}>{formatMoney(hostAmount(r), currency)}</span>
+                  </div>
+                  {r.amount_paid !== null && (
+                    <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                      <span className="text-sm text-gray-600">Encaissé</span>
+                      <span className="text-sm" style={{ fontWeight: 600 }}>{formatMoney(r.amount_paid, currency)}</span>
+                    </div>
+                  )}
+                  {r.amount_refunded !== null && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Remboursé via Stripe</span>
+                      <span className="text-sm text-red-600" style={{ fontWeight: 600 }}>{formatMoney(r.amount_refunded, currency)}</span>
+                    </div>
+                  )}
+                  {r.refund_amount !== null && !r.payment_status && (
+                    <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                      <span className="text-sm text-gray-600">Remboursable au voyageur (selon la politique)</span>
+                      <span className="text-sm text-red-600" style={{ fontWeight: 600 }}>{formatMoney(r.refund_amount, currency)}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* Timeline */}
+              {/* Versement à l'hôte */}
+              {r.payout && (
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6">
+                  <h2 className="text-lg mb-4" style={{ fontWeight: 600 }}>Versement à l&apos;hôte</h2>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm text-gray-600">Montant à virer</span>
+                    <span className="text-base" style={{ fontWeight: 600 }}>{formatMoney(r.payout.net_amount, currency)}</span>
+                  </div>
+                  {r.payout.status === 'paid' ? (
+                    <p className="text-sm text-emerald-700">
+                      Versé le {formatDay(r.payout.paid_date ?? '')}
+                      {r.payout.reference ? ` · réf. ${r.payout.reference}` : ''}
+                    </p>
+                  ) : (
+                    <>
+                      <p className="text-sm text-gray-600 mb-4">
+                        Prévu le {formatDay(r.payout.scheduled_date ?? '')} (lendemain de l&apos;arrivée), par virement à{' '}
+                        {fullName(r.host)}.
+                      </p>
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <input
+                          value={payoutReference}
+                          onChange={(e) => setPayoutReference(e.target.value.slice(0, 255))}
+                          placeholder="Référence du virement (facultatif)"
+                          className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#111827]/20"
+                        />
+                        <button
+                          onClick={markPayoutPaid}
+                          disabled={markingPaid}
+                          className="px-4 py-2 bg-[#111827] text-white rounded-lg text-sm disabled:opacity-50"
+                          style={{ fontWeight: 600 }}
+                        >
+                          {markingPaid ? 'Enregistrement…' : 'Marquer comme versé'}
+                        </button>
+                      </div>
+                      {payoutError && <p className="text-sm text-red-600 mt-2">{payoutError}</p>}
+                    </>
+                  )}
+                </div>
+              )}
+
+              {/* Chronologie */}
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6">
-                <h2 className="text-lg mb-5" style={{ fontWeight: 600 }}>Timeline du sejour</h2>
-                <div className="space-y-0">
+                <h2 className="text-lg mb-5" style={{ fontWeight: 600 }}>Chronologie</h2>
+                <div>
                   {timeline.map((event, i) => {
                     const Icon = event.icon;
+                    const isDay = event.date.length <= 10 || event.label === 'Arrivée' || event.label === 'Départ';
                     return (
-                      <div key={i} className="flex gap-3">
+                      <div key={`${event.label}-${i}`} className="flex gap-3">
                         <div className="flex flex-col items-center">
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-gray-50 ${event.color}`}>
                             <Icon className="w-4 h-4" />
@@ -398,186 +560,84 @@ export function AdminReservations() {
                         </div>
                         <div className="pb-4">
                           <div className="text-sm" style={{ fontWeight: 500 }}>{event.label}</div>
-                          <div className="text-xs text-gray-500">{formatDate(event.date)}</div>
+                          <div className="text-xs text-gray-500">{isDay ? formatDay(event.date) : formatDateTime(event.date)}</div>
                         </div>
                       </div>
                     );
                   })}
                 </div>
+                {r.cancellation_reason && (
+                  <p className="text-sm text-gray-600 mt-2">
+                    Motif : <span style={{ fontWeight: 500 }}>{r.cancellation_reason}</span>
+                  </p>
+                )}
               </div>
+
+              {r.guest_message && (
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6">
+                  <h2 className="text-lg mb-3 flex items-center gap-2" style={{ fontWeight: 600 }}>
+                    <MessageSquare className="w-4 h-4 text-gray-400" />
+                    Message du voyageur à l&apos;hôte
+                  </h2>
+                  <p className="text-sm text-gray-700 whitespace-pre-line">{r.guest_message}</p>
+                </div>
+              )}
             </div>
 
-            {/* Right column */}
             <div className="space-y-6">
-              {/* Guest info */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6">
-                <h2 className="text-sm text-gray-500 uppercase tracking-wider mb-4" style={{ fontWeight: 600 }}>Voyageur</h2>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-11 h-11 bg-[#111827] rounded-full flex items-center justify-center text-white text-sm flex-shrink-0" style={{ fontWeight: 600 }}>
-                    {r.guest.avatar}
-                  </div>
-                  <div>
-                    <div className="text-sm" style={{ fontWeight: 600 }}>{r.guest.name}</div>
-                    <div className="text-xs text-gray-500">Client #{r.guest.id}</div>
-                  </div>
-                </div>
-                <div className="space-y-2.5">
-                  <div className="flex items-center gap-2.5 text-sm text-gray-600">
-                    <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                    <span className="truncate">{r.guest.email}</span>
-                  </div>
-                  <div className="flex items-center gap-2.5 text-sm text-gray-600">
-                    <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                    {r.guest.phone}
-                  </div>
-                </div>
-                <div className="mt-4 pt-4 border-t border-gray-100 flex gap-2">
-                  <button className="flex-1 px-3 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-xs flex items-center justify-center gap-1.5" style={{ fontWeight: 500 }}>
-                    <MessageSquare className="w-3.5 h-3.5" />
-                    Message
-                  </button>
-                  <button className="px-3 py-2 border border-red-200 rounded-lg hover:bg-red-50 transition-colors text-xs text-red-600 flex items-center justify-center gap-1.5" style={{ fontWeight: 500 }}>
-                    <UserX className="w-3.5 h-3.5" />
-                    Bloquer
-                  </button>
-                </div>
-              </div>
-
-              {/* Host info */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6">
-                <h2 className="text-sm text-gray-500 uppercase tracking-wider mb-4" style={{ fontWeight: 600 }}>Hote</h2>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-11 h-11 bg-[#111827] rounded-full flex items-center justify-center text-white text-sm flex-shrink-0" style={{ fontWeight: 600 }}>
-                    {r.host.avatar}
-                  </div>
-                  <div>
-                    <div className="text-sm" style={{ fontWeight: 600 }}>{r.host.name}</div>
-                    <div className="text-xs text-gray-500">Hote #{r.host.id}</div>
-                  </div>
-                </div>
-                <div className="space-y-2.5">
-                  <div className="flex items-center gap-2.5 text-sm text-gray-600">
-                    <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                    <span className="truncate">{r.host.email}</span>
-                  </div>
-                  <div className="flex items-center gap-2.5 text-sm text-gray-600">
-                    <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                    {r.host.phone}
-                  </div>
-                </div>
-                <div className="mt-4 pt-4 border-t border-gray-100 flex gap-2">
-                  <button className="flex-1 px-3 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-xs flex items-center justify-center gap-1.5" style={{ fontWeight: 500 }}>
-                    <MessageSquare className="w-3.5 h-3.5" />
-                    Message
-                  </button>
-                  <button className="px-3 py-2 border border-orange-200 rounded-lg hover:bg-orange-50 transition-colors text-xs text-orange-600 flex items-center justify-center gap-1.5" style={{ fontWeight: 500 }}>
-                    <Ban className="w-3.5 h-3.5" />
-                    Suspendre
-                  </button>
-                </div>
-              </div>
-
-              {/* Admin actions */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6">
-                <h2 className="text-sm text-gray-500 uppercase tracking-wider mb-4" style={{ fontWeight: 600 }}>Actions administrateur</h2>
-                <div className="space-y-2">
-                  <button className="w-full px-4 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-3 text-sm text-left" style={{ fontWeight: 500 }}>
-                    <Edit className="w-4 h-4 text-gray-500" />
-                    Modifier les dates
-                  </button>
-                  {r.status !== 'Annulee' && r.status !== 'Terminee' && (
-                    <button onClick={() => setShowCancelModal(r.id)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl hover:bg-red-50 hover:border-red-200 transition-colors flex items-center gap-3 text-sm text-left" style={{ fontWeight: 500 }}>
-                      <Ban className="w-4 h-4 text-red-500" />
-                      Annuler la reservation
-                    </button>
-                  )}
-                  {r.paymentStatus === 'Paye' && (
-                    <button onClick={() => { setShowRefundModal(r.id); setRefundAmount(String(r.totalAmount)); }} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl hover:bg-blue-50 hover:border-blue-200 transition-colors flex items-center gap-3 text-sm text-left" style={{ fontWeight: 500 }}>
-                      <RefreshCw className="w-4 h-4 text-blue-500" />
-                      Forcer un remboursement
-                    </button>
-                  )}
-                  <button onClick={() => setShowFraudModal(r.id)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl hover:bg-orange-50 hover:border-orange-200 transition-colors flex items-center gap-3 text-sm text-left" style={{ fontWeight: 500 }}>
-                    <Shield className="w-4 h-4 text-orange-500" />
-                    Marquer comme fraude
-                  </button>
-                  <button className="w-full px-4 py-2.5 border border-gray-200 rounded-xl hover:bg-purple-50 hover:border-purple-200 transition-colors flex items-center gap-3 text-sm text-left" style={{ fontWeight: 500 }}>
-                    <AlertTriangle className="w-4 h-4 text-purple-500" />
-                    Voir les litiges
-                  </button>
-                </div>
-              </div>
+              {personCard('Voyageur', r.guest, r.guest ? `/admin/clients/${r.guest.id}` : null)}
+              {personCard('Hôte', r.host, r.host ? `/admin/hosts/${r.host.id}` : null)}
             </div>
           </div>
         </main>
 
-        {/* Cancel Modal */}
-        {showCancelModal && (
-          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => { setShowCancelModal(null); setCancelReason(''); }}>
-            <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
+        {/* Annulation par l'administration */}
+        {cancelOpen && (
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => !cancelling && setCancelOpen(false)}>
+            <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
               <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Ban className="w-5 h-5 text-red-600" />
               </div>
-              <h3 className="text-lg text-center mb-2" style={{ fontWeight: 600 }}>Annuler la reservation</h3>
-              <p className="text-sm text-gray-500 text-center mb-4">Cette action annulera la reservation et notifiera le voyageur et l&apos;hote.</p>
-              <textarea
-                placeholder="Raison de l'annulation..."
-                rows={3}
-                value={cancelReason}
-                onChange={(e) => setCancelReason(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111827]/20 text-sm resize-none mb-4"
-              />
+              <h3 className="text-lg text-center mb-2" style={{ fontWeight: 600 }}>
+                {r.phase === 'pending' ? 'Annuler la demande' : 'Annuler la réservation'}
+              </h3>
+              {!cancelPreview && !cancelError && (
+                <div className="flex justify-center py-6">
+                  <div className="w-6 h-6 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
+                </div>
+              )}
+              {cancelPreview && !cancelPreview.allowed && <p className="text-sm text-gray-600 text-center mb-4">{cancelPreview.message}</p>}
+              {cancelPreview?.allowed && (
+                <>
+                  <p className="text-sm text-gray-500 text-center mb-4">
+                    {cancelPreview.kind === 'cancel'
+                      ? `Le voyageur et l'hôte seront prévenus par e-mail. Le voyageur aura droit au remboursement intégral (${formatMoney(cancelPreview.refund.refund, currency)}), à régler hors ligne tant que le paiement en ligne n'existe pas.`
+                      : "Le voyageur et l'hôte seront prévenus par e-mail. Rien n'a été débité pour cette demande."}
+                  </p>
+                  <textarea
+                    placeholder="Motif de l'annulation (transmis au voyageur et à l'hôte)…"
+                    rows={3}
+                    value={cancelReason}
+                    onChange={(e) => setCancelReason(e.target.value.slice(0, 255))}
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111827]/20 text-sm resize-none mb-4"
+                  />
+                </>
+              )}
+              {cancelError && <p className="text-sm text-red-600 mb-4">{cancelError}</p>}
               <div className="flex items-center gap-3">
-                <button onClick={() => { setShowCancelModal(null); setCancelReason(''); }} className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors text-sm" style={{ fontWeight: 500 }}>Fermer</button>
-                <button onClick={() => { setShowCancelModal(null); setCancelReason(''); }} className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors text-sm" style={{ fontWeight: 600 }}>Confirmer l&apos;annulation</button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Refund Modal */}
-        {showRefundModal && (
-          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => { setShowRefundModal(null); setRefundAmount(''); }}>
-            <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <RefreshCw className="w-5 h-5 text-blue-600" />
-              </div>
-              <h3 className="text-lg text-center mb-2" style={{ fontWeight: 600 }}>Forcer un remboursement</h3>
-              <p className="text-sm text-gray-500 text-center mb-4">Le remboursement sera effectue sur le moyen de paiement original du voyageur.</p>
-              <div className="mb-4">
-                <label className="text-xs text-gray-500 mb-1.5 block" style={{ fontWeight: 500 }}>Montant du remboursement (€)</label>
-                <input
-                  type="number"
-                  value={refundAmount}
-                  onChange={(e) => setRefundAmount(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111827]/20 text-sm"
-                />
-              </div>
-              <div className="flex items-center gap-3">
-                <button onClick={() => { setShowRefundModal(null); setRefundAmount(''); }} className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors text-sm" style={{ fontWeight: 500 }}>Annuler</button>
-                <button onClick={() => { setShowRefundModal(null); setRefundAmount(''); }} className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors text-sm" style={{ fontWeight: 600 }}>Rembourser</button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Fraud Modal */}
-        {showFraudModal && (
-          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowFraudModal(null)}>
-            <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
-              <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Shield className="w-5 h-5 text-orange-600" />
-              </div>
-              <h3 className="text-lg text-center mb-2" style={{ fontWeight: 600 }}>Marquer comme fraude</h3>
-              <p className="text-sm text-gray-500 text-center mb-4">Cette reservation sera signalee comme frauduleuse. L&apos;equipe securite sera notifiee.</p>
-              <textarea
-                placeholder="Details de la suspicion de fraude..."
-                rows={3}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111827]/20 text-sm resize-none mb-4"
-              />
-              <div className="flex items-center gap-3">
-                <button onClick={() => setShowFraudModal(null)} className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors text-sm" style={{ fontWeight: 500 }}>Annuler</button>
-                <button onClick={() => setShowFraudModal(null)} className="flex-1 px-4 py-2.5 bg-orange-600 text-white rounded-xl hover:bg-orange-700 transition-colors text-sm" style={{ fontWeight: 600 }}>Confirmer</button>
+                <button onClick={() => setCancelOpen(false)} disabled={cancelling} className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors text-sm" style={{ fontWeight: 500 }}>
+                  Fermer
+                </button>
+                {cancelPreview?.allowed && (
+                  <button
+                    onClick={submitCancel}
+                    disabled={cancelling || !cancelReason.trim()}
+                    className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors text-sm disabled:opacity-50"
+                    style={{ fontWeight: 600 }}
+                  >
+                    {cancelling ? 'Annulation…' : "Confirmer l'annulation"}
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -586,509 +646,291 @@ export function AdminReservations() {
     );
   }
 
-  // ── List View ──────────────────────────────────────────────────────────────
+  // ── Liste ─────────────────────────────────────────────────────────────────
 
-  return (
-    <div className="min-h-screen bg-gray-50/50">
-      <AdminSidebar />
+  const statCards = [
+    {
+      label: `Versements à faire (${stats.payoutsToPay})`,
+      value: formatMoney(stats.payoutsToPayTotal),
+      icon: CalendarDays,
+      tone: 'bg-gray-100 text-gray-600',
+      text: '',
+    },
+    { label: 'Demandes en attente', value: String(stats.counts.pending ?? 0), icon: Clock, tone: 'bg-amber-50 text-amber-600', text: 'text-amber-700' },
+    { label: 'Séjours confirmés', value: formatMoney(stats.confirmedTotal), icon: DollarSign, tone: 'bg-emerald-50 text-emerald-600', text: 'text-emerald-700' },
+    { label: 'Frais de service Séjoura', value: formatMoney(stats.serviceFees), icon: TrendingUp, tone: 'bg-blue-50 text-blue-600', text: 'text-blue-700' },
+  ];
 
-      <main className="lg:ml-[280px] p-4 md:p-6 lg:p-8">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 md:mb-8 mt-16 lg:mt-0">
-          <div>
-            <h1 className="text-2xl md:text-3xl" style={{ fontWeight: 600 }}>Gestion des reservations</h1>
-            <p className="text-sm text-gray-500 mt-1">{filtered.length} reservation{filtered.length > 1 ? 's' : ''} trouvee{filtered.length > 1 ? 's' : ''}</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <button className="px-4 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm" style={{ fontWeight: 500 }}>
-              <Download className="w-4 h-4" />
-              <span className="hidden sm:inline">Exporter</span>
-            </button>
+  return shell(
+    <>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 md:mb-8 mt-16 lg:mt-0">
+        <div>
+          <h1 className="text-2xl md:text-3xl" style={{ fontWeight: 600 }}>Gestion des réservations</h1>
+          <p className="text-sm text-gray-500 mt-1">
+            {filtered.length} réservation{filtered.length > 1 ? 's' : ''} trouvée{filtered.length > 1 ? 's' : ''}
+          </p>
+        </div>
+        <button
+          onClick={() => exportCsv(filtered)}
+          disabled={filtered.length === 0}
+          className="px-4 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm self-start disabled:opacity-50"
+          style={{ fontWeight: 500 }}
+        >
+          <Download className="w-4 h-4" />
+          Exporter (CSV)
+        </button>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
+        {statCards.map((card) => {
+          const Icon = card.icon;
+          return (
+            <div key={card.label} className="bg-white rounded-xl p-4 md:p-5 shadow-sm">
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 ${card.tone}`}>
+                <Icon className="w-4 h-4" />
+              </div>
+              <div className={`text-xl md:text-2xl ${card.text}`} style={{ fontWeight: 600 }}>{card.value}</div>
+              <div className="text-xs text-gray-500 mt-1">{card.label}</div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-1">
+        {STATUS_PILLS.map((item) => (
+          <button
+            key={item.key}
+            onClick={() => {
+              setStatusFilter(item.key);
+              setCurrentPage(1);
+            }}
+            className={`px-4 py-2 rounded-xl text-sm whitespace-nowrap transition-all flex items-center gap-2 ${
+              statusFilter === item.key ? 'bg-[#111827] text-white shadow-sm' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+            }`}
+            style={{ fontWeight: statusFilter === item.key ? 600 : 500 }}
+          >
+            {item.label}
+            <span className={`text-xs px-1.5 py-0.5 rounded-md ${statusFilter === item.key ? 'bg-white/20' : 'bg-gray-100'}`}>
+              {stats.counts[item.key] ?? 0}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div className="p-4 md:p-6 border-b border-gray-100">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <div className="relative flex-1">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Rechercher par n°, logement, voyageur, hôte, e-mail…"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111827]/20 focus:border-[#111827] transition-all text-sm"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className={`px-4 py-2.5 border rounded-xl transition-colors flex items-center gap-2 text-sm ${
+                    showFilters ? 'bg-[#111827] text-white border-[#111827]' : 'border-gray-200 hover:bg-gray-50'
+                  }`}
+                  style={{ fontWeight: 500 }}
+                >
+                  <Filter className="w-4 h-4" />
+                  Filtres
+                  {activeFiltersCount > 0 && (
+                    <span
+                      className={`w-5 h-5 rounded-full text-xs flex items-center justify-center ${showFilters ? 'bg-white text-[#111827]' : 'bg-[#111827] text-white'}`}
+                      style={{ fontWeight: 600 }}
+                    >
+                      {activeFiltersCount}
+                    </span>
+                  )}
+                </button>
+                {(activeFiltersCount > 0 || statusFilter !== 'all' || searchQuery) && (
+                  <button onClick={clearFilters} className="px-3 py-2.5 text-sm text-gray-500 hover:text-red-600 transition-colors flex items-center gap-1">
+                    <X className="w-3.5 h-3.5" />
+                    Effacer
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {showFilters && (
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3 pt-2">
+                {[
+                  { label: 'Hôte', value: hostFilter, set: setHostFilter, options: hosts.map(([id, name]) => [String(id), name]) },
+                  { label: 'Voyageur', value: guestFilter, set: setGuestFilter, options: guests.map(([id, name]) => [String(id), name]) },
+                  {
+                    label: 'Arrivée',
+                    value: dateFilter,
+                    set: setDateFilter,
+                    options: [['this-month', 'Ce mois'], ['next-month', 'Mois prochain'], ['upcoming', 'À venir'], ['past', 'Passées']],
+                  },
+                  {
+                    label: 'Versement hôte',
+                    value: payoutFilter,
+                    set: setPayoutFilter,
+                    options: [['to-pay', 'À faire'], ['paid', 'Effectué']],
+                  },
+                  {
+                    label: 'Montant',
+                    value: amountFilter,
+                    set: setAmountFilter,
+                    options: [['0-500', '0 – 500 €'], ['500-1000', '500 – 1 000 €'], ['1000-2000', '1 000 – 2 000 €'], ['2000+', '2 000 € et plus']],
+                  },
+                ].map((filter) => (
+                  <div key={filter.label}>
+                    <label className="text-xs text-gray-500 mb-1.5 block" style={{ fontWeight: 500 }}>{filter.label}</label>
+                    <select
+                      value={filter.value}
+                      onChange={(e) => {
+                        filter.set(e.target.value);
+                        setCurrentPage(1);
+                      }}
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111827]/20 text-sm"
+                    >
+                      <option value="all">Tous</option>
+                      {filter.options.map(([value, label]) => (
+                        <option key={value} value={value}>{label}</option>
+                      ))}
+                    </select>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
-          <div className="bg-white rounded-xl p-4 md:p-5 shadow-sm border border-transparent">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                <CalendarDays className="w-4 h-4 text-gray-600" />
-              </div>
-            </div>
-            <div className="text-2xl md:text-3xl" style={{ fontWeight: 600 }}>{stats.total}</div>
-            <div className="text-xs text-gray-500 mt-1">Total reservations</div>
+        {filtered.length === 0 ? (
+          <div className="text-center py-16 text-sm text-gray-500">
+            {all.length === 0 ? 'Aucune réservation pour le moment.' : 'Aucune réservation pour ces filtres.'}
           </div>
-          <div className="bg-white rounded-xl p-4 md:p-5 shadow-sm border border-transparent">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center">
-                <DollarSign className="w-4 h-4 text-emerald-600" />
-              </div>
+        ) : (
+          <>
+            {/* Tableau (grand écran) */}
+            <div className="hidden xl:block overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-100 bg-gray-50/50">
+                    {['N°', 'Logement', 'Voyageur', 'Hôte', 'Séjour', 'Total', 'Statut', 'Créée le', ''].map((label, i) => (
+                      <th
+                        key={label || i}
+                        className={`py-3 px-4 text-xs text-gray-500 uppercase tracking-wider ${i === 5 ? 'text-right' : 'text-left'}`}
+                        style={{ fontWeight: 600 }}
+                      >
+                        {label}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginated.map((r) => (
+                    <tr key={r.id} onClick={() => setSelectedId(r.id)} className="border-b border-gray-50 hover:bg-gray-50/50 cursor-pointer">
+                      <td className="py-3 px-4 text-xs font-mono text-gray-600">{r.confirmation_code}</td>
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-3">
+                          {r.listing?.cover_photo_url ? (
+                            <img src={r.listing.cover_photo_url} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
+                          ) : (
+                            <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                              <Home className="w-4 h-4 text-gray-400" />
+                            </div>
+                          )}
+                          <div className="min-w-0">
+                            <div className="text-sm truncate max-w-[180px]" style={{ fontWeight: 500 }}>{r.listing?.title ?? '—'}</div>
+                            <div className="text-xs text-gray-500">{r.listing?.city}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-2">
+                          <Avatar person={r.guest} />
+                          <span className="text-sm truncate max-w-[120px]">{fullName(r.guest)}</span>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-2">
+                          <Avatar person={r.host} />
+                          <span className="text-sm truncate max-w-[120px]">{fullName(r.host)}</span>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="text-sm">{formatDay(r.check_in)} → {formatDay(r.check_out)}</div>
+                        <div className="text-xs text-gray-500 flex items-center gap-1">
+                          {r.nights_count} nuit{r.nights_count > 1 ? 's' : ''} · <Users className="w-3 h-3" /> {r.guests_count}
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 text-right text-sm" style={{ fontWeight: 600 }}>{formatMoney(r.total_price, r.currency)}</td>
+                      <td className="py-3 px-4">
+                        <ReservationStatusBadge phase={r.phase} />
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-500">{formatDay(r.created_at)}</td>
+                      <td className="py-3 px-4">
+                        <Eye className="w-4 h-4 text-gray-400" />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            <div className="text-2xl md:text-3xl text-emerald-700" style={{ fontWeight: 600 }}>{formatCurrency(stats.totalRevenue)}</div>
-            <div className="text-xs text-gray-500 mt-1">Revenus totaux</div>
-          </div>
-          <div className="bg-white rounded-xl p-4 md:p-5 shadow-sm border border-transparent">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-4 h-4 text-blue-600" />
-              </div>
-            </div>
-            <div className="text-2xl md:text-3xl text-blue-700" style={{ fontWeight: 600 }}>{formatCurrency(stats.totalCommission)}</div>
-            <div className="text-xs text-gray-500 mt-1">Commissions</div>
-          </div>
-          <div className="bg-white rounded-xl p-4 md:p-5 shadow-sm border border-transparent">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center">
-                <AlertTriangle className="w-4 h-4 text-purple-600" />
-              </div>
-            </div>
-            <div className="text-2xl md:text-3xl text-purple-700" style={{ fontWeight: 600 }}>{stats.litige}</div>
-            <div className="text-xs text-gray-500 mt-1">Litiges ouverts</div>
-          </div>
-        </div>
 
-        {/* Status filter pills */}
-        <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-1 scrollbar-hide">
-          {([
-            { key: 'all', label: 'Toutes', count: stats.total },
-            { key: 'Confirmee', label: 'Confirmees', count: stats.confirmee },
-            { key: 'En attente', label: 'En attente', count: stats.enAttente },
-            { key: 'En cours', label: 'En cours', count: stats.enCours },
-            { key: 'Terminee', label: 'Terminees', count: stats.terminee },
-            { key: 'Annulee', label: 'Annulees', count: stats.annulee },
-            { key: 'Litige', label: 'Litiges', count: stats.litige },
-          ] as const).map(item => (
-            <button
-              key={item.key}
-              onClick={() => { setStatusFilter(item.key); setCurrentPage(1); }}
-              className={`px-4 py-2 rounded-xl text-sm whitespace-nowrap transition-all flex items-center gap-2 ${
-                statusFilter === item.key
-                  ? 'bg-[#111827] text-white shadow-sm'
-                  : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
-              }`}
-              style={{ fontWeight: statusFilter === item.key ? 600 : 500 }}
-            >
-              {item.label}
-              <span className={`text-xs px-1.5 py-0.5 rounded-md ${statusFilter === item.key ? 'bg-white/20' : 'bg-gray-100'}`}>
-                {item.count}
-              </span>
-            </button>
-          ))}
-        </div>
+            {/* Cartes (tablette et mobile) */}
+            <div className="xl:hidden divide-y divide-gray-100">
+              {paginated.map((r) => (
+                <button key={r.id} onClick={() => setSelectedId(r.id)} className="w-full text-left p-4 hover:bg-gray-50/50">
+                  <div className="flex items-start justify-between gap-3 mb-2">
+                    <div className="min-w-0">
+                      <div className="text-sm truncate" style={{ fontWeight: 600 }}>{r.listing?.title ?? '—'}</div>
+                      <div className="text-xs text-gray-500 font-mono">{r.confirmation_code}</div>
+                    </div>
+                    <ReservationStatusBadge phase={r.phase} />
+                  </div>
+                  <div className="text-xs text-gray-600 mb-1">
+                    {fullName(r.guest)} chez {fullName(r.host)}
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">{formatDay(r.check_in)} → {formatDay(r.check_out)}</span>
+                    <span style={{ fontWeight: 600 }}>{formatMoney(r.total_price, r.currency)}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
 
-        {/* Table Card */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-          {/* Search & Filters Header */}
-          <div className="p-4 md:p-6 border-b border-gray-100">
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Rechercher par ID, logement, voyageur, hote..."
-                    value={searchQuery}
-                    onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111827]/20 focus:border-[#111827] transition-all text-sm"
-                  />
-                </div>
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between p-4 border-t border-gray-100">
+                <span className="text-sm text-gray-500">
+                  Page {currentPage} sur {totalPages}
+                </span>
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={() => setShowFilters(!showFilters)}
-                    className={`px-4 py-2.5 border rounded-xl transition-colors flex items-center gap-2 text-sm ${showFilters ? 'bg-[#111827] text-white border-[#111827]' : 'border-gray-200 hover:bg-gray-50'}`}
-                    style={{ fontWeight: 500 }}
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40"
+                    aria-label="Page précédente"
                   >
-                    <Filter className="w-4 h-4" />
-                    Filtres
-                    {activeFiltersCount > 0 && (
-                      <span className={`w-5 h-5 rounded-full text-xs flex items-center justify-center ${showFilters ? 'bg-white text-[#111827]' : 'bg-[#111827] text-white'}`} style={{ fontWeight: 600 }}>
-                        {activeFiltersCount}
-                      </span>
-                    )}
+                    <ChevronLeft className="w-4 h-4" />
                   </button>
-                  {activeFiltersCount > 0 && (
-                    <button onClick={clearFilters} className="px-3 py-2.5 text-sm text-gray-500 hover:text-red-600 transition-colors flex items-center gap-1">
-                      <X className="w-3.5 h-3.5" />
-                      Effacer
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {/* Expanded Filters */}
-              {showFilters && (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 pt-2">
-                  <div>
-                    <label className="text-xs text-gray-500 mb-1.5 block" style={{ fontWeight: 500 }}>Paiement</label>
-                    <select value={paymentFilter} onChange={(e) => { setPaymentFilter(e.target.value); setCurrentPage(1); }} className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111827]/20 text-sm">
-                      <option value="all">Tous</option>
-                      <option value="Paye">Paye</option>
-                      <option value="En attente">En attente</option>
-                      <option value="Rembourse">Rembourse</option>
-                      <option value="Echoue">Echoue</option>
-                      <option value="Partiel">Partiel</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="text-xs text-gray-500 mb-1.5 block" style={{ fontWeight: 500 }}>Hote</label>
-                    <select value={hostFilter} onChange={(e) => { setHostFilter(e.target.value); setCurrentPage(1); }} className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111827]/20 text-sm">
-                      <option value="all">Tous</option>
-                      {hosts.map(([id, name]) => <option key={id} value={id}>{name}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="text-xs text-gray-500 mb-1.5 block" style={{ fontWeight: 500 }}>Voyageur</label>
-                    <select value={guestFilter} onChange={(e) => { setGuestFilter(e.target.value); setCurrentPage(1); }} className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111827]/20 text-sm">
-                      <option value="all">Tous</option>
-                      {guests.map(([id, name]) => <option key={id} value={id}>{name}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="text-xs text-gray-500 mb-1.5 block" style={{ fontWeight: 500 }}>Periode</label>
-                    <select value={dateFilter} onChange={(e) => { setDateFilter(e.target.value); setCurrentPage(1); }} className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111827]/20 text-sm">
-                      <option value="all">Toutes</option>
-                      <option value="this-month">Ce mois</option>
-                      <option value="next-month">Mois prochain</option>
-                      <option value="past">Passees</option>
-                      <option value="upcoming">A venir</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="text-xs text-gray-500 mb-1.5 block" style={{ fontWeight: 500 }}>Montant</label>
-                    <select value={amountFilter} onChange={(e) => { setAmountFilter(e.target.value); setCurrentPage(1); }} className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111827]/20 text-sm">
-                      <option value="all">Tous</option>
-                      <option value="0-500">0 - 500 €</option>
-                      <option value="500-1000">500 - 1 000 €</option>
-                      <option value="1000-2000">1 000 - 2 000 €</option>
-                      <option value="2000+">2 000+ €</option>
-                    </select>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Desktop Table */}
-          <div className="hidden xl:block overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-100 bg-gray-50/50">
-                  <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>ID</th>
-                  <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>Logement</th>
-                  <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>Hote</th>
-                  <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>Voyageur</th>
-                  <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>Sejour</th>
-                  <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>Montant</th>
-                  <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>Commission</th>
-                  <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>Statut</th>
-                  <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>Paiement</th>
-                  <th className="text-right py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginated.map((r) => {
-                  const statusConfig = getStatusConfig(r.status);
-                  const paymentConfig = getPaymentConfig(r.paymentStatus);
-                  const StatusIcon = statusConfig.icon;
-                  return (
-                    <tr key={r.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group">
-                      <td className="py-3.5 px-4">
-                        <span className="text-xs text-gray-500 font-mono" style={{ fontWeight: 600 }}>#{r.id}</span>
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 flex-shrink-0">
-                            <Home className="w-4 h-4" />
-                          </div>
-                          <div className="min-w-0">
-                            <div className="text-sm truncate max-w-[150px]" style={{ fontWeight: 600 }}>{r.propertyName}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 bg-[#111827] rounded-full flex items-center justify-center text-white text-[10px] flex-shrink-0" style={{ fontWeight: 600 }}>{r.host.avatar}</div>
-                          <span className="text-sm text-gray-600 truncate max-w-[100px]">{r.host.name}</span>
-                        </div>
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 text-[10px] flex-shrink-0" style={{ fontWeight: 600 }}>{r.guest.avatar}</div>
-                          <span className="text-sm text-gray-600 truncate max-w-[100px]">{r.guest.name}</span>
-                        </div>
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <div className="text-sm" style={{ fontWeight: 500 }}>{formatDateShort(r.checkIn)} - {formatDateShort(r.checkOut)}</div>
-                        <div className="text-xs text-gray-400">{r.nights} nuit{r.nights > 1 ? 's' : ''}</div>
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <span className="text-sm" style={{ fontWeight: 600 }}>{formatCurrency(r.totalAmount)}</span>
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <span className="text-sm text-emerald-600" style={{ fontWeight: 500 }}>{formatCurrency(r.commission)}</span>
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs ${statusConfig.bg} ${statusConfig.text}`} style={{ fontWeight: 600 }}>
-                          <StatusIcon className="w-3 h-3" />
-                          {r.status}
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <span className={`inline-block px-2.5 py-1 rounded-lg text-xs ${paymentConfig.bg} ${paymentConfig.text}`} style={{ fontWeight: 600 }}>
-                          {r.paymentStatus}
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button onClick={() => setSelectedReservation(r)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Voir">
-                            <Eye className="w-4 h-4 text-gray-500" />
-                          </button>
-                          <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Modifier">
-                            <Edit className="w-4 h-4 text-gray-500" />
-                          </button>
-                          {r.status !== 'Annulee' && r.status !== 'Terminee' && (
-                            <button onClick={() => setShowCancelModal(r.id)} className="p-2 hover:bg-red-50 rounded-lg transition-colors" title="Annuler">
-                              <Ban className="w-4 h-4 text-red-500" />
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-                {paginated.length === 0 && (
-                  <tr>
-                    <td colSpan={10} className="py-16 text-center">
-                      <div className="flex flex-col items-center gap-3">
-                        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                          <Search className="w-5 h-5 text-gray-400" />
-                        </div>
-                        <div className="text-sm text-gray-500">Aucune reservation trouvee</div>
-                        <button onClick={clearFilters} className="text-sm text-[#111827] hover:underline" style={{ fontWeight: 500 }}>
-                          Effacer les filtres
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Tablet Table */}
-          <div className="hidden md:block xl:hidden overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-100 bg-gray-50/50">
-                  <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>Reservation</th>
-                  <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>Voyageur / Hote</th>
-                  <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>Sejour</th>
-                  <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>Montant</th>
-                  <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>Statut</th>
-                  <th className="text-right py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginated.map((r) => {
-                  const statusConfig = getStatusConfig(r.status);
-                  const StatusIcon = statusConfig.icon;
-                  return (
-                    <tr key={r.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
-                      <td className="py-3.5 px-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 flex-shrink-0">
-                            <Home className="w-4 h-4" />
-                          </div>
-                          <div>
-                            <div className="text-sm" style={{ fontWeight: 600 }}>{r.propertyName}</div>
-                            <div className="text-xs text-gray-500 font-mono">#{r.id}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <div className="text-sm" style={{ fontWeight: 500 }}>{r.guest.name}</div>
-                        <div className="text-xs text-gray-500">{r.host.name}</div>
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <div className="text-sm" style={{ fontWeight: 500 }}>{formatDateShort(r.checkIn)} - {formatDateShort(r.checkOut)}</div>
-                        <div className="text-xs text-gray-400">{r.nights} nuit{r.nights > 1 ? 's' : ''}</div>
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <div className="text-sm" style={{ fontWeight: 600 }}>{formatCurrency(r.totalAmount)}</div>
-                        <div className="text-xs text-emerald-600">{formatCurrency(r.commission)}</div>
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs ${statusConfig.bg} ${statusConfig.text}`} style={{ fontWeight: 600 }}>
-                          <StatusIcon className="w-3 h-3" />
-                          {r.status}
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <div className="flex items-center justify-end gap-1">
-                          <button onClick={() => setSelectedReservation(r)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                            <Eye className="w-4 h-4 text-gray-500" />
-                          </button>
-                          <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                            <Edit className="w-4 h-4 text-gray-500" />
-                          </button>
-                          {r.status !== 'Annulee' && r.status !== 'Terminee' && (
-                            <button onClick={() => setShowCancelModal(r.id)} className="p-2 hover:bg-red-50 rounded-lg transition-colors">
-                              <Ban className="w-4 h-4 text-red-500" />
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Mobile Card View */}
-          <div className="md:hidden divide-y divide-gray-50">
-            {paginated.map((r) => {
-              const statusConfig = getStatusConfig(r.status);
-              const paymentConfig = getPaymentConfig(r.paymentStatus);
-              const StatusIcon = statusConfig.icon;
-              return (
-                <div key={r.id} className="p-4 hover:bg-gray-50/50 transition-colors">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center text-gray-400 flex-shrink-0">
-                        <Home className="w-5 h-5" />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="text-sm truncate" style={{ fontWeight: 600 }}>{r.propertyName}</div>
-                        <div className="text-xs text-gray-500 font-mono">#{r.id}</div>
-                      </div>
-                    </div>
-                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs flex-shrink-0 ${statusConfig.bg} ${statusConfig.text}`} style={{ fontWeight: 600 }}>
-                      <StatusIcon className="w-3 h-3" />
-                      {r.status}
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3 mb-3">
-                    <div>
-                      <div className="text-xs text-gray-500 mb-0.5">Voyageur</div>
-                      <div className="flex items-center gap-1.5">
-                        <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center text-[8px] text-gray-600 flex-shrink-0" style={{ fontWeight: 600 }}>{r.guest.avatar}</div>
-                        <span className="text-xs" style={{ fontWeight: 500 }}>{r.guest.name}</span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-gray-500 mb-0.5">Hote</div>
-                      <div className="flex items-center gap-1.5">
-                        <div className="w-5 h-5 bg-[#111827] rounded-full flex items-center justify-center text-[8px] text-white flex-shrink-0" style={{ fontWeight: 600 }}>{r.host.avatar}</div>
-                        <span className="text-xs" style={{ fontWeight: 500 }}>{r.host.name}</span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-gray-500 mb-0.5">Sejour</div>
-                      <div className="text-xs" style={{ fontWeight: 500 }}>{formatDateShort(r.checkIn)} - {formatDateShort(r.checkOut)}</div>
-                      <div className="text-[10px] text-gray-400">{r.nights} nuit{r.nights > 1 ? 's' : ''}</div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-gray-500 mb-0.5">Montant</div>
-                      <div className="text-sm" style={{ fontWeight: 600 }}>{formatCurrency(r.totalAmount)}</div>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] ${paymentConfig.bg} ${paymentConfig.text}`} style={{ fontWeight: 600 }}>{r.paymentStatus}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
-                    <button onClick={() => setSelectedReservation(r)} className="flex-1 px-3 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-xs" style={{ fontWeight: 500 }}>
-                      <Eye className="w-3.5 h-3.5" />
-                      Voir
-                    </button>
-                    <button className="flex-1 px-3 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-xs" style={{ fontWeight: 500 }}>
-                      <Edit className="w-3.5 h-3.5" />
-                      Modifier
-                    </button>
-                    {r.status !== 'Annulee' && r.status !== 'Terminee' && (
-                      <button onClick={() => setShowCancelModal(r.id)} className="px-3 py-2 border border-gray-200 rounded-lg hover:bg-red-50 transition-colors">
-                        <Ban className="w-3.5 h-3.5 text-red-500" />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-            {paginated.length === 0 && (
-              <div className="py-16 text-center">
-                <div className="flex flex-col items-center gap-3">
-                  <Search className="w-8 h-8 text-gray-300" />
-                  <div className="text-sm text-gray-500">Aucune reservation trouvee</div>
-                  <button onClick={clearFilters} className="text-sm text-[#111827] hover:underline" style={{ fontWeight: 500 }}>
-                    Effacer les filtres
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40"
+                    aria-label="Page suivante"
+                  >
+                    <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>
               </div>
             )}
-          </div>
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="p-4 md:p-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="text-sm text-gray-500">
-                Affichage {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, filtered.length)} sur {filtered.length}
-              </div>
-              <div className="flex items-center gap-1.5">
-                <button
-                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                  disabled={currentPage === 1}
-                  className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`w-9 h-9 rounded-lg text-sm transition-colors ${page === currentPage ? 'bg-[#111827] text-white' : 'border border-gray-200 hover:bg-gray-50'}`}
-                    style={{ fontWeight: page === currentPage ? 600 : 400 }}
-                  >
-                    {page}
-                  </button>
-                ))}
-                <button
-                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                  disabled={currentPage === totalPages}
-                  className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </main>
-
-      {/* Cancel Modal (from list) */}
-      {showCancelModal && !selectedReservation && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => { setShowCancelModal(null); setCancelReason(''); }}>
-          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
-            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Ban className="w-5 h-5 text-red-600" />
-            </div>
-            <h3 className="text-lg text-center mb-2" style={{ fontWeight: 600 }}>Annuler la reservation</h3>
-            <p className="text-sm text-gray-500 text-center mb-4">Cette action annulera la reservation #{showCancelModal} et notifiera le voyageur et l&apos;hote.</p>
-            <textarea
-              placeholder="Raison de l'annulation..."
-              rows={3}
-              value={cancelReason}
-              onChange={(e) => setCancelReason(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111827]/20 text-sm resize-none mb-4"
-            />
-            <div className="flex items-center gap-3">
-              <button onClick={() => { setShowCancelModal(null); setCancelReason(''); }} className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors text-sm" style={{ fontWeight: 500 }}>Fermer</button>
-              <button onClick={() => { setShowCancelModal(null); setCancelReason(''); }} className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors text-sm" style={{ fontWeight: 600 }}>Confirmer</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+          </>
+        )}
+      </div>
+    </>,
   );
 }

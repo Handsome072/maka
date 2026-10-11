@@ -363,3 +363,86 @@ ${fallbackLink(url)}
     }),
   };
 }
+
+// ─── Réservations ─────────────────────────────────────────────────────────────
+
+export type ReservationMailOptions = {
+  /** URL du site, pour les images et le lien du bouton. */
+  site: string;
+  subject: string;
+  preheader: string;
+  heading: string;
+  /** Paragraphes en texte brut (échappés ici). */
+  paragraphs: string[];
+  /** Citation (message du voyageur, motif de refus…), en texte brut. */
+  quote?: { label: string; text: string } | null;
+  /** Lignes du récapitulatif : [libellé, valeur] en texte brut. */
+  summary: [string, string][];
+  button: { url: string; label: string };
+  footerNote: string;
+};
+
+/** Récapitulatif du séjour : logement, dates, voyageurs, montant, numéro. */
+function summaryBlock(rows: [string, string][]): string {
+  const lines = rows
+    .map(
+      ([label, value], index) => `
+                    <tr>
+                      <td style="padding:${index === 0 ? '0' : '10px'} 0 0;font-family:${FONT};font-size:13px;line-height:20px;color:#5A6B71;" width="42%">${escapeHtml(label)}</td>
+                      <td style="padding:${index === 0 ? '0' : '10px'} 0 0;font-family:${FONT};font-size:14px;line-height:20px;font-weight:600;color:#17252A;" align="right">${escapeHtml(value)}</td>
+                    </tr>`,
+    )
+    .join('');
+  return `
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:24px;background:#F5F9F9;border-radius:12px;">
+                    <tr>
+                      <td style="padding:18px 20px;">
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${lines}
+                        </table>
+                      </td>
+                    </tr>
+                  </table>`;
+}
+
+/** Email d'un événement de réservation (demande, confirmation, refus, expiration, annulation). */
+export function reservationMail(options: ReservationMailOptions): { subject: string; html: string } {
+  const origin = options.site.replace(/\/$/, '');
+  const paragraphs = options.paragraphs
+    .map(
+      (text) =>
+        `<p style="margin:0 0 14px;font-family:${FONT};font-size:16px;line-height:26px;color:#46575D;">${escapeHtml(text)}</p>`,
+    )
+    .join('\n                  ');
+  const quote = options.quote
+    ? `
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:8px;">
+                    <tr>
+                      <td style="border-left:3px solid #0A6B78;padding:4px 0 4px 16px;font-family:${FONT};">
+                        <div style="font-size:12px;line-height:18px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:#0A6B78;">${escapeHtml(options.quote.label)}</div>
+                        <div style="font-size:15px;line-height:24px;color:#17252A;white-space:pre-line;">${escapeHtml(options.quote.text)}</div>
+                      </td>
+                    </tr>
+                  </table>`
+    : '';
+
+  return {
+    subject: options.subject,
+    html: layout({
+      origin,
+      title: options.subject,
+      preheader: options.preheader,
+      tag: 'Réservation',
+      footerNote: escapeHtml(options.footerNote),
+      content: `
+              <tr>
+                <td class="px" style="padding:36px 48px 40px;">
+                  <h1 class="h1" style="margin:0 0 14px;font-family:${TITLE_FONT};font-size:28px;line-height:36px;font-weight:700;color:#17252A;">${escapeHtml(options.heading)}</h1>
+                  ${paragraphs}
+${quote}
+${summaryBlock(options.summary)}
+${button(escapeHtml(options.button.url), escapeHtml(options.button.label))}
+                </td>
+              </tr>`,
+    }),
+  };
+}

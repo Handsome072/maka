@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { HostSidebar } from '@/app/components/HostSidebar';
 import {
+  hostRevenueApi,
   type RevenueSummary,
   type RevenueChartResponse,
   type RevenueStats,
@@ -35,192 +36,21 @@ const PAYOUT_STATUS_CONFIG: Record<string, { label: string; color: string; bg: s
 
 type ActiveTab = 'overview' | 'upcoming' | 'history' | 'reports';
 
-// ─── Mock Data ───────────────────────────────────────────────────────────────
+// ─── Valeurs vides (avant le premier chargement, ou hôte sans versement) ─────
 
-const MOCK_SUMMARY: RevenueSummary = {
-  revenue_this_month: 3430.00,
-  revenue_this_year: 18750.50,
-  revenue_total: 42680.00,
-  revenue_estimated: 8500.00,
+const EMPTY_SUMMARY: RevenueSummary = {
+  revenue_this_month: 0,
+  revenue_this_year: 0,
+  revenue_total: 0,
+  revenue_estimated: 0,
   currency: 'EUR',
 };
 
-const MOCK_CHART: RevenueChartResponse = {
-  monthly: [
-    { month: 1, revenue: 833, gross: 980, commission: 147 },
-    { month: 2, revenue: 3289, gross: 3870, commission: 581 },
-    { month: 3, revenue: 5950, gross: 7000, commission: 1050 },
-    { month: 4, revenue: 2720, gross: 3200, commission: 480 },
-    { month: 5, revenue: 3400, gross: 4000, commission: 600 },
-    { month: 6, revenue: 4250, gross: 5000, commission: 750 },
-    { month: 7, revenue: 5525, gross: 6500, commission: 975 },
-    { month: 8, revenue: 5100, gross: 6000, commission: 900 },
-    { month: 9, revenue: 3825, gross: 4500, commission: 675 },
-    { month: 10, revenue: 2550, gross: 3000, commission: 450 },
-    { month: 11, revenue: 2975, gross: 3500, commission: 525 },
-    { month: 12, revenue: 1785, gross: 2100, commission: 315 },
-  ],
-  yearly: [
-    { year: 2024, revenue: 28500 },
-    { year: 2025, revenue: 38200 },
-    { year: 2026, revenue: 18750 },
-  ],
-  selected_year: 2026,
-};
-
-const MOCK_STATS: RevenueStats = {
-  total_nights: 186,
-  avg_revenue_per_night: 229.46,
-  avg_stay_duration: 4.2,
-  total_reservations: 44,
-};
-
-const MOCK_UPCOMING: Payout[] = [
-  {
-    id: 1,
-    reservation_id: 1,
-    listing: { id: 1, title: 'Chalet Mont-Tremblant', city: 'Mont-Tremblant' },
-    reservation_dates: { check_in: '2026-03-22', check_out: '2026-03-29' },
-    gross_amount: 2450,
-    commission_amount: 367.50,
-    net_amount: 2082.50,
-    currency: 'EUR',
-    status: 'scheduled',
-    scheduled_date: '2026-03-30',
-    paid_date: null,
-  },
-  {
-    id: 2,
-    reservation_id: 3,
-    listing: { id: 2, title: 'Appartement Vieux-Montreal', city: 'Montreal' },
-    reservation_dates: { check_in: '2026-03-15', check_out: '2026-03-20' },
-    gross_amount: 1750,
-    commission_amount: 262.50,
-    net_amount: 1487.50,
-    currency: 'EUR',
-    status: 'pending',
-    scheduled_date: '2026-03-21',
-    paid_date: null,
-  },
-  {
-    id: 3,
-    reservation_id: 7,
-    listing: { id: 1, title: 'Chalet Mont-Tremblant', city: 'Mont-Tremblant' },
-    reservation_dates: { check_in: '2026-03-28', check_out: '2026-04-04' },
-    gross_amount: 2800,
-    commission_amount: 420,
-    net_amount: 2380,
-    currency: 'EUR',
-    status: 'pending',
-    scheduled_date: '2026-04-05',
-    paid_date: null,
-  },
-  {
-    id: 8,
-    reservation_id: 12,
-    listing: { id: 3, title: 'Condo Lac-Beauport', city: 'Quebec' },
-    reservation_dates: { check_in: '2026-04-10', check_out: '2026-04-15' },
-    gross_amount: 1200,
-    commission_amount: 180,
-    net_amount: 1020,
-    currency: 'EUR',
-    status: 'pending',
-    scheduled_date: '2026-04-16',
-    paid_date: null,
-  },
-];
-
-const MOCK_HISTORY: Payout[] = [
-  {
-    id: 4,
-    reservation_id: 4,
-    listing: { id: 2, title: 'Appartement Vieux-Montreal', city: 'Montreal' },
-    reservation_dates: { check_in: '2026-02-10', check_out: '2026-02-14' },
-    gross_amount: 720,
-    commission_amount: 108,
-    net_amount: 612,
-    currency: 'EUR',
-    status: 'paid',
-    scheduled_date: '2026-02-15',
-    paid_date: '2026-02-15',
-  },
-  {
-    id: 5,
-    reservation_id: 5,
-    listing: { id: 1, title: 'Chalet Mont-Tremblant', city: 'Mont-Tremblant' },
-    reservation_dates: { check_in: '2026-02-01', check_out: '2026-02-08' },
-    gross_amount: 3150,
-    commission_amount: 472.50,
-    net_amount: 2677.50,
-    currency: 'EUR',
-    status: 'paid',
-    scheduled_date: '2026-02-09',
-    paid_date: '2026-02-09',
-  },
-  {
-    id: 6,
-    reservation_id: 2,
-    listing: { id: 2, title: 'Appartement Vieux-Montreal', city: 'Montreal' },
-    reservation_dates: { check_in: '2026-01-15', check_out: '2026-01-20' },
-    gross_amount: 980,
-    commission_amount: 147,
-    net_amount: 833,
-    currency: 'EUR',
-    status: 'paid',
-    scheduled_date: '2026-01-21',
-    paid_date: '2026-01-21',
-  },
-  {
-    id: 7,
-    reservation_id: 8,
-    listing: { id: 3, title: 'Condo Lac-Beauport', city: 'Quebec' },
-    reservation_dates: { check_in: '2025-12-20', check_out: '2025-12-27' },
-    gross_amount: 2100,
-    commission_amount: 315,
-    net_amount: 1785,
-    currency: 'EUR',
-    status: 'paid',
-    scheduled_date: '2025-12-28',
-    paid_date: '2025-12-28',
-  },
-  {
-    id: 9,
-    reservation_id: 10,
-    listing: { id: 1, title: 'Chalet Mont-Tremblant', city: 'Mont-Tremblant' },
-    reservation_dates: { check_in: '2025-11-15', check_out: '2025-11-22' },
-    gross_amount: 3500,
-    commission_amount: 525,
-    net_amount: 2975,
-    currency: 'EUR',
-    status: 'paid',
-    scheduled_date: '2025-11-23',
-    paid_date: '2025-11-23',
-  },
-];
-
-const MOCK_LISTINGS: RevenueListingOption[] = [
-  { id: 1, title: 'Chalet Mont-Tremblant', city: 'Mont-Tremblant' },
-  { id: 2, title: 'Appartement Vieux-Montreal', city: 'Montreal' },
-  { id: 3, title: 'Condo Lac-Beauport', city: 'Quebec' },
-];
-
-const MOCK_PAYOUT_DETAIL: PayoutDetail = {
-  id: 1,
-  reservation_id: 1,
-  listing: { id: 1, title: 'Chalet Mont-Tremblant', city: 'Mont-Tremblant' },
-  reservation: { id: 1, check_in: '2026-03-22', check_out: '2026-03-29', total_price: '2450.00', guests_count: 4 },
-  gross_amount: 2450,
-  cleaning_fee: 150,
-  commission_rate: 15,
-  commission_amount: 367.50,
-  taxes: 48.90,
-  net_amount: 2033.60,
-  currency: 'EUR',
-  status: 'scheduled',
-  scheduled_date: '2026-03-30',
-  paid_date: null,
-  reference: null,
-  created_at: '2026-03-10T10:00:00Z',
+const EMPTY_STATS: RevenueStats = {
+  total_nights: 0,
+  avg_revenue_per_night: 0,
+  avg_stay_duration: 0,
+  total_reservations: 0,
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -245,46 +75,81 @@ export function HostRevenues() {
   const [selectedPayout, setSelectedPayout] = useState<PayoutDetail | null>(null);
   const [showDetail, setShowDetail] = useState(false);
 
-  // Mock data (TODO: replace with API calls when backend is ready)
-  const summary = MOCK_SUMMARY;
-  const chart = MOCK_CHART;
-  const stats = MOCK_STATS;
-  const listings = MOCK_LISTINGS;
-  const upcoming = selectedListing
-    ? MOCK_UPCOMING.filter(p => p.listing?.id === selectedListing)
-    : MOCK_UPCOMING;
-  const history = selectedListing
-    ? MOCK_HISTORY.filter(p => p.listing?.id === selectedListing)
-    : MOCK_HISTORY;
+  // Versements réels (host_payouts) : créés quand Séjoura encaisse un séjour, virés après l'arrivée
+  const [summary, setSummary] = useState<RevenueSummary>(EMPTY_SUMMARY);
+  const [chart, setChart] = useState<RevenueChartResponse>({ monthly: [], yearly: [], selected_year: selectedYear });
+  const [stats, setStats] = useState<RevenueStats>(EMPTY_STATS);
+  const [listings, setListings] = useState<RevenueListingOption[]>([]);
+  const [allUpcoming, setAllUpcoming] = useState<Payout[]>([]);
+  const [allHistory, setAllHistory] = useState<Payout[]>([]);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
-  const handlePayoutClick = (payout: Payout) => {
-    setSelectedPayout({
-      ...MOCK_PAYOUT_DETAIL,
-      id: payout.id,
-      reservation_id: payout.reservation_id,
-      gross_amount: payout.gross_amount,
-      commission_amount: payout.commission_amount,
-      net_amount: payout.net_amount,
-      status: payout.status,
-      listing: payout.listing,
-      scheduled_date: payout.scheduled_date,
-      paid_date: payout.paid_date,
-      reservation: payout.reservation_dates ? {
-        id: payout.reservation_id,
-        check_in: payout.reservation_dates.check_in,
-        check_out: payout.reservation_dates.check_out,
-        total_price: String(payout.gross_amount),
-        guests_count: MOCK_PAYOUT_DETAIL.reservation?.guests_count ?? 2,
-      } : MOCK_PAYOUT_DETAIL.reservation,
-    });
-    setShowDetail(true);
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([
+      hostRevenueApi.getSummary(),
+      hostRevenueApi.getStats(),
+      hostRevenueApi.getListings(),
+      hostRevenueApi.getUpcoming(),
+      hostRevenueApi.getHistory(),
+    ])
+      .then(([summaryRes, statsRes, listingsRes, upcomingRes, historyRes]) => {
+        if (cancelled) return;
+        setSummary(summaryRes);
+        setStats(statsRes);
+        setListings(listingsRes.listings);
+        setAllUpcoming(upcomingRes.payouts);
+        setAllHistory(historyRes.payouts);
+      })
+      .catch(() => !cancelled && setLoadError('Impossible de charger vos revenus. Réessayez dans un instant.'));
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    hostRevenueApi
+      .getChart({ year: selectedYear, listing_id: selectedListing || undefined })
+      .then((res) => !cancelled && setChart(res))
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedYear, selectedListing]);
+
+  const upcoming = selectedListing ? allUpcoming.filter((p) => p.listing?.id === selectedListing) : allUpcoming;
+  const history = selectedListing ? allHistory.filter((p) => p.listing?.id === selectedListing) : allHistory;
+
+  const handlePayoutClick = async (payout: Payout) => {
+    try {
+      const res = await hostRevenueApi.getPayoutDetail(payout.id);
+      setSelectedPayout(res.payout);
+      setShowDetail(true);
+    } catch {
+      setLoadError('Impossible de charger ce versement.');
+    }
   };
 
-  const handleExport = (type: 'monthly' | 'annual' | 'csv') => {
-    // TODO: Replace with API call when backend is ready
-    // hostRevenueApi.exportCSV(params)
+  const handleExport = async (type: 'monthly' | 'annual' | 'csv') => {
+    const params =
+      type === 'monthly'
+        ? { year: selectedYear, month: new Date().getMonth() + 1 }
+        : type === 'annual'
+          ? { year: selectedYear }
+          : undefined;
     const filename = `revenus-${type === 'monthly' ? `${selectedYear}-${String(new Date().getMonth() + 1).padStart(2, '0')}` : type === 'annual' ? String(selectedYear) : 'complet'}.csv`;
-    alert(`Export "${filename}" sera disponible quand le backend sera connecte.`);
+    try {
+      const blob = await hostRevenueApi.exportCSV(params);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      setLoadError("L'export n'a pas pu être généré.");
+    }
   };
 
   const chartData = chartView === 'monthly'
@@ -312,6 +177,8 @@ export function HostRevenues() {
         <h1 className="text-2xl md:text-3xl mb-6 md:mb-8 mt-16 lg:mt-0" style={{ fontWeight: 600, color: '#222222' }}>
           Revenus
         </h1>
+
+        {loadError && <p className="text-sm text-red-600 mb-4">{loadError}</p>}
 
         {/* Tabs */}
         <div className="flex gap-2 mb-8 overflow-x-auto pb-1">

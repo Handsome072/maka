@@ -13,6 +13,13 @@ import {
 import { toast } from 'sonner';
 import { listingsApi, Listing } from '@/app/services/api';
 import { useAuth } from '@/app/context/AuthContext';
+import {
+  CANCELLATION_POLICIES,
+  CANCELLATION_POLICY_LABELS,
+  CANCELLATION_POLICY_RULES,
+  normalizeCancellationPolicy,
+  type CancellationPolicy,
+} from '@/shared/booking';
 
 // Import images
 const summaryChaletImg = "https://images.unsplash.com/photo-1685475512320-eede8aea2b95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBsdXh1cnklMjBjaGFsZXQlMjBleHRlcmlvciUyMGdyZWVuJTIwbmF0dXJlfGVufDF8fHx8MTc3MDk5NTg1M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
@@ -307,7 +314,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
   const [blockModalNote, setBlockModalNote] = useState("");
 
   // 13. Cancellation Policy
-  const [cancellationPolicy, setCancellationPolicy] = useState('Flexible');
+  const [cancellationPolicy, setCancellationPolicy] = useState<CancellationPolicy>('flexible');
 
   // 14. Taxes & Laws
   const [taxRegistration, setTaxRegistration] = useState({
@@ -424,7 +431,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
         if (listing.extra_guest_fee) { setExtraGuestFee(listing.extra_guest_fee); setExtraGuestFeeOpen(true); }
         if (listing.pet_fee) { setPetFee(listing.pet_fee); setPetFeeOpen(true); }
 
-        if (listing.cancellation_policy) setCancellationPolicy(listing.cancellation_policy);
+        if (listing.cancellation_policy) setCancellationPolicy(normalizeCancellationPolicy(listing.cancellation_policy) ?? 'flexible');
         if (listing.tax_registration) setTaxRegistration(listing.tax_registration);
         if (listing.accepted_local_laws) setAcceptedLocalLaws(listing.accepted_local_laws);
 
@@ -1714,17 +1721,17 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
             <div className="space-y-4">
               <label className="block text-sm font-medium text-[#222222]">Politique d'annulation</label>
               <div className="relative">
-                <select value={cancellationPolicy} onChange={(e) => setCancellationPolicy(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg appearance-none bg-white cursor-pointer focus:outline-none focus:border-black">
-                   <option value="Flexible">Flexible</option>
-                   <option value="Modérée">Modérée</option>
-                   <option value="Stricte">Stricte</option>
+                <select value={cancellationPolicy} onChange={(e) => setCancellationPolicy(e.target.value as CancellationPolicy)} className="w-full p-3 border border-gray-300 rounded-lg appearance-none bg-white cursor-pointer focus:outline-none focus:border-black">
+                   {CANCELLATION_POLICIES.map((policy) => (
+                     <option key={policy} value={policy}>{CANCELLATION_POLICY_LABELS[policy]}</option>
+                   ))}
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
               </div>
               <div className="bg-gray-50 p-4 rounded-lg border border-gray-100 text-sm space-y-3">
-                <p><span className="font-semibold text-[#222222]">Annulation jusqu'à 10 jours avant l'arrivée:</span><br/>Remboursement complet.</p>
-                <p><span className="font-semibold text-[#222222]">Moins de 10 jours avant l'arrivée :</span><br/>Perte de 30% du montant total.</p>
-                <p><span className="font-semibold text-[#222222]">Moins de 2 jours avant l'arrivée :</span><br/>Aucun remboursement (sauf dépôt de sécurité)</p>
+                {CANCELLATION_POLICY_RULES[cancellationPolicy].map((rule) => (
+                  <p key={rule}>{rule}</p>
+                ))}
               </div>
             </div>
           </div>
@@ -2129,7 +2136,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
                       <p><span className="font-semibold">Prix de base:</span> {pricing.base} {currency}</p>
                       <p><span className="font-semibold">Frais de ménage:</span> {fees.cleaning} {currency}</p>
                       <p><span className="font-semibold">Dépôt de sécurité:</span> {fees.security} {currency}</p>
-                      <p><span className="font-semibold">Politique d'annulation:</span> {cancellationPolicy}</p>
+                      <p><span className="font-semibold">Politique d'annulation:</span> {CANCELLATION_POLICY_LABELS[cancellationPolicy]}</p>
                    </div>
                 </div>
 

@@ -128,6 +128,18 @@ export function ChatThread({
                 {/* Messages */}
                 <div className="space-y-2">
                   {group.messages.map((msg) => {
+                    if (msg.is_system) {
+                      return (
+                        <div key={msg.id} className="flex justify-center py-1">
+                          <div className="max-w-[85%] text-center">
+                            <p className="text-xs px-4 py-2 rounded-xl bg-gray-50 border border-gray-200 whitespace-pre-wrap" style={{ color: '#4B5563', fontWeight: 500 }}>
+                              {msg.text}
+                            </p>
+                            <span className="text-[11px] text-gray-400">{formatMessageTime(msg.created_at)}</span>
+                          </div>
+                        </div>
+                      );
+                    }
                     const isMe = msg.sender_id === currentUserId;
                     const isAdminMsg = msg.sender_role === 'admin';
                     return (

@@ -12,6 +12,7 @@ import {
 import { AdminSidebar } from '@/app/components/AdminSidebar';
 import { adminListingsApi, type AdminListing } from '@/app/services/api';
 import { toast } from 'sonner';
+import { CANCELLATION_POLICY_LABELS, normalizeCancellationPolicy } from '@/shared/booking';
 
 const SPACE_TYPE_LABELS: Record<string, string> = {
   entire: 'Logement entier',
@@ -417,7 +418,12 @@ export function AdminPropertyDetail() {
                   {listing.cancellation_policy && (
                     <div>
                       <div className="text-xs text-gray-500 mb-1">Annulation</div>
-                      <div style={{ fontWeight: 600 }}>{listing.cancellation_policy}</div>
+                      <div style={{ fontWeight: 600 }}>
+                        {(() => {
+                          const policy = normalizeCancellationPolicy(listing.cancellation_policy);
+                          return policy ? CANCELLATION_POLICY_LABELS[policy] : listing.cancellation_policy;
+                        })()}
+                      </div>
                     </div>
                   )}
                   {listing.min_stay && (

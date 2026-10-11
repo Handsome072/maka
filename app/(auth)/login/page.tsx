@@ -31,7 +31,10 @@ export default function LoginPage() {
     try {
       clearError();
       const user = await login(userEmail, password);
-      router.push(user.role === 'admin' ? '/admin' : '/');
+      // Retour à la page qui a demandé la connexion (réservation…), chemins internes au site uniquement
+      const redirect = new URLSearchParams(window.location.search).get("redirect");
+      const safeRedirect = redirect && /^\/(?![/\\])/.test(redirect) ? redirect : null;
+      router.push(user.role === 'admin' ? '/admin' : safeRedirect ?? '/');
     } catch {
       // Error is handled by context
     }
