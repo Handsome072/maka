@@ -1,525 +1,546 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { ArrowLeft, Calendar, Check, Clock, MapPin, MessageSquare, Phone, ShieldCheck, Users, X } from 'lucide-react';
 import { HostSidebar } from '@/app/components/HostSidebar';
-import { useState } from 'react';
-import { ArrowLeft, Calendar, Users, MapPin, Mail, Phone, MessageSquare, Clock, Check, X } from 'lucide-react';
+import { hostReservationsApi, reservationsApi, type ReservationData } from '@/app/services/api';
+import { HOST_PHASE_LABELS, ReservationStatusBadge } from '@/app/components/booking/ReservationStatusBadge';
+import {
+  formatDateTime,
+  formatGuestsDetail,
+  formatHour,
+  formatMoney,
+  formatStayDay,
+  formatTimeLeft,
+  hostAmount,
+} from '@/app/components/booking/format';
+import { CANCELLATION_POLICY_LABELS, normalizeCancellationPolicy } from '@/shared/booking';
 
 interface HostReservationDetailProps {
   reservationId: string;
 }
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-  pending:     { label: 'En attente',  color: '#9333EA', bg: '#F3E8FF' },
-  confirmed:   { label: 'Confirmée',   color: '#B45309', bg: '#FEF3C7' },
-  in_progress: { label: 'En cours',    color: '#065F46', bg: '#D1FAE5' },
-  completed:   { label: 'Terminée',    color: '#4B5563', bg: '#F3F4F6' },
-  cancelled:   { label: 'Annulée',     color: '#991B1B', bg: '#FEE2E2' },
-};
+/** Motifs d'annulation par l'hôte ; le motif choisi est montré au voyageur. */
+const HOST_CANCEL_REASONS = [
+  "Le logement n'est plus disponible à ces dates",
+  'Travaux ou problème dans le logement',
+  'Raison personnelle',
+  'Autre raison',
+];
 
-const MOCK_DETAIL = {
-  'RES-001': {
-    id: 'RES-001',
-    status: 'confirmed',
-    property: { name: 'Chalet Mont-Tremblant', city: 'Mont-Tremblant', address: '123 Chemin du Sommet, Mont-Tremblant, QC' },
-    checkIn: '22 mars 2026',
-    checkInTime: '15:00',
-    checkOut: '29 mars 2026',
-    checkOutTime: '11:00',
-    nights: 7,
-    guests: 4,
-    guest: {
-      name: 'Alexandre Leroy',
-      avatar: 'AL',
-      email: 'alexandre.leroy@email.com',
-      phone: '+1 514 555 0101',
-    },
-    payment: {
-      total: '2 450 €',
-      commission: '245 €',
-      hostRevenue: '2 205 €',
-    },
-    bookedAt: '5 mars 2026',
-  },
-  'RES-002': {
-    id: 'RES-002',
-    status: 'in_progress',
-    property: { name: 'Appartement Vieux-Montréal', city: 'Montréal', address: '45 Rue Saint-Paul, Montréal, QC' },
-    checkIn: '3 mars 2026',
-    checkInTime: '15:00',
-    checkOut: '8 mars 2026',
-    checkOutTime: '11:00',
-    nights: 5,
-    guests: 2,
-    guest: {
-      name: 'Camille Bernard',
-      avatar: 'CB',
-      email: 'camille.bernard@email.com',
-      phone: '+1 514 555 0202',
-    },
-    payment: {
-      total: '980 €',
-      commission: '98 €',
-      hostRevenue: '882 €',
-    },
-    bookedAt: '20 fév. 2026',
-  },
-  'RES-003': {
-    id: 'RES-003',
-    status: 'confirmed',
-    property: { name: 'Chalet Mont-Tremblant', city: 'Mont-Tremblant', address: '123 Chemin du Sommet, Mont-Tremblant, QC' },
-    checkIn: '15 mars 2026',
-    checkInTime: '15:00',
-    checkOut: '20 mars 2026',
-    checkOutTime: '11:00',
-    nights: 5,
-    guests: 6,
-    guest: {
-      name: 'Lucas Bouchard',
-      avatar: 'LB',
-      email: 'lucas.bouchard@email.com',
-      phone: '+1 438 555 0303',
-    },
-    payment: {
-      total: '1 750 €',
-      commission: '175 €',
-      hostRevenue: '1 575 €',
-    },
-    bookedAt: '28 fév. 2026',
-  },
-  'RES-004': {
-    id: 'RES-004',
-    status: 'completed',
-    property: { name: 'Appartement Vieux-Montréal', city: 'Montréal', address: '45 Rue Saint-Paul, Montréal, QC' },
-    checkIn: '10 fév. 2026',
-    checkInTime: '15:00',
-    checkOut: '14 fév. 2026',
-    checkOutTime: '11:00',
-    nights: 4,
-    guests: 2,
-    guest: {
-      name: 'Sophie Moreau',
-      avatar: 'SM',
-      email: 'sophie.moreau@email.com',
-      phone: '+1 514 555 0404',
-    },
-    payment: {
-      total: '720 €',
-      commission: '72 €',
-      hostRevenue: '648 €',
-    },
-    bookedAt: '25 janv. 2026',
-  },
-  'RES-005': {
-    id: 'RES-005',
-    status: 'completed',
-    property: { name: 'Chalet Mont-Tremblant', city: 'Mont-Tremblant', address: '123 Chemin du Sommet, Mont-Tremblant, QC' },
-    checkIn: '1 fév. 2026',
-    checkInTime: '15:00',
-    checkOut: '8 fév. 2026',
-    checkOutTime: '11:00',
-    nights: 7,
-    guests: 5,
-    guest: {
-      name: 'Thomas Dubois',
-      avatar: 'TD',
-      email: 'thomas.dubois@email.com',
-      phone: '+1 438 555 0505',
-    },
-    payment: {
-      total: '3 150 €',
-      commission: '315 €',
-      hostRevenue: '2 835 €',
-    },
-    bookedAt: '15 janv. 2026',
-  },
-  'RES-006': {
-    id: 'RES-006',
-    status: 'cancelled',
-    property: { name: 'Appartement Vieux-Montréal', city: 'Montréal', address: '45 Rue Saint-Paul, Montréal, QC' },
-    checkIn: '20 fév. 2026',
-    checkInTime: '15:00',
-    checkOut: '25 fév. 2026',
-    checkOutTime: '11:00',
-    nights: 5,
-    guests: 3,
-    guest: {
-      name: 'Julie Martin',
-      avatar: 'JM',
-      email: 'julie.martin@email.com',
-      phone: '+1 514 555 0606',
-    },
-    payment: {
-      total: '1 120 €',
-      commission: '112 €',
-      hostRevenue: '1 008 €',
-    },
-    bookedAt: '5 fév. 2026',
-  },
-  'RES-007': {
-    id: 'RES-007',
-    status: 'confirmed',
-    property: { name: 'Chalet Mont-Tremblant', city: 'Mont-Tremblant', address: '123 Chemin du Sommet, Mont-Tremblant, QC' },
-    checkIn: '28 mars 2026',
-    checkInTime: '15:00',
-    checkOut: '4 avr. 2026',
-    checkOutTime: '11:00',
-    nights: 7,
-    guests: 4,
-    guest: {
-      name: 'Marc Rousseau',
-      avatar: 'MR',
-      email: 'marc.rousseau@email.com',
-      phone: '+1 438 555 0707',
-    },
-    payment: {
-      total: '2 800 €',
-      commission: '280 €',
-      hostRevenue: '2 520 €',
-    },
-    bookedAt: '1 mars 2026',
-  },
-  'RES-008': {
-    id: 'RES-008',
-    status: 'pending',
-    property: { name: 'Chalet Mont-Tremblant', city: 'Mont-Tremblant', address: '123 Chemin du Sommet, Mont-Tremblant, QC' },
-    checkIn: '10 avr. 2026',
-    checkInTime: '15:00',
-    checkOut: '15 avr. 2026',
-    checkOutTime: '11:00',
-    nights: 5,
-    guests: 3,
-    guest: {
-      name: 'Élodie Tremblay',
-      avatar: 'ET',
-      email: 'elodie.tremblay@email.com',
-      phone: '+1 514 555 0808',
-    },
-    payment: {
-      total: '1 890 €',
-      commission: '189 €',
-      hostRevenue: '1 701 €',
-    },
-    bookedAt: '6 mars 2026',
-  },
-  'RES-009': {
-    id: 'RES-009',
-    status: 'pending',
-    property: { name: 'Appartement Vieux-Montréal', city: 'Montréal', address: '45 Rue Saint-Paul, Montréal, QC' },
-    checkIn: '18 avr. 2026',
-    checkInTime: '15:00',
-    checkOut: '22 avr. 2026',
-    checkOutTime: '11:00',
-    nights: 4,
-    guests: 2,
-    guest: {
-      name: 'Hugo Lavoie',
-      avatar: 'HL',
-      email: 'hugo.lavoie@email.com',
-      phone: '+1 438 555 0909',
-    },
-    payment: {
-      total: '760 €',
-      commission: '76 €',
-      hostRevenue: '684 €',
-    },
-    bookedAt: '7 mars 2026',
-  },
-} as Record<string, any>;
+/** Motifs de refus proposés ; le motif choisi est montré au voyageur. */
+const DECLINE_REASONS = [
+  'Les dates ne sont finalement pas disponibles',
+  'Le logement ne convient pas à ce séjour',
+  'Le nombre de voyageurs ne convient pas',
+  'Autre raison',
+];
+
+/** Paiement du voyageur et versement à l'hôte, en une phrase. */
+function hostPaymentNote(reservation: ReservationData): string {
+  const payout = reservation.payout;
+  const money = (value: string | null) => formatMoney(value, reservation.currency);
+  switch (reservation.payment_status) {
+    case null:
+    case undefined:
+      return "Réservation sans paiement en ligne : convenez du règlement avec le voyageur dans la messagerie.";
+    case 'authorized':
+      return 'Le paiement du voyageur est autorisé : Séjoura l’encaissera dès que vous accepterez la demande.';
+    case 'released':
+      return 'Autorisation annulée : rien n’a été débité au voyageur.';
+    default:
+      if (payout?.status === 'paid') {
+        return `Versement de ${money(payout.net_amount)} effectué le ${formatStayDay(payout.paid_date ?? '')}${payout.reference ? ` (réf. ${payout.reference})` : ''}.`;
+      }
+      if (payout) {
+        return `Paiement encaissé par Séjoura. Versement de ${money(payout.net_amount)} prévu le ${formatStayDay(payout.scheduled_date ?? '')}, par virement.`;
+      }
+      return 'Paiement encaissé par Séjoura ; aucun versement n’est dû pour cette réservation.';
+  }
+}
+
+function amount(value: string | null | undefined): number {
+  const parsed = parseFloat(value ?? '');
+  return Number.isFinite(parsed) ? parsed : 0;
+}
 
 export function HostReservationDetail({ reservationId }: HostReservationDetailProps) {
   const router = useRouter();
-  const [reservationData, setReservationData] = useState(MOCK_DETAIL);
-  const [actionConfirm, setActionConfirm] = useState<{ action: 'accept' | 'refuse' } | null>(null);
-  const reservation = reservationData[reservationId];
+  const id = Number(reservationId);
+  const [reservation, setReservation] = useState<ReservationData | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleAccept = () => {
-    setReservationData(prev => ({
-      ...prev,
-      [reservationId]: { ...prev[reservationId], status: 'confirmed' },
-    }));
-    setActionConfirm(null);
+  const [action, setAction] = useState<'accept' | 'decline' | 'cancel' | null>(null);
+  const [cancelReason, setCancelReason] = useState(HOST_CANCEL_REASONS[0]);
+  const [replyMessage, setReplyMessage] = useState('');
+  const [declineReason, setDeclineReason] = useState(DECLINE_REASONS[0]);
+  const [submitting, setSubmitting] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    reservationsApi
+      .getOne(id)
+      .then((res) => {
+        if (cancelled) return;
+        if (res.reservation.viewer_role !== 'host') {
+          setError('Réservation introuvable.');
+          return;
+        }
+        setReservation(res.reservation);
+      })
+      .catch((err: { status?: number }) => {
+        if (cancelled) return;
+        setError(err?.status === 404 || err?.status === 403 ? 'Réservation introuvable.' : 'Impossible de charger la réservation.');
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
+
+  const openAction = (next: 'accept' | 'decline' | 'cancel') => {
+    setAction(next);
+    setReplyMessage('');
+    setDeclineReason(DECLINE_REASONS[0]);
+    setCancelReason(HOST_CANCEL_REASONS[0]);
+    setActionError(null);
   };
 
-  const handleRefuse = () => {
-    setReservationData(prev => ({
-      ...prev,
-      [reservationId]: { ...prev[reservationId], status: 'cancelled' },
-    }));
-    setActionConfirm(null);
+  const submitAction = async () => {
+    if (!action) return;
+    setSubmitting(true);
+    setActionError(null);
+    try {
+      const message = replyMessage.trim() || undefined;
+      const res =
+        action === 'accept'
+          ? await hostReservationsApi.accept(id, message)
+          : action === 'decline'
+            ? await hostReservationsApi.decline(id, { reason: declineReason, message })
+            : await hostReservationsApi.cancel(id, { reason: cancelReason, message });
+      setReservation(res.reservation);
+      setAction(null);
+      // Pastille « demandes à traiter » du menu
+      window.dispatchEvent(new Event('host-reservations-changed'));
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'La réponse n’a pas pu être enregistrée.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  if (!reservation) {
+  const backButton = (
+    <button
+      onClick={() => router.push('/annonces/reservations')}
+      className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 mt-16 lg:mt-0"
+    >
+      <ArrowLeft className="w-5 h-5" />
+      <span className="text-sm" style={{ fontWeight: 500 }}>Retour aux réservations</span>
+    </button>
+  );
+
+  if (error || !reservation) {
     return (
       <div className="min-h-screen bg-gray-50">
         <HostSidebar activePage="host-reservations" />
         <main className="lg:ml-[280px] p-4 md:p-6 lg:p-8">
-          <button
-            onClick={() => router.push('/annonces/reservations')}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 mt-16 lg:mt-0"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            Retour aux réservations
-          </button>
-          <div className="text-center py-24">
-            <h2 className="text-lg mb-2" style={{ fontWeight: 600, color: '#222222' }}>Réservation introuvable</h2>
-            <p className="text-sm" style={{ color: '#717171' }}>Cette réservation n'existe pas ou a été supprimée.</p>
-          </div>
+          {backButton}
+          {error ? (
+            <div className="text-center py-24">
+              <h2 className="text-lg mb-2" style={{ fontWeight: 600, color: '#222222' }}>{error}</h2>
+              <p className="text-sm" style={{ color: '#717171' }}>Cette réservation n&apos;existe pas ou ne concerne pas vos logements.</p>
+            </div>
+          ) : (
+            <div className="flex justify-center py-24">
+              <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
+            </div>
+          )}
         </main>
       </div>
     );
   }
 
-  const statusInfo = STATUS_CONFIG[reservation.status] || STATUS_CONFIG.confirmed;
+  const guest = reservation.guest;
+  const guestFirstName = guest?.first_name || 'Le voyageur';
+  const guestFullName = [guest?.first_name, guest?.last_name].filter(Boolean).join(' ') || 'Voyageur';
+  const listing = reservation.listing;
+  const currency = reservation.currency;
+  const nights = reservation.nights_count;
+  const pending = reservation.phase === 'pending';
+  const confirmed = reservation.phase === 'upcoming' || reservation.phase === 'ongoing';
+  const timeLeft = formatTimeLeft(reservation.expires_at);
+  const policy = normalizeCancellationPolicy(reservation.cancellation_policy);
+  const inboxHref = reservation.conversation_id ? `/annonces/inbox?conversation=${reservation.conversation_id}` : '/annonces/inbox';
+  const priceLines: [string, number][] = [
+    [`${formatMoney(reservation.price_per_night, currency)} x ${nights} nuit${nights > 1 ? 's' : ''}`, amount(reservation.price_per_night) * nights],
+    ['Frais de ménage', amount(reservation.cleaning_fee)],
+    ['Voyageurs supplémentaires', amount(reservation.extra_guest_fee)],
+    ['Animaux', amount(reservation.pet_fee)],
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
       <HostSidebar activePage="host-reservations" />
 
       <main className="lg:ml-[280px] p-4 md:p-6 lg:p-8">
-        {/* Back button */}
-        <button
-          onClick={() => router.push('/annonces/reservations')}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 mt-16 lg:mt-0"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span className="text-sm" style={{ fontWeight: 500 }}>Retour aux réservations</span>
-        </button>
+        {backButton}
 
-        {/* Header */}
+        {/* En-tête */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-8">
           <div>
             <h1 className="text-2xl md:text-3xl" style={{ fontWeight: 600, color: '#222222' }}>
-              Réservation {reservation.id}
+              {pending ? `Demande de ${guestFirstName}` : `Réservation de ${guestFullName}`}
             </h1>
             <p className="text-sm mt-1" style={{ color: '#717171' }}>
-              Réservé le {reservation.bookedAt}
+              N° <span className="font-mono">{reservation.confirmation_code}</span> · {pending ? 'Demandée' : 'Réservée'} le{' '}
+              {formatDateTime(reservation.created_at)}
             </p>
           </div>
-          <span
-            className="inline-block self-start px-3 py-1.5 rounded-full text-sm"
-            style={{ fontWeight: 600, backgroundColor: statusInfo.bg, color: statusInfo.color }}
-          >
-            {statusInfo.label}
-          </span>
+          <ReservationStatusBadge phase={reservation.phase} label={HOST_PHASE_LABELS[reservation.phase]} className="self-start text-sm" />
         </div>
 
-        {/* Action banner for pending reservations */}
-        {reservation.status === 'pending' && (
-          <div className="bg-purple-50 border border-purple-200 rounded-xl p-5 mb-6">
-            <p className="text-sm mb-4" style={{ fontWeight: 500, color: '#6B21A8' }}>
-              Ce voyageur souhaite réserver votre logement. Acceptez ou refusez cette demande.
+        {/* Demande à traiter */}
+        {pending && (
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-6">
+            <p className="text-base mb-1" style={{ fontWeight: 600, color: '#78350F' }}>
+              {guestFirstName} souhaite réserver du {formatStayDay(reservation.check_in)} au {formatStayDay(reservation.check_out)}
             </p>
+            <p className="text-sm mb-4 flex items-center gap-1.5" style={{ color: '#92400E' }}>
+              <Clock className="w-4 h-4" />
+              {timeLeft
+                ? `Répondez avant le ${formatDateTime(reservation.expires_at)} (il reste ${timeLeft}). Sans réponse, la demande expire et les dates sont libérées.`
+                : 'Le délai de réponse est dépassé.'}
+            </p>
+            {reservation.guest_message && (
+              <blockquote className="bg-white border border-amber-100 rounded-lg p-4 mb-4 text-sm whitespace-pre-line" style={{ color: '#222222' }}>
+                {reservation.guest_message}
+              </blockquote>
+            )}
             <div className="flex flex-col sm:flex-row gap-3">
               <button
-                onClick={() => setActionConfirm({ action: 'accept' })}
+                onClick={() => openAction('accept')}
                 className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm text-white transition-colors hover:opacity-90"
                 style={{ fontWeight: 600, backgroundColor: '#065F46' }}
               >
                 <Check className="w-5 h-5" />
-                Accepter la réservation
+                Accepter la demande
               </button>
               <button
-                onClick={() => setActionConfirm({ action: 'refuse' })}
+                onClick={() => openAction('decline')}
                 className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm text-white transition-colors hover:opacity-90"
                 style={{ fontWeight: 600, backgroundColor: '#991B1B' }}
               >
                 <X className="w-5 h-5" />
-                Refuser la réservation
+                Refuser
               </button>
-              <button
-                onClick={() => router.push('/annonces/inbox')}
-                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm border border-gray-300 hover:bg-gray-50 transition-colors"
+              <Link
+                href={inboxHref}
+                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm border border-gray-300 bg-white hover:bg-gray-50 transition-colors"
                 style={{ fontWeight: 600, color: '#222222' }}
               >
                 <MessageSquare className="w-5 h-5" />
-                Envoyer un message
-              </button>
+                Poser une question
+              </Link>
             </div>
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left column - Main info */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Stay info */}
-            <div className="bg-white border border-gray-200 rounded-xl p-6">
-              <h2 className="text-base mb-5" style={{ fontWeight: 600, color: '#222222' }}>Informations du séjour</h2>
+        {reservation.phase === 'declined' && (
+          <div className="bg-white border border-gray-200 rounded-xl p-5 mb-6 text-sm" style={{ color: '#374151' }}>
+            Vous avez refusé cette demande le {formatDateTime(reservation.declined_at)}
+            {reservation.cancellation_reason ? ` (« ${reservation.cancellation_reason} »)` : ''}. Les dates ont été libérées.
+          </div>
+        )}
+        {reservation.phase === 'expired' && (
+          <div className="bg-white border border-gray-200 rounded-xl p-5 mb-6 text-sm" style={{ color: '#374151' }}>
+            Cette demande a expiré sans réponse dans les 24 heures. Les dates ont été libérées.
+          </div>
+        )}
+        {reservation.phase === 'cancelled' && (
+          <div className="bg-white border border-gray-200 rounded-xl p-5 mb-6 text-sm space-y-1" style={{ color: '#374151' }}>
+            <p>
+              Réservation annulée le {formatDateTime(reservation.cancelled_at ?? reservation.updated_at)}
+              {reservation.cancelled_by === 'guest' ? ' par le voyageur' : reservation.cancelled_by === 'host' ? ' par vous' : ''}
+              {reservation.cancellation_reason ? ` (« ${reservation.cancellation_reason} »)` : ''}. Les dates ont été libérées.
+            </p>
+            {reservation.refund_amount !== null && (
+              <p>
+                {parseFloat(reservation.refund_amount) > 0
+                  ? reservation.payment_status
+                    ? `Séjoura a remboursé ${formatMoney(reservation.refund_amount, currency)} au voyageur selon la politique d'annulation ; votre versement a été ajusté.`
+                    : `Montant à rembourser au voyageur selon la politique d'annulation : ${formatMoney(reservation.refund_amount, currency)}. Le paiement en ligne n'étant pas encore disponible, ce remboursement se règle directement avec le voyageur.`
+                  : "Selon la politique d'annulation, aucun remboursement n'est dû au voyageur."}
+              </p>
+            )}
+          </div>
+        )}
+        {reservation.phase === 'upcoming' && (
+          <div className="flex justify-end mb-6">
+            <button
+              onClick={() => openAction('cancel')}
+              className="px-4 py-2 rounded-lg border border-red-200 text-sm text-red-700 bg-white hover:bg-red-50"
+              style={{ fontWeight: 600 }}
+            >
+              Annuler la réservation
+            </button>
+          </div>
+        )}
 
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-6">
+            {/* Séjour */}
+            <div className="bg-white border border-gray-200 rounded-xl p-6">
+              <h2 className="text-base mb-5" style={{ fontWeight: 600, color: '#222222' }}>Séjour</h2>
               <div className="space-y-4">
-                {/* Property */}
                 <div className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="text-sm" style={{ fontWeight: 600, color: '#222222' }}>{reservation.property.name}</p>
-                    <p className="text-sm" style={{ color: '#717171' }}>{reservation.property.address}</p>
+                    <p className="text-sm" style={{ fontWeight: 600, color: '#222222' }}>{listing?.title}</p>
+                    <p className="text-sm" style={{ color: '#717171' }}>
+                      {listing?.full_address || [listing?.city, listing?.province].filter(Boolean).join(', ')}
+                    </p>
                   </div>
                 </div>
-
-                {/* Dates grid */}
                 <div className="grid grid-cols-2 gap-4 pt-2">
                   <div className="flex items-start gap-3">
                     <Calendar className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="text-xs" style={{ color: '#717171' }}>Check-in</p>
-                      <p className="text-sm" style={{ fontWeight: 600, color: '#222222' }}>{reservation.checkIn}</p>
-                      <p className="text-xs" style={{ color: '#9CA3AF' }}>à partir de {reservation.checkInTime}</p>
+                      <p className="text-xs" style={{ color: '#717171' }}>Arrivée</p>
+                      <p className="text-sm" style={{ fontWeight: 600, color: '#222222' }}>{formatStayDay(reservation.check_in)}</p>
+                      <p className="text-xs" style={{ color: '#9CA3AF' }}>à partir de {formatHour(listing?.arrival_time, '14:00')}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <Calendar className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="text-xs" style={{ color: '#717171' }}>Check-out</p>
-                      <p className="text-sm" style={{ fontWeight: 600, color: '#222222' }}>{reservation.checkOut}</p>
-                      <p className="text-xs" style={{ color: '#9CA3AF' }}>avant {reservation.checkOutTime}</p>
+                      <p className="text-xs" style={{ color: '#717171' }}>Départ</p>
+                      <p className="text-sm" style={{ fontWeight: 600, color: '#222222' }}>{formatStayDay(reservation.check_out)}</p>
+                      <p className="text-xs" style={{ color: '#9CA3AF' }}>avant {formatHour(listing?.departure_time, '11:00')}</p>
                     </div>
                   </div>
                 </div>
-
-                {/* Duration & guests */}
                 <div className="grid grid-cols-2 gap-4 pt-2 border-t border-gray-100">
                   <div className="flex items-center gap-3">
                     <Clock className="w-5 h-5 text-gray-400 flex-shrink-0" />
                     <div>
-                      <p className="text-xs" style={{ color: '#717171' }}>Durée du séjour</p>
-                      <p className="text-sm" style={{ fontWeight: 600, color: '#222222' }}>{reservation.nights} nuit{reservation.nights > 1 ? 's' : ''}</p>
+                      <p className="text-xs" style={{ color: '#717171' }}>Durée</p>
+                      <p className="text-sm" style={{ fontWeight: 600, color: '#222222' }}>{nights} nuit{nights > 1 ? 's' : ''}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     <Users className="w-5 h-5 text-gray-400 flex-shrink-0" />
                     <div>
-                      <p className="text-xs" style={{ color: '#717171' }}>Nombre de voyageurs</p>
-                      <p className="text-sm" style={{ fontWeight: 600, color: '#222222' }}>{reservation.guests} voyageur{reservation.guests > 1 ? 's' : ''}</p>
+                      <p className="text-xs" style={{ color: '#717171' }}>Voyageurs</p>
+                      <p className="text-sm" style={{ fontWeight: 600, color: '#222222' }}>{formatGuestsDetail(reservation)}</p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Guest info */}
+            {/* Voyageur */}
             <div className="bg-white border border-gray-200 rounded-xl p-6">
-              <h2 className="text-base mb-5" style={{ fontWeight: 600, color: '#222222' }}>Informations voyageur</h2>
-
+              <h2 className="text-base mb-5" style={{ fontWeight: 600, color: '#222222' }}>Voyageur</h2>
               <div className="flex items-center gap-4 mb-5">
-                <div
-                  className="w-14 h-14 rounded-full flex items-center justify-center text-white text-lg flex-shrink-0"
-                  style={{ fontWeight: 600, backgroundColor: '#222222' }}
-                >
-                  {reservation.guest.avatar}
-                </div>
+                {guest?.profile_photo_url ? (
+                  <img src={guest.profile_photo_url} alt={guestFirstName} className="w-14 h-14 rounded-full object-cover flex-shrink-0" />
+                ) : (
+                  <div
+                    className="w-14 h-14 rounded-full flex items-center justify-center text-white text-lg flex-shrink-0"
+                    style={{ fontWeight: 600, backgroundColor: '#222222' }}
+                  >
+                    {guestFirstName.charAt(0).toUpperCase()}
+                  </div>
+                )}
                 <div>
-                  <p className="text-base" style={{ fontWeight: 600, color: '#222222' }}>{reservation.guest.name}</p>
+                  <p className="text-base" style={{ fontWeight: 600, color: '#222222' }}>{guestFullName}</p>
+                  {guest?.member_since && (
+                    <p className="text-sm" style={{ color: '#717171' }}>Membre depuis {new Date(guest.member_since).getFullYear()}</p>
+                  )}
                 </div>
               </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                  <span className="text-sm" style={{ color: '#222222' }}>{reservation.guest.email}</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                  <span className="text-sm" style={{ color: '#222222' }}>{reservation.guest.phone}</span>
-                </div>
+              <div className="space-y-3 text-sm" style={{ color: '#222222' }}>
+                {guest?.identity_verified && (
+                  <p className="flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-green-700" />
+                    Identité vérifiée
+                  </p>
+                )}
+                {guest?.phone ? (
+                  <p className="flex items-center gap-2">
+                    <Phone className="w-4 h-4 text-gray-400" />
+                    {guest.phone}
+                  </p>
+                ) : (
+                  !confirmed &&
+                  pending && (
+                    <p style={{ color: '#717171' }}>Le nom complet et le téléphone du voyageur s&apos;afficheront une fois la demande acceptée.</p>
+                  )
+                )}
               </div>
-
-              {/* Contact actions */}
-              {(reservation.status === 'pending' || reservation.status === 'confirmed' || reservation.status === 'in_progress') && (
+              {!pending && reservation.guest_message && (
+                <div className="mt-5 pt-5 border-t border-gray-100">
+                  <p className="text-xs mb-1" style={{ color: '#717171' }}>Message joint à la demande</p>
+                  <p className="text-sm whitespace-pre-line" style={{ color: '#222222' }}>{reservation.guest_message}</p>
+                </div>
+              )}
+              {!pending && (
                 <div className="flex gap-3 mt-5 pt-5 border-t border-gray-100">
-                  <button
-                    onClick={() => router.push('/annonces/inbox')}
+                  <Link
+                    href={inboxHref}
                     className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors text-sm"
                     style={{ fontWeight: 600, color: '#222222' }}
                   >
                     <MessageSquare className="w-4 h-4" />
-                    Envoyer un message
-                  </button>
+                    Écrire à {guestFirstName}
+                  </Link>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Right column - Payment */}
           <div className="space-y-6">
+            {/* Montants */}
             <div className="bg-white border border-gray-200 rounded-xl p-6">
-              <h2 className="text-base mb-5" style={{ fontWeight: 600, color: '#222222' }}>Informations paiement</h2>
-
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm" style={{ color: '#717171' }}>Montant total</span>
-                  <span className="text-sm" style={{ fontWeight: 600, color: '#222222' }}>{reservation.payment.total}</span>
+              <h2 className="text-base mb-5" style={{ fontWeight: 600, color: '#222222' }}>Montants</h2>
+              <div className="space-y-3 text-sm">
+                {priceLines
+                  .filter(([, value], index) => index === 0 || value > 0)
+                  .map(([label, value]) => (
+                    <div key={label} className="flex justify-between gap-4">
+                      <span style={{ color: '#717171' }}>{label}</span>
+                      <span style={{ color: '#222222' }}>{formatMoney(value, currency)}</span>
+                    </div>
+                  ))}
+                <div className="flex justify-between gap-4 pt-3 border-t border-gray-200">
+                  <span style={{ fontWeight: 600, color: '#222222' }}>Montant hôte</span>
+                  <span className="text-base" style={{ fontWeight: 700, color: '#065F46' }}>{formatMoney(hostAmount(reservation), currency)}</span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm" style={{ color: '#717171' }}>Commission plateforme</span>
-                  <span className="text-sm" style={{ color: '#991B1B' }}>- {reservation.payment.commission}</span>
-                </div>
-                <div className="flex justify-between items-center pt-3 border-t border-gray-200">
-                  <span className="text-sm" style={{ fontWeight: 600, color: '#222222' }}>Revenu estimé</span>
-                  <span className="text-base" style={{ fontWeight: 700, color: '#065F46' }}>{reservation.payment.hostRevenue}</span>
+                <div className="flex justify-between gap-4" style={{ color: '#9CA3AF' }}>
+                  <span>Frais de service Séjoura, payés par le voyageur</span>
+                  <span>{formatMoney(reservation.service_fee, currency)}</span>
                 </div>
               </div>
-
-              <p className="text-xs mt-4 p-3 rounded-lg" style={{ backgroundColor: '#F9FAFB', color: '#9CA3AF' }}>
-                Les détails complets des paiements sont disponibles dans la section Revenus.
+              <p className="text-xs mt-4 p-3 rounded-lg" style={{ backgroundColor: '#F9FAFB', color: '#6B7280' }}>
+                {hostPaymentNote(reservation)}
               </p>
             </div>
 
-            {/* Quick summary card */}
+            {/* Résumé */}
             <div className="bg-white border border-gray-200 rounded-xl p-6">
               <h2 className="text-base mb-4" style={{ fontWeight: 600, color: '#222222' }}>Résumé</h2>
               <div className="space-y-2.5 text-sm">
-                <div className="flex justify-between">
-                  <span style={{ color: '#717171' }}>ID réservation</span>
-                  <span className="font-mono" style={{ fontWeight: 500, color: '#222222' }}>{reservation.id}</span>
+                <div className="flex justify-between gap-4">
+                  <span style={{ color: '#717171' }}>N° de réservation</span>
+                  <span className="font-mono" style={{ fontWeight: 500, color: '#222222' }}>{reservation.confirmation_code}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span style={{ color: '#717171' }}>Statut</span>
-                  <span
-                    className="px-2 py-0.5 rounded-full text-xs"
-                    style={{ fontWeight: 600, backgroundColor: statusInfo.bg, color: statusInfo.color }}
-                  >
-                    {statusInfo.label}
-                  </span>
+                <div className="flex justify-between gap-4">
+                  <span style={{ color: '#717171' }}>Mode</span>
+                  <span style={{ color: '#222222' }}>{reservation.reservation_mode === 'instant' ? 'Instantanée' : 'Sur demande'}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span style={{ color: '#717171' }}>Réservé le</span>
-                  <span style={{ color: '#222222' }}>{reservation.bookedAt}</span>
-                </div>
+                {policy && (
+                  <div className="flex justify-between gap-4">
+                    <span style={{ color: '#717171' }}>Annulation</span>
+                    <span style={{ color: '#222222' }}>{CANCELLATION_POLICY_LABELS[policy]}</span>
+                  </div>
+                )}
+                {reservation.confirmed_at && (
+                  <div className="flex justify-between gap-4">
+                    <span style={{ color: '#717171' }}>Confirmée le</span>
+                    <span style={{ color: '#222222' }}>{formatDateTime(reservation.confirmed_at)}</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
       </main>
 
-      {/* Confirmation modal */}
-      {actionConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-xl">
+      {/* Accepter / refuser */}
+      {action && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => !submitting && setAction(null)}>
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg mb-2" style={{ fontWeight: 600, color: '#222222' }}>
-              {actionConfirm.action === 'accept' ? 'Accepter la réservation ?' : 'Refuser la réservation ?'}
+              {action === 'accept'
+                ? `Accepter la demande de ${guestFirstName} ?`
+                : action === 'decline'
+                  ? `Refuser la demande de ${guestFirstName} ?`
+                  : `Annuler la réservation de ${guestFirstName} ?`}
             </h3>
-            <p className="text-sm mb-6" style={{ color: '#717171' }}>
-              {actionConfirm.action === 'accept'
-                ? 'Le voyageur sera notifié et la réservation sera confirmée.'
-                : 'Le voyageur sera notifié de votre refus. Cette action est irréversible.'}
+            <p className="text-sm mb-5" style={{ color: '#717171' }}>
+              {action === 'accept'
+                ? `La réservation sera confirmée et ${guestFirstName} verra l'adresse et les instructions d'arrivée.${
+                    reservation.payment_status === 'authorized' ? ` Séjoura encaissera le paiement (${formatMoney(reservation.total_price, currency)}).` : ''
+                  }`
+                : action === 'decline'
+                  ? 'Les dates seront libérées. Le motif choisi sera indiqué au voyageur.'
+                  : `Annuler une réservation confirmée met le voyageur en difficulté : ne le faites qu'en dernier recours. ${guestFirstName} recevra un e-mail avec le motif choisi et aura droit au remboursement intégral (${formatMoney(reservation.total_price, currency)}).`}
             </p>
+
+            {action === 'cancel' && (
+              <label className="block mb-4">
+                <span className="text-xs block mb-1" style={{ color: '#717171', fontWeight: 600 }}>Motif</span>
+                <select
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900"
+                >
+                  {HOST_CANCEL_REASONS.map((reason) => (
+                    <option key={reason} value={reason}>{reason}</option>
+                  ))}
+                </select>
+              </label>
+            )}
+
+            {action === 'decline' && (
+              <label className="block mb-4">
+                <span className="text-xs block mb-1" style={{ color: '#717171', fontWeight: 600 }}>Motif</span>
+                <select
+                  value={declineReason}
+                  onChange={(e) => setDeclineReason(e.target.value)}
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900"
+                >
+                  {DECLINE_REASONS.map((reason) => (
+                    <option key={reason} value={reason}>{reason}</option>
+                  ))}
+                </select>
+              </label>
+            )}
+
+            <label className="block mb-5">
+              <span className="text-xs block mb-1" style={{ color: '#717171', fontWeight: 600 }}>
+                Message à {guestFirstName} (facultatif)
+              </span>
+              <textarea
+                value={replyMessage}
+                onChange={(e) => setReplyMessage(e.target.value.slice(0, 2000))}
+                rows={4}
+                placeholder={action === 'accept' ? 'Bienvenue ! Voici quelques informations pour votre arrivée…' : 'Merci pour votre demande…'}
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-gray-900"
+              />
+              <span className="text-xs" style={{ color: '#9CA3AF' }}>Envoyé dans votre conversation avec le voyageur.</span>
+            </label>
+
+            {actionError && <p className="text-sm text-red-600 mb-4">{actionError}</p>}
+
             <div className="flex gap-3">
               <button
-                onClick={() => setActionConfirm(null)}
+                onClick={() => setAction(null)}
+                disabled={submitting}
                 className="flex-1 py-2.5 rounded-lg text-sm border border-gray-300 hover:bg-gray-50 transition-colors"
                 style={{ fontWeight: 600, color: '#222222' }}
               >
-                Annuler
+                Retour
               </button>
               <button
-                onClick={() => actionConfirm.action === 'accept' ? handleAccept() : handleRefuse()}
-                className="flex-1 py-2.5 rounded-lg text-sm text-white transition-colors"
-                style={{
-                  fontWeight: 600,
-                  backgroundColor: actionConfirm.action === 'accept' ? '#065F46' : '#991B1B',
-                }}
+                onClick={submitAction}
+                disabled={submitting}
+                className="flex-1 py-2.5 rounded-lg text-sm text-white transition-colors disabled:opacity-60"
+                style={{ fontWeight: 600, backgroundColor: action === 'accept' ? '#065F46' : '#991B1B' }}
               >
-                {actionConfirm.action === 'accept' ? 'Confirmer' : 'Refuser'}
+                {submitting ? 'Envoi…' : action === 'accept' ? 'Accepter' : action === 'decline' ? 'Refuser' : 'Annuler la réservation'}
               </button>
             </div>
           </div>

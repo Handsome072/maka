@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import Link from 'next/link';
 import { X, Lock, Unlock, CalendarDays } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -12,16 +13,16 @@ import {
   DateStatus,
 } from './types';
 
-interface PanelContentProps {
+export interface PanelContentProps {
   selectedDates: Set<string>;
   calendarDates: CalendarDate[];
   reservations: CalendarReservation[];
   basePrice: number;
   currency: string;
-  panelPrice: string;
-  onPanelPriceChange: (value: string) => void;
-  onApplyPrice: () => void;
-  onResetPrice: () => void;
+  /** Logement affiché : lien vers la modification de son tarif. */
+  listingId: number | null;
+  /** Blocage en cours d'enregistrement. */
+  busy?: boolean;
   onBlock: () => void;
   onUnblock: () => void;
 }
@@ -31,10 +32,9 @@ export function PanelContent({
   calendarDates,
   reservations,
   basePrice,
-  panelPrice,
-  onPanelPriceChange,
-  onApplyPrice,
-  onResetPrice,
+  currency,
+  listingId,
+  busy = false,
   onBlock,
   onUnblock,
 }: PanelContentProps) {
@@ -135,7 +135,8 @@ export function PanelContent({
             {(commonStatus === 'available' || commonStatus === 'mixed') && (
               <button
                 onClick={onBlock}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg border text-sm transition-colors hover:bg-red-50"
+                disabled={busy}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg border text-sm transition-colors hover:bg-red-50 disabled:opacity-50"
                 style={{ fontWeight: 600, color: '#991B1B', borderColor: '#FECACA' }}
               >
                 <Lock className="w-4 h-4" />
@@ -145,7 +146,8 @@ export function PanelContent({
             {(commonStatus === 'blocked' || commonStatus === 'mixed') && (
               <button
                 onClick={onUnblock}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg border text-sm transition-colors hover:bg-green-50"
+                disabled={busy}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg border text-sm transition-colors hover:bg-green-50 disabled:opacity-50"
                 style={{ fontWeight: 600, color: '#166534', borderColor: '#BBF7D0' }}
               >
                 <Unlock className="w-4 h-4" />
@@ -156,42 +158,23 @@ export function PanelContent({
         )}
       </div>
 
-      {/* Pricing section */}
+      {/* Prix : le tarif de base de l'annonce s'applique à toutes les nuits */}
       {!hasOnlyReserved && (
-        <div className="space-y-3">
+        <div className="space-y-2">
           <p className="text-xs" style={{ color: '#717171', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             Prix par nuit
           </p>
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <input
-                type="number"
-                min="0"
-                value={panelPrice}
-                onChange={(e) => onPanelPriceChange(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-                style={{ fontWeight: 500 }}
-                placeholder={String(basePrice)}
-              />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs" style={{ color: '#9CA3AF' }}>
-                $
-              </span>
-            </div>
-            <button
-              onClick={onApplyPrice}
-              className="px-4 py-2 rounded-lg text-sm text-white transition-colors hover:opacity-90"
-              style={{ backgroundColor: '#222222', fontWeight: 600 }}
-            >
-              Appliquer
-            </button>
-          </div>
-          <button
-            onClick={onResetPrice}
-            className="text-xs underline transition-colors hover:opacity-70"
-            style={{ color: '#717171', fontWeight: 500 }}
-          >
-            Réinitialiser au prix de base ({basePrice} €)
-          </button>
+          <p className="text-sm" style={{ color: '#222222', fontWeight: 600 }}>
+            {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: currency || 'EUR' }).format(basePrice)}
+          </p>
+          <p className="text-xs" style={{ color: '#717171' }}>
+            Tarif de base de l&apos;annonce, appliqué à toutes les nuits.
+          </p>
+          {listingId && (
+            <Link href={`/annonces/edit?id=${listingId}`} className="text-xs underline" style={{ color: '#222222', fontWeight: 600 }}>
+              Modifier le tarif dans l&apos;annonce
+            </Link>
+          )}
         </div>
       )}
 
@@ -253,6 +236,13 @@ export function PanelContent({
                 {format(parseISO(overlappingReservation.checkOut), 'd MMM yyyy', { locale: fr })}
               </span>
             </div>
+            <Link
+              href={`/annonces/reservations/${overlappingReservation.id}`}
+              className="inline-block text-xs underline pt-1"
+              style={{ color: '#222222', fontWeight: 600 }}
+            >
+              {overlappingReservation.status === 'pending' ? 'Répondre à la demande' : 'Voir la réservation'}
+            </Link>
           </div>
         </div>
       )}

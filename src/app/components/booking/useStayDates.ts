@@ -1,7 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { reservationsApi } from '../../services/api';
+import { weekdayAllowed, weekdayName } from '@/shared/booking';
 
 const DAY_MS = 86_400_000;
 
@@ -29,15 +30,26 @@ export function nightsBetween(start: Date, end: Date): number {
   return Math.max(0, Math.round((end.getTime() - start.getTime()) / DAY_MS));
 }
 
+export interface StayRules {
+  /** Jours d'arrivée / de départ autorisés de l'annonce ({ Lun: true, Sam: false, … }). */
+  arrivalDays?: unknown;
+  departureDays?: unknown;
+  /** Séjour déjà choisi (page de réservation). */
+  initialCheckIn?: Date | null;
+  initialCheckOut?: Date | null;
+}
+
 /**
  * Sélection arrivée / départ façon Airbnb : on choisit d'abord l'arrivée, puis seuls les départs
- * possibles restent cliquables (durée min/max du séjour, aucune nuit déjà réservée entre les deux).
+ * possibles restent cliquables (durée min/max du séjour, jours autorisés, aucune nuit déjà réservée entre les deux).
  */
-export function useStayDates(listingId: number, minStay: number, maxStay: number) {
-  const [checkIn, setCheckIn] = useState<Date | null>(null);
-  const [checkOut, setCheckOut] = useState<Date | null>(null);
+export function useStayDates(listingId: number, minStay: number, maxStay: number, rules: StayRules = {}) {
+  const { arrivalDays, departureDays } = rules;
+  const [checkIn, setCheckIn] = useState<Date | null>(rules.initialCheckIn ?? null);
+  const [checkOut, setCheckOut] = useState<Date | null>(rules.initialCheckOut ?? null);
   const [focus, setFocus] = useState<DateFocus>('checkIn');
   const [bookedNights, setBookedNights] = useState<Set<string>>(() => new Set());
+  const [bookedVersion, setBookedVersion] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -56,7 +68,10 @@ export function useStayDates(listingId: number, minStay: number, maxStay: number
     return () => {
       cancelled = true;
     };
-  }, [listingId]);
+  }, [listingId, bookedVersion]);
+
+  /** Recharge les nuits occupées (après un refus « dates plus disponibles »). */
+  const reloadBooked = useCallback(() => setBookedVersion((v) => v + 1), []);
 
   const nightsFree = useCallback(
     (from: Date, nights: number) => {
@@ -69,18 +84,39 @@ export function useStayDates(listingId: number, minStay: number, maxStay: number
   );
 
   const canCheckIn = useCallback(
-    (day: Date) => day >= startOfToday() && nightsFree(day, minStay),
-    [minStay, nightsFree],
+    (day: Date) => day >= startOfToday() && weekdayAllowed(arrivalDays, day.getDay()) && nightsFree(day, minStay),
+    [minStay, nightsFree, arrivalDays],
   );
 
   const canCheckOut = useCallback(
     (day: Date) => {
       if (!checkIn || day <= checkIn) return false;
       const nights = nightsBetween(checkIn, day);
-      return nights >= minStay && (!maxStay || nights <= maxStay) && nightsFree(checkIn, nights);
+      return (
+        nights >= minStay &&
+        (!maxStay || nights <= maxStay) &&
+        weekdayAllowed(departureDays, day.getDay()) &&
+        nightsFree(checkIn, nights)
+      );
     },
-    [checkIn, minStay, maxStay, nightsFree],
+    [checkIn, minStay, maxStay, nightsFree, departureDays],
   );
+
+  /** Ce qui empêche de réserver le séjour choisi (dates venues d'ailleurs, ou nuits prises entre-temps). */
+  const issue = useMemo((): string | null => {
+    if (!checkIn || !checkOut) return null;
+    const nights = nightsBetween(checkIn, checkOut);
+    if (nights < minStay) return `Ce logement demande un séjour d'au moins ${minStay} nuit${minStay > 1 ? 's' : ''}.`;
+    if (maxStay && nights > maxStay) return `Ce logement accepte au maximum ${maxStay} nuits.`;
+    if (!weekdayAllowed(arrivalDays, checkIn.getDay())) {
+      return `Les arrivées ne sont pas possibles le ${weekdayName(checkIn.getDay())} dans ce logement.`;
+    }
+    if (!weekdayAllowed(departureDays, checkOut.getDay())) {
+      return `Les départs ne sont pas possibles le ${weekdayName(checkOut.getDay())} dans ce logement.`;
+    }
+    if (!nightsFree(checkIn, nights)) return 'Certaines de ces nuits sont déjà réservées.';
+    return null;
+  }, [checkIn, checkOut, minStay, maxStay, arrivalDays, departureDays, nightsFree]);
 
   const selectingCheckOut = focus === 'checkOut' && checkIn !== null;
 
@@ -122,6 +158,7 @@ export function useStayDates(listingId: number, minStay: number, maxStay: number
     checkIn,
     checkOut,
     nights: checkIn && checkOut ? nightsBetween(checkIn, checkOut) : 0,
+    issue,
     focus,
     setFocus,
     selectingCheckOut,
@@ -129,5 +166,6 @@ export function useStayDates(listingId: number, minStay: number, maxStay: number
     select,
     clear,
     clearCheckOut,
+    reloadBooked,
   };
 }
