@@ -20,7 +20,6 @@ import { validate } from '@/server/validation';
 import {
   nightsBetweenYmd,
   normalizeCancellationPolicy,
-  requestDeadline,
   stayLimits,
   weekdayAllowed,
   weekdayName,
@@ -35,8 +34,8 @@ function refuse(field: string, message: string): Response {
 }
 
 /**
- * Réservation d'un logement. Réservation instantanée : confirmée tout de suite.
- * Sinon demande en attente : l'hôte a 24 h pour répondre et les dates restent bloquées jusque-là.
+ * Réservation d'un logement, sans validation par l'hôte : confirmée dès sa création,
+ * ou dès le paiement quand le paiement en ligne est actif (dates retenues le temps de payer).
  */
 export const POST = route(async (req) => {
   const { user } = await authenticate(req);
@@ -124,14 +123,9 @@ export const POST = route(async (req) => {
 
   // ─── Création ───────────────────────────────────────────────────────────────
   const price = computePrice(listing, checkIn, checkOut, adults, children, pets);
-  const instant = listing.reservation_mode === 'instant';
   const now = freshTimestamp();
-  // Paiement en ligne : dates retenues le temps du paiement. Sinon l'hôte a 24 h pour répondre à une demande.
-  const expiresAt = payOnline
-    ? new Date(Date.parse(now) + CHECKOUT_MINUTES * 60_000).toISOString()
-    : instant
-      ? null
-      : requestDeadline(new Date(now), checkIn);
+  // Paiement en ligne : dates retenues le temps du paiement
+  const expiresAt = payOnline ? new Date(Date.parse(now) + CHECKOUT_MINUTES * 60_000).toISOString() : null;
 
   const attributes: Row = {
     guest_id: user.id,
@@ -151,12 +145,13 @@ export const POST = route(async (req) => {
     service_fee: price.service_fee,
     total_price: price.total,
     currency: listing.currency,
-    status: payOnline ? 'awaiting_payment' : instant ? 'confirmed' : 'pending',
+    status: payOnline ? 'awaiting_payment' : 'confirmed',
     payment_status: payOnline ? 'awaiting' : null,
-    reservation_mode: instant ? 'instant' : 'request',
+    // Toutes les réservations sont instantanées : l'hôte n'a pas à valider
+    reservation_mode: 'instant',
     cancellation_policy: normalizeCancellationPolicy(listing.cancellation_policy) ?? 'flexible',
     expires_at: expiresAt,
-    confirmed_at: instant && !payOnline ? now : null,
+    confirmed_at: payOnline ? null : now,
     guest_message: validated.guest_message ?? null,
     created_at: now,
     updated_at: now,
@@ -170,7 +165,7 @@ export const POST = route(async (req) => {
   const reservationId = (must(inserted) as Row).id as number;
 
   if (payOnline) {
-    // La réservation devient une demande (ou est confirmée) quand le paiement aboutit : voir finalizeCheckout
+    // La réservation est confirmée quand le paiement aboutit : voir finalizeCheckout
     const created = must(await db().from('reservations').select('*').eq('id', reservationId).single()) as Row;
     let checkout: { sessionId: string; clientSecret: string };
     try {
@@ -197,7 +192,7 @@ export const POST = route(async (req) => {
   }
 
   // Message automatique dans la conversation (ouverte au besoin), emails au voyageur et à l'hôte
-  await recordReservationEvent(reservationId, instant ? 'booked' : 'requested');
+  await recordReservationEvent(reservationId, 'booked');
   if (attributes.guest_message) {
     try {
       await postReservationMessage(
@@ -219,7 +214,7 @@ export const POST = route(async (req) => {
 
   return json(
     {
-      message: instant ? 'Réservation confirmée.' : 'Demande de réservation envoyée.',
+      message: 'Réservation confirmée.',
       reservation: formatReservation(reservation, user.id, conversationId),
     },
     201,

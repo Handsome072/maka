@@ -46,7 +46,8 @@ export function buildListingStoreAttributes(data: Row, userId: number, now: stri
     neighborhood: value('neighborhood'),
     transport: value('transport'),
     other_info: value('other_info'),
-    reservation_mode: data.reservation_mode ?? 'request',
+    // Plus de validation des demandes par l'hôte : toutes les annonces sont en réservation instantanée
+    reservation_mode: 'instant',
     arrival_time: value('arrival_time'),
     departure_time: value('departure_time'),
     min_age: data.min_age ?? 18,
@@ -92,7 +93,12 @@ export function fillListingForUpdate(data: Row, listing: Row): { filled: Row; di
     }
     if (LISTING_FILLABLE.has(key) && !LISTING_HOST_PROTECTED.has(key)) {
       // « Modérée » ou « Stricte » envoyés par d'anciens écrans : stockés sous la forme moderate / strict
-      filled[key] = key === 'cancellation_policy' ? (normalizeCancellationPolicy(value) ?? value) : value;
+      filled[key] =
+        key === 'cancellation_policy'
+          ? (normalizeCancellationPolicy(value) ?? value)
+          : key === 'reservation_mode'
+            ? 'instant'
+            : value;
     }
   }
 
