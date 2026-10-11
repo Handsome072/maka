@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { AlertTriangle, ArrowLeft, Clock, Lock, Star, X, Zap } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Lock, Star, X } from 'lucide-react';
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
 import { getStripe, PAYMENTS_ENABLED } from '../config/payments';
 import { reservationsApi, type ListingDetail, type PriceBreakdown, type ReservationData } from '../services/api';
@@ -164,7 +164,6 @@ export function BookingRequest({ bookingData, onBack, onBooked, onLoginRequired 
   /** Paiement Stripe ouvert : secret de la session ; à la fin, Stripe renvoie sur la page de confirmation. */
   const [checkoutSecret, setCheckoutSecret] = useState<string | null>(null);
 
-  const instant = listing?.reservation_mode === 'instant';
   const hostName = listing?.host?.first_name || bookingData.hostName || "l'hôte";
   const hostPhoto = listing?.host_photo_url || listing?.host?.profile_photo_url || bookingData.hostPhoto;
   const hostSince = listing?.host?.member_since || bookingData.hostSince;
@@ -267,30 +266,13 @@ export function BookingRequest({ bookingData, onBack, onBooked, onLoginRequired 
             <ArrowLeft className="w-5 h-5" />
           </button>
           <h1 className="text-[26px] md:text-[32px]" style={{ fontWeight: 600 }}>
-            {instant ? 'Confirmer et réserver' : 'Demande de réservation'}
+            Confirmer et réserver
           </h1>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8 lg:gap-16">
           {/* ─── Colonne de gauche ─── */}
           <div className="min-w-0">
-            {/* Mode de réservation */}
-            <div className="flex gap-4 p-5 rounded-2xl border border-gray-200 mb-2">
-              <div className="shrink-0 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                {instant ? <Zap className="w-5 h-5" /> : <Clock className="w-5 h-5" />}
-              </div>
-              <div>
-                <p className="text-base mb-1" style={{ fontWeight: 600 }}>
-                  {instant ? 'Réservation instantanée' : `Votre demande doit être acceptée par ${hostName}`}
-                </p>
-                <p className="text-sm text-gray-600">
-                  {instant
-                    ? 'Votre séjour est confirmé dès que vous cliquez sur « Réserver ».'
-                    : `${hostName} a 24 heures pour accepter ou refuser. Les dates restent bloquées pour vous pendant ce temps.`}
-                </p>
-              </div>
-            </div>
-
             {/* Votre voyage */}
             <section className="py-8 border-b border-gray-200">
               <h2 className="text-[22px] mb-6" style={{ fontWeight: 600 }}>Votre voyage</h2>
@@ -341,7 +323,7 @@ export function BookingRequest({ bookingData, onBack, onBooked, onLoginRequired 
             <section className="py-8 border-b border-gray-200">
               <h2 className="text-[22px] mb-2" style={{ fontWeight: 600 }}>Écrivez à {hostName}</h2>
               <p className="text-sm text-gray-600 mb-5">
-                Présentez-vous et dites-lui ce qui vous amène : les hôtes acceptent plus facilement une demande accompagnée d&apos;un mot.
+                Facultatif : présentez-vous et dites-lui ce qui vous amène, ou posez une question sur le logement.
               </p>
               <div className="flex items-center gap-3 mb-4">
                 {hostPhoto ? (
@@ -370,9 +352,7 @@ export function BookingRequest({ bookingData, onBack, onBooked, onLoginRequired 
               <h2 className="text-[22px] mb-2" style={{ fontWeight: 600 }}>Paiement</h2>
               {PAYMENTS_ENABLED ? (
                 <p className="text-base text-gray-700">
-                  {instant
-                    ? `Votre carte sera débitée${price ? ` de ${formatMoney(price.total, currency)}` : ''} pour confirmer la réservation.`
-                    : `Votre carte sera autorisée${price ? ` pour ${formatMoney(price.total, currency)}` : ''}, mais débitée seulement si ${hostName} accepte votre demande. Sinon, l'autorisation est annulée et rien ne vous est débité.`}
+                  {`Votre carte sera débitée${price ? ` de ${formatMoney(price.total, currency)}` : ''} et votre réservation confirmée immédiatement.`}
                   <span className="flex items-center gap-1.5 text-sm text-gray-500 mt-2">
                     <Lock className="w-3.5 h-3.5" />
                     Paiement sécurisé par Stripe : Séjoura ne voit jamais votre numéro de carte.
@@ -381,9 +361,7 @@ export function BookingRequest({ bookingData, onBack, onBooked, onLoginRequired 
               ) : (
                 <p className="text-base text-gray-700">
                   Aucun paiement n&apos;est demandé maintenant : le paiement en ligne n&apos;est pas encore disponible sur Séjoura.
-                  {instant
-                    ? ` ${hostName} vous indiquera dans la messagerie comment régler votre séjour.`
-                    : ` Si ${hostName} accepte votre demande, les modalités de règlement vous seront données dans la messagerie.`}
+                  {` ${hostName} vous indiquera dans la messagerie comment régler votre séjour.`}
                 </p>
               )}
             </section>
@@ -441,18 +419,11 @@ export function BookingRequest({ bookingData, onBack, onBooked, onLoginRequired 
                 {submitting || booked
                   ? PAYMENTS_ENABLED
                     ? 'Préparation du paiement…'
-                    : instant
-                      ? 'Réservation en cours…'
-                      : 'Envoi de la demande…'
+                    : 'Réservation en cours…'
                   : PAYMENTS_ENABLED
                     ? 'Continuer vers le paiement'
-                    : instant
-                      ? 'Réserver'
-                      : 'Demander à réserver'}
+                    : 'Réserver'}
               </button>
-              {!instant && (
-                <p className="text-sm text-gray-600 text-center mt-3">Vous ne serez débité de rien tant que l&apos;hôte n&apos;a pas accepté.</p>
-              )}
 
               {submitError && (
                 <div className="mt-4 p-4 rounded-lg bg-red-50 border border-red-200">
@@ -544,13 +515,9 @@ export function BookingRequest({ bookingData, onBack, onBooked, onLoginRequired 
             <div className="flex items-start justify-between gap-4 p-6 pb-2">
               <div>
                 <h2 className="text-[22px]" style={{ fontWeight: 600 }}>
-                  {instant ? 'Paiement' : 'Autorisation de paiement'}
+                  Paiement
                 </h2>
-                <p className="text-sm text-gray-600">
-                  {instant
-                    ? 'Votre réservation sera confirmée dès le paiement accepté.'
-                    : `Rien n'est débité tant que ${hostName} n'a pas accepté votre demande.`}
-                </p>
+                <p className="text-sm text-gray-600">Votre réservation sera confirmée dès le paiement accepté.</p>
               </div>
               <button onClick={() => setCheckoutSecret(null)} aria-label="Fermer le paiement" className="p-2 rounded-full hover:bg-gray-100">
                 <X className="w-5 h-5" />

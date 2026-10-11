@@ -263,7 +263,6 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
   }, [descriptionData.title, listingId]);
 
   // 8. Reservation Mode & Stay Duration
-  const [reservationMode, setReservationMode] = useState<'request' | 'instant'>('request');
   const [arrivalTime, setArrivalTime] = useState('17:00');
   const [departureTime, setDepartureTime] = useState('11:00');
   const [minAge, setMinAge] = useState("18");
@@ -406,7 +405,6 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
           otherInfo: listing.other_info || '',
         });
 
-        if (listing.reservation_mode) setReservationMode(listing.reservation_mode as 'request' | 'instant');
         if (listing.arrival_time) setArrivalTime(listing.arrival_time);
         if (listing.departure_time) setDepartureTime(listing.departure_time);
         if (listing.min_age) setMinAge(String(listing.min_age));
@@ -506,7 +504,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
     neighborhood:     descriptionData.neighborhood,
     transport:        descriptionData.transport,
     other_info:       descriptionData.otherInfo,
-    reservation_mode: reservationMode,
+    // Réservation toujours instantanée : plus de validation des demandes par l'hôte
+    reservation_mode: 'instant',
     arrival_time:     arrivalTime,
     departure_time:   departureTime,
     min_age:          parseInt(minAge) || 18,
@@ -1419,33 +1418,8 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
 
         {currentStep === 'reservation-mode' && (
           <div className="max-w-3xl mx-auto space-y-10">
-            <h1 className="text-3xl font-bold text-[#222222]">Définissez le mode de réservation</h1>
-            <div className="space-y-6">
-              <h3 className="text-lg font-bold text-[#222222]">Indiquez aux invités comment réserver votre chalet</h3>
-              <div className="space-y-4">
-                <label className="flex items-start gap-4 cursor-pointer group">
-                  <div className="mt-1 relative">
-                    <input type="radio" name="reservationMode" className="peer sr-only" checked={reservationMode === 'request'} onChange={() => setReservationMode('request')} />
-                    <div className="w-5 h-5 rounded-full border border-gray-300 peer-checked:border-black peer-checked:border-[6px] transition-all" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1"><span className="font-medium text-[#222222]">Demande de réservation</span><Info className="w-4 h-4 text-gray-400" /></div>
-                    <p className="text-[#717171] text-sm leading-relaxed">Les locations seront approuvées par l'équipe de MonsieurChalets. Il est essentiel de maintenir vos calendriers de disponibilité à jour en tout temps.</p>
-                  </div>
-                </label>
-                <label className="flex items-start gap-4 cursor-pointer group opacity-75">
-                  <div className="mt-1 relative">
-                    <input type="radio" name="reservationMode" className="peer sr-only" checked={reservationMode === 'instant'} onChange={() => setReservationMode('instant')} />
-                    <div className="w-5 h-5 rounded-full border border-gray-300 peer-checked:border-black peer-checked:border-[6px] transition-all" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1"><span className="font-medium text-[#222222]">Réservation instantanée</span><span className="text-[10px] font-bold bg-teal-100 text-teal-800 px-2 py-0.5 rounded-full">À venir</span></div>
-                    <p className="text-[#717171] text-sm leading-relaxed">Vous pourrez louer votre chalet de façon instantanée, sans avoir à répondre à chaque demande individuelle.</p>
-                  </div>
-                </label>
-              </div>
-            </div>
-            <div className="w-full h-px bg-gray-100" />
+            <h1 className="text-3xl font-bold text-[#222222]">Définissez vos règles de réservation</h1>
+            <p className="text-[#717171]">Les voyageurs réservent directement, sans attendre votre validation : gardez votre calendrier à jour.</p>
             <div className="space-y-6">
               <h3 className="text-lg font-bold text-[#222222]">Indiquez aux invités l'heure d'arrivée et de départ</h3>
               <div className="grid grid-cols-2 gap-8">
@@ -2078,7 +2052,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
                        </div>
                        <div className="bg-white">
                           {[
-                            { label: "Mode de réservation", step: 'reservation-mode' },
+                            { label: "Règles de réservation", step: 'reservation-mode' },
                             { label: "Tarification", step: 'pricing' },
                             { label: "Frais", step: 'fees' },
                             { label: "Calendrier", step: 'calendar' },
