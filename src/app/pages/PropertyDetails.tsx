@@ -300,9 +300,11 @@ interface PropertyDetailsProps {
   onBook?: (data: Record<string, unknown>) => void;
   onReviewAdded?: () => void;
   onNavigate?: (path: string) => void;
+  /** Séjour déjà choisi dans la recherche (dates et voyageurs repris dans le bloc de réservation). */
+  initialStay?: { checkIn: Date | null; checkOut: Date | null; guests: StayGuests } | null;
 }
 
-export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavigate }: PropertyDetailsProps) {
+export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavigate, initialStay }: PropertyDetailsProps) {
   const { isAuthenticated } = useAuth();
   const [showCarousel, setShowCarousel] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -327,11 +329,13 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
   const stay = useStayDates(listing.id, minStay, maxStay, {
     arrivalDays: listing.arrival_days,
     departureDays: listing.departure_days,
+    initialCheckIn: initialStay?.checkIn ?? null,
+    initialCheckOut: initialStay?.checkOut ?? null,
   });
   const { checkIn: checkInDate, checkOut: checkOutDate, nights } = stay;
-  const [guests, setGuests] = useState<StayGuests>({ adults: 1, children: 0, babies: 0, pets: 0 });
+  const [guests, setGuests] = useState<StayGuests>(() => initialStay?.guests ?? { adults: 1, children: 0, babies: 0, pets: 0 });
   const [showGuestsPicker, setShowGuestsPicker] = useState(false);
-  const [calendarMonth, setCalendarMonth] = useState(() => firstOfMonth(new Date()));
+  const [calendarMonth, setCalendarMonth] = useState(() => firstOfMonth(initialStay?.checkIn ?? new Date()));
   const [showDatesPopover, setShowDatesPopover] = useState(false);
   const [popoverMonth, setPopoverMonth] = useState(() => firstOfMonth(new Date()));
   const [showPriceDetail, setShowPriceDetail] = useState(false);

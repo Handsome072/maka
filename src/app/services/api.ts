@@ -5,8 +5,6 @@
 
 import type { RefundBreakdown } from '@/shared/booking';
 import type { Session } from '@supabase/supabase-js';
-// ⚠️ MODE DÉMO STATIQUE : voir data/demoListings.ts (publicListingsApi plus bas).
-import { DEMO_MODE, getDemoListings, getDemoListingDetail } from '../data/demoListings';
 import { getSupabase, UPLOADS_BUCKET } from './supabaseClient';
 
 const API_BASE_URL = '/api';
@@ -503,6 +501,21 @@ export interface Listing {
   country_code?: string | null;
 }
 
+/** Annonce de la liste publique (GET /listings/public) : avec le nombre d'avis et la note moyenne. */
+export interface PublicListing extends Listing {
+  reviews_count: number;
+  average_rating: number | null;
+}
+
+/** Filtres de la page de recherche ; les dates au format « AAAA-MM-JJ ». */
+export interface PublicListingsFilters {
+  destination?: string;
+  check_in?: string;
+  check_out?: string;
+  /** Adultes + enfants (bébés non compris). */
+  guests?: number;
+}
+
 // ─── Review & Host Types (for property detail page) ─────────────────────────
 
 export interface ReviewUser {
@@ -625,23 +638,18 @@ export const listingsApi = {
 };
 
 // ─── Public Listings API (no auth required) ─────────────────────────────────
-//
-// ⚠️  MODE DÉMO STATIQUE — déconnecté de api-homiqio (voir data/demoListings.ts).
-//     Pour réactiver l'API réelle : mettre DEMO_MODE = false dans
-//     data/demoListings.ts. Les deux méthodes retomberont alors sur apiFetch.
 
 export const publicListingsApi = {
-  getAll: async (): Promise<ListingsResponse> => {
-    if (DEMO_MODE) {
-      return { listings: getDemoListings() };
-    }
-    return apiFetch<ListingsResponse>('/listings/public');
+  getAll: async (filters: PublicListingsFilters = {}): Promise<{ listings: PublicListing[] }> => {
+    const query = new URLSearchParams();
+    Object.entries(filters).forEach(([key, val]) => {
+      if (val !== undefined && val !== '') query.append(key, String(val));
+    });
+    const qs = query.toString();
+    return apiFetch<{ listings: PublicListing[] }>(`/listings/public${qs ? `?${qs}` : ''}`);
   },
 
   getOne: async (id: number): Promise<{ listing: ListingDetail }> => {
-    if (DEMO_MODE) {
-      return { listing: getDemoListingDetail(id) };
-    }
     return apiFetch<{ listing: ListingDetail }>(`/listings/public/${id}`);
   },
 };

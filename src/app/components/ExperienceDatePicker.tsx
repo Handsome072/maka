@@ -20,6 +20,13 @@ export function ExperienceDatePicker({ onClose, onSelect, onDatesChange }: Exper
 
   const weekDays = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
 
+  // Les jours passés ne se réservent pas
+  const isPastDay = (day: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return day < today;
+  };
+
   // Calculer dynamiquement les dates rapides
   const quickDates = useMemo(() => {
     const today = new Date();
@@ -122,6 +129,7 @@ export function ExperienceDatePicker({ onClose, onSelect, onDatesChange }: Exper
   };
 
   const handleDateClick = (day: Date) => {
+    if (isPastDay(day)) return;
     setSelectedQuickOption(null);
     
     // Si aucune date n'est sélectionnée, ou si les deux dates sont déjà sélectionnées, recommencer
@@ -289,20 +297,23 @@ export function ExperienceDatePicker({ onClose, onSelect, onDatesChange }: Exper
               const isEnd = isEndDate(day);
               const inRange = isInRange(day);
               const isSelected = isStart || isEnd;
+              const isPast = isPastDay(day);
 
               return (
                 <button
                   key={index}
                   onClick={() => handleDateClick(day)}
-                  className="aspect-square flex items-center justify-center text-[14px] transition-colors relative"
+                  disabled={isPast}
+                  className="aspect-square flex items-center justify-center text-[14px] transition-colors relative disabled:cursor-not-allowed"
                   style={{
                     fontWeight: 400,
-                    color: isSelected ? '#FFFFFF' : '#222222',
+                    color: isSelected ? '#FFFFFF' : isPast ? '#B0B0B0' : '#222222',
+                    textDecoration: isPast ? 'line-through' : undefined,
                     backgroundColor: inRange ? '#F7F7F7' : 'transparent',
                     borderRadius: inRange ? '0' : '0',
                   }}
                   onMouseEnter={(e) => {
-                    if (!isSelected && !inRange) {
+                    if (!isSelected && !inRange && !isPast) {
                       e.currentTarget.style.backgroundColor = '#F7F7F7';
                     }
                   }}

@@ -4,6 +4,26 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect, useCallback } from 'react';
 import { PropertyDetails } from '@/app/pages/PropertyDetails';
 import { publicListingsApi, ListingDetail } from '@/app/services/api';
+import { rememberViewed } from '@/app/hooks/usePublicListings';
+import { parseYmd, startOfToday } from '@/app/components/booking/useStayDates';
+import type { StayGuests } from '@/app/components/booking/BookingGuestsDropdown';
+
+type InitialStay = { checkIn: Date | null; checkOut: Date | null; guests: StayGuests };
+
+/** Séjour transmis par la recherche (?check_in=…&check_out=…&adults=…) ; ignoré s'il commence avant aujourd'hui. */
+function stayFromUrl(): InitialStay | null {
+  const params = new URLSearchParams(window.location.search);
+  const count = (key: string) => Math.max(0, parseInt(params.get(key) ?? '', 10) || 0);
+  let checkIn = parseYmd(params.get('check_in'));
+  let checkOut = parseYmd(params.get('check_out'));
+  if (!checkIn || !checkOut || checkOut <= checkIn || checkIn < startOfToday()) {
+    checkIn = null;
+    checkOut = null;
+  }
+  const guests = { adults: Math.max(1, count('adults')), children: count('children'), babies: count('babies'), pets: count('pets') };
+  if (!checkIn && guests.adults === 1 && guests.children + guests.babies + guests.pets === 0) return null;
+  return { checkIn, checkOut, guests };
+}
 
 interface Props {
   id: string;
@@ -14,15 +34,26 @@ export function PropertyDetailsClient({ id }: Props) {
   const [listing, setListing] = useState<ListingDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [initialStay, setInitialStay] = useState<InitialStay | null>(null);
 
   const fetchListing = useCallback(() => {
     publicListingsApi.getOne(Number(id))
-      .then(res => setListing(res.listing))
-      .catch(err => setError(err.message || 'Erreur lors du chargement'))
+      .then(res => {
+        setListing(res.listing);
+        rememberViewed(res.listing.id);
+      })
+      .catch((err: { status?: number }) =>
+        setError(
+          err?.status === 404
+            ? "Ce logement n'existe pas ou n'est plus disponible."
+            : 'Impossible de charger ce logement. Réessayez dans un instant.',
+        ),
+      )
       .finally(() => setLoading(false));
   }, [id]);
 
   useEffect(() => {
+    setInitialStay(stayFromUrl());
     fetchListing();
   }, [fetchListing]);
 
@@ -81,6 +112,7 @@ export function PropertyDetailsClient({ id }: Props) {
       onBook={handleBook}
       onReviewAdded={fetchListing}
       onNavigate={(path) => router.push(path)}
+      initialStay={initialStay}
     />
   );
 }

@@ -17,6 +17,12 @@ export function toYmd(date: Date): string {
   return `${date.getFullYear()}-${m}-${d}`;
 }
 
+/** « AAAA-MM-JJ » → minuit local de ce jour ; null si le format ne correspond pas. */
+export function parseYmd(value: string | null | undefined): Date | null {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value ?? '');
+  return match ? new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3])) : null;
+}
+
 export function addDays(date: Date, days: number): Date {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
 }

@@ -1,13 +1,21 @@
-import { useState } from 'react';
-import { Heart, Star, ChevronLeft, ChevronRight } from 'lucide-react';
-import { FiltersModal } from '../components/FiltersModal';
+import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
+import { Heart, Star, ChevronLeft, ChevronRight, House } from 'lucide-react';
+import { FiltersModal, MAX_PRICE, MIN_PRICE, type FilterState } from '../components/FiltersModal';
 import { HeaderRightMenu } from '../components/HeaderRightMenu';
 import { LanguageModal } from '../components/LanguageModal';
 import { BecomeHostModal } from '../components/BecomeHostModal';
+import { SearchBar } from '../components/SearchBar';
+import { MobileSearchOverlay } from '../components/MobileSearchOverlay';
+import { nightsBetween, startOfToday, toYmd } from '../components/booking/useStayDates';
+import { publicListingsApi, type PublicListing } from '../services/api';
+import { placeLabel } from '@/shared/places';
 
 interface SearchResultsProps {
   onBack: () => void;
   onNavigate: (page: 'logements' | 'experiences' | 'services' | 'login') => void;
+  /** Relance une recherche (mêmes paramètres que la barre de recherche de l'accueil). */
+  onSearch: (params: any) => void;
   searchParams: {
     destination: string;
     checkInDate: Date | null;
@@ -21,200 +29,128 @@ interface SearchResultsProps {
   };
 }
 
-interface Property {
-  id: number;
-  images: string[];
-  badge?: 'Coup de coeur' | 'Originals' | 'Populaire' | 'Nouveau';
-  title: string;
-  rating: number;
-  reviews: number;
-  description: string;
-  bedrooms: string;
-  beds: string;
-  price: number;
-  originalPrice?: number;
+// Équipements du filtre → valeurs enregistrées dans listings.amenities
+const AMENITY_VALUES: Record<string, string[]> = {
+  wifi: ['wifi'],
+  kitchen: ['kitchen', 'cuisine_equipee'],
+  washer: ['washer'],
+  aircon: ['climatisation'],
+  pool: ['pool'],
+  parking: ['parking'],
+};
+
+const MONTHS = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+
+const shortDate = (date: Date) => `${date.getDate()} ${MONTHS[date.getMonth()]}`;
+
+// Lits d'une pièce : [{ type, count }] (annonces importées) ou { double: 2, simple: 1 } (parcours hôte)
+type Room = { beds?: { count?: number }[] | Record<string, number> };
+
+function rooms(listing: PublicListing): Room[] {
+  return [listing.bedrooms_data, listing.open_areas_data].flatMap((list) => (Array.isArray(list) ? (list as Room[]) : []));
 }
 
-const properties: Property[] = [
-  {
-    id: 1,
-    images: [
-      'https://images.unsplash.com/photo-1578266848416-c291bc0b2940?w=800',
-      'https://images.unsplash.com/photo-1595040398700-85ddd233d6f6?w=800',
-      'https://images.unsplash.com/photo-1638454668466-e8dbd5462f20?w=800',
-    ],
-    title: 'Appartement · Khet...',
-    rating: 4.92,
-    reviews: 36,
-    description: 'Chambre un lit/confortable maison...',
-    bedrooms: '1 chambre',
-    beds: '2 lits',
-    price: 744,
-  },
-  {
-    id: 2,
-    images: [
-      'https://images.unsplash.com/photo-1594904578869-c011783103c7?w=800',
-      'https://images.unsplash.com/photo-1633505765486-e404bbbec654?w=800',
-    ],
-    badge: 'Populaire',
-    title: 'Appartement · Khet...',
-    rating: 4.92,
-    reviews: 36,
-    description: 'ESHERS superloft appartement 1...',
-    bedrooms: '1 chambre',
-    beds: '2 lits',
-    price: 744,
-  },
-  {
-    id: 3,
-    images: [
-      'https://images.unsplash.com/photo-1638454668466-e8dbd5462f20?w=800',
-      'https://images.unsplash.com/photo-1654506012740-09321c969dc2?w=800',
-    ],
-    badge: 'Coup de coeur',
-    title: 'Appartement en rés...',
-    rating: 4.91,
-    reviews: 32,
-    description: 'Appartement moderne studio',
-    bedrooms: '1 chambre',
-    beds: '1 lit queen size',
-    price: 868,
-  },
-  {
-    id: 4,
-    images: [
-      'https://images.unsplash.com/photo-1633505765486-e404bbbec654?w=800',
-      'https://images.unsplash.com/photo-1578266848416-c291bc0b2940?w=800',
-    ],
-    badge: 'Coup de coeur',
-    title: 'Appartement · Huai...',
-    rating: 5.0,
-    reviews: 8,
-    description: 'Rama9-XT Huikhwang loft appartement',
-    bedrooms: '1 chambre',
-    beds: '1 lit',
-    price: 860,
-    originalPrice: 1106,
-  },
-  {
-    id: 5,
-    images: [
-      'https://images.unsplash.com/photo-1594904578869-c011783103c7?w=800',
-      'https://images.unsplash.com/photo-1595040398700-85ddd233d6f6?w=800',
-    ],
-    title: 'Appartement · Khet...',
-    rating: 5.0,
-    reviews: 5,
-    description: 'Location au mois/42 m²/salle...',
-    bedrooms: '1 chambre',
-    beds: '1 lit',
-    price: 720,
-    originalPrice: 984,
-  },
-  {
-    id: 6,
-    images: [
-      'https://images.unsplash.com/photo-1638454668466-e8dbd5462f20?w=800',
-      'https://images.unsplash.com/photo-1654506012740-09321c969dc2?w=800',
-    ],
-    badge: 'Originals',
-    title: 'Appartement · Khet...',
-    rating: 5.0,
-    reviews: 5,
-    description: 'Appartement Loft Rama9 au...',
-    bedrooms: '1 chambre',
-    beds: '1 lit',
-    price: 1016,
-    originalPrice: 1378,
-  },
-  {
-    id: 7,
-    images: [
-      'https://images.unsplash.com/photo-1654506012740-09321c969dc2?w=800',
-      'https://images.unsplash.com/photo-1633505765486-e404bbbec654?w=800',
-    ],
-    title: 'Appartement en rés...',
-    rating: 4.86,
-    reviews: 7,
-    description: 'Bangkok Bel appartement près d...',
-    bedrooms: '1 chambre',
-    beds: '1 lit',
-    price: 651,
-  },
-  {
-    id: 8,
-    images: [
-      'https://images.unsplash.com/photo-1578266848416-c291bc0b2940?w=800',
-      'https://images.unsplash.com/photo-1594904578869-c011783103c7?w=800',
-    ],
-    title: 'Appartement · Ratchathewi',
-    rating: 4.67,
-    reviews: 3,
-    description: 'Une chambre/Station de métro...',
-    bedrooms: '1 chambre',
-    beds: '1 lit queen size',
-    price: 895,
-  },
-  {
-    id: 9,
-    images: [
-      'https://images.unsplash.com/photo-1633505765486-e404bbbec654?w=800',
-      'https://images.unsplash.com/photo-1638454668466-e8dbd5462f20?w=800',
-    ],
-    badge: 'Nouveau',
-    title: 'Appartement · Khlon...',
-    rating: 4.67,
-    reviews: 3,
-    description: 'Condo de luxe moderne au centr...',
-    bedrooms: '1 chambre',
-    beds: '1 lit queen size',
-    price: 1438,
-    originalPrice: 1746,
-  },
-];
+function bedsInRoom(room: Room): number {
+  const beds = room?.beds;
+  if (Array.isArray(beds)) return beds.reduce((sum, bed) => sum + (Number(bed?.count) || 0), 0);
+  if (beds && typeof beds === 'object') return Object.values(beds).reduce((sum, count) => sum + (Number(count) || 0), 0);
+  return 0;
+}
 
-function PropertyCard({ property }: { property: Property }) {
+function bedroomCount(listing: PublicListing): number {
+  return Array.isArray(listing.bedrooms_data) ? listing.bedrooms_data.length : 0;
+}
+
+function bedCount(listing: PublicListing): number {
+  return rooms(listing).reduce((total, room) => total + bedsInRoom(room), 0);
+}
+
+function nightlyPrice(listing: PublicListing): number {
+  return Number(listing.base_price || 0);
+}
+
+function matchesFilters(listing: PublicListing, filters: FilterState | null): boolean {
+  if (!filters) return true;
+  const price = nightlyPrice(listing);
+  if (price < filters.priceMin) return false;
+  if (filters.priceMax < MAX_PRICE && price > filters.priceMax) return false;
+  if (bedroomCount(listing) < filters.bedrooms) return false;
+  if (bedCount(listing) < filters.beds) return false;
+  if (Number(listing.bathrooms || 0) < filters.bathrooms) return false;
+  if (filters.propertyTypes.length > 0 && !filters.propertyTypes.includes(listing.space_type ?? '')) return false;
+  const amenities = listing.amenities ?? [];
+  return filters.amenities.every((id) => (AMENITY_VALUES[id] ?? [id]).some((value) => amenities.includes(value)));
+}
+
+function activeFilterCount(filters: FilterState | null): number {
+  if (!filters) return 0;
+  return (
+    (filters.priceMin > MIN_PRICE || filters.priceMax < MAX_PRICE ? 1 : 0) +
+    (filters.bedrooms > 0 ? 1 : 0) +
+    (filters.beds > 0 ? 1 : 0) +
+    (filters.bathrooms > 0 ? 1 : 0) +
+    filters.propertyTypes.length +
+    filters.amenities.length
+  );
+}
+
+function plural(count: number, word: string): string {
+  return `${count} ${word}${count > 1 ? 's' : ''}`;
+}
+
+function ListingResultCard({ listing, href }: { listing: PublicListing; href: string }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
+  const images = (listing.photos ?? []).map((photo) => photo.url);
 
   const nextImage = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setCurrentImageIndex((prev) =>
-      prev === property.images.length - 1 ? 0 : prev + 1
-    );
+    setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
 
   const prevImage = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setCurrentImageIndex((prev) =>
-      prev === 0 ? property.images.length - 1 : prev - 1
-    );
+    setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
   };
 
+  const details = [
+    listing.space_type === 'private' ? 'Chambre privée' : 'Logement entier',
+    plural(listing.capacity, 'voyageur'),
+    bedroomCount(listing) > 0 ? plural(bedroomCount(listing), 'chambre') : null,
+    bedCount(listing) > 0 ? plural(bedCount(listing), 'lit') : null,
+  ].filter(Boolean);
+
   return (
-    <div className="group cursor-pointer">
+    <Link href={href} className="group block">
       {/* Image carousel */}
       <div className="relative aspect-square mb-3 rounded-xl overflow-hidden">
-        <img
-          src={property.images[currentImageIndex]}
-          alt={property.title}
-          className="w-full h-full object-cover"
-        />
+        {images.length > 0 ? (
+          <img
+            src={images[currentImageIndex]}
+            alt={listing.title || 'Logement'}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+            <House className="w-10 h-10 text-gray-300" strokeWidth={1.5} />
+          </div>
+        )}
 
         {/* Navigation buttons */}
-        {property.images.length > 1 && (
+        {images.length > 1 && (
           <>
             <button
               onClick={prevImage}
+              aria-label="Photo précédente"
               className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-white/90 hover:bg-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
             >
               <ChevronLeft className="w-4 h-4 text-gray-800" />
             </button>
             <button
               onClick={nextImage}
+              aria-label="Photo suivante"
               className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-white/90 hover:bg-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
             >
               <ChevronRight className="w-4 h-4 text-gray-800" />
@@ -223,12 +159,12 @@ function PropertyCard({ property }: { property: Property }) {
         )}
 
         {/* Dots indicator */}
-        {property.images.length > 1 && (
+        {images.length > 1 && (
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-            {property.images.map((_, index) => (
+            {images.slice(0, 5).map((_, index) => (
               <div
                 key={index}
-                className={`w-1.5 h-1.5 rounded-full transition-colors ${index === currentImageIndex
+                className={`w-1.5 h-1.5 rounded-full transition-colors ${index === Math.min(currentImageIndex, 4)
                     ? 'bg-white'
                     : 'bg-white/60'
                   }`}
@@ -238,10 +174,10 @@ function PropertyCard({ property }: { property: Property }) {
         )}
 
         {/* Badge */}
-        {property.badge && (
+        {listing.reviews_count >= 3 && (listing.average_rating ?? 0) >= 4.8 && (
           <div className="absolute top-3 left-3">
             <span className="text-[13px] px-3 py-1 bg-white rounded-full" style={{ fontWeight: 600 }}>
-              {property.badge}
+              Coup de coeur
             </span>
           </div>
         )}
@@ -253,6 +189,7 @@ function PropertyCard({ property }: { property: Property }) {
             e.stopPropagation();
             setIsFavorite(!isFavorite);
           }}
+          aria-label="Ajouter aux favoris"
           className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full hover:scale-110 transition-transform"
         >
           <Heart
@@ -268,75 +205,141 @@ function PropertyCard({ property }: { property: Property }) {
       {/* Property info */}
       <div>
         <div className="flex items-start justify-between mb-1">
-          <h3 className="text-[15px]" style={{ fontWeight: 600, color: '#222222' }}>
-            {property.title}
+          <h3 className="text-[15px] truncate" style={{ fontWeight: 600, color: '#222222' }}>
+            {placeLabel(listing) || listing.title || 'Logement'}
           </h3>
           <div className="flex items-center gap-1 ml-2 flex-shrink-0">
-            <Star className="w-3 h-3 fill-current" style={{ color: '#222222' }} />
-            <span className="text-[15px]" style={{ fontWeight: 400, color: '#222222' }}>
-              {property.rating.toFixed(2)}
-            </span>
-            <span className="text-[15px]" style={{ color: '#717171' }}>
-              ({property.reviews})
-            </span>
+            {listing.reviews_count > 0 ? (
+              <>
+                <Star className="w-3 h-3 fill-current" style={{ color: '#222222' }} />
+                <span className="text-[15px]" style={{ fontWeight: 400, color: '#222222' }}>
+                  {(listing.average_rating ?? 0).toFixed(2)}
+                </span>
+                <span className="text-[15px]" style={{ color: '#717171' }}>
+                  ({listing.reviews_count})
+                </span>
+              </>
+            ) : (
+              <span className="text-[15px]" style={{ color: '#222222' }}>Nouveau</span>
+            )}
           </div>
         </div>
 
         <p className="text-[15px] mb-1 truncate" style={{ color: '#717171' }}>
-          {property.description}
+          {listing.title || 'Logement'}
         </p>
         <p className="text-[15px] mb-1 truncate" style={{ color: '#717171' }}>
-          {property.bedrooms} · {property.beds}
+          {details.join(' · ')}
         </p>
 
         <div className="flex items-baseline gap-1.5">
-          {property.originalPrice && (
-            <span className="text-[15px] line-through" style={{ color: '#717171' }}>
-              {property.originalPrice} €
-            </span>
-          )}
           <span className="text-[15px]" style={{ fontWeight: 600, color: '#222222' }}>
-            {property.price} €
+            {nightlyPrice(listing).toFixed(0)} €
           </span>
           <span className="text-[15px]" style={{ color: '#717171' }}>
-            par mois
+            par nuit
           </span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
-export function SearchResults({ onBack, onNavigate, searchParams }: SearchResultsProps) {
+export function SearchResults({ onBack, onNavigate, onSearch, searchParams }: SearchResultsProps) {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showMenuDropdown, setShowMenuDropdown] = useState(false);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [showBecomeHostModal, setShowBecomeHostModal] = useState(false);
+  const [showSearchEditor, setShowSearchEditor] = useState(false);
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
+  const [filters, setFilters] = useState<FilterState | null>(null);
 
-  const formatDateRange = () => {
-    if (!searchParams.checkInDate) return 'Dates flexibles';
+  const destination = searchParams.destination.trim();
+  const { adults, children, babies, pets } = searchParams.guestsCount;
+  const guests = adults + children;
 
-    const monthNames = [
-      'janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin',
-      'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.',
-    ];
+  // Séjour retenu : au moins une nuit, à partir d'aujourd'hui ; sinon recherche sans dates
+  const { checkInDate, checkOutDate } = searchParams;
+  const stayValid = !!checkInDate && !!checkOutDate && checkOutDate > checkInDate && checkInDate >= startOfToday();
+  const checkIn = stayValid ? toYmd(checkInDate!) : undefined;
+  const checkOut = stayValid ? toYmd(checkOutDate!) : undefined;
+  const nights = stayValid ? nightsBetween(checkInDate!, checkOutDate!) : 0;
+  const datesIgnored = (!!checkInDate || !!checkOutDate) && !stayValid;
 
-    const checkInStr = `${searchParams.checkInDate.getDate()} ${monthNames[searchParams.checkInDate.getMonth()]}`;
+  const [listings, setListings] = useState<PublicListing[] | null>(null);
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
-    if (!searchParams.checkOutDate) return checkInStr;
+  useEffect(() => {
+    let cancelled = false;
+    setListings(null);
+    setFailed(false);
+    publicListingsApi
+      .getAll({
+        destination: destination || undefined,
+        check_in: checkIn,
+        check_out: checkOut,
+        guests: guests > 0 ? guests : undefined,
+      })
+      .then((res) => {
+        if (!cancelled) setListings(res.listings);
+      })
+      .catch(() => {
+        if (!cancelled) setFailed(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [destination, checkIn, checkOut, guests, attempt]);
 
-    const checkOutStr = `${searchParams.checkOutDate.getDate()} ${monthNames[searchParams.checkOutDate.getMonth()]}`;
-    return `${checkInStr} - ${checkOutStr}`;
-  };
+  const results = useMemo(
+    () => (listings ?? []).filter((listing) => matchesFilters(listing, filters)),
+    [listings, filters],
+  );
+  const filterCount = activeFilterCount(filters);
 
-  const totalGuests =
-    searchParams.guestsCount.adults +
-    searchParams.guestsCount.children +
-    searchParams.guestsCount.babies;
+  // Lien vers l'annonce : le séjour et les voyageurs choisis sont repris dans le bloc de réservation
+  const stayQuery = useMemo(() => {
+    const query = new URLSearchParams();
+    if (checkIn && checkOut) {
+      query.set('check_in', checkIn);
+      query.set('check_out', checkOut);
+    }
+    if (guests > 0) {
+      query.set('adults', String(Math.max(1, adults)));
+      if (children > 0) query.set('children', String(children));
+    }
+    if (babies > 0) query.set('babies', String(babies));
+    if (pets > 0) query.set('pets', String(pets));
+    const qs = query.toString();
+    return qs ? `?${qs}` : '';
+  }, [checkIn, checkOut, guests, adults, children, babies, pets]);
 
+  const dateRangeText = stayValid ? `${shortDate(checkInDate!)} - ${shortDate(checkOutDate!)}` : 'Dates flexibles';
+
+  const totalGuests = guests + babies;
   const guestsText = totalGuests > 0
     ? `${totalGuests} voyageur${totalGuests > 1 ? 's' : ''}`
     : 'Ajouter des voyageurs';
+
+  const summary = [
+    listings ? plural(results.length, 'logement') : null,
+    destination || null,
+    stayValid ? `${dateRangeText} (${plural(nights, 'nuit')})` : null,
+  ].filter(Boolean).join(' · ');
+
+  const editSearch = () => {
+    if (window.innerWidth < 768) {
+      setShowMobileSearch(true);
+    } else {
+      setShowSearchEditor((open) => !open);
+    }
+  };
+
+  const runSearch = (params: any) => {
+    setShowSearchEditor(false);
+    onSearch(params);
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -371,9 +374,13 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
         {/* Compact search bar row */}
         <div className="bg-white py-3 px-4 sm:px-6 lg:px-20">
           <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              {/* Compact search info */}
-              <button className="flex items-center border border-gray-200 rounded-full shadow-sm hover:shadow-md transition-shadow bg-white pl-6 pr-2 py-2">
+            <div className="flex items-center gap-3 min-w-0">
+              {/* Compact search info : ouvre la barre de recherche pour modifier la recherche */}
+              <button
+                onClick={editSearch}
+                aria-label="Modifier la recherche"
+                className="flex items-center min-w-0 border border-gray-200 rounded-full shadow-sm hover:shadow-md transition-shadow bg-white pl-6 pr-2 py-2"
+              >
                 <div className="flex items-center gap-3">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M13.5 6.5V14.5H10V11C10 10.4477 9.55228 10 9 10H7C6.44772 10 6 10.4477 6 11V14.5H2.5V6.5" stroke="#222222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -381,23 +388,23 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
                   </svg>
                 </div>
 
-                <div className="text-sm px-4" style={{ fontWeight: 600, color: '#222222' }}>
-                  {searchParams.destination || 'N\'importe où'}
+                <div className="text-sm px-4 truncate" style={{ fontWeight: 600, color: '#222222' }}>
+                  {destination || 'N\'importe où'}
                 </div>
 
-                <div className="w-px h-6 bg-gray-300"></div>
+                <div className="hidden sm:block w-px h-6 bg-gray-300"></div>
 
-                <div className="text-sm px-4" style={{ fontWeight: 600, color: '#222222' }}>
-                  {formatDateRange()}
+                <div className="hidden sm:block text-sm px-4 whitespace-nowrap" style={{ fontWeight: 600, color: '#222222' }}>
+                  {dateRangeText}
                 </div>
 
-                <div className="w-px h-6 bg-gray-300"></div>
+                <div className="hidden sm:block w-px h-6 bg-gray-300"></div>
 
-                <div className="text-sm px-4" style={{ color: '#717171' }}>
+                <div className="hidden sm:block text-sm px-4 whitespace-nowrap" style={{ color: '#717171' }}>
                   {guestsText}
                 </div>
 
-                <div className="bg-[#5EC6D8] text-white p-2.5 rounded-full">
+                <div className="bg-[#5EC6D8] text-white p-2.5 rounded-full flex-shrink-0">
                   <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M13 13L10.1 10.1M11.6667 6.33333C11.6667 9.27885 9.27885 11.6667 6.33333 11.6667C3.38781 11.6667 1 9.27885 1 6.33333C1 3.38781 3.38781 1 6.33333 1C9.27885 1 11.6667 3.38781 11.6667 6.33333Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
@@ -407,97 +414,112 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
 
             {/* Filters button */}
             <button
-              className="flex items-center gap-2 px-4 py-2.5 border border-gray-300 rounded-xl hover:border-gray-400 transition-colors"
+              className={`flex items-center gap-2 px-4 py-2.5 border rounded-xl transition-colors flex-shrink-0 ${filterCount > 0 ? 'border-gray-900' : 'border-gray-300 hover:border-gray-400'}`}
               onClick={() => setShowFilterModal(true)}
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M1.5 4H14.5M3.5 8H12.5M6 12H10" stroke="#222222" strokeWidth="1.5" strokeLinecap="round" />
               </svg>
               <span className="text-[12px]" style={{ fontWeight: 600, color: '#222222' }}>
-                Filtres
+                Filtres{filterCount > 0 ? ` (${filterCount})` : ''}
               </span>
             </button>
           </div>
         </div>
+
+        {/* Barre de recherche complète, pour modifier la recherche (ordinateur) */}
+        {showSearchEditor && (
+          <div className="hidden md:block border-t border-gray-100 pb-4">
+            <SearchBar onSearch={runSearch} />
+          </div>
+        )}
       </header>
 
       {/* Main content */}
       <div className="flex">
         {/* Results grid */}
         <div className="flex-1 px-4 sm:px-6 lg:px-20 py-6">
-          <p className="text-[14px] mb-6" style={{ color: '#717171' }}>
-            {searchParams.destination || 'Bangkok'} : Plus de 1000 logements
-          </p>
+          {datesIgnored && (
+            <p className="text-[14px] mb-3 px-4 py-3 rounded-xl bg-[#F7F7F7]" style={{ color: '#222222' }}>
+              Les dates choisies ne forment pas un séjour valide (au moins une nuit, à partir d&apos;aujourd&apos;hui) :
+              tous les logements sont affichés, sans vérifier leurs disponibilités.
+            </p>
+          )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10">
-            {properties.map((property) => (
-              <div key={property.id}>
-                <PropertyCard property={property} />
-              </div>
-            ))}
-          </div>
+          {summary && (
+            <p className="text-[14px] mb-6" style={{ color: '#717171' }}>
+              {summary}
+            </p>
+          )}
 
-          {/* Similar dates section */}
-          <div className="mt-16 mb-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-[22px]" style={{ fontWeight: 600, color: '#222222' }}>
-                Disponibles à des dates similaires
-              </h2>
-              <div className="flex items-center gap-2">
-                <span className="text-[14px]" style={{ color: '#222222' }}>1 / 2</span>
-                <button className="p-2 border border-gray-300 rounded-full hover:border-gray-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                  <ChevronLeft className="w-4 h-4" style={{ color: '#222222' }} />
-                </button>
-                <button className="p-2 border border-gray-300 rounded-full hover:border-gray-400 transition-colors">
-                  <ChevronRight className="w-4 h-4" style={{ color: '#222222' }} />
-                </button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
-              {properties.slice(3, 7).map((property) => (
-                <div
-                  key={property.id}
-                  className="relative"
-                >
-                  {/* Date badge */}
-                  <div className="absolute top-3 left-3 z-10">
-                    <span className="text-[13px] px-3 py-1.5 bg-white rounded-full" style={{ fontWeight: 600 }}>
-                      12 janv. – 17 févr.
-                    </span>
-                  </div>
-                  <PropertyCard property={property} />
+          {/* Chargement */}
+          {!listings && !failed && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10">
+              {Array.from({ length: 8 }, (_, index) => (
+                <div key={index} className="animate-pulse">
+                  <div className="aspect-square rounded-xl bg-gray-200 mb-3" />
+                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
+                  <div className="h-4 bg-gray-200 rounded w-1/2" />
                 </div>
               ))}
             </div>
+          )}
 
-            <button className="mt-6 px-6 py-3 border border-gray-900 rounded-lg text-[16px] hover:bg-gray-50 transition-colors" style={{ fontWeight: 600, color: '#222222' }}>
-              Rechercher à des dates similaires
-            </button>
-          </div>
+          {failed && (
+            <div className="py-16 text-center">
+              <p className="text-[15px] mb-4" style={{ color: '#222222' }}>
+                Impossible de charger les logements pour le moment.
+              </p>
+              <button
+                onClick={() => setAttempt((n) => n + 1)}
+                className="px-6 py-3 border border-gray-900 rounded-lg text-[15px] hover:bg-gray-50 transition-colors"
+                style={{ fontWeight: 600, color: '#222222' }}
+              >
+                Réessayer
+              </button>
+            </div>
+          )}
 
-          {/* Pagination */}
-          <div className="flex items-center justify-center gap-2 mt-12 mb-16">
-            <button className="w-8 h-8 rounded-full bg-gray-900 text-white flex items-center justify-center text-[14px]" style={{ fontWeight: 600 }}>
-              1
-            </button>
-            <button className="w-8 h-8 rounded-full hover:bg-gray-100 text-gray-900 flex items-center justify-center text-[14px] transition-colors" style={{ fontWeight: 600 }}>
-              2
-            </button>
-            <button className="w-8 h-8 rounded-full hover:bg-gray-100 text-gray-900 flex items-center justify-center text-[14px] transition-colors" style={{ fontWeight: 600 }}>
-              3
-            </button>
-            <button className="w-8 h-8 rounded-full hover:bg-gray-100 text-gray-900 flex items-center justify-center text-[14px] transition-colors" style={{ fontWeight: 600 }}>
-              4
-            </button>
-            <span className="px-2 text-gray-400">...</span>
-            <button className="w-8 h-8 rounded-full hover:bg-gray-100 text-gray-900 flex items-center justify-center text-[14px] transition-colors" style={{ fontWeight: 600 }}>
-              15
-            </button>
-            <button className="w-8 h-8 rounded-full hover:bg-gray-100 text-gray-900 flex items-center justify-center text-[14px] transition-colors">
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
+          {listings && results.length === 0 && (
+            <div className="py-16 text-center max-w-md mx-auto">
+              <h2 className="text-[22px] mb-2" style={{ fontWeight: 600, color: '#222222' }}>
+                Aucun logement ne correspond
+              </h2>
+              <p className="text-[15px] mb-6" style={{ color: '#717171' }}>
+                {filterCount > 0
+                  ? 'Essayez de retirer certains filtres.'
+                  : stayValid
+                    ? 'Aucun logement n’est disponible sur ces dates pour cette recherche. Essayez d’autres dates ou une autre destination.'
+                    : 'Essayez une autre destination ou un nombre de voyageurs différent.'}
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                {filterCount > 0 && (
+                  <button
+                    onClick={() => setFilters(null)}
+                    className="px-6 py-3 border border-gray-900 rounded-lg text-[15px] hover:bg-gray-50 transition-colors"
+                    style={{ fontWeight: 600, color: '#222222' }}
+                  >
+                    Retirer les filtres
+                  </button>
+                )}
+                <button
+                  onClick={() => runSearch({})}
+                  className="px-6 py-3 bg-[#222222] text-white rounded-lg text-[15px] hover:bg-black transition-colors"
+                  style={{ fontWeight: 600 }}
+                >
+                  Voir tous les logements
+                </button>
+              </div>
+            </div>
+          )}
+
+          {results.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10 mb-16">
+              {results.map((listing) => (
+                <ListingResultCard key={listing.id} listing={listing} href={`/property/${listing.id}${stayQuery}`} />
+              ))}
+            </div>
+          )}
 
           {/* Footer */}
           <footer className="border-t border-gray-200 bg-gray-50 py-12">
@@ -695,7 +717,19 @@ export function SearchResults({ onBack, onNavigate, searchParams }: SearchResult
       <FiltersModal
         isOpen={showFilterModal}
         onClose={() => setShowFilterModal(false)}
+        onApplyFilters={(applied) => setFilters(activeFilterCount(applied) > 0 ? applied : null)}
       />
+
+      {/* Mobile search */}
+      {showMobileSearch && (
+        <MobileSearchOverlay
+          isOpen={showMobileSearch}
+          onClose={() => setShowMobileSearch(false)}
+          currentPage="logements"
+          onNavigate={(page) => onNavigate(page)}
+          onSearch={runSearch}
+        />
+      )}
 
       {/* Language Modal */}
       {showLanguageModal && (

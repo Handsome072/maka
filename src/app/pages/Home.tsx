@@ -2,8 +2,10 @@ import { PropertyCard } from '../components/PropertyCard';
 import { PropertyCarousel } from '../components/PropertyCarousel';
 import { SearchBar } from '../components/SearchBar';
 import { useAuth } from '../context/AuthContext';
-import { useState, useEffect } from 'react';
-import { publicListingsApi, type Listing } from '../services/api';
+import { useState, useEffect, useMemo } from 'react';
+import type { PublicListing } from '../services/api';
+import { readRecentlyViewed, usePublicListings } from '../hooks/usePublicListings';
+import { placeLabel, provinceName } from '@/shared/places';
 
 interface HomeProps {
   isScrolled: boolean;
@@ -36,181 +38,90 @@ function getCardWidth(windowWidth: number): string {
   return 'calc((100vw - 96px - 80px) / 6)';
 }
 
+/** Une rangée n'apparaît qu'à partir de ce nombre d'annonces. */
+const MIN_SECTION_SIZE = 3;
+
+interface Section {
+  key: string;
+  title: string;
+  listings: PublicListing[];
+  /** Destination ouverte par la flèche du titre ; '' = toutes les annonces. */
+  destination?: string;
+}
+
+const price = (listing: PublicListing) => Number(listing.base_price || 0);
+
+/** Rangées de l'accueil, toutes tirées des annonces actives de la base. */
+function buildSections(listings: PublicListing[], recentIds: number[]): Section[] {
+  const sections: Section[] = [{ key: 'all', title: 'Nos annonces', listings, destination: '' }];
+
+  const byId = new Map(listings.map((listing) => [listing.id, listing]));
+  const recent = recentIds.map((id) => byId.get(id)).filter((listing): listing is PublicListing => !!listing);
+  if (recent.length > 0) {
+    sections.push({ key: 'recent', title: 'Annonces consultées récemment', listings: recent });
+  }
+
+  const byProvince = new Map<string, PublicListing[]>();
+  for (const listing of listings) {
+    const province = provinceName(listing.province);
+    if (province) byProvince.set(province, [...(byProvince.get(province) ?? []), listing]);
+  }
+  [...byProvince]
+    .filter(([, group]) => group.length >= MIN_SECTION_SIZE)
+    .sort(([a, groupA], [b, groupB]) => groupB.length - groupA.length || a.localeCompare(b, 'fr'))
+    .forEach(([province, group]) => {
+      sections.push({ key: `province-${province}`, title: `Logements · ${province}`, listings: group, destination: province });
+    });
+
+  const topRated = listings
+    .filter((listing) => listing.reviews_count > 0)
+    .sort((a, b) => (b.average_rating ?? 0) - (a.average_rating ?? 0) || b.reviews_count - a.reviews_count);
+  if (topRated.length >= MIN_SECTION_SIZE) {
+    sections.push({ key: 'top-rated', title: 'Les mieux notés par les voyageurs', listings: topRated });
+  }
+
+  const groups = listings.filter((listing) => listing.capacity >= 8).sort((a, b) => b.capacity - a.capacity);
+  if (groups.length >= MIN_SECTION_SIZE) {
+    sections.push({ key: 'groups', title: 'Pour les groupes · 8 voyageurs et plus', listings: groups });
+  }
+
+  const affordable = listings.filter((listing) => price(listing) > 0 && price(listing) < 200).sort((a, b) => price(a) - price(b));
+  if (affordable.length >= MIN_SECTION_SIZE) {
+    sections.push({ key: 'affordable', title: 'Moins de 200 € la nuit', listings: affordable });
+  }
+
+  return sections;
+}
+
+function spaceTypeLabel(spaceType: string | null): string {
+  if (spaceType === 'entire') return 'Logement entier';
+  if (spaceType === 'private') return 'Chambre privée';
+  return 'Logement';
+}
+
 export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
   const { isAuthenticated } = useAuth();
   const { width: windowWidth, mounted } = useWindowWidth();
   // Use undefined during SSR to avoid inline styles, let CSS handle it
   const cardWidth = mounted ? getCardWidth(windowWidth) : undefined;
 
-  // Fetch real active listings from API
-  const [publicListings, setPublicListings] = useState<Listing[]>([]);
-  const [listingsLoaded, setListingsLoaded] = useState(false);
+  // Annonces actives de la base
+  const { listings, failed, retry } = usePublicListings();
 
+  // Annonces consultées sur ce navigateur (affichées aux visiteurs connectés)
+  const [recentIds, setRecentIds] = useState<number[]>([]);
   useEffect(() => {
-    publicListingsApi.getAll()
-      .then(res => setPublicListings(res.listings))
-      .catch(() => {})
-      .finally(() => setListingsLoaded(true));
+    setRecentIds(readRecentlyViewed());
   }, []);
 
-  // Photos from DB listings - first photo of each listing
-  // Emily (57): 253=Sainte-Adele, 254=Charlevoix, 255=Sutton, 256=Stoneham, 257=Ile d'Orleans
-  // Pascal (58): 258=Saint-Sauveur, 259=Mont-Tremblant, 260=Whistler, 261=Chelsea, 262=Muskoka
-  // Lucas (59): 263=Tremblant, 264=Banff, 265=Tofino, 266=Lac-Saint-Jean, 267=Quebec
-  // Romeo (60): 268=Charlevoix, 269=Tofino, 270=Canmore, 271=Val-des-Monts, 272=Lac-Saint-Jean
-  const img = {
-    253: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80',
-    254: 'https://images.unsplash.com/photo-1518732714860-b62714ce0c59?w=800&q=80',
-    255: 'https://images.unsplash.com/photo-1537225228614-56cc3556d7ed?w=800&q=80',
-    256: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&q=80',
-    257: 'https://images.unsplash.com/photo-1600573472550-8090b5e0745e?w=800&q=80',
-    258: 'https://images.unsplash.com/photo-1520984032042-162d526883e0?w=800&q=80',
-    259: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80',
-    260: 'https://images.unsplash.com/photo-1499696010180-025ef6e1a8f9?w=800&q=80',
-    261: 'https://images.unsplash.com/photo-1505843513577-22bb7d21e455?w=800&q=80',
-    262: 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800&q=80',
-    263: 'https://images.unsplash.com/photo-1596178065887-1198b6148b2b?w=800&q=80',
-    264: 'https://images.unsplash.com/photo-1542718610-a1d656d1884c?w=800&q=80',
-    265: 'https://images.unsplash.com/photo-1604014237800-1c9102c219da?w=800&q=80',
-    266: 'https://images.unsplash.com/photo-1544984243-ec57ea16fe25?w=800&q=80',
-    267: 'https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=800&q=80',
-    268: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80',
-    269: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
-    270: 'https://images.unsplash.com/photo-1630699144867-37acec97df5a?w=800&q=80',
-    271: 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&q=80',
-    272: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
-  } as Record<number, string>;
+  const sections = useMemo(
+    () => (listings ? buildSections(listings, isAuthenticated ? recentIds : []) : []),
+    [listings, recentIds, isAuthenticated],
+  );
 
-  // Annonces consultees recemment
-  const recentlyViewedProperties = [
-    { id: '253', image: img[253], title: 'Chalet bois rond · Sainte-Adele', location: 'Emily Hote', date: '', price: '195 € / nuit', rating: 4.95, badge: 'Coup de coeur' as const },
-    { id: '258', image: img[258], title: 'Chalet rustique · Saint-Sauveur', location: 'Pascal Hote', date: '', price: '295 € / nuit', rating: 4.90, badge: 'Coup de coeur' as const },
-    { id: '263', image: img[263], title: 'Cabane dans les arbres · Tremblant', location: 'Lucas Hote', date: '', price: '189 € / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
-    { id: '268', image: img[268], title: 'Chalet grand luxe · Charlevoix', location: 'Romeo Hote', date: '', price: '495 € / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
-    { id: '257', image: img[257], title: 'Maison champetre · Ile d\'Orleans', location: 'Emily Hote', date: '', price: '220 € / nuit', rating: 4.85, badge: undefined },
-    { id: '259', image: img[259], title: 'Chalet spa · Mont-Tremblant', location: 'Pascal Hote', date: '', price: '320 € / nuit', rating: 4.88, badge: 'Nouveau' as const },
-  ];
-
-  // Chalets populaires · Laurentides (Emily 253, Pascal 258, Lucas 263, Romeo 268/270)
-  const laurentidesProperties = [
-    { id: '253', image: img[253], title: 'Chalet bois rond · Sainte-Adele', location: 'Emily Hote', date: '', price: '195 € / nuit', rating: 4.93, badge: 'Coup de coeur' as const },
-    { id: '258', image: img[258], title: 'Chalet rustique · Saint-Sauveur', location: 'Pascal Hote', date: '', price: '295 € / nuit', rating: 4.92, badge: 'Coup de coeur' as const },
-    { id: '263', image: img[263], title: 'Cabane dans les arbres · Tremblant', location: 'Lucas Hote', date: '', price: '189 € / nuit', rating: 4.96, badge: 'Populaire' as const },
-    { id: '270', image: img[270], title: 'Chalet alpin · Canmore', location: 'Romeo Hote', date: '', price: '310 € / nuit', rating: 4.96, badge: 'Coup de coeur' as const },
-    { id: '255', image: img[255], title: 'Refuge forestier · Sutton', location: 'Emily Hote', date: '', price: '155 € / nuit', rating: 4.90, badge: undefined },
-    { id: '259', image: img[259], title: 'Chalet spa · Mont-Tremblant', location: 'Pascal Hote', date: '', price: '320 € / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
-    { id: '266', image: img[266], title: 'Chalet du Lac-Saint-Jean · Alma', location: 'Lucas Hote', date: '', price: '165 € / nuit', rating: 4.92, badge: 'Nouveau' as const },
-  ];
-
-  // Chalets a la une · Charlevoix
-  const charlevoixProperties = [
-    { id: '268', image: img[268], title: 'Chalet grand luxe · La Malbaie', location: 'Romeo Hote', date: '', price: '495 € / nuit', rating: 4.95, badge: 'Populaire' as const },
-    { id: '254', image: img[254], title: 'Chalet vue fleuve · Baie-Saint-Paul', location: 'Emily Hote', date: '', price: '275 € / nuit', rating: 4.88, badge: 'Nouveau' as const },
-    { id: '260', image: img[260], title: 'Chalet ski alpin · Whistler', location: 'Pascal Hote', date: '', price: '450 € / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
-    { id: '264', image: img[264], title: 'Chalet de montagne · Banff', location: 'Lucas Hote', date: '', price: '380 € / nuit', rating: 4.89, badge: undefined },
-    { id: '269', image: img[269], title: 'Cabane ocean · Tofino', location: 'Romeo Hote', date: '', price: '295 € / nuit', rating: 4.92, badge: 'Populaire' as const },
-    { id: '256', image: img[256], title: 'Grand chalet ski · Stoneham', location: 'Emily Hote', date: '', price: '345 € / nuit', rating: 4.77, badge: undefined },
-    { id: '261', image: img[261], title: 'Chalet familial · Chelsea', location: 'Pascal Hote', date: '', price: '215 € / nuit', rating: 4.85, badge: 'Nouveau' as const },
-  ];
-
-  // Chalets disponibles · Cantons-de-l'Est
-  const cantonsProperties = [
-    { id: '265', image: img[265], title: 'Refuge cotier · Tofino', location: 'Lucas Hote', date: '', price: '265 € / nuit', rating: 4.90, badge: 'Nouveau' as const },
-    { id: '271', image: img[271], title: 'Maison champetre · Val-des-Monts', location: 'Romeo Hote', date: '', price: '185 € / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
-    { id: '255', image: img[255], title: 'Refuge forestier · Sutton', location: 'Emily Hote', date: '', price: '155 € / nuit', rating: 4.90, badge: 'Populaire' as const },
-    { id: '258', image: img[258], title: 'Chalet rustique · Saint-Sauveur', location: 'Pascal Hote', date: '', price: '295 € / nuit', rating: 4.89, badge: undefined },
-    { id: '266', image: img[266], title: 'Chalet du lac · Alma', location: 'Lucas Hote', date: '', price: '165 € / nuit', rating: 4.90, badge: 'Coup de coeur' as const },
-    { id: '272', image: img[272], title: 'Chalet de peche · Roberval', location: 'Romeo Hote', date: '', price: '175 € / nuit', rating: 4.84, badge: undefined },
-    { id: '254', image: img[254], title: 'Chalet vue fleuve · Charlevoix', location: 'Emily Hote', date: '', price: '275 € / nuit', rating: 5.0, badge: 'Nouveau' as const },
-  ];
-
-  // Chalets · Muskoka
-  const muskokaProperties = [
-    { id: '262', image: img[262], title: 'Chalet sur le lac · Bracebridge', location: 'Pascal Hote', date: '', price: '285 € / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
-    { id: '263', image: img[263], title: 'Cabane dans les arbres · Tremblant', location: 'Lucas Hote', date: '', price: '189 € / nuit', rating: 4.91, badge: 'Populaire' as const },
-    { id: '268', image: img[268], title: 'Chalet grand luxe · Charlevoix', location: 'Romeo Hote', date: '', price: '495 € / nuit', rating: 4.88, badge: undefined },
-    { id: '253', image: img[253], title: 'Chalet bois rond · Sainte-Adele', location: 'Emily Hote', date: '', price: '195 € / nuit', rating: 4.95, badge: 'Nouveau' as const },
-    { id: '261', image: img[261], title: 'Chalet familial · Chelsea', location: 'Pascal Hote', date: '', price: '215 € / nuit', rating: 4.92, badge: undefined },
-    { id: '264', image: img[264], title: 'Chalet de montagne · Banff', location: 'Lucas Hote', date: '', price: '380 € / nuit', rating: 4.88, badge: 'Coup de coeur' as const },
-    { id: '272', image: img[272], title: 'Chalet de peche · Roberval', location: 'Romeo Hote', date: '', price: '175 € / nuit', rating: 4.90, badge: 'Populaire' as const },
-  ];
-
-  // Chalets disponibles · Mont-Tremblant
-  const tremblantProperties = [
-    { id: '256', image: img[256], title: 'Grand chalet ski · Stoneham', location: 'Emily Hote', date: '', price: '345 € / nuit', rating: 4.97, badge: 'Populaire' as const },
-    { id: '259', image: img[259], title: 'Chalet spa · Lac-Tremblant', location: 'Pascal Hote', date: '', price: '320 € / nuit', rating: 4.86, badge: undefined },
-    { id: '265', image: img[265], title: 'Refuge cotier · Tofino', location: 'Lucas Hote', date: '', price: '265 € / nuit', rating: 4.91, badge: 'Nouveau' as const },
-    { id: '268', image: img[268], title: 'Chalet grand luxe · Charlevoix', location: 'Romeo Hote', date: '', price: '495 € / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
-    { id: '257', image: img[257], title: 'Maison champetre · Ile d\'Orleans', location: 'Emily Hote', date: '', price: '220 € / nuit', rating: 4.89, badge: undefined },
-    { id: '262', image: img[262], title: 'Chalet sur le lac · Muskoka', location: 'Pascal Hote', date: '', price: '285 € / nuit', rating: 4.90, badge: 'Populaire' as const },
-    { id: '267', image: img[267], title: 'Loft heritage · Vieux-Quebec', location: 'Lucas Hote', date: '', price: '225 € / nuit', rating: 4.95, badge: 'Nouveau' as const },
-  ];
-
-  // Chalets · Whistler
-  const whistlerProperties = [
-    { id: '270', image: img[270], title: 'Chalet alpin · Canmore', location: 'Romeo Hote', date: '', price: '310 € / nuit', rating: 4.94, badge: 'Coup de coeur' as const },
-    { id: '253', image: img[253], title: 'Chalet bois rond · Sainte-Adele', location: 'Emily Hote', date: '', price: '195 € / nuit', rating: 5.0, badge: 'Populaire' as const },
-    { id: '260', image: img[260], title: 'Chalet ski alpin · Whistler', location: 'Pascal Hote', date: '', price: '450 € / nuit', rating: 4.93, badge: undefined },
-    { id: '264', image: img[264], title: 'Chalet de montagne · Banff', location: 'Lucas Hote', date: '', price: '380 € / nuit', rating: 4.88, badge: 'Nouveau' as const },
-    { id: '269', image: img[269], title: 'Cabane ocean · Tofino', location: 'Romeo Hote', date: '', price: '295 € / nuit', rating: 4.92, badge: 'Coup de coeur' as const },
-    { id: '255', image: img[255], title: 'Refuge forestier · Sutton', location: 'Emily Hote', date: '', price: '155 € / nuit', rating: 4.85, badge: undefined },
-    { id: '259', image: img[259], title: 'Chalet spa · Mont-Tremblant', location: 'Pascal Hote', date: '', price: '320 € / nuit', rating: 4.91, badge: 'Nouveau' as const },
-  ];
-
-  // Chalets disponibles · Quebec
-  const quebecProperties = [
-    { id: '267', image: img[267], title: 'Loft heritage · Vieux-Quebec', location: 'Lucas Hote', date: '', price: '225 € / nuit', rating: 4.88, badge: 'Populaire' as const },
-    { id: '271', image: img[271], title: 'Maison champetre · Val-des-Monts', location: 'Romeo Hote', date: '', price: '185 € / nuit', rating: 4.78, badge: undefined },
-    { id: '256', image: img[256], title: 'Grand chalet ski · Stoneham', location: 'Emily Hote', date: '', price: '345 € / nuit', rating: 4.86, badge: 'Nouveau' as const },
-    { id: '258', image: img[258], title: 'Chalet rustique · Saint-Sauveur', location: 'Pascal Hote', date: '', price: '295 € / nuit', rating: 4.90, badge: undefined },
-    { id: '263', image: img[263], title: 'Cabane dans les arbres · Tremblant', location: 'Lucas Hote', date: '', price: '189 € / nuit', rating: 4.95, badge: 'Coup de coeur' as const },
-    { id: '268', image: img[268], title: 'Chalet grand luxe · Charlevoix', location: 'Romeo Hote', date: '', price: '495 € / nuit', rating: 5.0, badge: 'Populaire' as const },
-    { id: '257', image: img[257], title: 'Maison champetre · Ile d\'Orleans', location: 'Emily Hote', date: '', price: '220 € / nuit', rating: 4.86, badge: undefined },
-  ];
-
-  // Chalets · Banff
-  const banffProperties = [
-    { id: '260', image: img[260], title: 'Chalet ski alpin · Whistler', location: 'Pascal Hote', date: '', price: '450 € / nuit', rating: 4.98, badge: 'Coup de coeur' as const },
-    { id: '264', image: img[264], title: 'Chalet de montagne · Banff', location: 'Lucas Hote', date: '', price: '380 € / nuit', rating: 4.94, badge: 'Nouveau' as const },
-    { id: '270', image: img[270], title: 'Chalet alpin · Canmore', location: 'Romeo Hote', date: '', price: '310 € / nuit', rating: 5.0, badge: 'Populaire' as const },
-    { id: '254', image: img[254], title: 'Chalet vue fleuve · Charlevoix', location: 'Emily Hote', date: '', price: '275 € / nuit', rating: 4.89, badge: undefined },
-    { id: '259', image: img[259], title: 'Chalet spa · Mont-Tremblant', location: 'Pascal Hote', date: '', price: '320 € / nuit', rating: 4.92, badge: 'Coup de coeur' as const },
-    { id: '266', image: img[266], title: 'Chalet du lac · Alma', location: 'Lucas Hote', date: '', price: '165 € / nuit', rating: 4.80, badge: undefined },
-    { id: '269', image: img[269], title: 'Cabane ocean · Tofino', location: 'Romeo Hote', date: '', price: '295 € / nuit', rating: 4.95, badge: 'Nouveau' as const },
-  ];
-
-  // Chalets a decouvrir · Tofino
-  const tofinoProperties = [
-    { id: '257', image: img[257], title: 'Maison champetre · Ile d\'Orleans', location: 'Emily Hote', date: '', price: '220 € / nuit', rating: 4.94, badge: 'Populaire' as const },
-    { id: '262', image: img[262], title: 'Chalet sur le lac · Muskoka', location: 'Pascal Hote', date: '', price: '285 € / nuit', rating: 4.90, badge: undefined },
-    { id: '265', image: img[265], title: 'Refuge cotier · Tofino', location: 'Lucas Hote', date: '', price: '265 € / nuit', rating: 4.88, badge: 'Nouveau' as const },
-    { id: '269', image: img[269], title: 'Cabane ocean · Tofino', location: 'Romeo Hote', date: '', price: '295 € / nuit', rating: 5.0, badge: 'Coup de coeur' as const },
-    { id: '253', image: img[253], title: 'Chalet bois rond · Sainte-Adele', location: 'Emily Hote', date: '', price: '195 € / nuit', rating: 4.85, badge: undefined },
-    { id: '261', image: img[261], title: 'Chalet familial · Chelsea', location: 'Pascal Hote', date: '', price: '215 € / nuit', rating: 4.92, badge: 'Populaire' as const },
-    { id: '267', image: img[267], title: 'Loft heritage · Vieux-Quebec', location: 'Lucas Hote', date: '', price: '225 € / nuit', rating: 4.96, badge: 'Nouveau' as const },
-  ];
-
-  // Chalets populaires · Gatineau
-  const gatineauProperties = [
-    { id: '271', image: img[271], title: 'Maison champetre · Val-des-Monts', location: 'Romeo Hote', date: '', price: '185 € / nuit', rating: 4.93, badge: 'Coup de coeur' as const },
-    { id: '255', image: img[255], title: 'Refuge forestier · Sutton', location: 'Emily Hote', date: '', price: '155 € / nuit', rating: 4.85, badge: 'Nouveau' as const },
-    { id: '261', image: img[261], title: 'Chalet familial · Chelsea', location: 'Pascal Hote', date: '', price: '215 € / nuit', rating: 4.88, badge: 'Populaire' as const },
-    { id: '264', image: img[264], title: 'Chalet de montagne · Banff', location: 'Lucas Hote', date: '', price: '380 € / nuit', rating: 4.92, badge: undefined },
-    { id: '268', image: img[268], title: 'Chalet grand luxe · Charlevoix', location: 'Romeo Hote', date: '', price: '495 € / nuit', rating: 4.90, badge: 'Coup de coeur' as const },
-    { id: '254', image: img[254], title: 'Chalet vue fleuve · Charlevoix', location: 'Emily Hote', date: '', price: '275 € / nuit', rating: 4.78, badge: undefined },
-    { id: '261', image: img[261], title: 'Chalet Parc Gatineau · Chelsea', location: 'Pascal Hote', date: '', price: '215 € / nuit', rating: 4.95, badge: 'Nouveau' as const },
-  ];
-
-  // Chalets · Lac-Saint-Jean
-  const lacStJeanProperties = [
-    { id: '266', image: img[266], title: 'Chalet du lac · Alma', location: 'Lucas Hote', date: '', price: '165 € / nuit', rating: 5.0, badge: 'Populaire' as const },
-    { id: '272', image: img[272], title: 'Chalet de peche · Roberval', location: 'Romeo Hote', date: '', price: '175 € / nuit', rating: 4.89, badge: undefined },
-    { id: '256', image: img[256], title: 'Grand chalet ski · Stoneham', location: 'Emily Hote', date: '', price: '345 € / nuit', rating: 4.86, badge: 'Nouveau' as const },
-    { id: '259', image: img[259], title: 'Chalet spa · Mont-Tremblant', location: 'Pascal Hote', date: '', price: '320 € / nuit', rating: 4.90, badge: undefined },
-    { id: '265', image: img[265], title: 'Refuge cotier · Tofino', location: 'Lucas Hote', date: '', price: '265 € / nuit', rating: 4.88, badge: 'Coup de coeur' as const },
-    { id: '272', image: img[272], title: 'Chalet peche · Lac-Saint-Jean', location: 'Romeo Hote', date: '', price: '175 € / nuit', rating: 4.93, badge: 'Populaire' as const },
-    { id: '257', image: img[257], title: 'Maison champetre · Ile d\'Orleans', location: 'Emily Hote', date: '', price: '220 € / nuit', rating: 4.82, badge: undefined },
-  ];
+  const showDestination = (destination: string) => {
+    onSearch?.({ destination });
+  };
 
   return (
     <>
@@ -220,176 +131,63 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
       </div>
 
       <main className="pb-12">
-        {/* Annonces publiées (real data from API) */}
-        {listingsLoaded && publicListings.length > 0 && (
+        {/* Chargement */}
+        {!listings && !failed && (
+          <PropertyCarousel title="Nos annonces" showMoreLink={false}>
+            {Array.from({ length: 6 }, (_, index) => (
+              <div key={index} style={{ width: cardWidth }} className="animate-pulse">
+                <div className="aspect-square rounded-xl bg-gray-200 mb-3" />
+                <div className="h-3 bg-gray-200 rounded w-3/4 mb-2" />
+                <div className="h-3 bg-gray-200 rounded w-1/2" />
+              </div>
+            ))}
+          </PropertyCarousel>
+        )}
+
+        {failed && (
+          <div className="px-4 sm:px-6 lg:px-12 py-16 text-center">
+            <p className="text-gray-700 mb-4">Impossible de charger les annonces pour le moment.</p>
+            <button
+              onClick={retry}
+              className="px-5 py-2.5 rounded-lg border border-gray-900 text-sm hover:bg-gray-50 transition-colors"
+              style={{ fontWeight: 600 }}
+            >
+              Réessayer
+            </button>
+          </div>
+        )}
+
+        {listings && listings.length === 0 && (
+          <p className="px-4 sm:px-6 lg:px-12 py-16 text-center text-gray-600">
+            Aucun logement n&apos;est publié pour le moment.
+          </p>
+        )}
+
+        {listings && listings.length > 0 && sections.map((section) => (
           <PropertyCarousel
-            title="Nos annonces"
-            showMoreLink={true}
+            key={section.key}
+            title={section.title}
+            showMoreLink={section.destination !== undefined}
+            onShowMore={section.destination !== undefined ? () => showDestination(section.destination!) : undefined}
           >
-            {publicListings.map((listing) => (
+            {section.listings.map((listing) => (
               <div key={listing.id} style={{ width: cardWidth }} className="transition-all duration-300">
                 <PropertyCard
                   id={String(listing.id)}
-                  image={listing.photos?.[0]?.url || 'https://images.unsplash.com/photo-1593696140826-c58b021acf8b?w=400'}
-                  title={`${listing.title || 'Logement'} · ${listing.city || ''}`}
-                  location={listing.space_type === 'entire' ? 'Logement entier' : listing.space_type === 'private' ? 'Chambre privée' : 'Logement'}
+                  image={listing.photos?.[0]?.url || ''}
+                  title={listing.title || 'Logement'}
+                  location={placeLabel(listing)}
                   date=""
-                  price={`${Number(listing.base_price || 0).toFixed(0)} € / nuit`}
-                  rating={0}
-                  badge="Nouveau"
-                  guests={`${listing.capacity} voyageurs`}
+                  price={`${price(listing).toFixed(0)} € / nuit`}
+                  rating={listing.reviews_count > 0 ? listing.average_rating : null}
+                  badge={listing.reviews_count >= 3 && (listing.average_rating ?? 0) >= 4.8 ? 'Coup de coeur' : undefined}
+                  guests={`${spaceTypeLabel(listing.space_type)} · ${listing.capacity} voyageur${listing.capacity > 1 ? 's' : ''}`}
                   onClick={() => onPropertyClick(String(listing.id))}
                 />
               </div>
             ))}
           </PropertyCarousel>
-        )}
-
-        {/* Annonces consultées récemment - visible only when authenticated */}
-        {isAuthenticated && (
-          <PropertyCarousel
-            title="Annonces consultées récemment"
-            showMoreLink={true}
-          >
-            {recentlyViewedProperties.map((property, index) => (
-              <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
-                <PropertyCard {...property} onClick={() => onPropertyClick(property.id)} />
-              </div>
-            ))}
-          </PropertyCarousel>
-        )}
-
-        {/* Chalets populaires · Laurentides */}
-        <PropertyCarousel
-          title="Chalets populaires · Laurentides"
-          showMoreLink={true}
-        >
-          {laurentidesProperties.map((property, index) => (
-            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
-              <PropertyCard {...property} onClick={() => onPropertyClick(property.id)} />
-            </div>
-          ))}
-        </PropertyCarousel>
-
-        {/* Chalets à la une · Charlevoix */}
-        <PropertyCarousel
-          title="Chalets à la une · Charlevoix"
-          showMoreLink={true}
-        >
-          {charlevoixProperties.map((property, index) => (
-            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
-              <PropertyCard {...property} onClick={() => onPropertyClick(property.id)} />
-            </div>
-          ))}
-        </PropertyCarousel>
-
-        {/* Chalets disponibles · Cantons-de-l'Est */}
-        <PropertyCarousel
-          title="Chalets disponibles · Cantons-de-l'Est"
-          showMoreLink={true}
-        >
-          {cantonsProperties.map((property, index) => (
-            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
-              <PropertyCard {...property} onClick={() => onPropertyClick(property.id)} />
-            </div>
-          ))}
-        </PropertyCarousel>
-
-        {/* Chalets · Muskoka */}
-        <PropertyCarousel
-          title="Chalets · Muskoka"
-          showMoreLink={true}
-        >
-          {muskokaProperties.map((property, index) => (
-            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
-              <PropertyCard {...property} onClick={() => onPropertyClick(property.id)} />
-            </div>
-          ))}
-        </PropertyCarousel>
-
-        {/* Chalets disponibles · Mont-Tremblant */}
-        <PropertyCarousel
-          title="Chalets disponibles · Mont-Tremblant"
-          showMoreLink={true}
-        >
-          {tremblantProperties.map((property, index) => (
-            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
-              <PropertyCard {...property} onClick={() => onPropertyClick(property.id)} />
-            </div>
-          ))}
-        </PropertyCarousel>
-
-        {/* Chalets · Whistler */}
-        <PropertyCarousel
-          title="Chalets · Whistler"
-          showMoreLink={true}
-        >
-          {whistlerProperties.map((property, index) => (
-            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
-              <PropertyCard {...property} onClick={() => onPropertyClick(property.id)} />
-            </div>
-          ))}
-        </PropertyCarousel>
-
-        {/* Chalets disponibles · Québec */}
-        <PropertyCarousel
-          title="Chalets disponibles · Québec"
-          showMoreLink={true}
-        >
-          {quebecProperties.map((property, index) => (
-            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
-              <PropertyCard {...property} onClick={() => onPropertyClick(property.id)} />
-            </div>
-          ))}
-        </PropertyCarousel>
-
-        {/* Chalets · Banff */}
-        <PropertyCarousel
-          title="Chalets · Banff"
-          showMoreLink={true}
-        >
-          {banffProperties.map((property, index) => (
-            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
-              <PropertyCard {...property} onClick={() => onPropertyClick(property.id)} />
-            </div>
-          ))}
-        </PropertyCarousel>
-
-        {/* Chalets à découvrir · Tofino */}
-        <PropertyCarousel
-          title="Chalets à découvrir · Tofino"
-          showMoreLink={true}
-        >
-          {tofinoProperties.map((property, index) => (
-            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
-              <PropertyCard {...property} onClick={() => onPropertyClick(property.id)} />
-            </div>
-          ))}
-        </PropertyCarousel>
-
-        {/* Chalets populaires · Gatineau */}
-        <PropertyCarousel
-          title="Chalets populaires · Gatineau"
-          showMoreLink={true}
-        >
-          {gatineauProperties.map((property, index) => (
-            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
-              <PropertyCard {...property} onClick={() => onPropertyClick(property.id)} />
-            </div>
-          ))}
-        </PropertyCarousel>
-
-        {/* Chalets · Lac-Saint-Jean */}
-        <PropertyCarousel
-          title="Chalets · Lac-Saint-Jean"
-          showMoreLink={true}
-        >
-          {lacStJeanProperties.map((property, index) => (
-            <div key={index} style={{ width: cardWidth }} className="transition-all duration-300">
-              <PropertyCard {...property} onClick={() => onPropertyClick(property.id)} />
-            </div>
-          ))}
-        </PropertyCarousel>
+        ))}
       </main>
     </>
   );

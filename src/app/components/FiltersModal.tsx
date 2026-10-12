@@ -1,4 +1,4 @@
-import { X, Home, Building2, Castle, Warehouse, LayoutGrid, Wifi, UtensilsCrossed, WashingMachine, Snowflake, Waves, Car, Minus, Plus, Check } from "lucide-react";
+import { X, Home, DoorOpen, Wifi, UtensilsCrossed, WashingMachine, Snowflake, Waves, Car, Minus, Plus, Check } from "lucide-react";
 import { useEffect, useRef, useState, useCallback } from "react";
 
 interface FiltersModalProps {
@@ -7,7 +7,7 @@ interface FiltersModalProps {
   onApplyFilters?: (filters: FilterState) => void;
 }
 
-interface FilterState {
+export interface FilterState {
   priceMin: number;
   priceMax: number;
   bedrooms: number;
@@ -17,12 +17,10 @@ interface FilterState {
   amenities: string[];
 }
 
+// Identifiants = valeurs de listings.space_type
 const propertyTypes = [
-  { id: 'apartment', label: 'Appartement', icon: Building2 },
-  { id: 'house', label: 'Maison', icon: Home },
-  { id: 'villa', label: 'Villa', icon: Castle },
-  { id: 'loft', label: 'Loft', icon: Warehouse },
-  { id: 'studio', label: 'Studio', icon: LayoutGrid },
+  { id: 'entire', label: 'Logement entier', icon: Home },
+  { id: 'private', label: 'Chambre privée', icon: DoorOpen },
 ];
 
 const amenities = [
@@ -34,9 +32,9 @@ const amenities = [
   { id: 'parking', label: 'Parking gratuit', icon: Car },
 ];
 
-// Price range constants
-const MIN_PRICE = 0;
-const MAX_PRICE = 2000;
+// Price range constants (MAX_PRICE = pas de plafond)
+export const MIN_PRICE = 0;
+export const MAX_PRICE = 2000;
 const PRICE_STEP = 50;
 
 export function FiltersModal({ isOpen, onClose, onApplyFilters }: FiltersModalProps) {
@@ -258,7 +256,7 @@ export function FiltersModal({ isOpen, onClose, onApplyFilters }: FiltersModalPr
           {/* Property Types Section */}
           <section>
             <h3 className="text-base font-semibold text-gray-900 mb-4">Type de logement</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-3">
               {propertyTypes.map(({ id, label, icon: Icon }) => {
                 const isSelected = filters.propertyTypes.includes(id);
                 return (

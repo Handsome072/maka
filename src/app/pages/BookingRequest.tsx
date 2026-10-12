@@ -6,7 +6,7 @@ import { getStripe, PAYMENTS_ENABLED } from '../config/payments';
 import { reservationsApi, type ListingDetail, type PriceBreakdown, type ReservationData } from '../services/api';
 import { BookingGuestsDropdown, formatGuestsLabel, type StayGuests } from '../components/booking/BookingGuestsDropdown';
 import { DateRangeCalendar } from '../components/booking/DateRangeCalendar';
-import { toYmd, useStayDates } from '../components/booking/useStayDates';
+import { parseYmd, toYmd, useStayDates } from '../components/booking/useStayDates';
 import { formatHour, formatMoney, formatStayRange } from '../components/booking/format';
 import { cancellationSummary, stayLimits } from '@/shared/booking';
 
@@ -48,17 +48,12 @@ interface BookingRequestProps {
 
 const MESSAGE_MAX = 1000;
 
-function parseYmd(value: string): Date | null {
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value ?? '');
-  return match ? new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3])) : null;
-}
-
 function firstOfMonth(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), 1);
 }
 
 export function BookingRequest({ bookingData, onBack, onBooked, onLoginRequired }: BookingRequestProps) {
-  // ─── Annonce telle qu'enregistrée : ses règles s'appliquent, même si la page venait de la démo ──
+  // ─── Annonce telle qu'enregistrée : ses règles s'appliquent ──────────────────────────────────
   const [listing, setListing] = useState<ListingDetail | null>(null);
   const [listingError, setListingError] = useState<string | null>(null);
 

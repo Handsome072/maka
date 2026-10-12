@@ -31,10 +31,8 @@ function SearchResultsContent() {
   };
 
   // Handle navigation
-  const handleNavigate = (page: string, data?: any) => {
-    if (page === 'property-details') {
-      router.push('/property/1');
-    } else if (page === 'home' || page === 'logements') {
+  const handleNavigate = (page: string) => {
+    if (page === 'home' || page === 'logements') {
       router.push('/');
     } else {
       const path = getNavigationPath(page as any);
@@ -42,10 +40,25 @@ function SearchResultsContent() {
     }
   };
 
+  // Nouvelle recherche depuis la page de résultats
+  const handleSearch = (search: any) => {
+    const searchQuery = new URLSearchParams({
+      destination: search.destination || '',
+      checkIn: search.checkInDate?.toISOString() || '',
+      checkOut: search.checkOutDate?.toISOString() || '',
+      adults: search.guestsCount?.adults?.toString() || '0',
+      children: search.guestsCount?.children?.toString() || '0',
+      babies: search.guestsCount?.babies?.toString() || '0',
+      pets: search.guestsCount?.pets?.toString() || '0',
+    });
+    router.push(`/search?${searchQuery.toString()}`);
+  };
+
   return (
     <SearchResults 
       onBack={handleBack} 
       onNavigate={handleNavigate}
+      onSearch={handleSearch}
       searchParams={params}
     />
   );

@@ -7,6 +7,8 @@ interface PropertyCarouselProps {
   subtitle?: string;
   children: React.ReactNode;
   showMoreLink?: boolean;
+  /** Action de la flèche à côté du titre (ex. : ouvrir la recherche sur cette région). */
+  onShowMore?: () => void;
 }
 
 function useWindowWidth() {
@@ -26,7 +28,7 @@ function useWindowWidth() {
   return { width, mounted };
 }
 
-export function PropertyCarousel({ title, subtitle, children, showMoreLink = true }: PropertyCarouselProps) {
+export function PropertyCarousel({ title, subtitle, children, showMoreLink = true, onShowMore }: PropertyCarouselProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -93,7 +95,11 @@ export function PropertyCarousel({ title, subtitle, children, showMoreLink = tru
             <div className="flex items-center gap-2">
               <h2 className="text-lg md:text-2xl" style={{ fontWeight: 600 }}>{title}</h2>
               {showMoreLink && (
-                <button className="p-2 rounded-full text-sm text-gray-700 bg-gray-100 hover:underline flex items-center gap-1">
+                <button
+                  onClick={onShowMore}
+                  aria-label={`Voir tout : ${title}`}
+                  className="p-2 rounded-full text-sm text-gray-700 bg-gray-100 hover:underline flex items-center gap-1"
+                >
                   <svg
                     viewBox="0 0 18 18"
                     className="w-3 h-3"

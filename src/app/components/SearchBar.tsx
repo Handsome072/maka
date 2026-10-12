@@ -1,7 +1,5 @@
 import {
   Search,
-  Navigation,
-  Building,
   Landmark,
   MapPin,
   X,
@@ -9,112 +7,13 @@ import {
   ChevronRight,
   CalendarDays,
 } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { usePublicListings } from "../hooks/usePublicListings";
+import { destinationSuggestions, filterSuggestions } from "@/shared/places";
 import { ExperienceDatePicker } from "./ExperienceDatePicker";
 import { GuestsPicker } from "./GuestsPicker";
 import { ServiceDestinationPicker } from "./ServiceDestinationPicker";
 import { ServiceTypePicker } from "./ServiceTypePicker";
-
-const allDestinations = [
-  {
-    icon: Navigation,
-    title: "À proximité",
-    description: "Découvrez les options à proximité",
-    bgColor: "bg-blue-100",
-    iconColor: "text-blue-600",
-    searchKey: "proximite",
-  },
-  {
-    icon: Building,
-    title: "Marseille, Provence-Alpes-Côte d'Azur",
-    description: "Destination balnéaire prisée",
-    bgColor: "bg-blue-100",
-    iconColor: "text-blue-600",
-    searchKey: "marseille",
-  },
-  {
-    icon: Landmark,
-    title: "Lyon, Auvergne-Rhône-Alpes",
-    description:
-      "Célèbre pour des sites comme : Basilique Notre-Dame de Fourvière",
-    bgColor: "bg-green-100",
-    iconColor: "text-green-600",
-    searchKey: "lyon",
-  },
-  {
-    icon: Building,
-    title: "Montpellier, Occitanie",
-    description: "Populaire auprès des voyageurs à proximité",
-    bgColor: "bg-orange-100",
-    iconColor: "text-orange-600",
-    searchKey: "montpellier",
-  },
-  {
-    icon: Landmark,
-    title: "Toulouse, Occitanie",
-    description:
-      "Célèbre pour des sites comme : Basilique Saint-Sernin",
-    bgColor: "bg-pink-100",
-    iconColor: "text-pink-600",
-    searchKey: "toulouse",
-  },
-  {
-    icon: Landmark,
-    title: "Barcelone, Espagne",
-    description: "Destination balnéaire prisée",
-    bgColor: "bg-orange-100",
-    iconColor: "text-orange-600",
-    searchKey: "barcelone",
-  },
-  {
-    icon: MapPin,
-    title: "Bruxelles, Nouvelle-Aquitaine",
-    description: "À 415 km",
-    bgColor: "bg-gray-100",
-    iconColor: "text-gray-600",
-    searchKey: "bruxelles",
-  },
-  {
-    icon: MapPin,
-    title: "Île de Reem, Abou Dabi, Émirats arabes unis",
-    description: "",
-    bgColor: "bg-gray-100",
-    iconColor: "text-gray-600",
-    searchKey: "reem ree ile emirats",
-  },
-  {
-    icon: MapPin,
-    title: "Reeuwijk, Pays-Bas",
-    description: "",
-    bgColor: "bg-gray-100",
-    iconColor: "text-gray-600",
-    searchKey: "reeuwijk ree pays-bas",
-  },
-  {
-    icon: MapPin,
-    title: "Reefton, West Coast, Nouvelle-Zélande",
-    description: "",
-    bgColor: "bg-gray-100",
-    iconColor: "text-gray-600",
-    searchKey: "reefton ree nouvelle-zelande",
-  },
-  {
-    icon: MapPin,
-    title: "Reeperbahn, Allemagne",
-    description: "",
-    bgColor: "bg-gray-100",
-    iconColor: "text-gray-600",
-    searchKey: "reeperbahn ree allemagne",
-  },
-  {
-    icon: MapPin,
-    title: "Reepham, Royaume-Uni",
-    description: "",
-    bgColor: "bg-gray-100",
-    iconColor: "text-gray-600",
-    searchKey: "reepham ree royaume-uni",
-  },
-];
 
 interface SearchBarProps {
   onSearch?: (params: any) => void;
@@ -214,17 +113,13 @@ export function SearchBar({ onSearch, type = 'logements' }: SearchBarProps) {
     }
   }, [checkInDate, checkOutDate]);
 
-  const filteredDestinations = searchValue.trim()
-    ? allDestinations.filter(
-        (dest) =>
-          dest.searchKey
-            .toLowerCase()
-            .includes(searchValue.toLowerCase()) ||
-          dest.title
-            .toLowerCase()
-            .includes(searchValue.toLowerCase()),
-      )
-    : allDestinations.slice(0, 7);
+  // Destinations où des annonces sont publiées, chargées à l'ouverture de la liste
+  const { listings: destinationListings, failed: destinationsFailed } = usePublicListings(showDestinations);
+  const suggestions = useMemo(
+    () => destinationSuggestions(destinationListings ?? []),
+    [destinationListings],
+  );
+  const filteredDestinations = filterSuggestions(suggestions, searchValue).slice(0, 12);
 
   const handleClearSearch = () => {
     setSearchValue("");
@@ -617,16 +512,20 @@ export function SearchBar({ onSearch, type = 'logements' }: SearchBarProps) {
                 Suggestions de destinations
               </h3>
               <div className="space-y-0">
-                {filteredDestinations.length > 0 ? (
+                {!destinationListings && !destinationsFailed ? (
+                  <p className="text-[13px] text-gray-500 py-4 text-center">
+                    Chargement des destinations…
+                  </p>
+                ) : filteredDestinations.length > 0 ? (
                   filteredDestinations.map(
-                    (destination, index) => {
-                      const Icon = destination.icon;
+                    (destination) => {
+                      const Icon = destination.kind === "province" ? Landmark : MapPin;
                       return (
                         <button
-                          key={index}
+                          key={`${destination.kind}-${destination.label}`}
                           className="w-full flex items-start gap-3 px-2 py-2.5 rounded-lg hover:bg-gray-50 transition-colors text-left"
                           onClick={() => {
-                            setSearchValue(destination.title);
+                            setSearchValue(destination.label);
                             setShowDestinations(false);
                             // Auto-focus sur le champ Dates après sélection d'une ville
                             setTimeout(() => {
@@ -636,7 +535,7 @@ export function SearchBar({ onSearch, type = 'logements' }: SearchBarProps) {
                           }}
                         >
                           <div
-                            className={`flex-shrink-0 w-12 h-12 flex items-center justify-center ${destination.bgColor} ${destination.iconColor}`}
+                            className={`flex-shrink-0 w-12 h-12 flex items-center justify-center ${destination.kind === "province" ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-600"}`}
                             style={{ borderRadius: "8px" }}
                           >
                             <Icon
@@ -652,16 +551,15 @@ export function SearchBar({ onSearch, type = 'logements' }: SearchBarProps) {
                                 color: "#222222",
                               }}
                             >
-                              {destination.title}
+                              {destination.label}
                             </p>
-                            {destination.description && (
-                              <p
-                                className="text-[13px]"
-                                style={{ color: "#717171" }}
-                              >
-                                {destination.description}
-                              </p>
-                            )}
+                            <p
+                              className="text-[13px]"
+                              style={{ color: "#717171" }}
+                            >
+                              {destination.kind === "province" ? "Province · " : ""}
+                              {destination.count} logement{destination.count > 1 ? "s" : ""}
+                            </p>
                           </div>
                         </button>
                       );

@@ -1,4 +1,4 @@
-import { Heart } from 'lucide-react';
+import { Heart, House } from 'lucide-react';
 import { useState } from 'react';
 
 interface PropertyCardProps {
@@ -8,7 +8,8 @@ interface PropertyCardProps {
   location: string;
   date: string;
   price: string;
-  rating: number;
+  /** Note moyenne des avis ; null tant que le logement n'en a aucun. */
+  rating: number | null;
   badge?: 'Coup de coeur' | 'Originals' | 'Populaire' | 'Nouveau';
   guests?: string;
   beds?: string;
@@ -44,11 +45,17 @@ export function PropertyCard({
   return (
     <div className="group cursor-pointer flex-shrink-0 w-full" onClick={handleClick}>
       <div className="relative aspect-square rounded-xl overflow-hidden mb-3">
-        <img
-          src={image}
-          alt={title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-        />
+        {image ? (
+          <img
+            src={image}
+            alt={title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+            <House className="w-10 h-10 text-gray-300" strokeWidth={1.5} />
+          </div>
+        )}
         <button
           onClick={handleFavoriteClick}
           className="absolute top-3 right-3 hover:scale-110 transition-transform z-10"
@@ -80,10 +87,16 @@ export function PropertyCard({
         <div className="pt-1 flex items-center gap-1">
           <span className="text-xs text-gray-600">{price}</span>
           <span className="text-xs text-gray-600 mx-1">·</span>
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="text-gray-600">
-            <path d="M6 0L7.854 4.146L12 4.854L8.708 7.708L9.708 12L6 9.708L2.292 12L3.292 7.708L0 4.854L4.146 4.146L6 0Z"/>
-          </svg>
-          <span className="text-xs text-gray-600">{rating.toFixed(2)}</span>
+          {rating === null ? (
+            <span className="text-xs text-gray-600">Nouveau</span>
+          ) : (
+            <>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="text-gray-600">
+                <path d="M6 0L7.854 4.146L12 4.854L8.708 7.708L9.708 12L6 9.708L2.292 12L3.292 7.708L0 4.854L4.146 4.146L6 0Z"/>
+              </svg>
+              <span className="text-xs text-gray-600">{rating.toFixed(2)}</span>
+            </>
+          )}
         </div>
       </div>
     </div>

@@ -1,5 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
-import { X, Search, Navigation, Building, Landmark, MapPin, ChevronDown, ChevronRight, Minus, Plus } from 'lucide-react';
+import { X, Search, Landmark, MapPin, ChevronDown, ChevronRight, Minus, Plus } from 'lucide-react';
+import { usePublicListings } from '../hooks/usePublicListings';
+import { destinationSuggestions, filterSuggestions } from '@/shared/places';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface MobileSearchOverlayProps {
@@ -9,58 +11,6 @@ interface MobileSearchOverlayProps {
     onNavigate: (page: 'logements' | 'experiences' | 'services') => void;
     onSearch: (params: any) => void;
 }
-
-const destinations = [
-    {
-        icon: Navigation,
-        title: "À proximité",
-        description: "Découvrez les options à proximité",
-        bgColor: "bg-blue-100",
-        iconColor: "text-blue-600",
-    },
-    {
-        icon: Building,
-        title: "Marseille, Provence-Alpes-Côte d'Azur",
-        description: "Destination balnéaire prisée",
-        bgColor: "bg-blue-100",
-        iconColor: "text-blue-600",
-    },
-    {
-        icon: Landmark,
-        title: "Lyon, Auvergne-Rhône-Alpes",
-        description: "Célèbre pour des sites comme : Basilique Notre-Dame de Fourvière",
-        bgColor: "bg-green-100",
-        iconColor: "text-green-600",
-    },
-    {
-        icon: Building,
-        title: "Montpellier, Occitanie",
-        description: "Populaire auprès des voyageurs à proximité",
-        bgColor: "bg-orange-100",
-        iconColor: "text-orange-600",
-    },
-    {
-        icon: Landmark,
-        title: "Toulouse, Occitanie",
-        description: "Célèbre pour des sites comme : Basilique Saint-Sernin",
-        bgColor: "bg-pink-100",
-        iconColor: "text-pink-600",
-    },
-    {
-        icon: Landmark,
-        title: "Barcelone, Espagne",
-        description: "Destination balnéaire prisée",
-        bgColor: "bg-orange-100",
-        iconColor: "text-orange-600",
-    },
-    {
-        icon: MapPin,
-        title: "Bordeaux, Nouvelle-Aquitaine",
-        description: "À 415 km",
-        bgColor: "bg-gray-100",
-        iconColor: "text-gray-600",
-    },
-];
 
 const serviceTypes = [
     "Ménage",
@@ -92,6 +42,11 @@ export function MobileSearchOverlay({
     const [isDestinationExpanded, setIsDestinationExpanded] = useState(false);
 
     const [expandedSection, setExpandedSection] = useState<'destination' | 'dates' | 'guests' | 'service' | null>('destination');
+
+    // Destinations où des annonces sont publiées, filtrées par la saisie
+    const { listings: destinationListings, failed: destinationsFailed } = usePublicListings(isOpen);
+    const suggestions = useMemo(() => destinationSuggestions(destinationListings ?? []), [destinationListings]);
+    const destinations = useMemo(() => filterSuggestions(suggestions, searchValue), [suggestions, searchValue]);
 
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [startDate, setStartDate] = useState<Date | null>(null);
@@ -217,7 +172,15 @@ export function MobileSearchOverlay({
         setEndDate(end);
     };
 
+    // Les jours passés ne se réservent pas
+    const isPastDay = (day: Date) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return day < today;
+    };
+
     const handleDateClick = (day: Date) => {
+        if (isPastDay(day)) return;
         // Dès qu'on clique manuellement sur une date, on sort du mode \"rapide\"
         setSelectedQuickOption(null);
 
@@ -390,7 +353,10 @@ export function MobileSearchOverlay({
                                             type="text"
                                             placeholder="Rechercher une destination"
                                             value={searchValue}
-                                            onChange={(e) => setSearchValue(e.target.value)}
+                                            onChange={(e) => {
+                                                setSearchValue(e.target.value);
+                                                setSelectedDestination('');
+                                            }}
                                             onFocus={() => setIsDestinationExpanded(true)}
                                             className={`w-full pl-12 py-4 border border-gray-300 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-gray-200 ${isDestinationExpanded ? 'pr-12' : 'pr-4'}`}
                                         />
@@ -408,32 +374,41 @@ export function MobileSearchOverlay({
                                     </div>
                                     <p className="text-sm text-gray-500 mb-3">Suggestions de destinations</p>
                                     <div className="space-y-2">
-                                        {destinations.slice(0, isDestinationExpanded ? destinations.length : 3).map((dest, index) => {
-                                            const Icon = dest.icon;
+                                        {!destinationListings && !destinationsFailed && (
+                                            <p className="text-sm text-gray-500 py-3 text-center">Chargement des destinations…</p>
+                                        )}
+                                        {destinationListings && destinations.length === 0 && (
+                                            <p className="text-sm text-gray-500 py-3 text-center">Aucune destination trouvée</p>
+                                        )}
+                                        {destinations.slice(0, isDestinationExpanded ? 12 : 3).map((dest) => {
+                                            const Icon = dest.kind === 'province' ? Landmark : MapPin;
                                             return (
                                                 <button
-                                                    key={index}
+                                                    key={`${dest.kind}-${dest.label}`}
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        setSelectedDestination(dest.title);
-                                                        setSearchValue(dest.title);
+                                                        setSelectedDestination(dest.label);
+                                                        setSearchValue(dest.label);
                                                         setIsDestinationExpanded(false);
                                                         setExpandedSection('dates');
                                                     }}
-                                                    className={`w-full flex items-center gap-3 p-3 rounded-xl transition-colors ${selectedDestination === dest.title ? 'bg-gray-100' : 'hover:bg-gray-50'}`}
+                                                    className={`w-full flex items-center gap-3 p-3 rounded-xl transition-colors ${selectedDestination === dest.label ? 'bg-gray-100' : 'hover:bg-gray-50'}`}
                                                 >
-                                                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${dest.bgColor}`}>
-                                                        <Icon className={`w-5 h-5 ${dest.iconColor}`} />
+                                                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${dest.kind === 'province' ? 'bg-green-100' : 'bg-gray-100'}`}>
+                                                        <Icon className={`w-5 h-5 ${dest.kind === 'province' ? 'text-green-600' : 'text-gray-600'}`} />
                                                     </div>
                                                     <div className="text-left">
-                                                        <p className="font-medium text-sm">{dest.title}</p>
-                                                        <p className="text-xs text-gray-500">{dest.description}</p>
+                                                        <p className="font-medium text-sm">{dest.label}</p>
+                                                        <p className="text-xs text-gray-500">
+                                                            {dest.kind === 'province' ? 'Province · ' : ''}
+                                                            {dest.count} logement{dest.count > 1 ? 's' : ''}
+                                                        </p>
                                                     </div>
                                                 </button>
                                             );
                                         })}
                                     </div>
-                                    {!isDestinationExpanded && (
+                                    {!isDestinationExpanded && destinations.length > 3 && (
                                         <button
                                             onClick={(e) => {
                                                 e.stopPropagation();
@@ -552,11 +527,14 @@ export function MobileSearchOverlay({
                                                                                 e.stopPropagation();
                                                                                 handleDateClick(day);
                                                                             }}
+                                                                            disabled={isPastDay(day)}
                                                                             className={`aspect-square flex items-center justify-center text-sm transition-colors ${isSelected
                                                                                 ? 'bg-gray-900 text-white rounded-full'
                                                                                 : inRange
                                                                                     ? 'bg-gray-100'
-                                                                                    : 'hover:bg-gray-50'
+                                                                                    : isPastDay(day)
+                                                                                        ? 'text-gray-300 line-through cursor-not-allowed'
+                                                                                        : 'hover:bg-gray-50'
                                                                                 }`}
                                                                         >
                                                                             {day.getDate()}
