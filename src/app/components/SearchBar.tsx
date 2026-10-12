@@ -523,7 +523,7 @@ export function SearchBar({ onSearch, type = 'logements' }: SearchBarProps) {
                       return (
                         <button
                           key={`${destination.kind}-${destination.label}`}
-                          className="w-full flex items-start gap-3 px-2 py-2.5 rounded-lg hover:bg-gray-50 transition-colors text-left"
+                          className="w-full flex items-center gap-4 px-2 py-2.5 rounded-lg hover:bg-gray-50 transition-colors text-left"
                           onClick={() => {
                             setSearchValue(destination.label);
                             setShowDestinations(false);
@@ -534,16 +534,25 @@ export function SearchBar({ onSearch, type = 'logements' }: SearchBarProps) {
                             }, 100);
                           }}
                         >
-                          <div
-                            className={`flex-shrink-0 w-12 h-12 flex items-center justify-center ${destination.kind === "province" ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-600"}`}
-                            style={{ borderRadius: "8px" }}
-                          >
-                            <Icon
-                              className="w-5 h-5"
-                              strokeWidth={1.5}
+                          {destination.image ? (
+                            <img
+                              src={destination.image}
+                              alt=""
+                              className="flex-shrink-0 w-14 h-14 object-cover"
+                              style={{ borderRadius: "10px" }}
                             />
-                          </div>
-                          <div className="flex-1 min-w-0 pt-0.5">
+                          ) : (
+                            <div
+                              className={`flex-shrink-0 w-14 h-14 flex items-center justify-center ${destination.kind === "province" ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-600"}`}
+                              style={{ borderRadius: "10px" }}
+                            >
+                              <Icon
+                                className="w-5 h-5"
+                                strokeWidth={1.5}
+                              />
+                            </div>
+                          )}
+                          <div className="flex-1 min-w-0">
                             <p
                               className="text-[15px] mb-0.5"
                               style={{

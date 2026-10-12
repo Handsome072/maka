@@ -97,26 +97,35 @@ export interface DestinationSuggestion {
   label: string;
   kind: 'province' | 'city';
   count: number;
+  /** Photo de couverture d'une annonce de ce lieu (null si aucune n'a de photo). */
+  image: string | null;
 }
+
+type ListingWithPhotos = PlaceFields & { photos?: { url: string | null }[] | null };
 
 /**
  * Destinations où il existe au moins une annonce : les provinces qui en comptent plusieurs,
- * puis les villes, chacune avec son nombre d'annonces, des plus fournies aux moins fournies.
+ * puis les villes, chacune avec son nombre d'annonces (des plus fournies aux moins fournies)
+ * et la photo de couverture de sa première annonce.
  */
-export function destinationSuggestions(listings: PlaceFields[]): DestinationSuggestion[] {
-  const provinces = new Map<string, number>();
-  const cities = new Map<string, { label: string; count: number }>();
+export function destinationSuggestions(listings: ListingWithPhotos[]): DestinationSuggestion[] {
+  const provinces = new Map<string, DestinationSuggestion>();
+  const cities = new Map<string, DestinationSuggestion>();
+
+  const add = (map: Map<string, DestinationSuggestion>, key: string, label: string, kind: DestinationSuggestion['kind'], cover: string | null) => {
+    const entry = map.get(key) ?? { label, kind, count: 0, image: null };
+    entry.count += 1;
+    entry.image ??= cover;
+    map.set(key, entry);
+  };
 
   for (const listing of listings) {
+    const cover = listing.photos?.find((photo) => photo.url)?.url ?? null;
     const province = provinceName(listing.province);
-    if (province) provinces.set(province, (provinces.get(province) ?? 0) + 1);
-
+    if (province) add(provinces, province, province, 'province', cover);
     if (listing.city?.trim()) {
       const label = placeLabel(listing);
-      const key = normalizePlace(label);
-      const entry = cities.get(key) ?? { label, count: 0 };
-      entry.count += 1;
-      cities.set(key, entry);
+      add(cities, normalizePlace(label), label, 'city', cover);
     }
   }
 
@@ -124,11 +133,8 @@ export function destinationSuggestions(listings: PlaceFields[]): DestinationSugg
     b.count - a.count || a.label.localeCompare(b.label, 'fr');
 
   return [
-    ...[...provinces]
-      .filter(([, count]) => count > 1)
-      .map(([label, count]): DestinationSuggestion => ({ label, kind: 'province', count }))
-      .sort(byCount),
-    ...[...cities.values()].map((city): DestinationSuggestion => ({ ...city, kind: 'city' })).sort(byCount),
+    ...[...provinces.values()].filter((province) => province.count > 1).sort(byCount),
+    ...[...cities.values()].sort(byCount),
   ];
 }
 

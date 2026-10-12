@@ -160,6 +160,41 @@ const AMENITY_CONFIG: Record<string, { label: string; icon: string }> = {
   planche_decouper:   { label: 'Planche à découper',               icon: 'default' },
   eponge_produit:     { label: 'Éponge et produit vaisselle',      icon: 'default' },
   table_manger:       { label: 'Table à manger',                   icon: 'default' },
+  // Équipements et atouts des annonces importées (clés anglaises)
+  kitchen:            { label: 'Cuisine',                          icon: 'kitchen' },
+  washer:             { label: 'Lave-linge',                       icon: 'default' },
+  dryer:              { label: 'Sèche-linge',                      icon: 'dryer' },
+  parking:            { label: 'Parking gratuit sur place',        icon: 'default' },
+  pool:               { label: 'Piscine',                          icon: 'default' },
+  gym:                { label: 'Salle de sport',                   icon: 'default' },
+  hot_tub:            { label: 'Spa',                              icon: 'default' },
+  sauna:              { label: 'Sauna',                            icon: 'default' },
+  fireplace:          { label: 'Foyer',                            icon: 'default' },
+  bbq:                { label: 'Barbecue',                         icon: 'default' },
+  garden:             { label: 'Jardin',                           icon: 'default' },
+  game_room:          { label: 'Salle de jeux',                    icon: 'default' },
+  home_cinema:        { label: 'Salle de cinéma',                  icon: 'tv' },
+  wine_cellar:        { label: 'Cave à vin',                       icon: 'default' },
+  lake_access:        { label: 'Accès au lac',                     icon: 'default' },
+  boat_dock:          { label: 'Quai privé',                       icon: 'default' },
+  canoe:              { label: 'Canot',                            icon: 'default' },
+  kayak:              { label: 'Kayaks',                           icon: 'default' },
+  fishing:            { label: 'Pêche',                            icon: 'default' },
+  ski_access:         { label: 'Accès aux pistes de ski',          icon: 'default' },
+  ski_storage:        { label: 'Rangement pour skis',              icon: 'default' },
+  snowmobile_access:  { label: 'Accès aux sentiers de motoneige',  icon: 'default' },
+  hiking_trails:      { label: 'Sentiers de randonnée',            icon: 'default' },
+  bike_trails:        { label: 'Pistes cyclables',                 icon: 'default' },
+  bike_storage:       { label: 'Rangement pour vélos',             icon: 'default' },
+  surfboard_storage:  { label: 'Rangement pour planches de surf',  icon: 'default' },
+  outdoor_shower:     { label: 'Douche extérieure',                icon: 'default' },
+  treehouse:          { label: 'Cabane dans les arbres',           icon: 'default' },
+  heritage_building:  { label: 'Bâtiment patrimonial',             icon: 'default' },
+  mountain_view:      { label: 'Vue sur la montagne',              icon: 'default' },
+  ocean_view:         { label: "Vue sur l'océan",                  icon: 'default' },
+  river_view:         { label: 'Vue sur la rivière',               icon: 'default' },
+  city_view:          { label: 'Vue sur la ville',                 icon: 'default' },
+  nature_view:        { label: 'Vue sur la nature',                icon: 'default' },
 };
 
 function AmenityIcon({ type }: { type: string }) {
@@ -478,7 +513,9 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
   const capacity = listing.capacity || 1;
   const bathrooms = listing.bathrooms || 1;
   const normalizeBeds = (beds: unknown): { type: string; count: number }[] => {
-    if (Array.isArray(beds)) return beds;
+    if (Array.isArray(beds)) {
+      return (beds as { type: string; count: number }[]).map((bed) => ({ ...bed, type: BED_TYPE_LABELS[bed.type] || bed.type }));
+    }
     if (beds && typeof beds === 'object') {
       const entries = Object.entries(beds as Record<string, unknown>);
       if (entries.length > 0 && typeof entries[0][1] === 'number') {

@@ -394,9 +394,13 @@ export function MobileSearchOverlay({
                                                     }}
                                                     className={`w-full flex items-center gap-3 p-3 rounded-xl transition-colors ${selectedDestination === dest.label ? 'bg-gray-100' : 'hover:bg-gray-50'}`}
                                                 >
-                                                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${dest.kind === 'province' ? 'bg-green-100' : 'bg-gray-100'}`}>
-                                                        <Icon className={`w-5 h-5 ${dest.kind === 'province' ? 'text-green-600' : 'text-gray-600'}`} />
-                                                    </div>
+                                                    {dest.image ? (
+                                                        <img src={dest.image} alt="" className="w-12 h-12 rounded-lg object-cover flex-shrink-0" />
+                                                    ) : (
+                                                        <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${dest.kind === 'province' ? 'bg-green-100' : 'bg-gray-100'}`}>
+                                                            <Icon className={`w-5 h-5 ${dest.kind === 'province' ? 'text-green-600' : 'text-gray-600'}`} />
+                                                        </div>
+                                                    )}
                                                     <div className="text-left">
                                                         <p className="font-medium text-sm">{dest.label}</p>
                                                         <p className="text-xs text-gray-500">

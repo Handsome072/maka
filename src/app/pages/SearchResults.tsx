@@ -29,11 +29,11 @@ interface SearchResultsProps {
   };
 }
 
-// Équipements du filtre → valeurs enregistrées dans listings.amenities
+// Équipements du filtre → valeurs enregistrées dans listings.amenities (clés importées et clés du parcours hôte)
 const AMENITY_VALUES: Record<string, string[]> = {
   wifi: ['wifi'],
   kitchen: ['kitchen', 'cuisine_equipee'],
-  washer: ['washer'],
+  washer: ['washer', 'machine_laver'],
   aircon: ['climatisation'],
   pool: ['pool'],
   parking: ['parking'],
