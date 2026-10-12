@@ -511,19 +511,30 @@ export function BookingRequest({ bookingData, onBack, onBooked, onLoginRequired 
       {/* Paiement Stripe intégré : à la fin, Stripe renvoie sur la page de confirmation */}
       {checkoutSecret && (
         <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-[560px] max-h-[92vh] overflow-auto">
-            <div className="flex items-start justify-between gap-4 p-6 pb-2">
-              <div>
-                <h2 className="text-[22px]" style={{ fontWeight: 600 }}>
-                  Paiement
-                </h2>
-                <p className="text-sm text-gray-600">Votre réservation sera confirmée dès le paiement accepté.</p>
+          {/* 1040 px : assez large pour que Stripe passe sur deux colonnes et tienne sans défilement */}
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Paiement"
+            className="bg-white rounded-2xl w-full max-w-[1040px] max-h-[calc(100dvh-2rem)] overflow-auto"
+          >
+            <div className="flex items-start gap-2 px-4 pt-4">
+              {/* Site de démonstration : Stripe reste en mode test, seule la carte de test passe */}
+              <div className="flex-1 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-900 flex flex-wrap items-center gap-x-3 gap-y-1">
+                <span style={{ fontWeight: 600 }}>Site de démonstration : aucun vrai paiement.</span>
+                <span>
+                  Carte de test{' '}
+                  <span className="font-mono text-base tracking-wider select-all" style={{ fontWeight: 600 }}>
+                    4242 4242 4242 4242
+                  </span>
+                </span>
+                <span>· date future (ex. 12/34) · CVC au choix (ex. 123)</span>
               </div>
               <button onClick={() => setCheckoutSecret(null)} aria-label="Fermer le paiement" className="p-2 rounded-full hover:bg-gray-100">
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="px-2 pb-4">
+            <div className="px-2 pb-2">
               <EmbeddedCheckoutProvider stripe={getStripe()} options={{ clientSecret: checkoutSecret }}>
                 <EmbeddedCheckout />
               </EmbeddedCheckoutProvider>

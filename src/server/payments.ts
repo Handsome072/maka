@@ -86,6 +86,9 @@ export async function createCheckoutSession(
       ui_mode: 'embedded_page',
       mode: 'payment',
       locale: 'fr',
+      // Carte uniquement : sans ce filtre, Stripe ajoute Link, Klarna, Bancontact… activés dans le tableau de bord
+      allowed_payment_method_types: ['card'],
+      wallet_options: { link: { display: 'never' } },
       customer_email: guest.email,
       client_reference_id: String(reservation.id),
       line_items: lineItems(reservation, title),
