@@ -146,7 +146,7 @@ function layout(options: {
           <td class="px" style="padding:0 8px 20px;">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
               <tr>
-                <td align="left" valign="middle"><img src="${origin}/email/logo.png" width="128" alt="Séjoura" style="display:block;width:128px;height:auto;border:0;"></td>
+                <td align="left" valign="middle"><img src="${origin}/email/logo.png" width="160" alt="Séjoura" style="display:block;width:160px;height:auto;border:0;"></td>
                 <td class="tag" align="right" valign="middle" style="font-family:${FONT};font-size:11px;line-height:16px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#5A6B71;">${tag}</td>
               </tr>
             </table>

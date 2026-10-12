@@ -484,7 +484,7 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
             <img
               src="/sejoura_logo.png"
               alt="Séjoura Logo"
-              className="w-[120px] h-auto"
+              className="w-[150px] h-auto"
             />
           </button>
           <button 

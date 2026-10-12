@@ -58,7 +58,7 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
                 <img
                   src="/sejoura_logo.png"
                   alt="Séjoura Logo"
-                  className="hidden min-[950px]:block w-[150px] h-auto border-0"
+                  className="hidden min-[950px]:block w-[187px] h-auto border-0"
                 />
                 {/* Icône seule visible pour S < 950 */}
                 <img

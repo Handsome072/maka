@@ -83,10 +83,14 @@ export function LoggedInMenuDropdown({ isOpen, onClose, onBecomeHostClick, onLan
       `}</style>
       <div className="py-2">
         {/* Favoris */}
-        <button className="w-full px-8 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3 text-left">
+        <Link
+          href={ROUTES.CLIENT_SPACE_FAVORITES}
+          className="w-full px-8 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3 text-left"
+          onClick={onClose}
+        >
           <Heart className="w-5 h-5 text-gray-700" />
           <span className="text-sm" style={{ fontWeight: 600 }}>Favoris</span>
-        </button>
+        </Link>
 
         {/* Voyages */}
         <button className="w-full px-8 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3 text-left">

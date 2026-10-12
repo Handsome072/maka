@@ -81,7 +81,7 @@ export function SearchOverlay({
                 <img
                   src="/sejoura_logo.png"
                   alt="Séjoura Logo"
-                  className="w-[150px] h-auto border-0"
+                  className="w-[187px] h-auto border-0"
                 />
               </Link>
 

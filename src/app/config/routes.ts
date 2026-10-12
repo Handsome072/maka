@@ -14,6 +14,7 @@ export const ROUTES = {
   CLIENT_SPACE: '/client-space',
   CLIENT_SPACE_MESSAGES: '/client-space/messages',
   CLIENT_SPACE_RESERVATIONS: '/client-space/reservations',
+  CLIENT_SPACE_FAVORITES: '/client-space/favorites',
   CLIENT_SPACE_PROFILE: '/client-space/profile',
   CLIENT_SPACE_PAYMENTS: '/client-space/payments',
   CLIENT_SPACE_SECURITY: '/client-space/security',

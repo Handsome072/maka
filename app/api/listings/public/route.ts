@@ -1,6 +1,6 @@
-import { avg, round, ymd } from '@/server/format';
+import { ymd } from '@/server/format';
 import { json, route } from '@/server/http';
-import { formatListing, LISTING_WITH_PHOTOS, redactPublicListing, sortPhotos, type Row } from '@/server/listings';
+import { formatPublicListings, LISTING_WITH_PHOTOS, type Row } from '@/server/listings';
 import { expireStaleRequests } from '@/server/reservations';
 import { chunk, db, fetchAll } from '@/server/supabase';
 import { validate } from '@/server/validation';
@@ -51,15 +51,7 @@ export const GET = route(async (req) => {
     listings = await bookableFor(listings, ymd(filters.check_in) as string, ymd(filters.check_out) as string);
   }
 
-  const ratings = await reviewStats(listings.map((listing) => listing.id));
-
-  return json({
-    listings: listings.map((listing) => ({
-      ...redactPublicListing(formatListing(listing, sortPhotos(listing.photos))),
-      reviews_count: ratings.get(listing.id)?.count ?? 0,
-      average_rating: ratings.get(listing.id)?.average ?? null,
-    })),
-  });
+  return json({ listings: await formatPublicListings(listings) });
 });
 
 /** Annonces réservables sur [checkIn, checkOut) : mêmes règles que POST /reservations. */
@@ -109,25 +101,4 @@ async function bookableFor(listings: Row[], checkIn: string, checkOut: string): 
   }
 
   return candidates.filter((listing) => !unavailable.has(Number(listing.id)));
-}
-
-/** Nombre d'avis et note moyenne (2 décimales, comme reviews_summary) par annonce. */
-async function reviewStats(listingIds: number[]): Promise<Map<number, { count: number; average: number }>> {
-  const byListing = new Map<number, number[]>();
-  for (const ids of chunk(listingIds)) {
-    const reviews = await fetchAll<Row>(() =>
-      db().from('reviews').select('id, listing_id, rating').in('listing_id', ids).order('id'),
-    );
-    for (const review of reviews) {
-      const ratings = byListing.get(Number(review.listing_id)) ?? [];
-      ratings.push(Number(review.rating));
-      byListing.set(Number(review.listing_id), ratings);
-    }
-  }
-
-  const stats = new Map<number, { count: number; average: number }>();
-  for (const [listingId, ratings] of byListing) {
-    stats.set(listingId, { count: ratings.length, average: round(avg(ratings) ?? 0, 2) });
-  }
-  return stats;
 }

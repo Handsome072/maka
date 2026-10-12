@@ -10,7 +10,7 @@ import { BecomeHostModal } from '@/app/components/BecomeHostModal';
 import { ScrollProvider, useScroll } from '@/app/hooks/ScrollContext';
 import { useAuth } from '@/app/context/AuthContext';
 import { useHostStatus } from '@/app/hooks/useHostStatus';
-import { getCurrentPageFromPathname, getNavigationPath } from '@/app/config/routes';
+import { getCurrentPageFromPathname, getNavigationPath, ROUTES } from '@/app/config/routes';
 import { Search } from 'lucide-react';
 
 /**
@@ -185,7 +185,10 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
       {showHeaderFooter && !pathname?.startsWith('/property/') && (
         <MobileNav
           onSearchClick={() => setShowMobileSearch(true)}
-          onFavoritesClick={() => { }}
+          onFavoritesClick={() => {
+            handleNavigateScroll();
+            router.push(user ? ROUTES.CLIENT_SPACE_FAVORITES : `/login?redirect=${ROUTES.CLIENT_SPACE_FAVORITES}`);
+          }}
           isHost={isHost}
           onBecomeHostClick={() => {
             handleNavigateScroll();

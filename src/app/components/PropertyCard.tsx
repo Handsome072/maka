@@ -1,5 +1,5 @@
 import { Heart, House } from 'lucide-react';
-import { useState } from 'react';
+import { useFavorites } from '../context/FavoritesContext';
 
 interface PropertyCardProps {
   id?: string;
@@ -29,11 +29,13 @@ export function PropertyCard({
   beds,
   onClick
 }: PropertyCardProps) {
-  const [isFavorite, setIsFavorite] = useState(false);
+  const { isFavorite: isSaved, toggleFavorite } = useFavorites();
+  const listingId = id ? Number(id) : null;
+  const isFavorite = listingId !== null && isSaved(listingId);
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsFavorite(!isFavorite);
+    if (listingId !== null) toggleFavorite(listingId);
   };
 
   const handleClick = () => {
@@ -58,6 +60,8 @@ export function PropertyCard({
         )}
         <button
           onClick={handleFavoriteClick}
+          aria-label={isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+          aria-pressed={isFavorite}
           className="absolute top-3 right-3 hover:scale-110 transition-transform z-10"
         >
           <Heart

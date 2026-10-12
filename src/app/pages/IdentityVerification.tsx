@@ -46,7 +46,7 @@ export function IdentityVerification({ onNavigate, listingTitle = 'Maison hôte 
             <img
               src="/sejoura_logo.png"
               alt="Séjoura Logo"
-              className="w-[120px] h-auto"
+              className="w-[150px] h-auto"
             />
           </button>
           <button
@@ -172,7 +172,7 @@ export function IdentityVerification({ onNavigate, listingTitle = 'Maison hôte 
             <img
               src="/sejoura_logo.png"
               alt="Séjoura Logo"
-              className="w-[120px] h-auto"
+              className="w-[150px] h-auto"
             />
           </button>
           <button
@@ -254,7 +254,7 @@ export function IdentityVerification({ onNavigate, listingTitle = 'Maison hôte 
             <img
               src="/sejoura_logo.png"
               alt="Séjoura Logo"
-              className="w-[120px] h-auto"
+              className="w-[150px] h-auto"
             />
           </button>
           <button
@@ -357,7 +357,7 @@ export function IdentityVerification({ onNavigate, listingTitle = 'Maison hôte 
           <img
             src="/sejoura_logo.png"
             alt="Séjoura Logo"
-            className="w-[120px] h-auto"
+            className="w-[150px] h-auto"
           />
         </button>
         <button

@@ -4,6 +4,7 @@ import { ImageCarouselModal } from '../components/ImageCarouselModal';
 import { ListingDetail, reviewsApi, messagesApi, reservationsApi, PriceBreakdown } from '../services/api';
 import { BED_TYPE_LABELS } from '../components/host-onboarding/constants';
 import { useAuth } from '../context/AuthContext';
+import { useFavorites } from '../context/FavoritesContext';
 import { BookingGuestsDropdown, formatGuestsLabel, StayGuests } from '../components/booking/BookingGuestsDropdown';
 import { DateRangeCalendar } from '../components/booking/DateRangeCalendar';
 import { toYmd, useStayDates } from '../components/booking/useStayDates';
@@ -343,7 +344,9 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
   const { isAuthenticated } = useAuth();
   const [showCarousel, setShowCarousel] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
+  const { isFavorite: isSaved, toggleFavorite } = useFavorites();
+  const isFavorite = isSaved(listing.id);
+  const toggleListingFavorite = () => toggleFavorite(listing.id);
   const [carouselStartIndex, setCarouselStartIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [commentText, setCommentText] = useState('');
@@ -607,7 +610,7 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
         onClose={() => setShowCarousel(false)}
         showFavorite={true}
         isFavorite={isFavorite}
-        onFavoriteToggle={() => setIsFavorite(!isFavorite)}
+        onFavoriteToggle={toggleListingFavorite}
       />
 
       {/* Main Content */}
@@ -625,7 +628,9 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
               <Share className="w-5 h-5" />
             </button>
             <button
-              onClick={() => setIsFavorite(!isFavorite)}
+              onClick={toggleListingFavorite}
+              aria-label={isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+              aria-pressed={isFavorite}
               className="bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-sm hover:bg-white transition-colors"
             >
               <Heart className={`w-5 h-5 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
@@ -645,11 +650,12 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
                 <span className="text-sm underline hidden md:inline" style={{ fontWeight: 600 }}>Partager</span>
               </button>
               <button
-                onClick={() => setIsFavorite(!isFavorite)}
+                onClick={toggleListingFavorite}
+                aria-pressed={isFavorite}
                 className="flex items-center gap-2 px-2 py-2 md:px-3 md:py-2 rounded-lg transition-colors hover:bg-gray-100"
               >
                 <Heart className={`w-4 h-4 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
-                <span className="text-sm underline hidden md:inline" style={{ fontWeight: 600 }}>Enregistrer</span>
+                <span className="text-sm underline hidden md:inline" style={{ fontWeight: 600 }}>{isFavorite ? 'Enregistré' : 'Enregistrer'}</span>
               </button>
             </div>
           </div>

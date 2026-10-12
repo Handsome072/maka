@@ -654,6 +654,23 @@ export const publicListingsApi = {
   },
 };
 
+// ─── Favorites API (cœurs, utilisateur connecté) ────────────────────────────
+
+export const favoritesApi = {
+  /** Toutes les annonces enregistrées (listing_ids) et celles encore en ligne (listings). */
+  list: async (): Promise<{ listing_ids: number[]; listings: PublicListing[] }> => {
+    return apiFetch('/favorites');
+  },
+
+  add: async (listingId: number): Promise<MessageResponse> => {
+    return apiFetch<MessageResponse>(`/favorites/${listingId}`, { method: 'PUT' });
+  },
+
+  remove: async (listingId: number): Promise<MessageResponse> => {
+    return apiFetch<MessageResponse>(`/favorites/${listingId}`, { method: 'DELETE' });
+  },
+};
+
 // ─── Reviews API ─────────────────────────────────────────────────────────────
 
 export const reviewsApi = {

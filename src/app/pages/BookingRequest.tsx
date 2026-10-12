@@ -213,7 +213,7 @@ export function BookingRequest({ bookingData, onBack, onBooked, onLoginRequired 
     <header className="border-b border-gray-100 sticky top-0 bg-white z-40">
       <div className="max-w-[1480px] mx-auto px-6 md:px-10 lg:px-20 py-5 flex items-center justify-center">
         <Link href="/" aria-label="Accueil Séjoura">
-          <img src="/sejoura_logo.png" alt="Séjoura" className="w-[150px] h-auto" />
+          <img src="/sejoura_logo.png" alt="Séjoura" className="w-[187px] h-auto" />
         </Link>
       </div>
     </header>
