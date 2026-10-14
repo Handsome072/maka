@@ -3,12 +3,11 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import {
-  Search, Eye, Filter, Download, X, ChevronLeft, ChevronRight, ChevronDown,
-  CheckCircle, Clock, XCircle, AlertTriangle, RotateCcw, ArrowUpRight,
-  ArrowDownRight, TrendingUp, Calendar, DollarSign, Check, Ban
+  Search, Eye, Filter, Download, X, ChevronLeft, ChevronRight, 
+  CheckCircle, Clock, XCircle, RotateCcw, ArrowUpRight,
+  DollarSign, Check, Ban
 } from 'lucide-react';
 import { AdminSidebar } from '@/app/components/AdminSidebar';
-import { ROUTES } from '@/app/config/routes';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';

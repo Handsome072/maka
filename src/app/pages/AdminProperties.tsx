@@ -3,22 +3,15 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import {
-  Search, Eye, Edit, Trash2, Filter, Download, Plus, Star,
+  Search, Eye, Trash2, Filter, Download, 
   ChevronLeft, ChevronRight, X, Home, CheckCircle, PauseCircle,
-  XCircle, Clock, AlertTriangle, Building, MapPin, ChevronDown, Loader2
+  XCircle, Clock, Building, MapPin, Loader2
 } from 'lucide-react';
 import { AdminSidebar } from '@/app/components/AdminSidebar';
 import { adminListingsApi, type AdminListing } from '@/app/services/api';
 import { toast } from 'sonner';
 
-type StatusKey = 'pending' | 'active' | 'rejected' | 'archived';
 
-const STATUS_LABELS: Record<StatusKey, string> = {
-  pending: 'En attente',
-  active: 'Actif',
-  rejected: 'Refuse',
-  archived: 'Suspendu',
-};
 
 const SPACE_TYPE_LABELS: Record<string, string> = {
   entire: 'Logement entier',

@@ -3,17 +3,12 @@ import {
   Landmark,
   MapPin,
   X,
-  ChevronLeft,
-  ChevronRight,
-  CalendarDays,
 } from "lucide-react";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { usePublicListings } from "../hooks/usePublicListings";
 import { destinationSuggestions, filterSuggestions } from "@/shared/places";
 import { ExperienceDatePicker } from "./ExperienceDatePicker";
 import { GuestsPicker } from "./GuestsPicker";
-import { ServiceDestinationPicker } from "./ServiceDestinationPicker";
-import { ServiceTypePicker } from "./ServiceTypePicker";
 
 interface SearchBarProps {
   onSearch?: (params: any) => void;
@@ -26,32 +21,20 @@ export function SearchBar({ onSearch, type = 'logements' }: SearchBarProps) {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showGuestsPicker, setShowGuestsPicker] =
     useState(false);
-  const [dateTab, setDateTab] = useState<
-    "dates" | "mois" | "flexible"
-  >("dates");
   const [searchValue, setSearchValue] = useState("");
-  const [currentMonth, setCurrentMonth] = useState(
-    new Date(2026, 0),
-  ); // Janvier 2026
-  const [selectedMonthCount, setSelectedMonthCount] =
-    useState(3);
-  const [selectedDuration, setSelectedDuration] = useState<
-    "weekend" | "week" | "month" | null
-  >(null);
   const [guestsCount, setGuestsCount] = useState({
     adults: 0,
     children: 0,
     babies: 0,
     pets: type === 'services' ? 0 : 0,
   });
-  const [serviceType, setServiceType] = useState('');
+  const [serviceType] = useState('');
   const [checkInDate, setCheckInDate] = useState<Date | null>(
     null,
   );
   const [checkOutDate, setCheckOutDate] = useState<Date | null>(
     null,
   );
-  const [selectedDate, setSelectedDate] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dateDropdownRef = useRef<HTMLDivElement>(null);
   const guestsDropdownRef = useRef<HTMLDivElement>(null);
@@ -135,13 +118,6 @@ export function SearchBar({ onSearch, type = 'logements' }: SearchBarProps) {
     });
   };
 
-  const handleDatesChange = (
-    startDate: Date | null,
-    endDate: Date | null,
-  ) => {
-    setCheckInDate(startDate);
-    setCheckOutDate(endDate);
-  };
 
   const formatDateRange = () => {
     if (!checkInDate) return "";
@@ -588,10 +564,6 @@ export function SearchBar({ onSearch, type = 'logements' }: SearchBarProps) {
         {showDatePicker && (
           <div ref={dateDropdownRef}>
             <ExperienceDatePicker
-              onClose={() => setShowDatePicker(false)}
-              onSelect={(dateText) => {
-                setSelectedDate(dateText);
-              }}
               onDatesChange={(start, end) => {
                 setCheckInDate(start);
                 setCheckOutDate(end);

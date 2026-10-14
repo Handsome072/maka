@@ -37,7 +37,6 @@ function detectCardBrand(number: string): string {
 export function ClientPayments() {
   const [paymentsTab, setPaymentsTab] = useState<'paiements' | 'versements' | 'frais'>('paiements');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [payoutStep, setPayoutStep] = useState<'none' | 'method' | 'owner' | 'details'>('none');
   const [savedMethods, setSavedMethods] = useState<SavedPaymentMethod[]>([]);
   const [cardNumber, setCardNumber] = useState('');
   const [cardExpiry, setCardExpiry] = useState('');
@@ -153,7 +152,6 @@ export function ClientPayments() {
                 Ajoutez au moins un mode de versement pour nous indiquer où envoyer votre argent.
               </p>
               <button
-                onClick={() => setPayoutStep('method')}
                 className="px-6 py-3 bg-gray-900 text-white rounded-lg text-sm transition-colors hover:bg-gray-800"
                 style={{ fontWeight: 600 }}
               >

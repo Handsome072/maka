@@ -73,6 +73,3 @@ export function useScroll() {
   return context;
 }
 
-// Alias pour compatibilité avec l'ancien projet
-export const useScrollContext = useScroll;
-

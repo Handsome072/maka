@@ -2,12 +2,10 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState, useMemo } from 'react';
 
 interface ExperienceDatePickerProps {
-  onClose: () => void;
-  onSelect: (dateText: string) => void;
   onDatesChange?: (startDate: Date | null, endDate: Date | null) => void;
 }
 
-export function ExperienceDatePicker({ onClose, onSelect, onDatesChange }: ExperienceDatePickerProps) {
+export function ExperienceDatePicker({ onDatesChange }: ExperienceDatePickerProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -106,23 +104,11 @@ export function ExperienceDatePicker({ onClose, onSelect, onDatesChange }: Exper
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
   };
 
-  const formatDateRange = (start: Date, end: Date) => {
-    const startMonth = monthNames[start.getMonth()].substring(0, 4).toLowerCase();
-    const endMonth = monthNames[end.getMonth()].substring(0, 4).toLowerCase();
-    
-    if (start.getTime() === end.getTime()) {
-      return `${start.getDate()} ${startMonth}.`;
-    }
-    
-    return `${start.getDate()} ${startMonth}. - ${end.getDate()} ${endMonth}.`;
-  };
 
   const handleQuickDateSelect = (start: Date, end: Date, optionName: string) => {
     setSelectedQuickOption(optionName);
     setStartDate(start);
     setEndDate(end);
-    const dateText = formatDateRange(start, end);
-    onSelect(dateText);
     if (onDatesChange) {
       onDatesChange(start, end);
     }
@@ -136,8 +122,6 @@ export function ExperienceDatePicker({ onClose, onSelect, onDatesChange }: Exper
     if (!startDate || (startDate && endDate)) {
       setStartDate(day);
       setEndDate(null);
-      const monthName = monthNames[day.getMonth()].substring(0, 4).toLowerCase();
-      onSelect(`${day.getDate()} ${monthName}.`);
       if (onDatesChange) {
         onDatesChange(day, null);
       }
@@ -148,15 +132,11 @@ export function ExperienceDatePicker({ onClose, onSelect, onDatesChange }: Exper
       if (day < startDate) {
         setEndDate(startDate);
         setStartDate(day);
-        const dateText = formatDateRange(day, startDate);
-        onSelect(dateText);
         if (onDatesChange) {
           onDatesChange(day, startDate);
         }
       } else {
         setEndDate(day);
-        const dateText = formatDateRange(startDate, day);
-        onSelect(dateText);
         if (onDatesChange) {
           onDatesChange(startDate, day);
         }

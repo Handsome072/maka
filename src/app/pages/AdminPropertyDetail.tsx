@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-  ArrowLeft, Star, MapPin, Users, Bath, Bed, Wifi, CheckCircle, PauseCircle,
-  XCircle, Clock, Edit, Trash2, Eye, Calendar, DollarSign, TrendingUp,
-  Home, MessageCircle, Flag, AlertTriangle, ChevronLeft, ChevronRight,
-  Shield, Heart, Award, BarChart3, Loader2
+  ArrowLeft, MapPin, Users, Bath, Wifi, CheckCircle, PauseCircle,
+  XCircle, Clock, Trash2, 
+  Home, AlertTriangle, ChevronLeft, ChevronRight,
+  Loader2
 } from 'lucide-react';
 import { AdminSidebar } from '@/app/components/AdminSidebar';
 import { adminListingsApi, type AdminListing } from '@/app/services/api';

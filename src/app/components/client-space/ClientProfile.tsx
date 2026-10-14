@@ -24,7 +24,6 @@ export function ClientProfile() {
   // Form fields
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [preferredName, setPreferredName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [phoneCountryCode, setPhoneCountryCode] = useState('+1');
@@ -59,7 +58,6 @@ export function ClientProfile() {
   const populateFields = (user: User) => {
     setFirstName(user.first_name || '');
     setLastName(user.last_name || '');
-    setPreferredName('');
     setEmail(user.email || '');
     setPhone(user.phone || '');
     setPhoneCountryCode(user.phone_country_code || '+1');

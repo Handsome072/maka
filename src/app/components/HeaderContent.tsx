@@ -1,7 +1,5 @@
-import { Globe, Menu, User } from 'lucide-react';
 import Link from 'next/link';
-import { useAuth } from '../context/AuthContext';
-import { ROUTES, NAV_ITEMS } from '../config/routes';
+import { ROUTES } from '../config/routes';
 
 interface HeaderContentProps {
   currentPage: 'logements' | 'experiences' | 'services';
@@ -16,13 +14,7 @@ interface HeaderContentProps {
 
 export function HeaderContent({
   currentPage,
-  onNavigate,
-  onGlobeClick,
-  onMenuClick,
-  onBecomeHostClick,
-  MenuDropdownComponent,
 }: HeaderContentProps) {
-  const { user } = useAuth();
 
   return (
     <div className="flex-1">

@@ -48,7 +48,6 @@ export function MobileSearchOverlay({
     const suggestions = useMemo(() => destinationSuggestions(destinationListings ?? []), [destinationListings]);
     const destinations = useMemo(() => filterSuggestions(suggestions, searchValue), [suggestions, searchValue]);
 
-    const [currentMonth, setCurrentMonth] = useState(new Date());
     const [startDate, setStartDate] = useState<Date | null>(null);
     const [endDate, setEndDate] = useState<Date | null>(null);
     const [selectedQuickOption, setSelectedQuickOption] = useState<string | null>(null);

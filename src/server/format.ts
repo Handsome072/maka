@@ -61,11 +61,6 @@ export function monthYear(value: string | Date): string {
   return `${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 }
 
-/** Carbon::now()->year etc. */
-export function nowUtc(): Date {
-  return new Date();
-}
-
 /** Début de la journée UTC ("today" des règles de validation Laravel). */
 export function todayUtc(): Date {
   const now = new Date();
@@ -80,11 +75,6 @@ export function decimal(value: number | string | null | undefined, places: numbe
   return round(Number(value), places).toFixed(places);
 }
 
-/**
- * Colonne DECIMAL non castée lue par PDO MySQL : chaîne avec l'échelle de la colonne
- * (ex. SUM(net_amount) → "1234.50").
- */
-export const rawDecimal = decimal;
 
 /** (float) $value */
 export function float(value: unknown): number {

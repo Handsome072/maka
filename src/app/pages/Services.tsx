@@ -1,4 +1,3 @@
-import { ServiceCategoryCard } from '../components/ServiceCategoryCard';
 import { ServiceCard } from '../components/ServiceCard';
 import { PropertyCarousel } from '../components/PropertyCarousel';
 import { SearchBar } from '../components/SearchBar';
@@ -34,7 +33,7 @@ function getCardWidth(windowWidth: number): string {
   return 'calc((100vw - 96px - 80px) / 6)';
 }
 
-export function Services({ isScrolled, onServiceClick, onSearch }: ServicesProps) {
+export function Services({ onServiceClick, onSearch }: ServicesProps) {
   const { width: windowWidth, mounted } = useWindowWidth();
   const cardWidth = mounted ? getCardWidth(windowWidth) : undefined;
   // Données pour la section Chefs privés (nouvelle section horizontale)

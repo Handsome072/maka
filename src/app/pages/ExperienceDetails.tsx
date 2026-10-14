@@ -1,5 +1,5 @@
-import { Heart, Share, Star, ChevronLeft, ChevronRight, X } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { Heart, Share, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState } from 'react';
 import { Header } from '../components/Header';
 import { ExperienceCard } from '../components/ExperienceCard';
 import { ImageCarouselModal } from '../components/ImageCarouselModal';
@@ -14,14 +14,7 @@ export function ExperienceDetails({ onBack }: ExperienceDetailsProps) {
   const [carouselStartIndex, setCarouselStartIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const { isScrolled } = useScroll();
-  const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   const images = [
     'https://images.unsplash.com/photo-1705535541638-8805ba0f64aa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwYXJhbHltcGljJTIwYXRobGV0ZSUyMHRyYWluaW5nJTIwc25vd3xlbnwxfHx8fDE3Njc3NzYxNjZ8MA&ixlib=rb-4.1.0&q=80&w=1080',

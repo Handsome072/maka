@@ -3,7 +3,6 @@
 import { useRouter } from 'next/navigation';
 import { Home } from '@/app/pages/Home';
 import { useScroll } from '@/app/hooks/ScrollContext';
-import { ROUTES } from '@/app/config/routes';
 
 /**
  * Page d'accueil Next.js

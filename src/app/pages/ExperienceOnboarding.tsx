@@ -1,5 +1,4 @@
 import { useState, useEffect, ReactNode } from 'react';
-import { MapPin } from 'lucide-react';
 import Image from 'next/image';
 
 interface ExperienceOnboardingProps {
@@ -147,7 +146,6 @@ export function ExperienceOnboarding({ onNavigate }: ExperienceOnboardingProps) 
   const [showDistinctionModal, setShowDistinctionModal] = useState(false);
   const [showAddLinkModal, setShowAddLinkModal] = useState(false);
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
-  const [websiteLink, setWebsiteLink] = useState('');
 
   // Photo modals
   const [showPhotoTipsModal, setShowPhotoTipsModal] = useState(false);

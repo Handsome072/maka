@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
-  ArrowLeft, Ban, PauseCircle, KeyRound, MessageCircle, ShieldCheck, Shield,
+  ArrowLeft, PauseCircle, KeyRound, MessageCircle, ShieldCheck, Shield,
   FileText, Monitor, MapPin, Phone, Mail, Globe, Calendar, AlertTriangle,
   Star, Trash2, Flag, Eye, CreditCard, RotateCcw, Clock, Activity,
   ChevronDown, ChevronUp, X, Loader2, Send, ShieldAlert

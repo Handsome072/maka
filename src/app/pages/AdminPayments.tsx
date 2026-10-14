@@ -3,15 +3,13 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import {
-  Search, Eye, Filter, Download, X, ChevronLeft, ChevronRight, ChevronDown,
-  CheckCircle, Clock, XCircle, DollarSign, TrendingUp, TrendingDown,
-  CreditCard, AlertTriangle, RotateCcw, ArrowUpRight, ArrowDownRight,
-  Banknote, Percent, BarChart3, Calendar
-} from 'lucide-react';
+  Search, Eye, Filter, Download, X, ChevronLeft, ChevronRight, 
+  CheckCircle, DollarSign, 
+  CreditCard, AlertTriangle, RotateCcw, ArrowUpRight, 
+  Banknote, Percent} from 'lucide-react';
 import { AdminSidebar } from '@/app/components/AdminSidebar';
-import { ROUTES } from '@/app/config/routes';
 import {
-  BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Area, AreaChart
 } from 'recharts';
 

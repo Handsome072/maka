@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
-import { authApi, User as ApiUser, CompleteSignupData, getAuthToken, removeAuthToken, setAuthToken } from '../services/api';
+import { authApi, User as ApiUser, CompleteSignupData, getAuthToken, removeAuthToken } from '../services/api';
 
 // User interface that includes both old format (for backward compatibility) and new API format
 export interface User {

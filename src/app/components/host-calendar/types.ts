@@ -19,22 +19,6 @@ export interface CalendarReservation {
   status: 'confirmed' | 'pending' | 'cancelled';
 }
 
-export interface CalendarListing {
-  id: number;
-  title: string;
-  city: string;
-  basePrice: number;
-  weekendPrice: number | null;
-  currency: string;
-}
-
-export interface DateUpdatePayload {
-  listingId: number;
-  dates: string[];
-  customPrice?: number | null;
-  status?: 'available' | 'blocked';
-}
-
 // ─── Style constants ────────────────────────────────────────────────────────────
 
 export const DATE_STATUS_CONFIG: Record<

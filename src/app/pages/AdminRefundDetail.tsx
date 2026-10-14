@@ -5,8 +5,8 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
   ArrowLeft, CheckCircle, Clock, XCircle, RotateCcw, AlertTriangle,
-  User, Mail, Phone, Calendar, Hash, MapPin, CreditCard, Copy,
-  DollarSign, Shield, ArrowUpRight, Ban, Play, Edit3, Scale
+  Mail, Phone, Calendar, Hash, MapPin, CreditCard, Copy,
+  Play, Edit3, Scale
 } from 'lucide-react';
 import { AdminSidebar } from '@/app/components/AdminSidebar';
 

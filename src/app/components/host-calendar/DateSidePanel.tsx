@@ -9,7 +9,6 @@ import {
   CalendarDate,
   CalendarReservation,
   DATE_STATUS_CONFIG,
-  RESERVATION_BAR_COLORS,
   DateStatus,
 } from './types';
 
@@ -62,7 +61,6 @@ export function PanelContent({
   const commonStatus: DateStatus | 'mixed' =
     statuses.size === 1 ? Array.from(statuses)[0] : 'mixed';
 
-  const hasReservedDates = statuses.has('reserved');
   const hasOnlyReserved = statuses.size === 1 && statuses.has('reserved');
 
   // Find overlapping reservation

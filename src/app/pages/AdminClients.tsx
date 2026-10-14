@@ -2,12 +2,11 @@
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import {
-  Search, Eye, Trash2, Ban, PauseCircle, ChevronUp, ChevronDown, FileDown,
+  Search, Trash2, PauseCircle, ChevronUp, ChevronDown, FileDown,
   Shield, ShieldCheck, Star, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, X, SlidersHorizontal,
   Users, UserCheck, UserPlus, BadgeCheck, AlertTriangle, RotateCcw, Loader2
 } from 'lucide-react';
 import { AdminSidebar } from '@/app/components/AdminSidebar';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { adminClientsApi, type AdminClient, type AdminClientsStats } from '@/app/services/api';
 

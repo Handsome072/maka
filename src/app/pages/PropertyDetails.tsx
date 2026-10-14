@@ -349,7 +349,6 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
   const isFavorite = isSaved(listing.id);
   const toggleListingFavorite = () => toggleFavorite(listing.id);
   const [carouselStartIndex, setCarouselStartIndex] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [commentRating, setCommentRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
@@ -390,12 +389,6 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
   const [canScrollSleepLeft, setCanScrollSleepLeft] = useState(false);
   const [canScrollSleepRight, setCanScrollSleepRight] = useState(false);
 
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   useEffect(() => {
     const container = sleepScrollRef.current;

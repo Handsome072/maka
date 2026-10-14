@@ -2,9 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { HostSidebar } from '@/app/components/HostSidebar';
-import { userProfileApi, User, NotificationPreferences } from '@/app/services/api';
-import { useAuth } from '@/app/context/AuthContext';
-import { Search, Bell, Eye, EyeOff } from 'lucide-react';
+import { userProfileApi, NotificationPreferences } from '@/app/services/api';
+import { Eye, EyeOff } from 'lucide-react';
 
 type SettingsSection = 'personal' | 'security' | 'notifications' | 'preferences';
 
@@ -20,8 +19,6 @@ const DEFAULT_NOTIFICATIONS: NotificationPreferences = {
 };
 
 export function HostSettings() {
-  const { user: authUser } = useAuth();
-  const [profile, setProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState<SettingsSection>('personal');
   const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -71,7 +68,6 @@ export function HostSettings() {
   const loadProfile = async () => {
     try {
       const res = await userProfileApi.getProfile();
-      setProfile(res.user);
       setFirstName(res.user.first_name || '');
       setLastName(res.user.last_name || '');
       setEmail(res.user.email || '');
@@ -95,7 +91,7 @@ export function HostSettings() {
   const handleSavePersonalInfo = async () => {
     setSavingPersonal(true);
     try {
-      const res = await userProfileApi.updatePersonalInfo({
+      await userProfileApi.updatePersonalInfo({
         first_name: firstName,
         last_name: lastName,
         email,
@@ -106,7 +102,6 @@ export function HostSettings() {
         address_postal_code: addressPostalCode,
         address_country: addressCountry,
       });
-      setProfile(res.user);
       showToast('success', 'Informations mises à jour.');
     } catch (err: any) {
       showToast('error', err.message || 'Erreur lors de la sauvegarde.');

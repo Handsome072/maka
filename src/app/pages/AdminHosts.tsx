@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Search, Eye, PauseCircle, ChevronUp, ChevronDown, FileDown,
   Shield, ShieldCheck, Star, ChevronLeft, ChevronRight, X, SlidersHorizontal,
-  Users, UserCheck, UserX, BadgeCheck, Home, DollarSign, TrendingUp, BarChart3,
+  Users, UserCheck, UserX, BadgeCheck, Home, 
   Loader2
 } from 'lucide-react';
 import { AdminSidebar } from '@/app/components/AdminSidebar';

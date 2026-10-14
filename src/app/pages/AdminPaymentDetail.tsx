@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
-  ArrowLeft, Eye, CheckCircle, Clock, XCircle, DollarSign, CreditCard,
-  AlertTriangle, RotateCcw, User, Mail, Phone, Home, Calendar, Shield,
-  Ban, Flag, Pause, Play, Copy, ExternalLink, Hash, Building, MapPin
+  ArrowLeft, CheckCircle, Clock, XCircle, CreditCard,
+  AlertTriangle, RotateCcw, Mail, Phone, Calendar, Shield,
+  Ban, Flag, Pause, Play, Copy, Hash, MapPin
 } from 'lucide-react';
 import { AdminSidebar } from '@/app/components/AdminSidebar';
 

@@ -13,10 +13,8 @@ import {
   parseISO,
   isBefore,
   isAfter,
-  isSameDay,
   differenceInCalendarDays,
 } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import {
   CalendarDate,
   CalendarReservation,
@@ -42,7 +40,6 @@ export function CalendarGrid({
   reservations,
   selectedDates,
   basePrice,
-  currency,
   onDateClick,
   onDateRangeSelect,
 }: CalendarGridProps) {

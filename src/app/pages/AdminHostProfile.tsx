@@ -4,11 +4,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
-  ArrowLeft, Ban, PauseCircle, MessageCircle, ShieldCheck, Shield,
+  ArrowLeft, Ban, PauseCircle, ShieldCheck, Shield,
   FileText, Monitor, MapPin, Phone, Mail, Globe, Calendar, AlertTriangle,
-  Star, DollarSign, Home, TrendingUp, Clock, XCircle, Lock, CheckCircle,
-  Trash2, Flag, CreditCard, RotateCcw, Eye, ChevronDown, ChevronUp,
-  Building, User, BarChart3, Wallet, Receipt, Loader2
+  Star, DollarSign, Home, TrendingUp, Clock, XCircle, CheckCircle,
+  Trash2, Flag, CreditCard, Eye, ChevronDown, ChevronUp,
+  BarChart3, Wallet, Loader2
 } from 'lucide-react';
 import { AdminSidebar } from '@/app/components/AdminSidebar';
 import { adminHostsApi, AdminHostDetail, AdminHostNote } from '@/app/services/api';
@@ -81,15 +81,6 @@ export function AdminHostProfile() {
     }
   };
 
-  const handleActivate = async () => {
-    if (!host) return;
-    try {
-      await adminHostsApi.activate(host.id);
-      setHost(prev => prev ? { ...prev, status: 'ACTIF' } : null);
-    } catch (err: any) {
-      alert(err.message || 'Erreur');
-    }
-  };
 
   const getStatusColor = (status: string) => {
     if (status === 'ACTIF') return 'bg-emerald-50 text-emerald-700 border border-emerald-200';

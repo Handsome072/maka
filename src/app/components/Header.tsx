@@ -1,4 +1,3 @@
-import { Search, Globe, Menu, User } from "lucide-react";
 import { useState, forwardRef, useRef, useImperativeHandle } from "react";
 import Link from "next/link";
 import { CompactSearchBar } from "./SearchBar";
@@ -7,7 +6,6 @@ import { LanguageModal } from "./LanguageModal";
 import { HeaderContent } from "./HeaderContent";
 import { BecomeHostModal } from "./BecomeHostModal";
 import { HeaderRightMenu } from "./HeaderRightMenu";
-import { useAuth } from "../context/AuthContext";
 import { ROUTES } from "../config/routes";
 
 interface HeaderProps {
@@ -33,7 +31,6 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
     const [showBecomeHostModal, setShowBecomeHostModal] =
       useState(false);
 
-    const { user } = useAuth();
 
     // Internal ref for the header element
     const headerRef = useRef<HTMLElement>(null);

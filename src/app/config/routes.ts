@@ -84,21 +84,6 @@ export const ROUTES = {
  */
 export type MainPage = 'logements' | 'experiences' | 'services';
 
-export const MAIN_PAGE_ROUTES: Record<MainPage, string> = {
-  logements: ROUTES.HOME,
-  experiences: ROUTES.EXPERIENCES,
-  services: ROUTES.SERVICES,
-};
-
-/**
- * Items de navigation pour le header
- */
-export const NAV_ITEMS = [
-  { key: 'logements' as const, label: 'Logements', path: ROUTES.HOME },
-  { key: 'experiences' as const, label: 'Expériences', path: ROUTES.EXPERIENCES, badge: 'NOUVEAU' },
-  { key: 'services' as const, label: 'Services', path: ROUTES.SERVICES, badge: 'NOUVEAU' },
-];
-
 /**
  * Helper pour déterminer la page courante à partir du pathname
  */

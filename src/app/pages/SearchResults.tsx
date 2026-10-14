@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { FiltersModal, MAX_PRICE, MIN_PRICE, type FilterState } from '../components/FiltersModal';
 import { bedCount, bedroomCount, ListingResultCard, nightlyPrice, plural } from '../components/ListingResultCard';
