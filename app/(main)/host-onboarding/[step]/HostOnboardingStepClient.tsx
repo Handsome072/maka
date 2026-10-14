@@ -51,10 +51,13 @@ export default function HostOnboardingStepClient() {
     'signature'
   ];
 
-  // If step is not valid, redirect to acceptance-condition
-  const initialStep = validSteps.includes(step) 
-    ? step as any
-    : 'acceptance-condition';
+  // If step is not valid, redirect to acceptance-condition.
+  // « signature » is now part of the final review step (« verification »).
+  const initialStep = !validSteps.includes(step)
+    ? 'acceptance-condition'
+    : step === 'signature'
+      ? 'verification'
+      : step as any;
 
   // Handle navigation
   const handleNavigate = (page: string, data?: any) => {
@@ -71,11 +74,6 @@ export default function HostOnboardingStepClient() {
   // Handle complete onboarding
   const handleCompleteOnboarding = () => {
     router.push('/annonces');
-  };
-
-  // Handle step changes - navigate to the new step URL
-  const handleStepChange = (newStep: string) => {
-    router.push(`/host-onboarding/${newStep}`);
   };
 
   // Show spinner while checking auth
@@ -95,7 +93,7 @@ export default function HostOnboardingStepClient() {
       onNavigate={handleNavigate}
       onCompleteOnboarding={handleCompleteOnboarding}
       initialStep={initialStep}
-      onStepChange={handleStepChange}
+      stepBasePath="/host-onboarding"
     />
   );
 }

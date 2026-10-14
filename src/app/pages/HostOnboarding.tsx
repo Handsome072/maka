@@ -1,17 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
 import { Logo } from '@/app/components/Logo';
 import {
-  Check, ChevronRight, Minus, Plus, Pencil, X, ChevronDown, ChevronUp, ChevronLeft,
+  Check, ChevronDown, ChevronLeft, ChevronRight, Pencil, X, Trash2, Plus,
   Wifi, Tv, Snowflake, Flame, Fan, Droplets, Zap, Plug,
   Monitor, Armchair, Shirt, WashingMachine, Wind,
   UtensilsCrossed, Refrigerator, Thermometer, Microwave, CookingPot,
-  Coffee, Blend, Utensils, CircleDot, GlassWater, Sparkles,
+  Coffee, Blend, Utensils, CircleDot, GlassWater,
   CupSoda, Scissors, SprayCan, Table, Box, ChefHat, Sandwich, Grid3x3,
-  MapPin, Upload, Info, HelpCircle, Calendar as CalendarIcon, User,
-  Loader2, AlertCircle
+  House, BedDouble, UsersRound, Sofa, ShieldCheck, Camera, ImagePlus, User,
+  KeyRound, Smartphone, HandHeart, Building2, Info, CalendarDays, CircleCheck, Loader2, AlertCircle,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { listingsApi, Listing } from '@/app/services/api';
+import { listingsApi } from '@/app/services/api';
 import { useAuth } from '@/app/context/AuthContext';
 import {
   CANCELLATION_POLICIES,
@@ -20,42 +20,44 @@ import {
   normalizeCancellationPolicy,
   type CancellationPolicy,
 } from '@/shared/booking';
-
-// Import images
-const summaryChaletImg = "https://images.unsplash.com/photo-1685475512320-eede8aea2b95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBsdXh1cnklMjBjaGFsZXQlMjBleHRlcmlvciUyMGdyZWVuJTIwbmF0dXJlfGVufDF8fHx8MTc3MDk5NTg1M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
+import {
+  AmountInput, CheckboxRow, CheckTile, Field, ListingPreview, NextChapterCard, OptionCard,
+  RecapList, RecapRow, SectionTitle, SelectInput, StepHeader, StepperRow, Switch, YesNo,
+  inputClass, textareaClass,
+} from '@/app/components/host-onboarding/ui';
+import { ActionBar, MobileProgress, OnboardingRail, type RailChapter } from '@/app/components/host-onboarding/OnboardingNav';
 
 interface HostOnboardingProps {
   onNavigate: (page: string, data?: any) => void;
   initialStep?: Step;
   onCompleteOnboarding?: () => void;
   listingId?: number;
+  /** Chemin des étapes (ex. /host-onboarding) : l'adresse de la page suit alors l'étape affichée. */
+  stepBasePath?: string;
 }
 
-type Step = 
-  | 'acceptance-condition' 
-  | 'reservation-type' 
-  | 'address-location' 
+type Step =
+  | 'acceptance-condition'
+  | 'reservation-type'
+  | 'address-location'
   | 'capacity-details'
-
   | 'amenities'
   | 'summary-review-1'
   | 'host-photo'
   | 'chalet-photos'
   | 'chalet-description'
   | 'summary-review-2'
-
   | 'reservation-mode'
   | 'pricing'
   | 'fees'
   | 'calendar'
   | 'cancellation-policy'
+  | 'summary-review-3'
   | 'laws-taxes'
   | 'local-laws'
   | 'guest-arrival'
   | 'phone-number'
-  | 'summary-review-3'
-  | 'verification'
-  | 'signature';
+  | 'verification';
 
 interface Bedroom {
   id: string;
@@ -73,6 +75,8 @@ interface Bedroom {
     other: number;
   };
 }
+
+type BedType = keyof Bedroom['beds'];
 
 // Amenities Data
 const AMENITIES_DATA = {
@@ -125,57 +129,185 @@ const AMENITIES_DATA = {
   ],
 };
 
+const AMENITY_LABELS: Record<string, string> = Object.fromEntries(
+  Object.values(AMENITIES_DATA).flat().map((a) => [a.id, a.label]),
+);
 
+const MIN_AMENITIES = 8;
 const DAYS_OF_WEEK = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+const FR_MONTHS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
-// --- MAP EMBED HELPER ---
+const BED_TYPES: { key: BedType; label: string; one: string; many: string }[] = [
+  { key: 'simple', label: 'Lit simple', one: 'lit simple', many: 'lits simples' },
+  { key: 'double', label: 'Lit double', one: 'lit double', many: 'lits doubles' },
+  { key: 'queen', label: 'Lit queen', one: 'lit queen', many: 'lits queen' },
+  { key: 'king', label: 'Lit king', one: 'lit king', many: 'lits king' },
+  { key: 'simple_bunk', label: 'Lit simple superposé', one: 'lit simple superposé', many: 'lits simples superposés' },
+  { key: 'double_bunk', label: 'Lit double superposé', one: 'lit double superposé', many: 'lits doubles superposés' },
+  { key: 'queen_bunk', label: 'Lit queen superposé', one: 'lit queen superposé', many: 'lits queen superposés' },
+  { key: 'king_bunk', label: 'Lit king superposé', one: 'lit king superposé', many: 'lits king superposés' },
+  { key: 'sofa_bed', label: 'Canapé-lit', one: 'canapé-lit', many: 'canapés-lits' },
+  { key: 'other', label: "Matériel d'appoint", one: "couchage d'appoint", many: "couchages d'appoint" },
+];
+
+const EMPTY_BEDS: Bedroom['beds'] = {
+  simple: 0, double: 0, queen: 0, king: 0, simple_bunk: 0, double_bunk: 0, queen_bunk: 0, king_bunk: 0, sofa_bed: 0, other: 0,
+};
+
+// Former imported listings store beds as [{ type, count }] with « single » instead of « simple »
+const BED_ALIASES: Record<string, BedType> = { single: 'simple', sofa: 'sofa_bed' };
+
+function normalizeRoom(raw: any, index: number, prefix: string, fallbackName: string): Bedroom {
+  const beds = { ...EMPTY_BEDS };
+  const add = (type: string, count: unknown) => {
+    const key = (BED_ALIASES[type] ?? type) as BedType;
+    beds[key in beds ? key : 'other'] += Math.max(0, Math.trunc(Number(count)) || 0);
+  };
+  if (Array.isArray(raw?.beds)) raw.beds.forEach((bed: any) => add(String(bed?.type), bed?.count));
+  else if (raw?.beds && typeof raw.beds === 'object') Object.entries(raw.beds).forEach(([type, count]) => add(type, count));
+  return { id: raw?.id ? String(raw.id) : `${prefix}-${index + 1}`, name: raw?.name || `${fallbackName} ${index + 1}`, beds };
+}
+
+const SPACE_TYPES = [
+  { id: 'entire', label: 'Logement entier', desc: 'Les voyageurs disposent du logement dans son intégralité.', icon: House },
+  { id: 'private', label: 'Chambre privée', desc: 'Les voyageurs ont leur propre chambre pour dormir.', icon: BedDouble },
+  { id: 'shared', label: 'Chambre partagée', desc: 'Les voyageurs dorment dans une chambre partagée.', icon: UsersRound },
+] as const;
+
+const RENTAL_FREQUENCIES = [
+  { id: 'occasional', label: 'De temps en temps', desc: "C'est mon logement privé, que je loue occasionnellement." },
+  { id: 'dedicated', label: "Toute l'année", desc: 'Le logement est exclusivement dédié à la location.' },
+] as const;
+
+const CHECKIN_METHODS = [
+  { id: 'keybox', label: 'Boîte à clé sécurisée', desc: 'Les voyageurs récupèrent la clé dans une boîte à code.', icon: KeyRound },
+  { id: 'smartlock', label: 'Serrure intelligente', desc: 'La porte s’ouvre avec un code ou une application.', icon: Smartphone },
+  { id: 'meet', label: "Accueil par l'hôte", desc: 'Vous ou un proche accueillez les voyageurs sur place.', icon: HandHeart },
+  { id: 'staff', label: "Personnel de l'immeuble", desc: 'La réception ou le concierge remet les clés.', icon: Building2 },
+];
+
+const INTERNET_SPEEDS = [
+  { value: '50', label: 'Moins de 50 Mbps' },
+  { value: '100', label: '50 à 100 Mbps' },
+  { value: '500', label: '100 à 500 Mbps' },
+  { value: '1000', label: 'Plus de 500 Mbps' },
+];
+
+const PROVINCES: Record<string, string> = { QC: 'Québec', ON: 'Ontario', NB: 'Nouveau-Brunswick', Other: 'Autre' };
+const COUNTRIES: Record<string, string> = { CA: 'Canada', US: 'États-Unis', FR: 'France', Other: 'Autre' };
+
+// Parcours : 5 chapitres. L'étape de fin de chapitre (récapitulatif) n'est pas numérotée.
+const CHAPTERS: { title: string; summary: string; steps: Step[]; end?: Step }[] = [
+  { title: 'Votre logement', summary: 'Type de location, adresse, capacité et équipements', steps: ['reservation-type', 'address-location', 'capacity-details', 'amenities'], end: 'summary-review-1' },
+  { title: 'Votre annonce', summary: 'Photo de profil, photos du logement, titre et description', steps: ['host-photo', 'chalet-photos', 'chalet-description'], end: 'summary-review-2' },
+  { title: 'Tarifs et réservations', summary: 'Règles de séjour, prix, frais, calendrier et annulation', steps: ['reservation-mode', 'pricing', 'fees', 'calendar', 'cancellation-policy'], end: 'summary-review-3' },
+  { title: 'Règles et arrivée', summary: 'Enregistrement, lois locales, arrivée des voyageurs et téléphone', steps: ['laws-taxes', 'local-laws', 'guest-arrival', 'phone-number'] },
+  { title: 'Vérification et envoi', summary: "Relecture de l'annonce et signature", steps: ['verification'] },
+];
+
+const ALL_STEPS: Step[] = ['acceptance-condition', ...CHAPTERS.flatMap((c) => (c.end ? [...c.steps, c.end] : c.steps))];
+
+const STEP_LABELS: Record<Step, string> = {
+  'acceptance-condition': 'Bienvenue',
+  'reservation-type': 'Type de location',
+  'address-location': 'Adresse',
+  'capacity-details': 'Capacité et couchages',
+  'amenities': 'Équipements',
+  'summary-review-1': 'Fin du chapitre 1',
+  'host-photo': 'Photo de profil',
+  'chalet-photos': 'Photos du logement',
+  'chalet-description': 'Titre et description',
+  'summary-review-2': 'Fin du chapitre 2',
+  'reservation-mode': 'Règles de séjour',
+  'pricing': 'Prix par nuit',
+  'fees': 'Frais',
+  'calendar': 'Calendrier',
+  'cancellation-policy': 'Annulation',
+  'summary-review-3': 'Fin du chapitre 3',
+  'laws-taxes': 'Enregistrement et taxes',
+  'local-laws': 'Lois locales',
+  'guest-arrival': 'Arrivée des voyageurs',
+  'phone-number': 'Téléphone',
+  'verification': 'Relecture et signature',
+};
+
+const DRAFT_VERSION = 1;
+
+// --- HELPERS ---
+
 function buildMapEmbedUrl(city?: string, country?: string): string {
   const query = encodeURIComponent([city, country].filter(Boolean).join(', ') || 'Canada');
   return `https://maps.google.com/maps?q=${query}&z=12&output=embed&hl=fr`;
 }
 
+const plural = (n: number, one: string, many: string) => `${n} ${n > 1 ? many : one}`;
+
+function parseAmount(value: string | null | undefined): number | null {
+  if (value === null || value === undefined) return null;
+  const n = parseFloat(String(value).replace(/\s/g, '').replace(',', '.'));
+  return Number.isFinite(n) ? n : null;
+}
+
+function formatAmount(value: string | null | undefined): string | null {
+  const n = parseAmount(value);
+  if (n === null) return null;
+  return new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: Number.isInteger(n) ? 0 : 2,
+    maximumFractionDigits: 2,
+  }).format(n);
+}
+
+function countBeds(rooms: Bedroom[]): number {
+  return rooms.reduce((sum, room) => sum + Object.values(room.beds).reduce((a, b) => a + b, 0), 0);
+}
+
+function describeBeds(beds: Bedroom['beds']): string {
+  const parts = BED_TYPES.filter((t) => beds[t.key] > 0).map((t) => plural(beds[t.key], t.one, t.many));
+  return parts.length > 0 ? parts.join(', ') : 'Aucun lit indiqué';
+}
+
+type TaxDate = { d: string; m: string; y: string };
+
+function taxDateToInput(date?: TaxDate | null): string {
+  if (!date?.d || !date.m || !date.y) return '';
+  const month = FR_MONTHS.indexOf(date.m);
+  if (month < 0) return '';
+  return `${date.y}-${String(month + 1).padStart(2, '0')}-${String(date.d).padStart(2, '0')}`;
+}
+
+function inputToTaxDate(value: string): TaxDate {
+  if (!value) return { d: '', m: '', y: '' };
+  const [y, m, d] = value.split('-');
+  return { d: String(parseInt(d, 10)), m: FR_MONTHS[parseInt(m, 10) - 1] ?? '', y };
+}
+
+const newId = (prefix: string) => `${prefix}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+
 // --- MAIN COMPONENT ---
 
-export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition', onCompleteOnboarding, listingId }: HostOnboardingProps) {
+export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition', onCompleteOnboarding, listingId, stepBasePath }: HostOnboardingProps) {
   const isEditMode = !!listingId;
   const { user } = useAuth();
   const hasProfilePhoto = !!user?.profile_photo_url;
 
-  // Linearize steps - skip host-photo if user already has a profile photo
-  const allSteps: Step[] = [
-    'acceptance-condition',
-    'reservation-type',
-    'address-location',
-    'capacity-details',
-    'amenities',
-    'summary-review-1',
-    'host-photo',
-    'chalet-photos',
-    'chalet-description',
-    'summary-review-2',
-    'reservation-mode',
-    'pricing',
-    'fees',
-    'calendar',
-    'cancellation-policy',
-    'laws-taxes',
-    'local-laws',
-    'guest-arrival',
-    'phone-number',
-    'summary-review-3',
-    'verification',
-    'signature'
-  ];
-  const stepsList = hasProfilePhoto ? allSteps.filter(s => s !== 'host-photo') : allSteps;
+  // Skip host-photo if the user already has a profile photo, and the welcome screen when editing
+  const stepsList = ALL_STEPS.filter(
+    (s) => !(hasProfilePhoto && s === 'host-photo') && !(isEditMode && s === 'acceptance-condition'),
+  );
 
-  const [currentStep, setCurrentStep] = useState<Step>(initialStep);
+  const [currentStep, setCurrentStep] = useState<Step>(() =>
+    isEditMode && initialStep === 'acceptance-condition' ? 'reservation-type' : initialStep,
+  );
   const [isLoadingListing, setIsLoadingListing] = useState(isEditMode);
-  
+  const [furthestIndex, setFurthestIndex] = useState(0);
+
   // -- STATE --
 
   // 1. Acceptance
   const [acceptedConditions, setAcceptedConditions] = useState(false);
-  
+
   // 2. Reservation
   const [rentalFrequency, setRentalFrequency] = useState<'occasional' | 'dedicated' | null>(null);
   const [spaceType, setSpaceType] = useState<'entire' | 'private' | 'shared' | null>(null);
@@ -200,21 +332,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
   });
 
   const [bedrooms, setBedrooms] = useState<Bedroom[]>([
-    {
-      id: '1',
-      name: 'Chambre #1',
-      beds: { simple: 1, double: 0, queen: 0, king: 0, simple_bunk: 0, double_bunk: 0, queen_bunk: 0, king_bunk: 0, sofa_bed: 0, other: 0 }
-    }
+    { id: '1', name: 'Chambre 1', beds: { ...EMPTY_BEDS, simple: 1 } }
   ]);
 
   const [openAreas, setOpenAreas] = useState<Bedroom[]>([]);
 
   // 5. Amenities
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
-  const [expandedAmenities, setExpandedAmenities] = useState<Record<string, boolean>>({
-    'Connectivité et multimédia': true // Default expanded
-  });
-
 
   // 7. Photos
   const [hostPhoto, setHostPhoto] = useState<string | null>(null);
@@ -222,7 +346,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
 
   // 7.5. Description
   const [descriptionData, setDescriptionData] = useState({
-    title: 'Chalet Calme',
+    title: '',
     subtitle: '',
     description: '',
     aboutChalet: '',
@@ -262,15 +386,13 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
     };
   }, [descriptionData.title, listingId]);
 
-  // 8. Reservation Mode & Stay Duration
+  // 8. Stay rules
   const [arrivalTime, setArrivalTime] = useState('17:00');
   const [departureTime, setDepartureTime] = useState('11:00');
   const [minAge, setMinAge] = useState("18");
-
-  // Stay Duration (Merged into Reservation Mode)
   const [minStay, setMinStay] = useState("1");
   const [maxStay, setMaxStay] = useState("Aucun maximum");
-  const [advancedStaySettingsOpen, setAdvancedStaySettingsOpen] = useState(true);
+  const [advancedStaySettingsOpen, setAdvancedStaySettingsOpen] = useState(false);
   const [departureDays, setDepartureDays] = useState<Record<string, boolean>>({
     'Lun': true, 'Mar': true, 'Mer': true, 'Jeu': true, 'Ven': true, 'Sam': false, 'Dim': true
   });
@@ -297,20 +419,11 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
   const [extraGuestFee, setExtraGuestFee] = useState('');
   const [petFee, setPetFee] = useState('');
 
-  // 12. Calendar & Modals
-  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
-  const [isRateModalOpen, setIsRateModalOpen] = useState(false);
-  const [isBlockModalOpen, setIsBlockModalOpen] = useState(false); // New Block Modal
-  const [activeTab, setActiveTab] = useState<'rates' | 'blocks'>('rates');
-  
-  // Rate Modal State
-  const [rateModalMinStay, setRateModalMinStay] = useState("1");
-  const [rateModalMaxStay, setRateModalMaxStay] = useState("Aucun maximum");
-  const [rateModalNote, setRateModalNote] = useState("");
-
-  // Block Modal State
-  const [isBlockEnabled, setIsBlockEnabled] = useState(true);
-  const [blockModalNote, setBlockModalNote] = useState("");
+  // 12. Calendar preview (first day of the displayed month)
+  const [calendarMonth, setCalendarMonth] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  });
 
   // 13. Cancellation Policy
   const [cancellationPolicy, setCancellationPolicy] = useState<CancellationPolicy>('flexible');
@@ -319,30 +432,29 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
   const [taxRegistration, setTaxRegistration] = useState({
     type: 'CITQ',
     number: '',
-    issueDate: { d: '1', m: 'Janvier', y: '2027' },
-    expDate: { d: '1', m: 'Janvier', y: '2027' },
+    issueDate: { d: '', m: '', y: '' } as TaxDate,
+    expDate: { d: '', m: '', y: '' } as TaxDate,
     taxesIncluded: null as boolean | null
   });
 
-  // 15. Local Laws (New)
+  // 15. Local Laws
   const [acceptedLocalLaws, setAcceptedLocalLaws] = useState(false);
 
-  // 16. Guest Arrival (New)
+  // 16. Guest Arrival
   const [guestArrival, setGuestArrival] = useState({
     internetSpeed: '',
     hasWifi: null as boolean | null,
-    guideFile: null as string | null,
     instructions: '',
     checkinMethod: ''
   });
 
-  // 17. Phone Number (New)
+  // 17. Phone Number
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryCode, setCountryCode] = useState('+1');
   const [isSmsModalOpen, setIsSmsModalOpen] = useState(false);
   const [smsCode, setSmsCode] = useState('');
 
-  // 18. Signature (New)
+  // 18. Signature
   const [signatureName, setSignatureName] = useState('');
   const [isSigned, setIsSigned] = useState(false);
 
@@ -380,11 +492,11 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
           bathrooms: listing.bathrooms ?? 1,
         });
 
-        if (listing.bedrooms_data && listing.bedrooms_data.length > 0) {
-          setBedrooms(listing.bedrooms_data);
+        if (Array.isArray(listing.bedrooms_data) && listing.bedrooms_data.length > 0) {
+          setBedrooms(listing.bedrooms_data.map((room: any, i: number) => normalizeRoom(room, i, 'b', 'Chambre')));
         }
-        if (listing.open_areas_data && listing.open_areas_data.length > 0) {
-          setOpenAreas(listing.open_areas_data);
+        if (Array.isArray(listing.open_areas_data) && listing.open_areas_data.length > 0) {
+          setOpenAreas(listing.open_areas_data.map((room: any, i: number) => normalizeRoom(room, i, 'oa', 'Espace ouvert')));
         }
 
         if (listing.amenities) setSelectedAmenities(listing.amenities);
@@ -395,7 +507,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
         }
 
         setDescriptionData({
-          title: listing.title || 'Chalet Calme',
+          title: listing.title || '',
           subtitle: listing.subtitle || '',
           description: listing.description || '',
           aboutChalet: listing.about_chalet || '',
@@ -430,13 +542,12 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
         if (listing.pet_fee) { setPetFee(listing.pet_fee); setPetFeeOpen(true); }
 
         if (listing.cancellation_policy) setCancellationPolicy(normalizeCancellationPolicy(listing.cancellation_policy) ?? 'flexible');
-        if (listing.tax_registration) setTaxRegistration(listing.tax_registration);
+        if (listing.tax_registration) setTaxRegistration((prev) => ({ ...prev, ...listing.tax_registration }));
         if (listing.accepted_local_laws) setAcceptedLocalLaws(listing.accepted_local_laws);
 
         setGuestArrival({
           internetSpeed: listing.wifi_speed || '',
           hasWifi: listing.has_wifi ?? null,
-          guideFile: null,
           instructions: listing.checkin_instructions || '',
           checkinMethod: listing.checkin_method || '',
         });
@@ -452,31 +563,171 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
       .finally(() => setIsLoadingListing(false));
   }, [listingId]);
 
-  // -- HELPERS --
+  // -- NAVIGATION --
   const currentStepIndex = stepsList.indexOf(currentStep);
-  const progressPercentage = ((currentStepIndex + 1) / stepsList.length) * 100;
 
-  const getCurrentBigStep = () => {
-    // Group 1: Base + Summary
-    if ([
-      'acceptance-condition', 'reservation-type', 'address-location', 
-      'capacity-details', 'amenities', 'summary-review-1'
-    ].includes(currentStep)) return 1;
-    
-    // Group 2: Environment (Photos, Description, Summary)
-    if (['host-photo', 'chalet-photos', 'chalet-description', 'summary-review-2'].includes(currentStep)) return 2;
-    
-    // Group 3: Welcome (Permissions, Reservation, Pricing, Fees, Calendar, Policy, Laws, Local Laws, Guest Arrival, Phone, Review 3, Verification, Signature)
-    return 3;
+  const goToStep = (step: Step) => {
+    setCurrentStep(step);
+    window.scrollTo(0, 0);
+    if (stepBasePath) {
+      const url = `${stepBasePath}/${step}/`;
+      if (window.location.pathname !== url) window.history.pushState(null, '', url);
+    }
   };
-  const currentBigStep = getCurrentBigStep();
 
-  const bigSteps = [
-    { number: 1, label: "Commencez par la base" },
-    { number: 2, label: "Décrivez l'environnement" },
-    { number: 3, label: "Préparez l'accueil des invités" }
-  ];
+  // A step that is not part of this flow (e.g. host-photo when the account already has a photo)
+  useEffect(() => {
+    if (currentStepIndex !== -1) return;
+    const fallback = currentStep === 'host-photo' ? 'chalet-photos' : stepsList[0];
+    setCurrentStep(fallback);
+    if (stepBasePath) window.history.replaceState(null, '', `${stepBasePath}/${fallback}/`);
+  }, [currentStepIndex, currentStep, stepsList, stepBasePath]);
 
+  // Canonical address on arrival (e.g. the former /signature/ step)
+  useEffect(() => {
+    if (!stepBasePath) return;
+    const url = `${stepBasePath}/${currentStep}/`;
+    if (window.location.pathname !== url) window.history.replaceState(null, '', url);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Browser back/forward between steps
+  useEffect(() => {
+    if (!stepBasePath) return;
+    const onPopState = () => {
+      const segment = window.location.pathname.replace(/\/$/, '').split('/').pop() as Step;
+      if (ALL_STEPS.includes(segment)) setCurrentStep(segment);
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, [stepBasePath]);
+
+  useEffect(() => {
+    if (isEditMode) setFurthestIndex(stepsList.length - 1);
+    else if (currentStepIndex > 0) setFurthestIndex((prev) => Math.max(prev, currentStepIndex));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStepIndex, isEditMode]);
+
+  // -- DRAFT (saved in this browser, new listings only) --
+  const draftKey = !isEditMode && user?.id ? `homiqio_host_draft_${user.id}` : null;
+  const draftLoadedRef = useRef(false);
+  const [draftInfo, setDraftInfo] = useState<{ step: Step; savedAt: number } | null>(null);
+  const [lastSavedAt, setLastSavedAt] = useState<number | null>(null);
+
+  const buildDraft = (withPhotos: boolean) => ({
+    v: DRAFT_VERSION,
+    savedAt: Date.now(),
+    step: currentStep,
+    furthest: furthestIndex,
+    acceptedConditions, rentalFrequency, spaceType, addressData, capacityData, bedrooms, openAreas,
+    selectedAmenities, descriptionData, arrivalTime, departureTime, minStay, maxStay, departureDays, arrivalDays,
+    currency, pricing, fees, extraGuestFee, petFee, cancellationPolicy, taxRegistration, acceptedLocalLaws,
+    guestArrival, phoneNumber, countryCode,
+    hostPhoto: withPhotos ? hostPhoto : null,
+    chaletPhotos: withPhotos ? chaletPhotos : [],
+  });
+
+  const saveDraft = () => {
+    if (!draftKey) return;
+    try {
+      localStorage.setItem(draftKey, JSON.stringify(buildDraft(true)));
+    } catch {
+      // Photos can exceed the browser quota: keep the rest of the draft
+      try { localStorage.setItem(draftKey, JSON.stringify(buildDraft(false))); } catch { return; }
+    }
+    setLastSavedAt(Date.now());
+  };
+
+  const clearDraft = () => {
+    if (!draftKey) return;
+    try { localStorage.removeItem(draftKey); } catch { /* storage unavailable */ }
+  };
+
+  useEffect(() => {
+    if (!draftKey || draftLoadedRef.current) return;
+    draftLoadedRef.current = true;
+    let draft: any = null;
+    try {
+      const raw = localStorage.getItem(draftKey);
+      draft = raw ? JSON.parse(raw) : null;
+    } catch {
+      draft = null;
+    }
+    if (!draft || draft.v !== DRAFT_VERSION) return;
+
+    setAcceptedConditions(!!draft.acceptedConditions);
+    if (draft.rentalFrequency) setRentalFrequency(draft.rentalFrequency);
+    if (draft.spaceType) setSpaceType(draft.spaceType);
+    if (draft.addressData) setAddressData(draft.addressData);
+    if (draft.capacityData) setCapacityData(draft.capacityData);
+    if (Array.isArray(draft.bedrooms)) setBedrooms(draft.bedrooms.map((room: any, i: number) => normalizeRoom(room, i, 'b', 'Chambre')));
+    if (Array.isArray(draft.openAreas)) setOpenAreas(draft.openAreas.map((room: any, i: number) => normalizeRoom(room, i, 'oa', 'Espace ouvert')));
+    if (Array.isArray(draft.selectedAmenities)) setSelectedAmenities(draft.selectedAmenities);
+    if (draft.hostPhoto) setHostPhoto(draft.hostPhoto);
+    if (Array.isArray(draft.chaletPhotos)) setChaletPhotos(draft.chaletPhotos);
+    if (draft.descriptionData) setDescriptionData(draft.descriptionData);
+    if (draft.arrivalTime) setArrivalTime(draft.arrivalTime);
+    if (draft.departureTime) setDepartureTime(draft.departureTime);
+    if (draft.minStay) setMinStay(draft.minStay);
+    if (draft.maxStay) setMaxStay(draft.maxStay);
+    if (draft.departureDays) setDepartureDays(draft.departureDays);
+    if (draft.arrivalDays) setArrivalDays(draft.arrivalDays);
+    if (draft.currency) setCurrency(draft.currency);
+    if (draft.pricing) setPricing(draft.pricing);
+    if (draft.fees) setFees(draft.fees);
+    if (draft.extraGuestFee) { setExtraGuestFee(draft.extraGuestFee); setExtraGuestFeeOpen(true); }
+    if (draft.petFee) { setPetFee(draft.petFee); setPetFeeOpen(true); }
+    if (draft.cancellationPolicy) setCancellationPolicy(draft.cancellationPolicy);
+    if (draft.taxRegistration) setTaxRegistration(draft.taxRegistration);
+    setAcceptedLocalLaws(!!draft.acceptedLocalLaws);
+    if (draft.guestArrival) setGuestArrival(draft.guestArrival);
+    if (draft.phoneNumber) setPhoneNumber(draft.phoneNumber);
+    if (draft.countryCode) setCountryCode(draft.countryCode);
+    if (typeof draft.furthest === 'number') setFurthestIndex((prev) => Math.max(prev, draft.furthest));
+    if (ALL_STEPS.includes(draft.step)) setDraftInfo({ step: draft.step, savedAt: draft.savedAt });
+    setLastSavedAt(draft.savedAt ?? null);
+  }, [draftKey]);
+
+  // Autosave once the host has gone past the welcome screen
+  useEffect(() => {
+    if (!draftKey || furthestIndex === 0 || currentStep === 'acceptance-condition') return;
+    const timer = setTimeout(saveDraft, 600);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    draftKey, furthestIndex, currentStep, acceptedConditions, rentalFrequency, spaceType, addressData, capacityData,
+    bedrooms, openAreas, selectedAmenities, hostPhoto, chaletPhotos, descriptionData, arrivalTime, departureTime,
+    minStay, maxStay, departureDays, arrivalDays, currency, pricing, fees, extraGuestFee, petFee, cancellationPolicy,
+    taxRegistration, acceptedLocalLaws, guestArrival, phoneNumber, countryCode,
+  ]);
+
+  // Also save when the tab is closed or reloaded before the autosave delay
+  const saveDraftRef = useRef(saveDraft);
+  saveDraftRef.current = () => {
+    if (furthestIndex > 0 && currentStep !== 'acceptance-condition') saveDraft();
+  };
+  useEffect(() => {
+    if (!draftKey) return;
+    const onPageHide = () => saveDraftRef.current();
+    window.addEventListener('pagehide', onPageHide);
+    return () => window.removeEventListener('pagehide', onPageHide);
+  }, [draftKey]);
+
+  const handleSaveAndExit = () => {
+    if (!isEditMode && furthestIndex > 0) {
+      saveDraft();
+      toast.success('Brouillon enregistré sur cet appareil');
+    }
+    onNavigate('annonces');
+  };
+
+  const restartFromScratch = () => {
+    if (!window.confirm('Effacer le brouillon et recommencer une nouvelle annonce ?')) return;
+    clearDraft();
+    window.location.assign(`${stepBasePath ?? '/host-onboarding'}/acceptance-condition/`);
+  };
+
+  // -- PAYLOAD & SUBMIT --
   const buildListingPayload = () => ({
     rental_frequency: rentalFrequency,
     space_type:       spaceType,
@@ -514,14 +765,14 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
     arrival_days:     arrivalDays,
     departure_days:   departureDays,
     currency:         currency,
-    base_price:       parseFloat(pricing.base) || 0,
-    weekend_price:    pricing.weekend ? parseFloat(pricing.weekend) : null,
-    weekly_price:     pricing.weekly  ? parseFloat(pricing.weekly)  : null,
-    monthly_price:    pricing.monthly ? parseFloat(pricing.monthly) : null,
-    cleaning_fee:     parseFloat(fees.cleaning) || 0,
-    security_deposit: parseFloat(fees.security) || 0,
-    extra_guest_fee:  extraGuestFee ? parseFloat(extraGuestFee) : null,
-    pet_fee:          petFee        ? parseFloat(petFee)        : null,
+    base_price:       parseAmount(pricing.base) ?? 0,
+    weekend_price:    parseAmount(pricing.weekend),
+    weekly_price:     parseAmount(pricing.weekly),
+    monthly_price:    parseAmount(pricing.monthly),
+    cleaning_fee:     parseAmount(fees.cleaning) ?? 0,
+    security_deposit: parseAmount(fees.security) ?? 0,
+    extra_guest_fee:  parseAmount(extraGuestFee),
+    pet_fee:          parseAmount(petFee),
     cancellation_policy: cancellationPolicy,
     tax_registration: taxRegistration,
     accepted_local_laws: acceptedLocalLaws,
@@ -545,6 +796,7 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
         toast.success("Annonce mise à jour avec succès !");
       } else {
         await listingsApi.createListing(payload as Record<string, unknown>);
+        clearDraft();
         toast.success("Annonce soumise avec succès ! Elle sera examinée par notre équipe.");
       }
       if (onCompleteOnboarding) onCompleteOnboarding();
@@ -557,8 +809,49 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
     }
   };
 
+  // What still blocks the current step (shown next to the disabled button)
+  const getBlockingReason = (): string | null => {
+    switch (currentStep) {
+      case 'reservation-type':
+        if (!spaceType) return 'Choisissez ce que vous offrez aux voyageurs';
+        if (!rentalFrequency) return 'Choisissez une fréquence de location';
+        return null;
+      case 'address-location':
+        if (!addressData.address.trim()) return "Indiquez l'adresse du logement";
+        if (!addressData.city.trim()) return 'Indiquez la ville';
+        return null;
+      case 'amenities': {
+        const missing = MIN_AMENITIES - selectedAmenities.length;
+        return missing > 0 ? `Encore ${plural(missing, 'équipement', 'équipements')} à sélectionner` : null;
+      }
+      case 'chalet-description':
+        if (!descriptionData.title.trim()) return 'Donnez un titre à votre annonce';
+        if (titleExists) return 'Ce titre est déjà utilisé';
+        if (!descriptionData.description.trim()) return 'Ajoutez une description';
+        return null;
+      case 'pricing':
+        return (parseAmount(pricing.base) ?? 0) > 0 ? null : 'Indiquez un prix par nuit';
+      case 'local-laws':
+        return acceptedLocalLaws ? null : 'Acceptez les conditions pour continuer';
+      case 'guest-arrival':
+        if (!guestArrival.checkinMethod) return 'Choisissez comment les voyageurs entrent';
+        if (guestArrival.hasWifi === null) return 'Indiquez si le logement a le wifi';
+        if (guestArrival.hasWifi && !guestArrival.internetSpeed) return 'Indiquez la vitesse de connexion';
+        return null;
+      case 'phone-number':
+        return phoneNumber.trim() ? null : 'Indiquez votre numéro de téléphone';
+      case 'verification':
+        if (!isSigned) return 'Cochez la certification';
+        if (!signatureName.trim()) return 'Signez avec votre nom complet';
+        return null;
+      default:
+        return null;
+    }
+  };
+  const blockingReason = getBlockingReason();
+
   const handleNext = () => {
-    const nextIndex = currentStepIndex + 1;
+    if (blockingReason) return;
 
     // Handle Phone Step Modal Trigger
     if (currentStep === 'phone-number') {
@@ -566,54 +859,29 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
       return;
     }
 
-    if (nextIndex < stepsList.length) {
-      setCurrentStep(stepsList[nextIndex]);
-      window.scrollTo(0, 0);
-    } else {
-      submitListing();
-    }
+    const next = stepsList[currentStepIndex + 1];
+    if (next) goToStep(next);
+    else submitListing();
   };
 
   const handleBack = () => {
-    const prevIndex = currentStepIndex - 1;
-    if (prevIndex >= 0) {
-      setCurrentStep(stepsList[prevIndex]);
-      window.scrollTo(0, 0);
-    } else {
-      onNavigate('annonces');
-    }
-  };
-
-  const jumpToStep = (step: Step) => {
-    setCurrentStep(step);
-    window.scrollTo(0, 0);
+    const prev = stepsList[currentStepIndex - 1];
+    if (prev) goToStep(prev);
+    else onNavigate('annonces');
   };
 
   // --- SUB-LOGIC ---
   const addBedroom = () => {
-    const newId = (bedrooms.length + 1).toString();
-    setBedrooms([...bedrooms, {
-      id: newId,
-      name: `Chambre #${newId}`,
-      beds: { simple: 0, double: 0, queen: 0, king: 0, simple_bunk: 0, double_bunk: 0, queen_bunk: 0, king_bunk: 0, sofa_bed: 0, other: 0 }
-    }]);
+    setBedrooms([...bedrooms, { id: newId('b'), name: `Chambre ${bedrooms.length + 1}`, beds: { ...EMPTY_BEDS } }]);
   };
 
   const addOpenArea = () => {
-    const newId = `oa-${openAreas.length + 1}`;
-    setOpenAreas([...openAreas, {
-      id: newId,
-      name: `Aire ouverte #${openAreas.length + 1}`,
-      beds: { simple: 0, double: 0, queen: 0, king: 0, simple_bunk: 0, double_bunk: 0, queen_bunk: 0, king_bunk: 0, sofa_bed: 0, other: 0 }
-    }]);
+    setOpenAreas([...openAreas, { id: newId('oa'), name: `Espace ouvert ${openAreas.length + 1}`, beds: { ...EMPTY_BEDS } }]);
   };
 
-  const removeBedroom = () => {
-    if (bedrooms.length > 0) setBedrooms(bedrooms.slice(0, -1));
-  };
-
-  const removeOpenArea = () => {
-    if (openAreas.length > 0) setOpenAreas(openAreas.slice(0, -1));
+  const removeRoom = (id: string, type: 'bedroom' | 'openArea') => {
+    if (type === 'bedroom') setBedrooms(bedrooms.filter(b => b.id !== id));
+    else setOpenAreas(openAreas.filter(a => a.id !== id));
   };
 
   const updateItem = (updatedItem: Bedroom, type: 'bedroom' | 'openArea') => {
@@ -624,38 +892,23 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
     }
   };
 
-  const handleBedCountChange = (bedType: keyof Bedroom['beds'], change: number) => {
+  const setBedCount = (bedType: BedType, count: number) => {
     if (!editingItem) return;
-    const currentCount = editingItem.item.beds[bedType];
-    const newCount = Math.max(0, currentCount + change);
     setEditingItem({
       ...editingItem,
-      item: {
-        ...editingItem.item,
-        beds: {
-          ...editingItem.item.beds,
-          [bedType]: newCount
-        }
-      }
+      item: { ...editingItem.item, beds: { ...editingItem.item.beds, [bedType]: Math.max(0, count) } }
     });
   };
 
   const toggleAmenity = (id: string) => {
-    setSelectedAmenities(prev => 
+    setSelectedAmenities(prev =>
       prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
     );
   };
 
-  const toggleSection = (section: string) => {
-    setExpandedAmenities(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }));
-  };
-
-
   const handleHostPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    e.target.value = '';
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -666,36 +919,145 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
   };
 
   const handleChaletPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      const newPhotos: string[] = [];
-      Array.from(files).forEach((file) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          newPhotos.push(reader.result as string);
-          if (newPhotos.length === files.length) {
-            setChaletPhotos(prev => [...prev, ...newPhotos]);
-          }
+    const files = Array.from(e.target.files ?? []);
+    e.target.value = '';
+    if (files.length === 0) return;
+    const newPhotos: string[] = [];
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        newPhotos.push(reader.result as string);
+        if (newPhotos.length === files.length) {
+          setChaletPhotos(prev => [...prev, ...newPhotos]);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removePhoto = (index: number) => setChaletPhotos(chaletPhotos.filter((_, i) => i !== index));
+
+  const makeCover = (index: number) => {
+    const photo = chaletPhotos[index];
+    setChaletPhotos([photo, ...chaletPhotos.filter((_, i) => i !== index)]);
+  };
+
+  // --- DERIVED DISPLAY VALUES ---
+  const spaceLabel = SPACE_TYPES.find(s => s.id === spaceType)?.label;
+  const frequencyLabel = RENTAL_FREQUENCIES.find(f => f.id === rentalFrequency)?.label;
+  const allRooms = [...bedrooms, ...openAreas];
+  const bedCount = countBeds(allRooms);
+  const capacityLine = [
+    plural(capacityData.capacity, 'voyageur', 'voyageurs'),
+    plural(bedrooms.length, 'chambre', 'chambres'),
+    plural(bedCount, 'lit', 'lits'),
+    plural(capacityData.bathrooms, 'salle de bain', 'salles de bain'),
+  ].join(' · ');
+  const capacitySummary = [spaceLabel, capacityLine].filter(Boolean).join(' · ');
+  const regionLabel = addressData.country === 'CA'
+    ? (addressData.province !== 'Other' ? PROVINCES[addressData.province] : '')
+    : (addressData.country !== 'Other' ? COUNTRIES[addressData.country] : '');
+  const locationLabel = [addressData.city.trim(), regionLabel].filter(Boolean).join(', ') || undefined;
+  const coverPhoto = chaletPhotos[0] ?? null;
+  const basePriceLabel = formatAmount(pricing.base);
+  const checkinLabel = CHECKIN_METHODS.find(m => m.id === guestArrival.checkinMethod)?.label;
+  const amenityNames = selectedAmenities.map(id => AMENITY_LABELS[id]).filter(Boolean);
+
+  // Chapters, numbering and progress
+  const chapters = CHAPTERS.map(c => ({ ...c, steps: c.steps.filter(s => stepsList.includes(s)) }));
+  const numberedSteps = chapters.flatMap(c => c.steps);
+  const totalSteps = numberedSteps.length;
+  const chapterIndex = chapters.findIndex(c => c.steps.includes(currentStep) || c.end === currentStep);
+  const chapter = chapters[chapterIndex];
+  const stepInChapter = chapter ? chapter.steps.indexOf(currentStep) + 1 : 0;
+  const completedSteps = numberedSteps.filter(s => stepsList.indexOf(s) < currentStepIndex).length;
+  const stepNumber = numberedSteps.indexOf(currentStep) + 1;
+  const isChapterEnd = !!chapter && chapter.end === currentStep;
+  const eyebrow = chapter ? `Chapitre ${chapterIndex + 1} · ${chapter.title}` : undefined;
+
+  const railChapters: RailChapter[] = chapters.map((c, i) => {
+    const doneCount = c.steps.filter(s => stepsList.indexOf(s) < currentStepIndex).length;
+    const allDone = doneCount === c.steps.length;
+    const expanded = i === chapterIndex;
+    const status = allDone ? 'done' : expanded ? 'current' : 'todo';
+    const firstIndex = stepsList.indexOf(c.steps[0]);
+    return {
+      number: i + 1,
+      title: c.title,
+      status,
+      expanded,
+      statusLabel: allDone
+        ? 'Terminé'
+        : expanded
+          ? `Étape ${stepInChapter} sur ${c.steps.length}`
+          : plural(c.steps.length, 'étape', 'étapes'),
+      target: firstIndex <= furthestIndex ? c.steps[0] : undefined,
+      steps: c.steps.map(s => {
+        const index = stepsList.indexOf(s);
+        return {
+          id: s,
+          label: STEP_LABELS[s],
+          state: s === currentStep ? 'current' : index < currentStepIndex ? 'done' : 'todo',
+          clickable: index <= furthestIndex,
         };
-        reader.readAsDataURL(file);
-      });
-    }
-  };
+      }),
+    };
+  });
 
-  const isNextDisabled = () => {
-    if (currentStep === 'acceptance-condition' && !acceptedConditions) return true;
-    if (currentStep === 'reservation-type' && (!rentalFrequency || !spaceType)) return true;
-    if (currentStep === 'amenities' && selectedAmenities.length < 8) return true;
-    if (currentStep === 'chalet-description' && titleExists) return true;
-    if (currentStep === 'local-laws' && !acceptedLocalLaws) return true;
-    if (currentStep === 'guest-arrival' && (!guestArrival.internetSpeed || guestArrival.hasWifi === null || !guestArrival.checkinMethod)) return true;
-    if (currentStep === 'phone-number' && !phoneNumber) return true;
-    if (currentStep === 'signature' && (!signatureName || !isSigned)) return true;
-    return false;
-  };
+  const mobileSegments = chapters.map((c, i) => {
+    const done = c.steps.filter(s => stepsList.indexOf(s) < currentStepIndex).length;
+    const inProgress = i === chapterIndex && !isChapterEnd ? 0.5 : 0;
+    return Math.min(1, (done + inProgress) / c.steps.length);
+  });
 
-  // Dynamic summary image: use first uploaded photo, fallback to default
-  const summaryImage = chaletPhotos.length > 0 ? chaletPhotos[0] : summaryChaletImg;
+  const nextLabel = isChapterEnd
+    ? `Continuer vers le chapitre ${chapterIndex + 2}`
+    : currentStep === 'verification'
+      ? (isSubmitting ? 'Envoi en cours…' : isEditMode ? 'Enregistrer les modifications' : 'Envoyer pour vérification')
+      : 'Continuer';
+
+  const savedTime = lastSavedAt
+    ? new Date(lastSavedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+    : null;
+
+  // Calendar preview: Monday-first grid of the displayed month
+  const calendarCells = (() => {
+    const year = calendarMonth.getFullYear();
+    const month = calendarMonth.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const offset = (calendarMonth.getDay() + 6) % 7;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return [
+      ...Array.from({ length: offset }, () => null),
+      ...Array.from({ length: daysInMonth }, (_, i) => {
+        const date = new Date(year, month, i + 1);
+        return { day: i + 1, past: date < today };
+      }),
+    ];
+  })();
+  const calendarTitle = calendarMonth.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+  const isCurrentMonth = (() => {
+    const now = new Date();
+    return calendarMonth.getFullYear() === now.getFullYear() && calendarMonth.getMonth() === now.getMonth();
+  })();
+
+  // Layout widths: every step starts on the same left edge, inside a 1000px frame
+  const NARROW = 'w-full max-w-[640px]';
+  const WIDE = 'w-full max-w-[880px]';
+  const WITH_ASIDE = 'w-full grid gap-10 lg:gap-14 lg:grid-cols-[minmax(0,1fr)_320px] items-start';
+  const ASIDE = 'lg:sticky lg:top-6';
+
+  const renderChapterEnd = (title: string, description: string, rows: React.ReactNode) => {
+    const next = chapters[chapterIndex + 1];
+    return (
+      <div className="w-full max-w-[680px]">
+        <StepHeader icon={Check} eyebrowOnMobile eyebrow={`Chapitre ${chapterIndex + 1} terminé`} title={title} description={description} />
+        <RecapList>{rows}</RecapList>
+        {next && <NextChapterCard number={chapterIndex + 2} title={next.title} summary={next.summary} count={next.steps.length} />}
+      </div>
+    );
+  };
 
   if (isLoadingListing) {
     return (
@@ -708,1789 +1070,960 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
     );
   }
 
+  // --- WELCOME SCREEN ---
+  if (currentStep === 'acceptance-condition') {
+    return (
+      <div className="min-h-screen bg-white flex font-sans text-[#222222]">
+        <div className="flex-1 min-w-0 flex flex-col px-5 sm:px-10 lg:px-16 pt-6 pb-14">
+          <header className="flex items-center justify-between gap-4">
+            <Logo className="h-[30px] w-auto" />
+            <button
+              type="button"
+              onClick={() => onNavigate('annonces')}
+              className="min-h-[44px] text-sm font-semibold underline underline-offset-[3px] hover:text-black"
+            >
+              Quitter
+            </button>
+          </header>
+
+          <main className="w-full max-w-[600px] mx-auto mt-10 lg:mt-14 space-y-8">
+            <div className="space-y-3">
+              <p className="text-sm font-semibold text-[#0A6E85]">Devenir hôte</p>
+              <h1 className="text-[32px] md:text-[40px] leading-[1.15] font-bold tracking-[-0.02em]">Proposez votre logement sur Séjoura</h1>
+              <p className="text-[17px] leading-relaxed text-[#555555]">
+                Cinq chapitres pour présenter votre logement. Notre équipe relit ensuite chaque annonce avant sa mise en ligne.
+              </p>
+            </div>
+
+            {draftInfo && (
+              <div className="rounded-2xl border border-[#E4E4E4] p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold">Vous avez une annonce en cours</p>
+                  <p className="text-sm text-[#6A6A6A]">
+                    Enregistrée le {new Date(draftInfo.savedAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} · {STEP_LABELS[draftInfo.step]}
+                  </p>
+                </div>
+                <div className="flex gap-2 flex-shrink-0">
+                  <button
+                    type="button"
+                    onClick={restartFromScratch}
+                    className="min-h-[44px] px-4 rounded-xl border border-[#CFCFCF] text-sm font-semibold hover:border-[#222222]"
+                  >
+                    Recommencer
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => goToStep(stepsList.includes(draftInfo.step) && draftInfo.step !== 'acceptance-condition' ? draftInfo.step : stepsList[1])}
+                    className="min-h-[44px] px-5 rounded-xl bg-[#222222] text-white text-sm font-semibold hover:bg-black"
+                  >
+                    Reprendre
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <ol className="border-t border-[#EBEBEB]">
+              {CHAPTERS.map((c, i) => (
+                <li key={c.title} className="flex items-start gap-4 py-3.5 border-b border-[#EBEBEB]">
+                  <span className="w-[30px] h-[30px] flex-shrink-0 rounded-full border-[1.5px] border-[#222222] flex items-center justify-center text-sm font-semibold">
+                    {i + 1}
+                  </span>
+                  <span>
+                    <span className="block text-base font-semibold">{c.title}</span>
+                    <span className="block text-sm text-[#6A6A6A]">{c.summary}</span>
+                  </span>
+                </li>
+              ))}
+            </ol>
+
+            <section aria-labelledby="criteria-title" className="rounded-2xl bg-[#F7F7F7] p-6 space-y-4">
+              <div className="space-y-1">
+                <h2 id="criteria-title" className="text-[17px] font-semibold">Une sélection exigeante</h2>
+                <p className="text-[15px] leading-relaxed text-[#555555]">
+                  <strong className="text-[#222222]">82 % des demandes d'inscription sont refusées.</strong> Avant de commencer, vérifiez que votre logement répond à nos critères :
+                </p>
+              </div>
+              <ul className="space-y-3">
+                {[
+                  { icon: ShieldCheck, text: 'Des hôtes sérieux, engagés à offrir un service de qualité' },
+                  { icon: House, text: 'Un logement unique et soigné' },
+                  { icon: Camera, text: 'Des photos de qualité professionnelle' },
+                ].map(({ icon: Icon, text }) => (
+                  <li key={text} className="flex items-center gap-3 text-[15px]">
+                    <span className="w-9 h-9 flex-shrink-0 rounded-[10px] bg-white text-[#0A6E85] flex items-center justify-center">
+                      <Icon className="w-5 h-5" />
+                    </span>
+                    {text}
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <CheckboxRow id="accept-conditions" checked={acceptedConditions} onChange={setAcceptedConditions}>
+              Je comprends que mon logement peut être refusé s'il ne répond pas à ces critères.
+            </CheckboxRow>
+
+            <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-4">
+              <p className="text-sm text-[#6A6A6A]">
+                Une question ? <a href="mailto:contact@sejoura.com" className="font-medium text-[#0A6E85] hover:underline">contact@sejoura.com</a>
+              </p>
+              <button
+                type="button"
+                onClick={() => goToStep(stepsList[currentStepIndex + 1])}
+                disabled={!acceptedConditions}
+                className="min-h-[52px] px-8 rounded-xl text-base font-semibold bg-[#222222] text-white hover:bg-black transition-colors disabled:bg-[#E4E4E4] disabled:text-[#767676] disabled:cursor-not-allowed"
+              >
+                Commencer
+              </button>
+            </div>
+          </main>
+        </div>
+
+        <div className="hidden lg:block w-[44%] max-w-[720px] flex-shrink-0">
+          <div className="sticky top-0 h-screen">
+            <img src="/assets/search-background.png" alt="" className="w-full h-full object-cover" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-white flex flex-col font-sans">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 bg-white z-50 h-20 border-b border-gray-100 px-6 md:px-12 flex items-center justify-between">
-        <div className="flex items-center">
-          <Logo />
-        </div>
-        
-        <div className="hidden md:flex items-center absolute left-1/2 transform -translate-x-1/2 space-x-4">
-          {bigSteps.map((step, index) => (
-            <div key={step.number} className="flex items-center">
-              <div className={`flex items-center gap-2 ${currentBigStep >= step.number ? 'opacity-100' : 'opacity-40'}`}>
-                {currentBigStep > step.number ? (
-                   <div className="w-6 h-6 rounded-full bg-black flex items-center justify-center">
-                     <Check className="w-4 h-4 text-white" />
-                   </div>
-                ) : (
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium ${
-                    currentBigStep === step.number ? 'bg-black text-white' : 'bg-gray-200 text-gray-600'
-                  }`}>
-                    {step.number}
-                  </div>
-                )}
-                <span className="text-sm font-medium text-[#222222] whitespace-nowrap">{step.label}</span>
-              </div>
-              {index < bigSteps.length - 1 && (
-                 <ChevronRight className="w-4 h-4 text-gray-300 mx-2" />
-              )}
-            </div>
-          ))}
-        </div>
+    <div className="min-h-screen bg-white font-sans text-[#222222]">
+      <OnboardingRail
+        heading={isEditMode ? "Modifier l'annonce" : 'Nouvelle annonce'}
+        chapters={railChapters}
+        progress={Math.round((completedSteps / totalSteps) * 100)}
+        progressLabel={stepNumber ? `Étape ${stepNumber} sur ${totalSteps}` : `${completedSteps} étapes sur ${totalSteps}`}
+        onStepClick={(id) => goToStep(id as Step)}
+        footer={
+          <>
+            {isEditMode ? (
+              <p>Vos modifications sont enregistrées à la dernière étape.</p>
+            ) : (
+              <p className="flex items-start gap-2">
+                <CircleCheck className="w-4 h-4 mt-px flex-shrink-0 text-[#0A6E85]" />
+                {savedTime ? `Brouillon enregistré sur cet appareil à ${savedTime}` : 'Votre brouillon est enregistré sur cet appareil à chaque étape'}
+              </p>
+            )}
+            <p>
+              Une question ? <a href="mailto:contact@sejoura.com" className="font-medium text-[#0A6E85] hover:underline">contact@sejoura.com</a>
+            </p>
+          </>
+        }
+      />
 
-        <div className="flex items-center">
+      <div className="lg:pl-[300px]">
+        <header className="flex items-center justify-between lg:justify-end gap-4 h-[72px] px-5 md:px-10">
+          <div className="lg:hidden">
+            <Logo className="h-7 w-auto" />
+          </div>
           <button
-            className="px-4 py-2 text-sm font-medium text-[#222222] border border-gray-200 rounded-full hover:bg-gray-50 transition-colors"
-            onClick={() => onNavigate('annonces')}
+            type="button"
+            onClick={handleSaveAndExit}
+            className="min-h-[44px] px-4 rounded-full border border-[#DDDDDD] text-sm font-semibold hover:bg-[#F7F7F7] transition-colors"
           >
-            <span className="mr-2">✓</span>
-            Enregistrer et quitter
+            {isEditMode ? 'Quitter' : 'Enregistrer et quitter'}
           </button>
-        </div>
+        </header>
 
-        <div className="absolute bottom-0 left-0 h-[2px] bg-black transition-all duration-300 ease-out" style={{ width: `${progressPercentage}%` }} />
-      </header>
-
-      {/* Main Content */}
-      <main className="flex-1 pt-32 pb-24 px-6 md:px-12 max-w-7xl mx-auto w-full animate-in fade-in duration-500">
-        
-        {currentStep === 'acceptance-condition' && (
-          <div className="max-w-4xl mx-auto space-y-8">
-            <div className="space-y-6">
-              <h1 className="text-3xl md:text-4xl font-bold text-[#222222]">
-                Important: Conditions d'acceptation de votre logement
-              </h1>
-              <h2 className="text-xl font-semibold text-[#222222] underline decoration-2 underline-offset-4">
-                82% des demandes d'inscription sont refusées en raison de nos normes de gestion.
-              </h2>
-              <div className="space-y-4 text-[#717171] text-base leading-relaxed">
-                <p>Avant de commencer votre processus d'inscription, lire la note suivante.</p>
-                <p>Depuis 2015, Séjoura s'engage à améliorer les normes de gestion et la qualité des produits proposés.</p>
-                <ul className="list-disc pl-5 space-y-2">
-                  <li>Des propriétaires sérieux, engagés à fournir un service de qualité.</li>
-                  <li>Une propriété unique et distinguée.</li>
-                  <li>Des photographies de haute qualité prises par un professionnel.</li>
-                </ul>
-                <p>Si vous avez des doutes, contactez-nous à <a href="mailto:info@homiqio.com" className="underline">info@homiqio.com</a>.</p>
-              </div>
-            </div>
-            <div className="pt-8">
-              <label className="flex items-start gap-3 cursor-pointer group">
-                <div 
-                  className={`w-6 h-6 rounded border flex items-center justify-center flex-shrink-0 transition-colors ${
-                    acceptedConditions ? 'bg-black border-black' : 'border-gray-300 bg-white group-hover:border-black'
-                  }`}
-                  onClick={(e) => { e.preventDefault(); setAcceptedConditions(!acceptedConditions); }}
-                >
-                  {acceptedConditions && <Check className="w-4 h-4 text-white" strokeWidth={3} />}
-                </div>
-                <div className="select-none" onClick={() => setAcceptedConditions(!acceptedConditions)}>
-                  <span className="text-[#222222] font-medium italic">Je comprends que ma propriété peut potentiellement être refusée</span>
-                </div>
-              </label>
-            </div>
-          </div>
+        {chapter && (
+          <MobileProgress
+            chapterLabel={`Chapitre ${chapterIndex + 1} · ${chapter.title}`}
+            stepLabel={isChapterEnd ? 'Terminé' : `Étape ${stepInChapter} sur ${chapter.steps.length}`}
+            segments={mobileSegments}
+          />
         )}
 
-        {currentStep === 'reservation-type' && (
-          <div className="max-w-4xl mx-auto space-y-10">
-            <h1 className="text-3xl font-bold text-[#222222]">Type de réservation</h1>
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-[#222222]">À quelle fréquence louerez-vous votre logement ?</h3>
-              <div className="space-y-3">
-                {[
-                  { id: 'occasional', label: "C'est un logement privé que je loue occasionnellement" },
-                  { id: 'dedicated', label: "C'est un logement exclusivement dédié à la location" }
-                ].map(opt => (
-                  <label key={opt.id} className="flex items-center gap-3 cursor-pointer group">
-                    <div 
-                      className={`w-5 h-5 rounded-full border flex items-center justify-center flex-shrink-0 transition-all ${
-                        rentalFrequency === opt.id ? 'border-black' : 'border-gray-300 group-hover:border-black'
-                      }`}
-                      onClick={() => setRentalFrequency(opt.id as any)}
-                    >
-                       {rentalFrequency === opt.id && <div className="w-3 h-3 bg-black rounded-full" />}
-                    </div>
-                    <span className="text-[#717171] group-hover:text-[#222222] transition-colors">{opt.label}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-            <div className="w-16 h-px bg-gray-200" />
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-[#222222]">Qu'offrez-vous aux invités ?</h3>
-              <div className="space-y-6">
-                {[
-                  { id: 'entire', label: 'Logement entier', desc: "Les voyageurs disposent du logement dans son intégralité." },
-                  { id: 'private', label: 'Chambre privée', desc: "Les invités ont leur propre chambre privée pour dormir." },
-                  { id: 'shared', label: 'Chambre partagée', desc: "Les invités dorment dans une chambre partagée." }
-                ].map(opt => (
-                  <div key={opt.id} className="flex items-start gap-3 group cursor-pointer" onClick={() => setSpaceType(opt.id as any)}>
-                    <div 
-                      className={`w-5 h-5 mt-1 rounded-full border flex items-center justify-center flex-shrink-0 transition-all ${
-                        spaceType === opt.id ? 'border-black' : 'border-gray-300 group-hover:border-black'
-                      }`}
-                    >
-                       {spaceType === opt.id && <div className="w-3 h-3 bg-black rounded-full" />}
-                    </div>
-                    <div>
-                      <span className="block text-[#222222] font-medium mb-1 group-hover:text-black">{opt.label}</span>
-                      <span className="block text-[#717171] text-sm leading-relaxed">{opt.desc}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
+        <main className="px-5 md:px-10 pt-8 lg:pt-4 pb-40">
+          <div className="mx-auto w-full max-w-[1000px] animate-in fade-in duration-300" key={currentStep}>
 
-        {currentStep === 'address-location' && (
-          <div className="flex flex-col lg:flex-row gap-12">
-            <div className="flex-1 space-y-8">
-              <div className="space-y-2">
-                <h1 className="text-2xl font-bold text-[#222222]">Saisir votre adresse</h1>
-                <p className="text-[#717171]">Seuls les voyageurs qui disposent d'une réservation confirmée pourront voir votre adresse.</p>
-              </div>
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-[#222222]">Ville *</label>
-                  <input type="text" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" placeholder="Ville" value={addressData.city} onChange={e => setAddressData({...addressData, city: e.target.value})} />
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-[#222222]">Adresse *</label>
-                  <input type="text" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" placeholder="Adresse" value={addressData.address} onChange={e => setAddressData({...addressData, address: e.target.value})} />
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-[#222222]">Code postal *</label>
-                  <input type="text" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" placeholder="Code postal" value={addressData.postalCode} onChange={e => setAddressData({...addressData, postalCode: e.target.value})} />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-[#222222]">Province / État</label>
-                    <div className="relative">
-                      <select className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black appearance-none bg-white" value={addressData.province} onChange={e => setAddressData({...addressData, province: e.target.value})}>
-                        <option value="QC">Québec</option>
-                        <option value="ON">Ontario</option>
-                        <option value="NB">Nouveau-Brunswick</option>
-                        <option value="Other">Autre</option>
-                      </select>
-                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                    </div>
+          {currentStep === 'reservation-type' && (
+            <div className={WIDE}>
+              <StepHeader eyebrow={eyebrow} title="Quel type de logement proposez-vous ?" description="Ces informations aident les voyageurs à trouver le séjour qui leur correspond." />
+              <div className="space-y-10">
+                <section aria-labelledby="space-title">
+                  <SectionTitle id="space-title">Qu'offrez-vous aux voyageurs ?</SectionTitle>
+                  <div className="grid sm:grid-cols-3 gap-3">
+                    {SPACE_TYPES.map(opt => (
+                      <OptionCard key={opt.id} selected={spaceType === opt.id} onClick={() => setSpaceType(opt.id)} icon={opt.icon} title={opt.label} description={opt.desc} />
+                    ))}
                   </div>
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-[#222222]">Pays</label>
-                    <div className="relative">
-                      <select className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black appearance-none bg-white" value={addressData.country} onChange={e => setAddressData({...addressData, country: e.target.value})}>
-                        <option value="CA">Canada</option>
-                        <option value="US">États-Unis</option>
-                        <option value="FR">France</option>
-                        <option value="Other">Autre</option>
-                      </select>
-                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                    </div>
+                </section>
+                <section aria-labelledby="frequency-title">
+                  <SectionTitle id="frequency-title">À quelle fréquence le louerez-vous ?</SectionTitle>
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    {RENTAL_FREQUENCIES.map(opt => (
+                      <OptionCard key={opt.id} layout="row" selected={rentalFrequency === opt.id} onClick={() => setRentalFrequency(opt.id)} title={opt.label} description={opt.desc} />
+                    ))}
                   </div>
-                </div>
+                </section>
               </div>
             </div>
-            <div className="flex-1">
-               <div className="relative w-full aspect-square rounded-xl overflow-hidden border border-gray-200">
+          )}
+
+          {currentStep === 'address-location' && (
+            <div className={WITH_ASIDE}>
+              <div>
+                <StepHeader eyebrow={eyebrow} title="Où se situe votre logement ?" description="Seuls les voyageurs ayant une réservation confirmée verront l'adresse exacte." />
+                <div className="space-y-5">
+                  <Field label="Adresse" htmlFor="address-street">
+                    <input id="address-street" type="text" autoComplete="street-address" className={inputClass} placeholder="Numéro et rue" value={addressData.address} onChange={e => setAddressData({ ...addressData, address: e.target.value })} />
+                  </Field>
+                  <div className="grid sm:grid-cols-2 gap-5">
+                    <Field label="Ville" htmlFor="address-city">
+                      <input id="address-city" type="text" autoComplete="address-level2" className={inputClass} value={addressData.city} onChange={e => setAddressData({ ...addressData, city: e.target.value })} />
+                    </Field>
+                    <Field label="Code postal" htmlFor="address-postal" optional>
+                      <input id="address-postal" type="text" autoComplete="postal-code" className={inputClass} value={addressData.postalCode} onChange={e => setAddressData({ ...addressData, postalCode: e.target.value })} />
+                    </Field>
+                  </div>
+                  <div className="grid sm:grid-cols-2 gap-5">
+                    <Field label="Province ou État" htmlFor="address-province">
+                      <SelectInput id="address-province" value={addressData.province} onChange={v => setAddressData({ ...addressData, province: v })}>
+                        {Object.entries(PROVINCES).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                      </SelectInput>
+                    </Field>
+                    <Field label="Pays" htmlFor="address-country">
+                      <SelectInput id="address-country" value={addressData.country} onChange={v => setAddressData({ ...addressData, country: v })}>
+                        {Object.entries(COUNTRIES).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                      </SelectInput>
+                    </Field>
+                  </div>
+                </div>
+              </div>
+              <div className={`${ASIDE} space-y-3`}>
+                <p className="text-[13px] font-semibold text-[#6A6A6A]">Secteur</p>
+                <div className="aspect-square rounded-2xl overflow-hidden border border-[#E4E4E4]">
                   <iframe
-                    title="Carte Google Maps"
-                    src={buildMapEmbedUrl(addressData.city, addressData.country)}
+                    title="Carte du secteur"
+                    src={buildMapEmbedUrl(addressData.city, addressData.country !== 'Other' ? COUNTRIES[addressData.country] : undefined)}
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
-                    allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
                   />
-               </div>
-            </div>
-          </div>
-        )}
-
-        {currentStep === 'capacity-details' && (
-          <div className="max-w-3xl mx-auto space-y-10">
-            <h1 className="text-2xl font-bold text-[#222222]">Capacité d'accueil du chalet</h1>
-            <div className="space-y-8">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-[#222222]">Capacité d'accueil *</label>
-                  <div className="relative">
-                    <select className="w-full p-3 border border-gray-300 rounded-lg appearance-none bg-white" value={capacityData.capacity} onChange={(e) => setCapacityData({...capacityData, capacity: parseInt(e.target.value)})}>
-                      {[...Array(20)].map((_, i) => <option key={i} value={i+1}>{i+1}</option>)}
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-[#222222]">Nombre maximum d'adultes *</label>
-                  <div className="relative">
-                    <select className="w-full p-3 border border-gray-300 rounded-lg appearance-none bg-white" value={capacityData.adults} onChange={(e) => setCapacityData({...capacityData, adults: parseInt(e.target.value)})}>
-                      {[...Array(20)].map((_, i) => <option key={i} value={i+1}>{i+1}</option>)}
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-[#222222]">Salles de bain *</label>
-                  <div className="relative">
-                    <select className="w-full p-3 border border-gray-300 rounded-lg appearance-none bg-white" value={capacityData.bathrooms} onChange={(e) => setCapacityData({...capacityData, bathrooms: parseInt(e.target.value)})}>
-                      {[...Array(10)].map((_, i) => <option key={i} value={i+1}>{i+1}</option>)}
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="space-y-4 pt-4 border-t border-gray-100">
-                <div className="flex items-center justify-between">
-                  <span className="text-[#222222] font-medium">Chambres à coucher</span>
-                  <div className="flex items-center gap-4">
-                    <button onClick={removeBedroom} className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-black"><Minus className="w-4 h-4" /></button>
-                    <span className="text-base font-medium w-6 text-center">{bedrooms.length}</span>
-                    <button onClick={addBedroom} className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-black"><Plus className="w-4 h-4" /></button>
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  {bedrooms.map((bedroom) => (
-                    <div key={bedroom.id} className="border border-gray-200 rounded-xl p-4 flex items-center justify-between">
-                      <div>
-                        <h3 className="font-semibold text-[#222222]">{bedroom.name}</h3>
-                        <p className="text-sm text-[#717171]">{Object.values(bedroom.beds).some(v => v > 0) ? 'Lits configurés' : 'Aucun lit configuré'}</p>
-                      </div>
-                      <button onClick={() => setEditingItem({ item: bedroom, type: 'bedroom' })} className="flex items-center gap-2 text-sm font-medium hover:bg-gray-50 px-3 py-2 rounded-lg transition-colors"><Pencil className="w-4 h-4" /> Modifier</button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-4 pt-4 border-t border-gray-100">
-                <div className="flex items-center justify-between">
-                  <span className="text-[#222222] font-medium">Chambres à aire ouverte</span>
-                  <div className="flex items-center gap-4">
-                    <button onClick={removeOpenArea} className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-black"><Minus className="w-4 h-4" /></button>
-                    <span className="text-base font-medium w-6 text-center">{openAreas.length}</span>
-                    <button onClick={addOpenArea} className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-black"><Plus className="w-4 h-4" /></button>
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  {openAreas.map((area) => (
-                    <div key={area.id} className="border border-gray-200 rounded-xl p-4 flex items-center justify-between">
-                      <div>
-                        <h3 className="font-semibold text-[#222222]">{area.name}</h3>
-                        <p className="text-sm text-[#717171]">{Object.values(area.beds).some(v => v > 0) ? 'Lits configurés' : 'Aucun lit configuré'}</p>
-                      </div>
-                      <button onClick={() => setEditingItem({ item: area, type: 'openArea' })} className="flex items-center gap-2 text-sm font-medium hover:bg-gray-50 px-3 py-2 rounded-lg transition-colors"><Pencil className="w-4 h-4" /> Modifier</button>
-                    </div>
-                  ))}
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-
-        {currentStep === 'amenities' && (
-          <div className="max-w-4xl mx-auto space-y-8">
-            <h1 className="text-3xl font-bold text-[#222222] mb-2">Commodités</h1>
-            <p className={`text-sm mb-6 ${selectedAmenities.length < 8 ? 'text-red-500' : 'text-gray-500'}`}>
-              {selectedAmenities.length}/8 sélectionnées (minimum 8 requises)
-            </p>
-            <div className="space-y-6">
-              {Object.entries(AMENITIES_DATA).map(([section, items]) => (
-                <div key={section} className="border-b border-gray-100 pb-6">
-                   <button onClick={() => toggleSection(section)} className="flex items-center justify-between w-full py-2">
-                     <h3 className="text-lg font-bold text-[#222222]">{section}</h3>
-                     <ChevronDown className={`w-5 h-5 text-gray-500 ${expandedAmenities[section] ? 'rotate-180' : ''}`} />
-                   </button>
-                   {expandedAmenities[section] && (
-                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-8 mt-4">
-                        {items.map((amenity) => (
-                          <label key={amenity.id} className="flex items-center gap-3 cursor-pointer group" onClick={() => toggleAmenity(amenity.id)}>
-                            <div className={`w-5 h-5 rounded border flex items-center justify-center flex-shrink-0 transition-colors ${selectedAmenities.includes(amenity.id) ? 'bg-black border-black' : 'border-gray-300 bg-white'}`}>
-                              {selectedAmenities.includes(amenity.id) && <Check className="w-3.5 h-3.5 text-white" />}
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <amenity.icon className="w-4 h-4 text-gray-500 group-hover:text-black transition-colors" />
-                              <span className="text-sm">{amenity.label}</span>
-                            </div>
-                          </label>
-                        ))}
-                     </div>
-                   )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {currentStep === 'summary-review-1' && (
-          <div className="max-w-6xl mx-auto">
-             <div className="flex flex-col lg:flex-row gap-16 items-start">
-               <div className="flex-1 w-full space-y-8">
-                 <h1 className="text-3xl font-bold text-[#222222]">Vous y êtes presque!</h1>
-                 
-                 <div className="space-y-4">
-                    {/* Stage 1 - Expanded */}
-                    <div className="bg-gray-50 border border-gray-100 rounded-xl overflow-hidden">
-                       <div className="p-6 flex items-center justify-between border-b border-gray-100">
-                          <div className="flex items-center gap-4">
-                             <div className="w-10 h-10 rounded-full border border-black flex items-center justify-center text-[#222222] font-bold text-lg bg-white">1</div>
-                             <div>
-                                <h3 className="font-bold text-[#222222]">Commencez par la base</h3>
-                                <p className="text-sm text-gray-500">Lits, salles de bain, commodités...</p>
-                             </div>
-                          </div>
-                          <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
-                             <Check className="w-5 h-5 text-white" />
-                          </div>
-                       </div>
-                       <div className="bg-white">
-                          {[
-                            { label: "Type de réservation", step: 'reservation-type' },
-                            { label: "Saisir votre adresse", step: 'address-location' },
-                            { label: "Capacité d'accueil du chalet", step: 'capacity-details' },
-                            { label: "Commodités", step: 'amenities' }
-                          ].map((item, idx) => (
-                             <div key={idx} className="flex items-center justify-between p-4 border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors">
-                                <span className="text-[#222222] font-medium text-sm">{item.label}</span>
-                                <button onClick={() => jumpToStep(item.step as Step)} className="p-2 hover:bg-gray-200 rounded-full transition-colors">
-                                   <Pencil className="w-4 h-4 text-gray-500" />
-                                </button>
-                             </div>
-                          ))}
-                       </div>
-                    </div>
-
-                    {/* Stage 2 - Next */}
-                    <div className="bg-white border border-gray-200 rounded-xl p-6 flex items-center justify-between">
-                       <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-full border border-black flex items-center justify-center text-[#222222] font-bold text-lg">2</div>
-                          <div>
-                             <h3 className="font-bold text-[#222222]">Décrivez l'environnement</h3>
-                             <p className="text-sm text-gray-500">Décrivez l'environnement</p>
-                          </div>
-                       </div>
-                    </div>
-
-                    {/* Stage 3 - Locked */}
-                    <div className="bg-white border border-gray-200 rounded-xl p-6 flex items-center justify-between opacity-50">
-                       <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-gray-400 font-bold text-lg">3</div>
-                          <div>
-                             <h3 className="font-bold text-gray-400">Préparez l'accueil des invités</h3>
-                             <p className="text-sm text-gray-400">Préparez l'accueil des invités</p>
-                          </div>
-                       </div>
-                    </div>
-                 </div>
-
-                 <div className="mt-8">
-                   <button onClick={handleNext} className="w-full bg-black text-white py-4 rounded-xl font-bold text-lg hover:opacity-90 transition-opacity">
-                     Continuer
-                   </button>
-                 </div>
-               </div>
-               <div className="flex-1 w-full lg:h-[700px] rounded-2xl overflow-hidden shadow-lg hidden lg:block sticky top-32">
-                 <img src={summaryImage} className="w-full h-full object-cover" />
-               </div>
-             </div>
-          </div>
-        )}
-
-        {currentStep === 'host-photo' && (
-          <div className="max-w-2xl mx-auto space-y-10">
-            <div className="text-center space-y-4">
-              <h1 className="text-3xl font-bold text-[#222222]">Ajoutez une photo de vous</h1>
-              <p className="text-[#717171] max-w-lg mx-auto">
-                Assurez-vous que votre photo montre clairement votre visage, afin que les voyageurs puissent facilement vous identifier en tant qu’hôte.
-              </p>
-            </div>
-            
-            <div className="flex justify-center">
-              <div className="flex items-center gap-6">
-                <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden border border-gray-300">
-                   {hostPhoto ? (
-                     <img src={hostPhoto} alt="Host" className="w-full h-full object-cover" />
-                   ) : (
-                     <User className="w-10 h-10 text-gray-400" />
-                   )}
-                </div>
-                <label className="cursor-pointer">
-                   <div className="flex items-center gap-2 px-6 py-3 bg-white border border-black rounded-full hover:bg-gray-50 transition-colors shadow-sm">
-                     <Upload className="w-4 h-4" />
-                     <span className="font-medium">Ajouter une photo</span>
-                   </div>
-                   <input type="file" className="hidden" accept="image/*" onChange={handleHostPhotoUpload} />
-                </label>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {currentStep === 'chalet-photos' && (
-          <div className="max-w-4xl mx-auto space-y-10">
-            <div className="space-y-4">
-              <h1 className="text-3xl font-bold text-[#222222]">Photos du chalet</h1>
-              
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-bold text-[#222222] mb-1">Astuces pour les photos</h3>
-                  <p className="text-sm text-gray-500">Nous vous suggérons de télécharger au moins 5 photos des différentes pièces et espaces à l'intérieur et à l'extérieur du chalet.</p>
-                </div>
-                <div>
-                  <h3 className="font-bold text-[#222222] mb-1">Quels types de photos dois-je télécharger?</h3>
-                  <p className="text-sm text-gray-500">Veuillez télécharger au moins une photo de chaque pièce du chalet, y compris le salon, la cuisine, les chambre(s), les salle(s) de bains, l’extérieur et les environs.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-8">
-              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-                {[0, 1, 2, 3, 4].map((index) => (
-                  <div key={index} className="w-32 h-32 md:w-40 md:h-40 bg-gray-100 rounded-xl flex-shrink-0 flex items-center justify-center relative overflow-hidden group border border-gray-200">
-                     {chaletPhotos[index] ? (
-                       <>
-                         <img src={chaletPhotos[index]} alt={`Chalet ${index + 1}`} className="w-full h-full object-cover" />
-                         <button 
-                            onClick={() => {
-                              const newPhotos = [...chaletPhotos];
-                              newPhotos.splice(index, 1);
-                              setChaletPhotos(newPhotos);
-                            }}
-                            className="absolute top-1 right-1 p-1 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
-                         >
-                           <X className="w-3 h-3" />
-                         </button>
-                       </>
-                     ) : (
-                       <div className="w-8 h-8 rounded-full border border-black flex items-center justify-center">
-                         <Plus className="w-4 h-4 text-black" />
-                       </div>
-                     )}
-                  </div>
-                ))}
-              </div>
-
-              <div className="relative cursor-pointer group">
-                 <input type="file" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" multiple accept=".png, .jpg, .jpeg, .webp" onChange={handleChaletPhotoUpload} />
-                 <div className="text-center">
-                   <p className="text-[#222222] font-medium text-sm group-hover:underline">Faites glisser vos images ici, ou <span className="underline">Parcourir</span></p>
-                   <p className="text-gray-400 text-xs mt-1">Formats acceptés: PNG, JPG, WEBP</p>
-                 </div>
-              </div>
-
-              {chaletPhotos.length > 5 && (
-                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
-                  {chaletPhotos.slice(5).map((photo, i) => {
-                    const index = i + 5;
-                    return (
-                      <div key={index} className="aspect-square bg-gray-100 rounded-xl relative overflow-hidden group border border-gray-200">
-                        <img src={photo} alt={`Chalet ${index + 1}`} className="w-full h-full object-cover" />
-                        <button
-                          onClick={() => {
-                            const newPhotos = [...chaletPhotos];
-                            newPhotos.splice(index, 1);
-                            setChaletPhotos(newPhotos);
-                          }}
-                          className="absolute top-1 right-1 p-1 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {currentStep === 'chalet-description' && (
-          <div className="max-w-3xl mx-auto space-y-10">
-             <h1 className="text-3xl font-bold text-[#222222] text-center mb-8">Description du chalet</h1>
-             
-             <div className="space-y-6">
-                <div className="space-y-2">
-                   <label className="block text-sm font-bold text-[#222222]">Titre de l'annonce *</label>
-                   <input
-                      type="text"
-                      value={descriptionData.title}
-                      onChange={(e) => setDescriptionData({...descriptionData, title: e.target.value})}
-                      className={`w-full p-3 border rounded-lg focus:outline-none ${
-                        titleExists ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-black'
-                      }`}
-                   />
-                   {titleExists && (
-                     <div className="flex items-center gap-2 text-red-600 text-sm">
-                       <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                       <p>Ce titre existe déjà. Veuillez en choisir un autre.</p>
-                     </div>
-                   )}
-                   {checkingTitle && (
-                     <p className="text-xs text-gray-400">Vérification du titre...</p>
-                   )}
-                   <div className="flex items-start gap-2 text-gray-500 text-xs">
-                     <Info className="w-3 h-3 mt-0.5" />
-                     <p>Astuce: Suscitez l'intérêt des voyageurs avec un titre accrocheur qui souligne ce qui rend votre chalet unique.</p>
-                   </div>
-                </div>
-
-                <div className="space-y-2">
-                   <label className="block text-sm font-bold text-[#222222]">Sous-titre descriptif de l'annonce <span className="text-gray-400 font-normal">(Optionnel)</span></label>
-                   <input 
-                      type="text" 
-                      placeholder="Sous-titre descriptif de l'annonce"
-                      value={descriptionData.subtitle}
-                      onChange={(e) => setDescriptionData({...descriptionData, subtitle: e.target.value})}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black"
-                   />
-                   <div className="flex items-start gap-2 text-gray-500 text-xs">
-                     <Info className="w-3 h-3 mt-0.5" />
-                     <p>Astuce: Décrivez les principaux atouts de votre chalet afin d'attirer l'attention des voyageurs.</p>
-                   </div>
-                </div>
-
-                <div className="space-y-2">
-                   <label className="block text-sm font-bold text-[#222222]">Description *</label>
-                   <textarea 
-                      value={descriptionData.description}
-                      onChange={(e) => setDescriptionData({...descriptionData, description: e.target.value})}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black min-h-[150px]"
-                   />
-                   <div className="flex items-start gap-2 text-gray-500 text-xs">
-                     <Info className="w-3 h-3 mt-0.5" />
-                     <p>Conseil: Rédigez une courte description qui présente votre chalet, les activités à proximité et le village dans lequel il se trouve.</p>
-                   </div>
-                </div>
-
-                <div className="space-y-4 pt-4 border-t border-gray-100">
-                   <h3 className="font-bold text-gray-500 text-sm uppercase">Ajoutez des informations supplémentaires sur votre chalet (Optionnel)</h3>
-                   
-                   <div className="space-y-2">
-                      <label className="block text-sm font-bold text-[#222222]">Le chalet</label>
-                      <textarea 
-                         value={descriptionData.aboutChalet}
-                         onChange={(e) => setDescriptionData({...descriptionData, aboutChalet: e.target.value})}
-                         placeholder="Tapez ici..."
-                         className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black min-h-[100px]"
-                      />
-                      <div className="flex items-start gap-2 text-gray-500 text-xs">
-                        <Info className="w-3 h-3 mt-0.5" />
-                        <p>Conseil: Incluez tout autre détail qui peut aider les invités à définir leurs attentes pour leur séjour.</p>
-                      </div>
-                   </div>
-
-                   <div className="space-y-2">
-                      <label className="block text-sm font-bold text-[#222222]">Disponibilités de l'hôte</label>
-                      <textarea 
-                         value={descriptionData.hostAvailability}
-                         onChange={(e) => setDescriptionData({...descriptionData, hostAvailability: e.target.value})}
-                         placeholder="Tapez ici..."
-                         className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black min-h-[100px]"
-                      />
-                      <div className="flex items-start gap-2 text-gray-500 text-xs">
-                        <Info className="w-3 h-3 mt-0.5" />
-                        <p>Conseil: Informez les invités de votre disponibilité pendant leur séjour. Pour votre sécurité, ne communiquez pas votre numéro de téléphone ou votre adresse électronique avant d'avoir confirmé une réservation.</p>
-                      </div>
-                   </div>
-
-                   <div className="space-y-2">
-                      <label className="block text-sm font-bold text-[#222222]">Le quartier</label>
-                      <textarea 
-                         value={descriptionData.neighborhood}
-                         onChange={(e) => setDescriptionData({...descriptionData, neighborhood: e.target.value})}
-                         placeholder="Tapez ici..."
-                         className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black min-h-[100px]"
-                      />
-                      <div className="flex items-start gap-2 text-gray-500 text-xs">
-                        <Info className="w-3 h-3 mt-0.5" />
-                        <p>Conseil: Présentez ce qui rend votre quartier unique, comme votre café, votre parc préféré ou d'autres lieux qui peuvent susciter l'intérêt des touristes.</p>
-                      </div>
-                   </div>
-
-                   <div className="space-y-2">
-                      <label className="block text-sm font-bold text-[#222222]">Transport</label>
-                      <textarea 
-                         value={descriptionData.transport}
-                         onChange={(e) => setDescriptionData({...descriptionData, transport: e.target.value})}
-                         placeholder="Tapez ici..."
-                         className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black min-h-[100px]"
-                      />
-                      <div className="flex items-start gap-2 text-gray-500 text-xs">
-                        <Info className="w-3 h-3 mt-0.5" />
-                        <p>Conseil: Indiquez aux invités ce qu'ils doivent savoir sur votre quartier, comme les moyens de transport courants à proximité, les conseils en matière de circulation ou les itinéraires à faire à pied.</p>
-                      </div>
-                   </div>
-
-                   <div className="space-y-2">
-                      <label className="block text-sm font-bold text-[#222222]">Autres informations pertinentes</label>
-                      <textarea 
-                         value={descriptionData.otherInfo}
-                         onChange={(e) => setDescriptionData({...descriptionData, otherInfo: e.target.value})}
-                         placeholder="Tapez ici..."
-                         className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black min-h-[100px]"
-                      />
-                   </div>
-                </div>
-             </div>
-          </div>
-        )}
-
-        {currentStep === 'summary-review-2' && (
-          <div className="max-w-6xl mx-auto">
-             <div className="flex flex-col lg:flex-row gap-16 items-start">
-               <div className="flex-1 w-full space-y-8">
-                 <h1 className="text-3xl font-bold text-[#222222]">Vous y êtes presque!</h1>
-                 
-                 <div className="space-y-4">
-                    {/* Stage 1 - Completed/Collapsed */}
-                    <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between">
-                       <div className="flex items-center gap-4">
-                          <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-sm">1</div>
-                          <div>
-                             <h3 className="font-bold text-[#222222]">Commencez par la base</h3>
-                          </div>
-                       </div>
-                       <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
-                          <Check className="w-4 h-4 text-white" />
-                       </div>
-                    </div>
-
-                    {/* Stage 2 - Expanded */}
-                    <div className="bg-gray-50 border border-gray-100 rounded-xl overflow-hidden">
-                       <div className="p-6 flex items-center justify-between border-b border-gray-100">
-                          <div className="flex items-center gap-4">
-                             <div className="w-10 h-10 rounded-full border border-black flex items-center justify-center text-[#222222] font-bold text-lg bg-white">2</div>
-                             <div>
-                                <h3 className="font-bold text-[#222222]">Décrivez l'environnement</h3>
-                                <p className="text-sm text-gray-500">Décrivez l'environnement</p>
-                             </div>
-                          </div>
-                          <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
-                             <Check className="w-5 h-5 text-white" />
-                          </div>
-                       </div>
-                       <div className="bg-white">
-                          {[
-                            { label: "Photo de l'hôte", step: 'host-photo' },
-                            { label: "Photos du chalet", step: 'chalet-photos' },
-                            { label: "Description du chalet", step: 'chalet-description' }
-                          ].map((item, idx) => (
-                             <div key={idx} className="flex items-center justify-between p-4 border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors">
-                                <span className="text-[#222222] font-medium text-sm">{item.label}</span>
-                                <button onClick={() => jumpToStep(item.step as Step)} className="p-2 hover:bg-gray-200 rounded-full transition-colors">
-                                   <Pencil className="w-4 h-4 text-gray-500" />
-                                </button>
-                             </div>
-                          ))}
-                       </div>
-                    </div>
-
-                    {/* Stage 3 - Next/Locked */}
-                    <div className="bg-white border border-gray-200 rounded-xl p-6 flex items-center justify-between">
-                       <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-full border border-black flex items-center justify-center text-[#222222] font-bold text-lg">3</div>
-                          <div>
-                             <h3 className="font-bold text-[#222222]">Préparez l'accueil des invités</h3>
-                             <p className="text-sm text-gray-500">Préparez l'accueil des invités</p>
-                          </div>
-                       </div>
-                    </div>
-                 </div>
-
-                 <div className="mt-8">
-                   <button onClick={handleNext} className="w-full bg-black text-white py-4 rounded-xl font-bold text-lg hover:opacity-90 transition-opacity">
-                     Continuer
-                   </button>
-                 </div>
-               </div>
-               <div className="flex-1 w-full lg:h-[700px] rounded-2xl overflow-hidden shadow-lg hidden lg:block sticky top-32">
-                 <img src={summaryImage} className="w-full h-full object-cover" />
-               </div>
-             </div>
-          </div>
-        )}
-
-
-        {currentStep === 'reservation-mode' && (
-          <div className="max-w-3xl mx-auto space-y-10">
-            <h1 className="text-3xl font-bold text-[#222222]">Définissez vos règles de réservation</h1>
-            <p className="text-[#717171]">Les voyageurs réservent directement, sans attendre votre validation : gardez votre calendrier à jour.</p>
-            <div className="space-y-6">
-              <h3 className="text-lg font-bold text-[#222222]">Indiquez aux invités l'heure d'arrivée et de départ</h3>
-              <div className="grid grid-cols-2 gap-8">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-[#222222]">Heure d'arrivée</label>
-                  <div className="relative">
-                    <select value={arrivalTime} onChange={(e) => setArrivalTime(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg appearance-none bg-white cursor-pointer focus:outline-none focus:border-black">
-                      {['15:00', '16:00', '17:00', '18:00', '19:00'].map(t => <option key={t} value={t}>{t}</option>)}
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-[#222222]">Heure de départ</label>
-                  <div className="relative">
-                    <select value={departureTime} onChange={(e) => setDepartureTime(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg appearance-none bg-white cursor-pointer focus:outline-none focus:border-black">
-                      {['10:00', '11:00', '12:00', '13:00'].map(t => <option key={t} value={t}>{t}</option>)}
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="w-full h-px bg-gray-100" />
-            <div className="space-y-8">
-               <h2 className="text-lg font-bold text-[#222222]">Durée du séjour</h2>
-               <div className="space-y-2">
-                 <label className="block text-xs font-medium text-gray-500 uppercase">Durée minimum d'un séjour</label>
-                 <div className="relative">
-                    <select value={minStay} onChange={(e) => setMinStay(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg appearance-none bg-white cursor-pointer focus:outline-none focus:border-black">
-                      {[1, 2, 3, 4, 5, 6, 7].map(n => <option key={n} value={n}>{n}</option>)}
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                 </div>
-               </div>
-               <div className="space-y-2">
-                 <label className="block text-xs font-medium text-gray-500 uppercase">Durée maximale d'un séjour</label>
-                 <div className="relative">
-                    <select value={maxStay} onChange={(e) => setMaxStay(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg appearance-none bg-white cursor-pointer focus:outline-none focus:border-black">
-                      <option value="Aucun maximum">Aucun maximum</option>
-                      {[7, 14, 28].map(n => <option key={n} value={n}>{n} jours</option>)}
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                 </div>
-               </div>
-               <div className="pt-4 border-t border-gray-100">
-                  <button onClick={() => setAdvancedStaySettingsOpen(!advancedStaySettingsOpen)} className="flex items-center justify-between w-full py-2">
-                    <span className="font-medium text-[#222222]">Paramètres avancés</span>
-                    {advancedStaySettingsOpen ? <ChevronUp className="w-5 h-5 text-gray-500" /> : <ChevronDown className="w-5 h-5 text-gray-500" />}
-                  </button>
-                  {advancedStaySettingsOpen && (
-                    <div className="pt-6 space-y-8 animate-in slide-in-from-top-2 duration-200">
-                      <div className="space-y-4">
-                        <div className="flex items-center gap-2"><label className="text-sm font-medium text-[#222222]">Sélectionnez les jours de départ</label><HelpCircle className="w-4 h-4 text-gray-400" /></div>
-                        <div className="flex flex-wrap gap-2">{DAYS_OF_WEEK.map((day) => (<label key={day} className="flex flex-col items-center gap-2 cursor-pointer"><span className="text-sm text-gray-500">{day}</span><div className={`w-6 h-6 rounded border flex items-center justify-center transition-colors ${departureDays[day] ? 'bg-black border-black' : 'border-gray-300 bg-white'}`} onClick={() => setDepartureDays(prev => ({ ...prev, [day]: !prev[day] }))}>{departureDays[day] && <Check className="w-4 h-4 text-white" />}</div></label>))}</div>
-                      </div>
-                      <div className="space-y-4">
-                        <div className="flex items-center gap-2"><label className="text-sm font-medium text-[#222222]">Sélectionnez les jours d'arrivée</label><HelpCircle className="w-4 h-4 text-gray-400" /></div>
-                        <div className="flex flex-wrap gap-2">{DAYS_OF_WEEK.map((day) => (<label key={day} className="flex flex-col items-center gap-2 cursor-pointer"><span className="text-sm text-gray-500">{day}</span><div className={`w-6 h-6 rounded border flex items-center justify-center transition-colors ${arrivalDays[day] ? 'bg-black border-black' : 'border-gray-300 bg-white'}`} onClick={() => setArrivalDays(prev => ({ ...prev, [day]: !prev[day] }))}>{arrivalDays[day] && <Check className="w-4 h-4 text-white" />}</div></label>))}</div>
-                      </div>
-                      <div className="space-y-4">
-                         <div className="flex items-center gap-2"><label className="text-sm font-medium text-[#222222]">Durée minimale du séjour en fonction du jour</label><HelpCircle className="w-4 h-4 text-gray-400" /></div>
-                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">{['Lundi', 'Mardi', 'Mercredi'].map(day => (<div key={day} className="space-y-2"><label className="text-xs font-medium text-gray-500">{day}</label><div className="relative"><select className="w-full p-2 border border-gray-300 rounded-lg appearance-none bg-white"><option>-</option>{[1, 2, 3, 4, 5].map(n => <option key={n} value={n}>{n}</option>)}</select><ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" /></div></div>))}</div>
-                      </div>
-                    </div>
-                  )}
-               </div>
-            </div>
-          </div>
-        )}
-
-        {currentStep === 'pricing' && (
-          <div className="max-w-3xl mx-auto space-y-10">
-            <h1 className="text-3xl font-bold text-[#222222] text-center mb-8">Définissez vos prix</h1>
-            <div className="space-y-8">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-[#222222]">Sélectionnez la devise monétaire de votre pays *</label>
-                <div className="relative">
-                  <select value={currency} onChange={(e) => setCurrency(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg appearance-none bg-white cursor-pointer focus:outline-none focus:border-black">
-                    <option value="EUR">EUR (€)</option>
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                </div>
-                <p className="text-xs text-gray-500">Choisissez une devise pour indiquer vos prix</p>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-[#222222]">Tarif de base *</label>
-                  <input type="text" value={pricing.base} onChange={(e) => setPricing({...pricing, base: e.target.value})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" placeholder="0" />
-                  <p className="text-xs text-gray-500">Ce prix sera le tarif par défaut pour chaque nuit.</p>
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-[#222222]">Tarif d'une nuit de week-end</label>
-                  <input type="text" value={pricing.weekend} onChange={(e) => setPricing({...pricing, weekend: e.target.value})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" placeholder="EUR (€)" />
-                  <p className="text-xs text-gray-500">Ce prix sera le prix par défaut pour le week-end.</p>
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-[#222222]">Tarif hebdomadaire</label>
-                  <input type="text" value={pricing.weekly} onChange={(e) => setPricing({...pricing, weekly: e.target.value})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" placeholder="EUR (€)" />
-                  <p className="text-xs text-gray-500">Ce prix sera le tarif par défaut pour une période de 7 jours.</p>
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-[#222222]">Tarif mensuel</label>
-                  <input type="text" value={pricing.monthly} onChange={(e) => setPricing({...pricing, monthly: e.target.value})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" placeholder="EUR (€)" />
-                  <p className="text-xs text-gray-500">Ce prix sera le tarif appliqué pour des périodes de 28 jours.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {currentStep === 'fees' && (
-          <div className="max-w-3xl mx-auto space-y-10">
-            <h1 className="text-3xl font-bold text-[#222222] text-center mb-8">Ajoutez des frais de base</h1>
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2"><label className="block text-sm font-bold text-[#222222]">Frais de nettoyage</label><HelpCircle className="w-4 h-4 text-gray-400" /></div>
-                <input type="text" value={fees.cleaning} onChange={(e) => setFees({...fees, cleaning: e.target.value})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2"><label className="block text-sm font-bold text-[#222222]">Dépôt de sécurité</label><HelpCircle className="w-4 h-4 text-gray-400" /></div>
-                <input type="text" value={fees.security} onChange={(e) => setFees({...fees, security: e.target.value})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
-              </div>
-              <div className="border-t border-gray-100 pt-6">
-                <button onClick={() => setExtraGuestFeeOpen(!extraGuestFeeOpen)} className="flex items-center justify-between w-full p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                  <span className="font-bold text-[#222222]">Frais pour invité supplémentaire <span className="text-gray-400 font-normal">(Optionnel)</span></span>
-                  <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform ${extraGuestFeeOpen ? 'rotate-180' : ''}`} />
-                </button>
-                {extraGuestFeeOpen && (
-                  <div className="mt-4 pl-4 animate-in slide-in-from-top-2">
-                     <div className="space-y-2 max-w-xs"><label className="text-sm font-medium">Frais par invité</label><input type="text" placeholder="EUR (€)" value={extraGuestFee} onChange={(e) => setExtraGuestFee(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" /></div>
-                  </div>
-                )}
-              </div>
+          {currentStep === 'capacity-details' && (
+            <div className={WITH_ASIDE}>
               <div>
-                <button onClick={() => setPetFeeOpen(!petFeeOpen)} className="flex items-center justify-between w-full p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                  <span className="font-bold text-[#222222]">Frais pour animaux <span className="text-gray-400 font-normal">(Optionnel)</span></span>
-                  <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform ${petFeeOpen ? 'rotate-180' : ''}`} />
-                </button>
-                {petFeeOpen && (
-                  <div className="mt-4 pl-4 animate-in slide-in-from-top-2">
-                     <div className="space-y-2 max-w-xs"><label className="text-sm font-medium">Frais par animal</label><input type="text" placeholder="EUR (€)" value={petFee} onChange={(e) => setPetFee(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" /></div>
+                <StepHeader eyebrow={eyebrow} title="Combien de voyageurs pouvez-vous accueillir ?" description="Indiquez la capacité maximale, puis la répartition des lits." />
+                <div className="rounded-2xl border border-[#E4E4E4] divide-y divide-[#E4E4E4]">
+                  <StepperRow label="Voyageurs" help="Capacité maximale du logement" value={capacityData.capacity} min={1} max={20}
+                    onChange={v => setCapacityData({ ...capacityData, capacity: v, adults: Math.min(capacityData.adults, v) })} />
+                  <StepperRow label="Adultes" help="Nombre maximum d'adultes" value={capacityData.adults} min={1} max={capacityData.capacity}
+                    onChange={v => setCapacityData({ ...capacityData, adults: v })} />
+                  <StepperRow label="Salles de bain" value={capacityData.bathrooms} min={1} max={10}
+                    onChange={v => setCapacityData({ ...capacityData, bathrooms: v })} />
+                </div>
+
+                <section aria-labelledby="rooms-title" className="mt-10">
+                  <SectionTitle id="rooms-title" aside={plural(bedCount, 'lit', 'lits')}>Où dorment vos voyageurs ?</SectionTitle>
+                  <div className="space-y-2.5">
+                    {[...bedrooms.map(item => ({ item, type: 'bedroom' as const })), ...openAreas.map(item => ({ item, type: 'openArea' as const }))].map(({ item, type }) => {
+                      const Icon = type === 'bedroom' ? BedDouble : Sofa;
+                      const configured = Object.values(item.beds).some(v => v > 0);
+                      return (
+                        <div key={item.id} className="flex items-center gap-4 rounded-2xl border border-[#E4E4E4] px-4 py-3.5">
+                          <span className="w-11 h-11 flex-shrink-0 rounded-xl bg-[#F7F7F7] flex items-center justify-center">
+                            <Icon className="w-[22px] h-[22px]" strokeWidth={1.75} />
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[15px] font-semibold truncate">
+                              {item.name}
+                              {type === 'openArea' && <span className="font-normal text-[#6A6A6A]"> · espace ouvert</span>}
+                            </p>
+                            <p className={`text-sm ${configured ? 'text-[#6A6A6A]' : 'text-[#B54708]'}`}>{describeBeds(item.beds)}</p>
+                          </div>
+                          <button type="button" onClick={() => setEditingItem({ item, type })} className="min-h-[44px] px-3 text-sm font-semibold underline underline-offset-[3px] hover:text-black">
+                            Modifier
+                          </button>
+                          <button type="button" onClick={() => removeRoom(item.id, type)} aria-label={`Supprimer ${item.name}`} className="w-10 h-10 flex-shrink-0 rounded-full flex items-center justify-center text-[#6A6A6A] hover:bg-[#F7F7F7] hover:text-[#222222]">
+                            <Trash2 className="w-[18px] h-[18px]" />
+                          </button>
+                        </div>
+                      );
+                    })}
                   </div>
-                )}
+                  <div className="flex flex-wrap gap-2.5 mt-4">
+                    <button type="button" onClick={addBedroom} className="inline-flex items-center gap-2 min-h-[44px] px-4 rounded-full border border-[#CFCFCF] text-sm font-semibold hover:border-[#222222]">
+                      <Plus className="w-4 h-4" /> Ajouter une chambre
+                    </button>
+                    <button type="button" onClick={addOpenArea} className="inline-flex items-center gap-2 min-h-[44px] px-4 rounded-full border border-[#CFCFCF] text-sm font-semibold hover:border-[#222222]">
+                      <Plus className="w-4 h-4" /> Ajouter un espace ouvert
+                    </button>
+                  </div>
+                </section>
+              </div>
+              <div className={ASIDE}>
+                <ListingPreview photo={coverPhoto} title={descriptionData.title.trim()} location={locationLabel} details={capacitySummary}
+                  note="L'aperçu se complète au fil des étapes : photos, titre puis prix." />
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* --- CALENDAR STEP --- */}
-        {currentStep === 'calendar' && (
-          <div className="max-w-6xl mx-auto space-y-8">
-            <div className="bg-[#FFF8E6] border border-[#FFE0B2] p-4 rounded-lg flex items-center gap-3">
-              <div className="p-1 bg-[#FF9800] rounded text-white"><CalendarIcon className="w-4 h-4" /></div>
-              <span className="text-[#B7791F] font-semibold text-sm">Un hébergement réussi commence avec un calendrier à jour</span>
+          {currentStep === 'amenities' && (
+            <div className={WIDE}>
+              <div className="flex flex-wrap items-end justify-between gap-x-6">
+                <StepHeader eyebrow={eyebrow} title="Quels équipements proposez-vous ?" description={`Sélectionnez-en au moins ${MIN_AMENITIES}. Vous pourrez en ajouter après la publication.`} />
+                <span
+                  role="status"
+                  className={`mb-10 inline-flex items-center gap-2 min-h-[40px] px-4 rounded-full text-sm font-semibold ${
+                    selectedAmenities.length >= MIN_AMENITIES ? 'bg-[#E6F6F9] text-[#0A6E85]' : 'bg-[#F2F2F2] text-[#484848]'
+                  }`}
+                >
+                  {selectedAmenities.length >= MIN_AMENITIES && <Check className="w-4 h-4" strokeWidth={2.5} />}
+                  {selectedAmenities.length >= MIN_AMENITIES
+                    ? `${selectedAmenities.length} sélectionnés · minimum atteint`
+                    : `${selectedAmenities.length} sur ${MIN_AMENITIES} minimum`}
+                </span>
+              </div>
+              <div className="space-y-9">
+                {Object.entries(AMENITIES_DATA).map(([section, items]) => {
+                  const count = items.filter(a => selectedAmenities.includes(a.id)).length;
+                  return (
+                    <section key={section} aria-label={section}>
+                      <div className="flex items-baseline justify-between gap-3 pb-2.5 mb-3.5 border-b border-[#EBEBEB]">
+                        <h2 className="text-[17px] font-semibold">{section}</h2>
+                        <span className="text-[13px] text-[#6A6A6A]">{count > 0 ? plural(count, 'sélectionné', 'sélectionnés') : `${items.length} au choix`}</span>
+                      </div>
+                      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                        {items.map(amenity => (
+                          <CheckTile key={amenity.id} selected={selectedAmenities.includes(amenity.id)} onClick={() => toggleAmenity(amenity.id)} label={amenity.label} icon={amenity.icon} />
+                        ))}
+                      </div>
+                    </section>
+                  );
+                })}
+              </div>
             </div>
+          )}
 
-            <div className="text-sm text-[#717171] leading-relaxed max-w-3xl">
-              Votre calendrier est votre meilleur allié pour assurer à vos invités la meilleure expérience possible. Assurez-vous que votre calendrier demeure à jour afin de recevoir des demandes de réservation uniquement lorsque votre chalet est disponible. Annuler un séjour à la dernière minute entraîne des pénalités.
-            </div>
+          {currentStep === 'summary-review-1' && renderChapterEnd(
+            'Votre logement est décrit',
+            'Vérifiez ces informations avant de passer à votre annonce. Vous pourrez toujours les modifier.',
+            <>
+              <RecapRow label="Type de location" value={[spaceLabel, frequencyLabel?.toLowerCase()].filter(Boolean).join(' · ') || 'Non renseigné'} onEdit={() => goToStep('reservation-type')} />
+              <RecapRow label="Adresse" value={addressData.address || 'Non renseignée'} sub={[addressData.postalCode, addressData.city].filter(Boolean).join(' ') || undefined} onEdit={() => goToStep('address-location')} />
+              <RecapRow label="Capacité" value={capacityLine} onEdit={() => goToStep('capacity-details')} />
+              <RecapRow label="Équipements" value={plural(selectedAmenities.length, 'équipement', 'équipements')}
+                sub={amenityNames.length > 0 ? `${amenityNames.slice(0, 5).join(', ')}${amenityNames.length > 5 ? '…' : ''}` : undefined}
+                onEdit={() => goToStep('amenities')} />
+            </>
+          )}
 
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold text-[#222222]">Calendrier externe iCals</h2>
-                <div className="flex gap-2">
-                  <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-full text-sm font-medium hover:bg-gray-50"><Upload className="w-4 h-4" /> Exporter</button>
-                  <button onClick={() => setIsImportModalOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-full text-sm font-medium hover:bg-gray-800"><Plus className="w-4 h-4" /> Ajouter</button>
+          {currentStep === 'host-photo' && (
+            <div className={NARROW}>
+              <StepHeader eyebrow={eyebrow} title="Ajoutez une photo de vous" description="Choisissez une photo où votre visage est bien visible : les voyageurs aiment savoir qui les accueille." />
+              <div className="flex flex-col sm:flex-row items-center gap-6 rounded-2xl border border-[#E4E4E4] p-6">
+                <div className="w-32 h-32 flex-shrink-0 rounded-full bg-[#F2F2F2] flex items-center justify-center overflow-hidden">
+                  {hostPhoto ? <img src={hostPhoto} alt="Votre photo de profil" className="w-full h-full object-cover" /> : <User className="w-12 h-12 text-[#9A9A9A]" strokeWidth={1.5} />}
+                </div>
+                <div className="space-y-3 text-center sm:text-left">
+                  <p className="text-sm text-[#6A6A6A]">Photo nette, de face, sans lunettes de soleil. Formats PNG, JPG ou WEBP.</p>
+                  <label className="inline-flex items-center gap-2 min-h-[44px] px-5 rounded-xl border border-[#222222] text-sm font-semibold cursor-pointer hover:bg-[#F7F7F7] focus-within:ring-2 focus-within:ring-[#222222]">
+                    <Camera className="w-4 h-4" />
+                    {hostPhoto ? 'Changer de photo' : 'Choisir une photo'}
+                    <input type="file" className="sr-only" accept="image/*" onChange={handleHostPhotoUpload} />
+                  </label>
                 </div>
               </div>
-              <div className="bg-gray-50 rounded-lg py-8 text-center border border-gray-100 text-sm text-[#717171]">
-                Aucun iCal externe n'a encore été ajouté
+            </div>
+          )}
+
+          {currentStep === 'chalet-photos' && (
+            <div className={WIDE}>
+              <StepHeader eyebrow={eyebrow} title="Ajoutez des photos de votre logement"
+                description="Ajoutez au moins une photo de chaque pièce : salon, cuisine, chambres, salles de bain, extérieur et environs. Nous recommandons au moins 5 photos." />
+              <div className="relative rounded-2xl border-[1.5px] border-dashed border-[#CFCFCF] bg-[#FAFAFA] px-6 py-10 text-center transition-colors hover:border-[#222222] focus-within:border-[#222222]">
+                <input type="file" multiple accept=".png,.jpg,.jpeg,.webp" onChange={handleChaletPhotoUpload} aria-label="Ajouter des photos du logement" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                <ImagePlus className="w-8 h-8 mx-auto text-[#484848]" strokeWidth={1.75} />
+                <p className="mt-3 text-[15px] font-semibold">Glissez vos photos ici</p>
+                <p className="text-sm text-[#6A6A6A]">ou <span className="font-semibold text-[#222222] underline underline-offset-[3px]">parcourez vos fichiers</span> · PNG, JPG ou WEBP</p>
               </div>
-            </div>
 
-            <div className="flex items-center gap-3 overflow-x-auto pb-4 scrollbar-hide">
-               <span className="flex items-center gap-1 text-sm font-semibold text-[#B7791F] whitespace-nowrap"><Sparkles className="w-4 h-4" /> Périodes automatiques</span>
-               {['Hiver', 'Semaine de relâche', 'Printemps', 'Pâques', 'Fête de la reine', 'Été', 'Semaines de la construction', 'Haute saison - Été', 'Automne', 'Fête du travail'].map((period) => (
-                 <button key={period} className="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm hover:border-black whitespace-nowrap shadow-sm flex items-center gap-2">
-                   {period} <span className="text-xs">🔥</span>
-                 </button>
-               ))}
-               <button className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center flex-shrink-0"><ChevronRight className="w-4 h-4" /></button>
-            </div>
-
-            <div className="border border-gray-200 rounded-xl overflow-hidden flex flex-col lg:flex-row h-[600px]">
-               <div className="w-full lg:w-72 border-r border-gray-200 bg-white flex flex-col">
-                  <div className="flex border-b border-gray-200">
-                    <button 
-                      onClick={() => setActiveTab('rates')}
-                      className={`flex-1 py-4 text-sm font-medium text-center relative ${activeTab === 'rates' ? 'text-black' : 'text-gray-500'}`}
-                    >
-                      Tarifs spécifiques
-                      {activeTab === 'rates' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-black" />}
-                    </button>
-                    <button 
-                      onClick={() => setActiveTab('blocks')}
-                      className={`flex-1 py-4 text-sm font-medium text-center relative ${activeTab === 'blocks' ? 'text-black' : 'text-gray-500'}`}
-                    >
-                      Blocages
-                      {activeTab === 'blocks' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-black" />}
-                    </button>
-                  </div>
-                  
-                  {activeTab === 'rates' && (
-                    <div className="p-6 flex-1 flex flex-col">
-                      <div className="flex items-center justify-between mb-6">
-                        <h3 className="font-bold text-xl text-[#222222]">Tarifs spécifiques</h3>
-                        <button 
-                           onClick={() => setIsRateModalOpen(true)}
-                           className="text-xs font-semibold px-3 py-1.5 border border-gray-300 rounded-full hover:bg-gray-50"
-                        >
-                          + Ajouter
-                        </button>
+              {chaletPhotos.length > 0 && (
+                <section aria-labelledby="photos-title" className="mt-8">
+                  <SectionTitle id="photos-title" aside={chaletPhotos.length < 5 ? `${chaletPhotos.length} sur 5 recommandées` : plural(chaletPhotos.length, 'photo', 'photos')}>
+                    Vos photos
+                  </SectionTitle>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {chaletPhotos.map((photo, index) => (
+                      <div key={index} className={`group relative rounded-xl overflow-hidden bg-[#F2F2F2] ${index === 0 ? 'col-span-2 row-span-2' : ''}`}>
+                        <img src={photo} alt={`Photo ${index + 1} du logement`} className="w-full h-full min-h-[140px] aspect-[4/3] object-cover" />
+                        {index === 0 && (
+                          <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-white text-xs font-semibold shadow">Photo de couverture</span>
+                        )}
+                        <div className="absolute top-2 right-2 flex gap-1.5">
+                          {index > 0 && (
+                            <button type="button" onClick={() => makeCover(index)} className="h-8 px-2.5 rounded-full bg-white text-xs font-semibold shadow sm:opacity-0 sm:group-hover:opacity-100 focus:opacity-100 transition-opacity">
+                              Mettre en couverture
+                            </button>
+                          )}
+                          <button type="button" onClick={() => removePhoto(index)} aria-label={`Retirer la photo ${index + 1}`} className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow">
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
-                      <div className="text-sm text-gray-500 italic">Aucun tarif spécifique ajouté</div>
-                    </div>
-                  )}
-
-                  {activeTab === 'blocks' && (
-                    <div className="p-6 flex-1 flex flex-col">
-                       <div className="flex items-center justify-between mb-6">
-                        <h3 className="font-bold text-xl text-[#222222]">Blocages</h3>
-                        <button 
-                           onClick={() => setIsBlockModalOpen(true)}
-                           className="text-xs font-semibold px-3 py-1.5 border border-gray-300 rounded-full hover:bg-gray-50"
-                        >
-                          + Ajouter
-                        </button>
-                      </div>
-                       <div className="text-sm text-gray-500 italic">Aucun blocage de période ajouté</div>
-                    </div>
-                  )}
-               </div>
-
-               <div className="flex-1 bg-white flex flex-col">
-                  <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-                    <button className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50">Fixer un tarif spécifique</button>
-                    <div className="flex items-center gap-4">
-                      <button className="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center"><ChevronLeft className="w-4 h-4" /></button>
-                      <span className="font-bold text-lg">Février 2026</span>
-                      <button className="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center"><ChevronRight className="w-4 h-4" /></button>
-                    </div>
-                    <div className="flex gap-2">
-                       <button className="px-4 py-2 bg-[#1B1F2E] text-white rounded-lg text-sm font-medium hover:opacity-90">Importer</button>
-                       <button className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50 flex items-center gap-2"><Upload className="w-4 h-4" /> Exporter</button>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-7 border-b border-gray-200 bg-gray-50">
-                    {['DIM', 'LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM'].map(day => (
-                      <div key={day} className="py-2 text-center text-xs font-medium text-gray-500">{day}</div>
                     ))}
                   </div>
-                  <div className="flex-1 grid grid-cols-7 auto-rows-fr bg-white">
-                     {[...Array(6)].map((_, i) => <div key={`empty-${i}`} className="border-b border-r border-gray-100 min-h-[100px]" />)}
-                     {[...Array(28)].map((_, i) => (
-                       <div key={i} className="border-b border-r border-gray-100 min-h-[100px] p-2 relative hover:bg-gray-50 cursor-pointer group transition-colors">
-                          <span className="text-xs text-gray-400 absolute top-2 right-2">{i + 1}</span>
-                          <div className="flex flex-col items-center justify-center h-full gap-1">
-                             <span className="text-sm font-medium text-gray-400 group-hover:text-black">120 €</span>
-                          </div>
-                       </div>
-                     ))}
-                     {[...Array(8)].map((_, i) => <div key={`empty-end-${i}`} className="border-b border-r border-gray-100 min-h-[100px]" />)}
-                  </div>
-               </div>
+                </section>
+              )}
             </div>
-          </div>
-        )}
+          )}
 
-        {currentStep === 'cancellation-policy' && (
-          <div className="max-w-2xl mx-auto space-y-10">
-            <h1 className="text-3xl font-bold text-[#222222]">Politique d'annulation</h1>
-            <div className="space-y-4">
-              <label className="block text-sm font-medium text-[#222222]">Politique d'annulation</label>
-              <div className="relative">
-                <select value={cancellationPolicy} onChange={(e) => setCancellationPolicy(e.target.value as CancellationPolicy)} className="w-full p-3 border border-gray-300 rounded-lg appearance-none bg-white cursor-pointer focus:outline-none focus:border-black">
-                   {CANCELLATION_POLICIES.map((policy) => (
-                     <option key={policy} value={policy}>{CANCELLATION_POLICY_LABELS[policy]}</option>
-                   ))}
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+          {currentStep === 'chalet-description' && (
+            <div className={WITH_ASIDE}>
+              <div>
+                <StepHeader eyebrow={eyebrow} title="Présentez votre logement" description="Un titre accrocheur et une description claire aident les voyageurs à se projeter." />
+                <div className="space-y-6">
+                  <Field
+                    label="Titre de l'annonce"
+                    htmlFor="listing-title"
+                    hint={checkingTitle ? 'Vérification du titre…' : 'Mettez en avant ce qui rend votre logement unique.'}
+                    error={titleExists ? (
+                      <span className="flex items-center gap-2"><AlertCircle className="w-4 h-4 flex-shrink-0" /> Ce titre existe déjà. Choisissez-en un autre.</span>
+                    ) : undefined}
+                  >
+                    <input id="listing-title" type="text" value={descriptionData.title} maxLength={255}
+                      onChange={(e) => setDescriptionData({ ...descriptionData, title: e.target.value })}
+                      placeholder="Ex. : Appartement lumineux près du marché"
+                      className={`${inputClass} ${titleExists ? 'border-[#B42318] focus:border-[#B42318] focus:ring-[#B42318]' : ''}`} />
+                  </Field>
+                  <Field label="Sous-titre" htmlFor="listing-subtitle" optional hint="Résumez les principaux atouts du logement en une phrase.">
+                    <input id="listing-subtitle" type="text" value={descriptionData.subtitle} onChange={(e) => setDescriptionData({ ...descriptionData, subtitle: e.target.value })} className={inputClass} />
+                  </Field>
+                  <Field label="Description" htmlFor="listing-description" hint="Présentez le logement, les activités à proximité et le village ou le quartier.">
+                    <textarea id="listing-description" value={descriptionData.description} onChange={(e) => setDescriptionData({ ...descriptionData, description: e.target.value })} className={`${textareaClass} min-h-[160px]`} />
+                  </Field>
+                </div>
+
+                <section aria-labelledby="extra-info-title" className="mt-10 pt-8 border-t border-[#EBEBEB]">
+                  <SectionTitle id="extra-info-title" aside="Facultatif">Informations complémentaires</SectionTitle>
+                  <div className="space-y-6">
+                    {[
+                      { key: 'aboutChalet', label: 'Le logement', hint: 'Tout autre détail qui aide les voyageurs à savoir à quoi s’attendre.' },
+                      { key: 'hostAvailability', label: 'Vos disponibilités', hint: 'Dites aux voyageurs comment vous joindre pendant le séjour. Pour votre sécurité, ne donnez ni téléphone ni e-mail avant la réservation.' },
+                      { key: 'neighborhood', label: 'Le quartier', hint: 'Un café, un parc ou un lieu que vous aimez à proximité.' },
+                      { key: 'transport', label: 'Transport', hint: 'Transports en commun, stationnement, itinéraires à pied.' },
+                      { key: 'otherInfo', label: 'Autres informations', hint: undefined },
+                    ].map(({ key, label, hint }) => (
+                      <Field key={key} label={label} htmlFor={`extra-${key}`} hint={hint}>
+                        <textarea id={`extra-${key}`} value={descriptionData[key as keyof typeof descriptionData]}
+                          onChange={(e) => setDescriptionData({ ...descriptionData, [key]: e.target.value })}
+                          className={`${textareaClass} min-h-[100px]`} />
+                      </Field>
+                    ))}
+                  </div>
+                </section>
               </div>
-              <div className="bg-gray-50 p-4 rounded-lg border border-gray-100 text-sm space-y-3">
-                {CANCELLATION_POLICY_RULES[cancellationPolicy].map((rule) => (
-                  <p key={rule}>{rule}</p>
+              <div className={ASIDE}>
+                <ListingPreview photo={coverPhoto} title={descriptionData.title.trim()} location={locationLabel} details={capacitySummary} />
+              </div>
+            </div>
+          )}
+
+          {currentStep === 'summary-review-2' && renderChapterEnd(
+            'Votre annonce prend forme',
+            'Vérifiez vos photos et votre texte avant de fixer vos tarifs.',
+            <>
+              <RecapRow label="Photo de profil"
+                value={hostPhoto ? 'Ajoutée' : hasProfilePhoto ? 'Photo de votre compte' : 'Aucune photo'}
+                onEdit={stepsList.includes('host-photo') ? () => goToStep('host-photo') : undefined} />
+              <RecapRow label="Photos" value={plural(chaletPhotos.length, 'photo', 'photos')}
+                sub={chaletPhotos.length > 0 ? (
+                  <span className="flex gap-1.5 mt-1.5">
+                    {chaletPhotos.slice(0, 6).map((photo, i) => <img key={i} src={photo} alt="" className="w-12 h-12 rounded-lg object-cover" />)}
+                  </span>
+                ) : 'Ajoutez au moins 5 photos pour une annonce complète'}
+                onEdit={() => goToStep('chalet-photos')} />
+              <RecapRow label="Titre" value={descriptionData.title || 'Non renseigné'} sub={descriptionData.subtitle || undefined} onEdit={() => goToStep('chalet-description')} />
+              <RecapRow label="Description"
+                value={descriptionData.description ? `${descriptionData.description.slice(0, 140)}${descriptionData.description.length > 140 ? '…' : ''}` : 'Non renseignée'}
+                onEdit={() => goToStep('chalet-description')} />
+            </>
+          )}
+
+          {currentStep === 'reservation-mode' && (
+            <div className={NARROW}>
+              <StepHeader eyebrow={eyebrow} title="Définissez vos règles de séjour" description="Les voyageurs réservent directement, sans validation de votre part : gardez votre calendrier à jour." />
+              <div className="space-y-10">
+                <section aria-labelledby="hours-title">
+                  <SectionTitle id="hours-title">Horaires</SectionTitle>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Field label="Arrivée à partir de" htmlFor="arrival-time">
+                      <SelectInput id="arrival-time" value={arrivalTime} onChange={setArrivalTime}>
+                        {['15:00', '16:00', '17:00', '18:00', '19:00'].map(t => <option key={t} value={t}>{t}</option>)}
+                      </SelectInput>
+                    </Field>
+                    <Field label="Départ avant" htmlFor="departure-time">
+                      <SelectInput id="departure-time" value={departureTime} onChange={setDepartureTime}>
+                        {['10:00', '11:00', '12:00', '13:00'].map(t => <option key={t} value={t}>{t}</option>)}
+                      </SelectInput>
+                    </Field>
+                  </div>
+                </section>
+
+                <section aria-labelledby="stay-title">
+                  <SectionTitle id="stay-title">Durée du séjour</SectionTitle>
+                  <div className="rounded-2xl border border-[#E4E4E4]">
+                    <StepperRow label="Durée minimale" help="En nombre de nuits" value={parseInt(minStay) || 1} min={1} max={30} onChange={v => setMinStay(String(v))} unit="nuits" />
+                  </div>
+                  <div className="mt-5">
+                    <Field label="Durée maximale" htmlFor="max-stay">
+                      <SelectInput id="max-stay" value={maxStay} onChange={setMaxStay}>
+                        <option value="Aucun maximum">Aucun maximum</option>
+                        {['7', '14', '28'].map(n => <option key={n} value={n}>{n} nuits</option>)}
+                      </SelectInput>
+                    </Field>
+                  </div>
+                </section>
+
+                <section className="border-t border-[#EBEBEB] pt-6">
+                  <button type="button" onClick={() => setAdvancedStaySettingsOpen(!advancedStaySettingsOpen)} aria-expanded={advancedStaySettingsOpen} className="w-full flex items-center justify-between gap-4 min-h-[44px] text-left">
+                    <span>
+                      <span className="block text-[17px] font-semibold">Jours d'arrivée et de départ</span>
+                      <span className="block text-sm text-[#6A6A6A]">Limitez les jours où les séjours peuvent commencer ou se terminer.</span>
+                    </span>
+                    <ChevronDown className={`w-5 h-5 flex-shrink-0 text-[#6A6A6A] transition-transform ${advancedStaySettingsOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {advancedStaySettingsOpen && (
+                    <div className="pt-6 space-y-6">
+                      {[
+                        { label: 'Arrivées possibles le', days: arrivalDays, set: setArrivalDays },
+                        { label: 'Départs possibles le', days: departureDays, set: setDepartureDays },
+                      ].map(({ label, days, set }) => (
+                        <div key={label} role="group" aria-label={label} className="space-y-3">
+                          <p className="text-sm font-semibold">{label}</p>
+                          <div className="flex flex-wrap gap-2">
+                            {DAYS_OF_WEEK.map(day => (
+                              <button key={day} type="button" aria-pressed={!!days[day]} onClick={() => set(prev => ({ ...prev, [day]: !prev[day] }))}
+                                className={`w-14 h-11 rounded-xl border text-sm font-semibold transition-colors ${days[day] ? 'bg-[#222222] border-[#222222] text-white' : 'bg-white border-[#CFCFCF] text-[#484848] hover:border-[#222222]'}`}>
+                                {day}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </section>
+              </div>
+            </div>
+          )}
+
+          {currentStep === 'pricing' && (
+            <div className={WITH_ASIDE}>
+              <div>
+                <StepHeader eyebrow={eyebrow} title="Fixez votre prix par nuit" description="Vous pourrez le modifier à tout moment depuis votre espace hôte." />
+                <div className="space-y-2.5">
+                  <label htmlFor="base-price" className="block text-[15px] font-semibold">Prix de base</label>
+                  <div className="flex items-center gap-2.5 rounded-2xl border border-[#CFCFCF] px-6 py-4 focus-within:border-[#222222] focus-within:ring-1 focus-within:ring-[#222222]">
+                    <input id="base-price" type="text" inputMode="decimal" value={pricing.base} onChange={(e) => setPricing({ ...pricing, base: e.target.value })}
+                      style={{ width: `${Math.max(pricing.base.length, 2) + 0.2}ch` }}
+                      className="max-w-full min-w-0 bg-transparent text-[44px] md:text-[56px] font-bold tracking-[-0.02em] tabular-nums focus:outline-none" />
+                    <span className="text-[36px] md:text-[44px] font-bold">€</span>
+                    <span className="ml-auto text-base text-[#6A6A6A]">par nuit</span>
+                  </div>
+                  <p className="text-[13px] text-[#6A6A6A]">Devise : euro (EUR)</p>
+                </div>
+
+                <section aria-labelledby="optional-rates-title" className="mt-10">
+                  <SectionTitle id="optional-rates-title" aside="Facultatif">Tarifs particuliers</SectionTitle>
+                  <div className="grid sm:grid-cols-3 gap-4">
+                    <Field label="Nuit de week-end" htmlFor="rate-weekend" hint="Vendredi et samedi">
+                      <AmountInput id="rate-weekend" value={pricing.weekend} onChange={v => setPricing({ ...pricing, weekend: v })} />
+                    </Field>
+                    <Field label="Semaine" htmlFor="rate-weekly" hint="Pour 7 nuits">
+                      <AmountInput id="rate-weekly" value={pricing.weekly} onChange={v => setPricing({ ...pricing, weekly: v })} />
+                    </Field>
+                    <Field label="Mois" htmlFor="rate-monthly" hint="Pour 28 nuits">
+                      <AmountInput id="rate-monthly" value={pricing.monthly} onChange={v => setPricing({ ...pricing, monthly: v })} />
+                    </Field>
+                  </div>
+                </section>
+              </div>
+              <div className={ASIDE}>
+                <ListingPreview photo={coverPhoto} title={descriptionData.title.trim()} location={locationLabel} details={capacitySummary} price={basePriceLabel}
+                  note="C'est ainsi que votre annonce apparaîtra dans les résultats de recherche." />
+              </div>
+            </div>
+          )}
+
+          {currentStep === 'fees' && (
+            <div className={NARROW}>
+              <StepHeader eyebrow={eyebrow} title="Ajoutez vos frais" description="Indiquez les montants demandés en plus du prix des nuits." />
+              <div className="space-y-5">
+                <Field label="Frais de ménage" htmlFor="fee-cleaning" hint="Facturés une fois par séjour.">
+                  <AmountInput id="fee-cleaning" value={fees.cleaning} onChange={v => setFees({ ...fees, cleaning: v })} />
+                </Field>
+                <Field label="Dépôt de sécurité" htmlFor="fee-security">
+                  <AmountInput id="fee-security" value={fees.security} onChange={v => setFees({ ...fees, security: v })} />
+                </Field>
+              </div>
+
+              <section aria-labelledby="optional-fees-title" className="mt-10">
+                <SectionTitle id="optional-fees-title" aside="Facultatif">Frais supplémentaires</SectionTitle>
+                <div className="rounded-2xl border border-[#E4E4E4] divide-y divide-[#E4E4E4]">
+                  {[
+                    { label: 'Voyageur supplémentaire', help: 'Par voyageur supplémentaire et par nuit', open: extraGuestFeeOpen, setOpen: setExtraGuestFeeOpen, value: extraGuestFee, setValue: setExtraGuestFee, id: 'fee-extra-guest' },
+                    { label: 'Animaux', help: 'Par nuit, lorsque des animaux accompagnent les voyageurs', open: petFeeOpen, setOpen: setPetFeeOpen, value: petFee, setValue: setPetFee, id: 'fee-pet' },
+                  ].map(fee => (
+                    <div key={fee.id} className="px-5 py-4 space-y-4">
+                      <div className="flex items-center justify-between gap-4">
+                        <div>
+                          <p className="text-base font-semibold">{fee.label}</p>
+                          <p className="text-sm text-[#6A6A6A]">{fee.help}</p>
+                        </div>
+                        <Switch checked={fee.open} label={`Frais : ${fee.label}`} onChange={(on) => { fee.setOpen(on); if (!on) fee.setValue(''); }} />
+                      </div>
+                      {fee.open && (
+                        <div className="max-w-[240px]">
+                          <label htmlFor={fee.id} className="sr-only">Montant : {fee.label}</label>
+                          <AmountInput id={fee.id} value={fee.value} onChange={fee.setValue} />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </section>
+            </div>
+          )}
+
+          {currentStep === 'calendar' && (
+            <div className={WIDE}>
+              <StepHeader eyebrow={eyebrow} title="Gardez votre calendrier à jour"
+                description="Les voyageurs réservent directement les nuits libres. Après la publication, bloquez les nuits où le logement n'est pas disponible depuis votre calendrier hôte." />
+              <div className="flex items-start gap-3 rounded-2xl bg-[#E6F6F9] px-5 py-4 text-sm leading-relaxed text-[#0A6E85] mb-8">
+                <Info className="w-5 h-5 flex-shrink-0 mt-px" />
+                <p>Annuler un séjour à la dernière minute entraîne des pénalités : vérifiez vos disponibilités avant la mise en ligne.</p>
+              </div>
+              <section aria-labelledby="calendar-title" className="rounded-2xl border border-[#E4E4E4] overflow-hidden">
+                <div className="flex items-center justify-between gap-4 px-5 py-4 border-b border-[#E4E4E4]">
+                  <h2 id="calendar-title" className="text-[17px] font-semibold capitalize">{calendarTitle}</h2>
+                  <div className="flex gap-1">
+                    <button type="button" aria-label="Mois précédent" disabled={isCurrentMonth}
+                      onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1))}
+                      className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-[#F7F7F7] disabled:opacity-30 disabled:hover:bg-transparent">
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button type="button" aria-label="Mois suivant"
+                      onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1))}
+                      className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-[#F7F7F7]">
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+                <div className="grid grid-cols-7 bg-[#FAFAFA] border-b border-[#E4E4E4]">
+                  {DAYS_OF_WEEK.map(day => <div key={day} className="py-2 text-center text-xs font-semibold text-[#6A6A6A]">{day}</div>)}
+                </div>
+                <div className="grid grid-cols-7">
+                  {calendarCells.map((cell, i) => (
+                    <div key={i} className={`min-h-[64px] md:min-h-[84px] p-2 border-b border-r border-[#F0F0F0] ${(i + 1) % 7 === 0 ? 'border-r-0' : ''}`}>
+                      {cell && (
+                        <div className="h-full flex flex-col justify-between">
+                          <span className={`text-sm ${cell.past ? 'text-[#BDBDBD] line-through' : 'font-semibold text-[#222222]'}`}>{cell.day}</span>
+                          {!cell.past && basePriceLabel && <span className="hidden sm:block text-xs text-[#6A6A6A]">{basePriceLabel}</span>}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </section>
+              <p className="mt-3 flex items-center gap-2 text-[13px] text-[#6A6A6A]">
+                <CalendarDays className="w-4 h-4" />
+                Toutes les nuits à venir sont ouvertes à la réservation au prix de base.
+              </p>
+            </div>
+          )}
+
+          {currentStep === 'cancellation-policy' && (
+            <div className={NARROW}>
+              <StepHeader eyebrow={eyebrow} title="Choisissez votre politique d'annulation" description="Elle s'affiche sur votre annonce et s'applique à chaque réservation." />
+              <div className="space-y-3">
+                {CANCELLATION_POLICIES.map(policy => (
+                  <OptionCard key={policy} layout="row" selected={cancellationPolicy === policy} onClick={() => setCancellationPolicy(policy)}
+                    title={CANCELLATION_POLICY_LABELS[policy]} description={CANCELLATION_POLICY_RULES[policy].join(' ')} />
                 ))}
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* --- NEW STEP: TAXES AND LAWS --- */}
-        {currentStep === 'laws-taxes' && (
-          <div className="max-w-3xl mx-auto space-y-10">
-            <h1 className="text-3xl font-bold text-[#222222] text-center">Indiquez les taxes et lois applicables</h1>
-            
-            <p className="text-[#717171] text-center max-w-xl mx-auto">
-              Si vous avez l'obligation de détenir un numéro d'enregistrement ou un permis de location à court terme dans votre secteur, indiquez-le ci-dessus.
-            </p>
+          {currentStep === 'summary-review-3' && renderChapterEnd(
+            'Vos tarifs sont prêts',
+            'Vérifiez vos règles et vos prix avant les dernières informations pratiques.',
+            <>
+              <RecapRow label="Règles de séjour" value={`Arrivée dès ${arrivalTime} · départ avant ${departureTime}`}
+                sub={`${plural(parseInt(minStay) || 1, 'nuit', 'nuits')} minimum · ${maxStay === 'Aucun maximum' ? 'pas de maximum' : `${maxStay} nuits maximum`}`}
+                onEdit={() => goToStep('reservation-mode')} />
+              <RecapRow label="Prix" value={basePriceLabel ? `${basePriceLabel} par nuit` : 'Non renseigné'}
+                sub={[
+                  formatAmount(pricing.weekend) && `week-end ${formatAmount(pricing.weekend)}`,
+                  formatAmount(pricing.weekly) && `semaine ${formatAmount(pricing.weekly)}`,
+                  formatAmount(pricing.monthly) && `mois ${formatAmount(pricing.monthly)}`,
+                ].filter(Boolean).join(' · ') || undefined}
+                onEdit={() => goToStep('pricing')} />
+              <RecapRow label="Frais" value={`Ménage ${formatAmount(fees.cleaning) ?? '0 €'} · dépôt ${formatAmount(fees.security) ?? '0 €'}`}
+                sub={[
+                  formatAmount(extraGuestFee) && `voyageur supplémentaire ${formatAmount(extraGuestFee)}`,
+                  formatAmount(petFee) && `animaux ${formatAmount(petFee)}`,
+                ].filter(Boolean).join(' · ') || undefined}
+                onEdit={() => goToStep('fees')} />
+              <RecapRow label="Annulation" value={CANCELLATION_POLICY_LABELS[cancellationPolicy]} onEdit={() => goToStep('cancellation-policy')} />
+            </>
+          )}
 
-            <div className="bg-white border border-gray-200 rounded-xl p-8 space-y-6 shadow-sm">
-               <div className="space-y-2">
-                 <label className="block text-sm font-bold text-[#222222]">Type d'enregistrement *</label>
-                 <div className="relative">
-                   <select 
-                     value={taxRegistration.type}
-                     onChange={(e) => setTaxRegistration({...taxRegistration, type: e.target.value})}
-                     className="w-full p-3 border border-gray-300 rounded-lg appearance-none bg-white cursor-pointer focus:outline-none focus:border-black"
-                   >
-                     <option value="CITQ">CITQ</option>
-                     <option value="Other">Autre</option>
-                   </select>
-                   <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                 </div>
-               </div>
-
-               <div className="space-y-2">
-                 <label className="block text-sm font-bold text-[#222222]">Numéro d'enregistrement CITQ *</label>
-                 <input 
-                   type="text" 
-                   placeholder="Tapez ici" 
-                   value={taxRegistration.number}
-                   onChange={(e) => setTaxRegistration({...taxRegistration, number: e.target.value})}
-                   className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black"
-                 />
-               </div>
-
-               <div className="space-y-2">
-                 <label className="block text-sm font-bold text-[#222222]">Date de délivrance</label>
-                 <div className="grid grid-cols-3 gap-4">
-                    <div className="relative">
-                      <select className="w-full p-3 border border-gray-300 rounded-lg appearance-none bg-white"><option>1</option></select>
-                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                    </div>
-                    <div className="relative">
-                      <select className="w-full p-3 border border-gray-300 rounded-lg appearance-none bg-white"><option>Janvier</option></select>
-                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                    </div>
-                    <div className="relative">
-                      <select className="w-full p-3 border border-gray-300 rounded-lg appearance-none bg-white"><option>2027</option></select>
-                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                    </div>
-                 </div>
-               </div>
-
-               <div className="space-y-2">
-                 <label className="block text-sm font-bold text-[#222222]">Date d'expiration</label>
-                 <div className="grid grid-cols-3 gap-4">
-                    <div className="relative">
-                      <select className="w-full p-3 border border-gray-300 rounded-lg appearance-none bg-white"><option>1</option></select>
-                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                    </div>
-                    <div className="relative">
-                      <select className="w-full p-3 border border-gray-300 rounded-lg appearance-none bg-white"><option>Janvier</option></select>
-                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                    </div>
-                    <div className="relative">
-                      <select className="w-full p-3 border border-gray-300 rounded-lg appearance-none bg-white"><option>2027</option></select>
-                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                    </div>
-                 </div>
-               </div>
-
-               <div className="space-y-2">
-                 <label className="block text-sm font-bold text-[#222222]">Image du certificat</label>
-                 <button className="w-full py-3 border border-gray-300 rounded-full flex items-center justify-center gap-2 text-[#222222] font-medium hover:bg-gray-50 transition-colors">
-                   <Upload className="w-4 h-4" /> Téléverser
-                 </button>
-               </div>
-            </div>
-
-            <div className="space-y-4">
-               <h3 className="font-bold text-xl text-[#222222]">Taxes</h3>
-               <p className="text-[#717171] text-sm">Si les taxes (i.e.: TPS, TVQ) ne sont pas déjà incluses dans votre prix de base, ajoutez-les ici.</p>
-               
-               <div className="flex items-center justify-between border-t border-gray-100 pt-4">
-                 <span className="text-[#222222]">Souhaitez-vous inclure les taxes à votre prix?</span>
-                 <div className="flex items-center gap-4">
-                    <button 
-                      onClick={() => setTaxRegistration({...taxRegistration, taxesIncluded: true})}
-                      className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all ${
-                        taxRegistration.taxesIncluded === true 
-                          ? 'bg-black border-black text-white' 
-                          : 'border-gray-300 bg-transparent text-black hover:border-black'
-                      }`}
-                    >
-                      <Check className="w-5 h-5" />
-                    </button>
-                    <button 
-                      onClick={() => setTaxRegistration({...taxRegistration, taxesIncluded: false})}
-                      className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all ${
-                        taxRegistration.taxesIncluded === false 
-                          ? 'bg-red-500 border-red-500 text-white' 
-                          : 'border-gray-300 bg-transparent text-red-500 hover:border-red-500'
-                      }`}
-                    >
-                      <X className="w-5 h-5" />
-                    </button>
-                 </div>
-               </div>
-            </div>
-          </div>
-        )}
-
-        {/* --- NEW STEP: LOCAL LAWS --- */}
-        {currentStep === 'local-laws' && (
-          <div className="max-w-3xl mx-auto space-y-10">
-            <h1 className="text-3xl font-bold text-[#222222] text-center">Prenez connaissance des lois et des taxes locales</h1>
-            
-            <div className="space-y-6 text-[#717171] text-base leading-relaxed">
-              <p>
-                Vous devez toujours vous informer sur les lois en vigueur dans votre ville avant de publier votre annonce.
-              </p>
-              <p>
-                La plupart des villes réglementent le partage de logement et les codes applicables de différents endroits (droit de l'urbanisme, plan d'occupation des sols, code du bâtiment, règlement de zonage, etc.) Le plus souvent, vous devez vous enregistrer et obtenir une autorisation avant de pouvoir louer votre chalet ou accepter des voyageurs. Vous pouvez également être responsable de la collecte et du versement de certaines taxes. Dans certains endroits, les locations à court terme sont totalement interdites.
-              </p>
-              <p>
-                Vous êtes responsable de votre propre décision de louer ou de réserver un chalet, il vous incombe donc de connaître les règles applicables avant d'utiliser MonsieurChalets.
-              </p>
-              <p>
-                Pour commencer, nous vous proposons quelques ressources utiles dans la section «Réglementation de votre ville».
-              </p>
-              <p>
-                En acceptant nos conditions générales et en publiant une annonce, vous vous engagez à respecter les lois et règlements de votre pays.
-              </p>
-            </div>
-
-            <div className="pt-4">
-              <label className="flex items-start gap-4 cursor-pointer group">
-                <div 
-                  className={`w-6 h-6 rounded border flex items-center justify-center flex-shrink-0 transition-colors mt-0.5 ${
-                    acceptedLocalLaws ? 'bg-black border-black' : 'border-gray-300 bg-white group-hover:border-black'
-                  }`}
-                  onClick={(e) => { e.preventDefault(); setAcceptedLocalLaws(!acceptedLocalLaws); }}
-                >
-                  {acceptedLocalLaws && <Check className="w-4 h-4 text-white" strokeWidth={3} />}
+          {currentStep === 'laws-taxes' && (
+            <div className={NARROW}>
+              <StepHeader eyebrow={eyebrow} title="Enregistrement et taxes" description="Si votre secteur exige un numéro d'enregistrement ou un permis de location à court terme, indiquez-le ici." />
+              <div className="space-y-5">
+                <Field label="Type d'enregistrement" htmlFor="tax-type">
+                  <SelectInput id="tax-type" value={taxRegistration.type} onChange={v => setTaxRegistration({ ...taxRegistration, type: v })}>
+                    <option value="CITQ">CITQ</option>
+                    <option value="Other">Autre</option>
+                  </SelectInput>
+                </Field>
+                <Field label={taxRegistration.type === 'CITQ' ? "Numéro d'enregistrement CITQ" : "Numéro d'enregistrement"} htmlFor="tax-number" hint="Laissez vide si votre secteur n'en exige pas.">
+                  <input id="tax-number" type="text" value={taxRegistration.number} onChange={(e) => setTaxRegistration({ ...taxRegistration, number: e.target.value })} className={inputClass} />
+                </Field>
+                <div className="grid sm:grid-cols-2 gap-5">
+                  <Field label="Date de délivrance" htmlFor="tax-issue" optional>
+                    <input id="tax-issue" type="date" value={taxDateToInput(taxRegistration.issueDate)} onChange={(e) => setTaxRegistration({ ...taxRegistration, issueDate: inputToTaxDate(e.target.value) })} className={inputClass} />
+                  </Field>
+                  <Field label="Date d'expiration" htmlFor="tax-expiry" optional>
+                    <input id="tax-expiry" type="date" value={taxDateToInput(taxRegistration.expDate)} onChange={(e) => setTaxRegistration({ ...taxRegistration, expDate: inputToTaxDate(e.target.value) })} className={inputClass} />
+                  </Field>
                 </div>
-                <div className="select-none" onClick={() => setAcceptedLocalLaws(!acceptedLocalLaws)}>
-                  <span className="text-[#222222] font-medium leading-normal">
-                    J'accepte les <span className="underline text-blue-600">termes et conditions</span> de la plateforme, ainsi que de respecter les lois locales en vigueur qui s'appliquent à l'endroit où j'effectue la location de mon chalet.
-                  </span>
+              </div>
+
+              <section aria-labelledby="taxes-title" className="mt-10 pt-8 border-t border-[#EBEBEB]">
+                <SectionTitle id="taxes-title">Taxes</SectionTitle>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <p className="text-[15px] text-[#484848]">Vos prix incluent-ils déjà les taxes (TPS, TVQ) ?</p>
+                  <YesNo label="Taxes incluses dans le prix" value={taxRegistration.taxesIncluded} onChange={v => setTaxRegistration({ ...taxRegistration, taxesIncluded: v })} />
                 </div>
-              </label>
+              </section>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* --- NEW STEP: GUEST ARRIVAL --- */}
-        {currentStep === 'guest-arrival' && (
-          <div className="max-w-3xl mx-auto space-y-10">
-            <h1 className="text-3xl font-bold text-[#222222] text-center">Facilitez l'arrivée de vos invités avec ces derniers détails</h1>
-            
-            <div className="space-y-8">
-              {/* Internet Section */}
-              <div className="space-y-6">
-                 <h3 className="text-lg font-bold text-[#222222]">Internet</h3>
-                 
-                 <div className="space-y-2">
-                   <label className="block text-sm font-medium text-[#222222]">Quelle est la vitesse de votre connexion Internet? *</label>
-                   <div className="relative">
-                     <select 
-                       value={guestArrival.internetSpeed}
-                       onChange={(e) => setGuestArrival({...guestArrival, internetSpeed: e.target.value})}
-                       className="w-full p-3 border border-gray-300 rounded-lg appearance-none bg-white cursor-pointer focus:outline-none focus:border-black"
-                     >
-                       <option value="">Choisissez-en un</option>
-                       <option value="50">Moins de 50 Mbps</option>
-                       <option value="100">50 à 100 Mbps</option>
-                       <option value="500">100 à 500 Mbps</option>
-                       <option value="1000">Plus de 500 Mbps</option>
-                     </select>
-                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                   </div>
-                 </div>
-
-                 <div className="flex items-center justify-between border-b border-gray-50 pb-4">
-                   <span className="text-[#222222] font-medium">Avez-vous une connexion au wifi?</span>
-                   <div className="flex items-center gap-4">
-                     <button 
-                       onClick={() => setGuestArrival({...guestArrival, hasWifi: true})} 
-                       className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all ${
-                         guestArrival.hasWifi === true 
-                           ? 'bg-transparent border-black text-black' 
-                           : 'border-gray-300 bg-transparent text-gray-400 hover:border-gray-400'
-                       }`}
-                     >
-                       <Check className="w-5 h-5" />
-                     </button>
-                     <button 
-                       onClick={() => setGuestArrival({...guestArrival, hasWifi: false})} 
-                       className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all ${
-                         guestArrival.hasWifi === false 
-                           ? 'bg-transparent border-red-500 text-red-500' 
-                           : 'border-gray-300 bg-transparent text-gray-400 hover:border-gray-400'
-                       }`}
-                     >
-                       <X className="w-5 h-5" />
-                     </button>
-                   </div>
-                 </div>
+          {currentStep === 'local-laws' && (
+            <div className={NARROW}>
+              <StepHeader eyebrow={eyebrow} title="Respectez les lois de votre secteur" description="Avant de publier votre annonce, informez-vous sur les règles en vigueur dans votre ville." />
+              <div className="rounded-2xl bg-[#F7F7F7] p-6 space-y-4 text-[15px] leading-relaxed text-[#484848]">
+                <p>
+                  La plupart des villes encadrent la location de logements (urbanisme, zonage, code du bâtiment, etc.). Le plus souvent, vous devez vous enregistrer et obtenir une autorisation avant de louer votre logement ou d'accueillir des voyageurs.
+                </p>
+                <p>
+                  Vous pouvez aussi devoir percevoir et reverser certaines taxes. Dans certains secteurs, la location de courte durée est interdite.
+                </p>
+                <p>
+                  Vous êtes responsable de votre décision de louer votre logement : il vous appartient de connaître les règles applicables avant d'utiliser Séjoura.
+                </p>
               </div>
-
-              {/* Guide Section */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-bold text-[#222222]">Guide du chalet</h3>
-                <button className="w-full py-3 border border-gray-300 rounded-full flex items-center justify-center gap-2 text-[#222222] font-medium hover:bg-gray-50 transition-colors">
-                  <Upload className="w-4 h-4" /> Téléverser
-                </button>
-              </div>
-
-              {/* Instructions Section */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-bold text-[#222222]">Instructions et règlements par rapport à la propriété</h3>
-                <textarea 
-                  value={guestArrival.instructions}
-                  onChange={(e) => setGuestArrival({...guestArrival, instructions: e.target.value})}
-                  placeholder="Tapez ici..."
-                  className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-black min-h-[120px] resize-none"
-                />
-              </div>
-
-              {/* Arrival Method Section */}
-              <div className="space-y-2">
-                 <label className="block text-sm font-bold text-[#222222]">Arrivée | Méthode d'enregistrement *</label>
-                 <div className="relative">
-                   <select 
-                     value={guestArrival.checkinMethod}
-                     onChange={(e) => setGuestArrival({...guestArrival, checkinMethod: e.target.value})}
-                     className="w-full p-3 border border-gray-300 rounded-lg appearance-none bg-white cursor-pointer focus:outline-none focus:border-black"
-                   >
-                     <option value="">-</option>
-                     <option value="keybox">Boîte à clé sécurisée</option>
-                     <option value="smartlock">Serrure intelligente</option>
-                     <option value="meet">Hôte vous accueille</option>
-                     <option value="staff">Personnel de l'immeuble</option>
-                   </select>
-                   <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                 </div>
+              <div className="mt-8">
+                <CheckboxRow id="accept-local-laws" checked={acceptedLocalLaws} onChange={setAcceptedLocalLaws}>
+                  J'accepte les <a href="/terms" target="_blank" rel="noopener noreferrer" className="font-semibold underline underline-offset-[3px]">conditions générales</a> de Séjoura et je m'engage à respecter les lois locales en vigueur là où se trouve mon logement.
+                </CheckboxRow>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* --- NEW STEP: PHONE NUMBER --- */}
-        {currentStep === 'phone-number' && (
-          <div className="max-w-2xl mx-auto space-y-10">
-            <div className="text-center space-y-4">
-               <h1 className="text-3xl font-bold text-[#222222]">Ajoutez votre numéro de téléphone</h1>
-               <p className="text-[#717171]">
-                 Nous vous enverrons des demandes de réservation, des rappels et d'autres notifications. Ce numéro doit pouvoir recevoir des SMS ou des appels.
-               </p>
-            </div>
-            
-            <div className="space-y-2">
-               <label className="block text-sm font-bold text-[#222222]">Numéro de téléphone portable *</label>
-               <div className="relative flex items-center">
-                  <div className="absolute left-3 flex items-center gap-2 pr-2 border-r border-gray-300">
-                     <div className="relative">
-                        <select 
-                          value={countryCode} 
-                          onChange={(e) => setCountryCode(e.target.value)}
-                          className="appearance-none bg-transparent font-medium text-[#222222] pr-6 focus:outline-none cursor-pointer"
-                        >
-                          <option value="+1">🇨🇦 +1</option>
-                          <option value="+1US">🇺🇸 +1</option>
-                          <option value="+33">🇫🇷 +33</option>
-                        </select>
-                        <ChevronDown className="w-3 h-3 text-[#222222] absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none" />
-                     </div>
+          {currentStep === 'guest-arrival' && (
+            <div className={NARROW}>
+              <StepHeader eyebrow={eyebrow} title="Préparez l'arrivée des voyageurs" description="Ces informations sont communiquées aux voyageurs une fois leur réservation confirmée." />
+              <div className="space-y-10">
+                <section aria-labelledby="checkin-title">
+                  <SectionTitle id="checkin-title">Comment les voyageurs entrent-ils dans le logement ?</SectionTitle>
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    {CHECKIN_METHODS.map(method => (
+                      <OptionCard key={method.id} selected={guestArrival.checkinMethod === method.id} onClick={() => setGuestArrival({ ...guestArrival, checkinMethod: method.id })}
+                        icon={method.icon} title={method.label} description={method.desc} />
+                    ))}
                   </div>
-                  <input 
-                    type="tel" 
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                    className="w-full p-3 pl-28 border border-gray-300 rounded-lg focus:outline-none focus:border-black"
-                    placeholder="(000) 000-0000"
-                  />
-               </div>
-            </div>
-          </div>
-        )}
+                </section>
 
-        {/* --- NEW STEP: SUMMARY REVIEW 3 --- */}
-        {currentStep === 'summary-review-3' && (
-          <div className="max-w-6xl mx-auto">
-             <div className="flex flex-col lg:flex-row gap-16 items-start">
-               <div className="flex-1 w-full space-y-8">
-                 <h1 className="text-3xl font-bold text-[#222222]">Vous y êtes presque!</h1>
-                 
-                 <div className="space-y-4">
-                    {/* Stage 1 - Completed/Collapsed */}
-                    <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between">
-                       <div className="flex items-center gap-4">
-                          <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-sm">1</div>
-                          <div>
-                             <h3 className="font-bold text-[#222222]">Commencez par la base</h3>
-                          </div>
-                       </div>
-                       <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
-                          <Check className="w-4 h-4 text-white" />
-                       </div>
+                <Field label="Instructions et règlement intérieur" htmlFor="checkin-instructions" optional hint="Code d'accès, stationnement, règles de la maison…">
+                  <textarea id="checkin-instructions" value={guestArrival.instructions} onChange={(e) => setGuestArrival({ ...guestArrival, instructions: e.target.value })} className={`${textareaClass} min-h-[120px]`} />
+                </Field>
+
+                <section aria-labelledby="internet-title">
+                  <SectionTitle id="internet-title">Internet</SectionTitle>
+                  <div className="rounded-2xl border border-[#E4E4E4] divide-y divide-[#E4E4E4]">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-5 py-4">
+                      <p className="text-[15px] font-medium">Le logement a-t-il le wifi ?</p>
+                      <YesNo label="Wifi disponible" value={guestArrival.hasWifi}
+                        onChange={v => setGuestArrival({ ...guestArrival, hasWifi: v, internetSpeed: v ? guestArrival.internetSpeed : '' })} />
                     </div>
-
-                    {/* Stage 2 - Completed/Collapsed */}
-                    <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between">
-                       <div className="flex items-center gap-4">
-                          <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-sm">2</div>
-                          <div>
-                             <h3 className="font-bold text-[#222222]">Décrivez l'environnement</h3>
-                          </div>
-                       </div>
-                       <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
-                          <Check className="w-4 h-4 text-white" />
-                       </div>
-                    </div>
-
-                    {/* Stage 3 - Expanded */}
-                    <div className="bg-gray-50 border border-gray-100 rounded-xl overflow-hidden">
-                       <div className="p-6 flex items-center justify-between border-b border-gray-100">
-                          <div className="flex items-center gap-4">
-                             <div className="w-10 h-10 rounded-full border border-black flex items-center justify-center text-[#222222] font-bold text-lg bg-white">3</div>
-                             <div>
-                                <h3 className="font-bold text-[#222222]">Préparez l'accueil des invités</h3>
-                                <p className="text-sm text-gray-500">Préparez l'accueil des invités</p>
-                             </div>
-                          </div>
-                          <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
-                             <Check className="w-5 h-5 text-white" />
-                          </div>
-                       </div>
-                       <div className="bg-white">
-                          {[
-                            { label: "Règles de réservation", step: 'reservation-mode' },
-                            { label: "Tarification", step: 'pricing' },
-                            { label: "Frais", step: 'fees' },
-                            { label: "Calendrier", step: 'calendar' },
-                            { label: "Politique d'annulation", step: 'cancellation-policy' },
-                            { label: "Taxes et lois", step: 'laws-taxes' },
-                            { label: "Lois locales", step: 'local-laws' },
-                            { label: "Arrivée des invités", step: 'guest-arrival' },
-                            { label: "Numéro de téléphone", step: 'phone-number' }
-                          ].map((item, idx) => (
-                             <div key={idx} className="flex items-center justify-between p-4 border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors">
-                                <span className="text-[#222222] font-medium text-sm">{item.label}</span>
-                                <button onClick={() => jumpToStep(item.step as Step)} className="p-2 hover:bg-gray-200 rounded-full transition-colors">
-                                   <Pencil className="w-4 h-4 text-gray-500" />
-                                </button>
-                             </div>
-                          ))}
-                       </div>
-                    </div>
-                 </div>
-
-                 <div className="mt-8">
-                   <button onClick={handleNext} className="w-full bg-black text-white py-4 rounded-xl font-bold text-lg hover:opacity-90 transition-opacity">
-                     Continuer
-                   </button>
-                 </div>
-               </div>
-               <div className="flex-1 w-full lg:h-[700px] rounded-2xl overflow-hidden shadow-lg hidden lg:block sticky top-32">
-                 <img src={summaryImage} className="w-full h-full object-cover" />
-               </div>
-             </div>
-          </div>
-        )}
-
-        {/* --- NEW STEP: VERIFICATION --- */}
-        {currentStep === 'verification' && (
-          <div className="max-w-4xl mx-auto space-y-10">
-             <h1 className="text-3xl font-bold text-[#222222] text-center mb-8">Vérifiez vos informations</h1>
-             
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* General Info */}
-                <div className="bg-gray-50 p-6 rounded-xl space-y-4">
-                   <h3 className="font-bold text-lg text-[#222222] border-b border-gray-200 pb-2">Général</h3>
-                   <div className="space-y-2 text-sm">
-                      <p><span className="font-semibold">Adresse:</span> {addressData.address}, {addressData.city}</p>
-                      <p><span className="font-semibold">Capacité:</span> {capacityData.capacity} personnes</p>
-                      <p><span className="font-semibold">Chambres:</span> {bedrooms.length}</p>
-                      <p><span className="font-semibold">Salles de bain:</span> {capacityData.bathrooms}</p>
-                   </div>
-                </div>
-
-                {/* Pricing */}
-                <div className="bg-gray-50 p-6 rounded-xl space-y-4">
-                   <h3 className="font-bold text-lg text-[#222222] border-b border-gray-200 pb-2">Tarification</h3>
-                   <div className="space-y-2 text-sm">
-                      <p><span className="font-semibold">Prix de base:</span> {pricing.base} {currency}</p>
-                      <p><span className="font-semibold">Frais de ménage:</span> {fees.cleaning} {currency}</p>
-                      <p><span className="font-semibold">Dépôt de sécurité:</span> {fees.security} {currency}</p>
-                      <p><span className="font-semibold">Politique d'annulation:</span> {CANCELLATION_POLICY_LABELS[cancellationPolicy]}</p>
-                   </div>
-                </div>
-
-                {/* Photos */}
-                <div className="bg-gray-50 p-6 rounded-xl space-y-4 md:col-span-2">
-                   <h3 className="font-bold text-lg text-[#222222] border-b border-gray-200 pb-2">Photos</h3>
-                   <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-                      {chaletPhotos.length > 0 ? chaletPhotos.map((photo, i) => (
-                        <div key={i} className="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden border border-gray-200">
-                           <img src={photo} className="w-full h-full object-cover" />
-                        </div>
-                      )) : (
-                        <p className="text-sm text-gray-500 italic">Aucune photo ajoutée</p>
-                      )}
-                   </div>
-                </div>
-             </div>
-          </div>
-        )}
-
-        {/* --- NEW STEP: SIGNATURE --- */}
-        {currentStep === 'signature' && (
-          <div className="max-w-2xl mx-auto space-y-10">
-             <div className="text-center space-y-4">
-               <h1 className="text-3xl font-bold text-[#222222]">Confirmation et soumission</h1>
-               <p className="text-[#717171]">
-                 Veuillez confirmer l'exactitude des informations et signer ci-dessous pour soumettre votre annonce.
-               </p>
-             </div>
-
-             <div className="bg-white border border-gray-200 rounded-xl p-8 space-y-6">
-                <div className="space-y-4">
-                   <label className="flex items-start gap-3 cursor-pointer group">
-                      <div 
-                        className={`w-6 h-6 rounded border flex items-center justify-center flex-shrink-0 transition-colors mt-0.5 ${
-                          isSigned ? 'bg-black border-black' : 'border-gray-300 bg-white group-hover:border-black'
-                        }`}
-                        onClick={() => setIsSigned(!isSigned)}
-                      >
-                        {isSigned && <Check className="w-4 h-4 text-white" strokeWidth={3} />}
+                    {guestArrival.hasWifi && (
+                      <div className="px-5 py-4">
+                        <Field label="Vitesse de connexion" htmlFor="internet-speed">
+                          <SelectInput id="internet-speed" value={guestArrival.internetSpeed} onChange={v => setGuestArrival({ ...guestArrival, internetSpeed: v })}>
+                            <option value="">Choisissez une vitesse</option>
+                            {INTERNET_SPEEDS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+                          </SelectInput>
+                        </Field>
                       </div>
-                      <div className="text-sm text-[#717171] leading-relaxed select-none" onClick={() => setIsSigned(!isSigned)}>
-                        Je certifie que toutes les informations fournies sont exactes et conformes à la réalité. Je comprends que toute fausse déclaration pourrait entraîner la suspension de mon annonce. J'accepte les conditions d'utilisation de Séjoura.
-                      </div>
-                   </label>
-                </div>
-
-                <div className="space-y-2">
-                   <label className="block text-sm font-bold text-[#222222]">Signature électronique (Nom complet) *</label>
-                   <input 
-                     type="text" 
-                     placeholder="Votre nom complet"
-                     value={signatureName}
-                     onChange={(e) => setSignatureName(e.target.value)}
-                     className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black font-serif italic text-lg"
-                   />
-                </div>
-             </div>
-
-             <div className="flex justify-center gap-4">
-                <button 
-                  onClick={handleBack}
-                  className="w-full py-4 border border-gray-300 rounded-full font-bold text-lg text-[#222222] hover:bg-gray-50 transition-colors"
-                >
-                  Retour
-                </button>
-                <button
-                  onClick={handleNext}
-                  disabled={!isSigned || !signatureName || isSubmitting}
-                  className={`w-full py-4 rounded-full font-bold text-lg text-white transition-all flex items-center justify-center gap-2 ${
-                    !isSigned || !signatureName || isSubmitting ? 'bg-gray-300 cursor-not-allowed' : 'bg-black hover:opacity-90'
-                  }`}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      Envoi en cours...
-                    </>
-                  ) : (
-                    'Soumettre votre annonce'
-                  )}
-                </button>
-             </div>
-             {submitError && (
-               <p className="text-red-500 text-sm text-center mt-3">{submitError}</p>
-             )}
-          </div>
-        )}
-
-      </main>
-
-      {/* Footer Navigation */}
-      {!currentStep.includes('summary-review') && currentStep !== 'signature' && (
-        <footer className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 py-3 px-6 md:px-12 z-50">
-           <div className="max-w-4xl mx-auto w-full flex items-center justify-between">
-              {currentStep !== 'acceptance-condition' && (
-                 <button 
-                  onClick={handleBack}
-                  className="px-6 py-3 border border-gray-200 rounded-full text-[#222222] font-semibold hover:bg-gray-50 transition-colors shadow-sm min-w-[120px]"
-                 >
-                   Retour
-                 </button>
-              )}
-              <div className={currentStep === 'acceptance-condition' ? 'ml-auto' : ''}>
-                <button 
-                  onClick={handleNext}
-                  disabled={isNextDisabled()}
-                  className={`px-8 py-3 rounded-full text-white font-semibold transition-all shadow-md min-w-[120px] ${
-                    isNextDisabled() ? 'bg-gray-800 opacity-50 cursor-not-allowed' : 'bg-[#222222] hover:bg-black'
-                  }`}
-                >
-                  Suivant
-                </button>
+                    )}
+                  </div>
+                </section>
               </div>
-           </div>
-        </footer>
-      )}
-
-      {currentStep.includes('summary-review') && (
-         <footer className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 py-3 px-6 md:px-12 z-50">
-            <div className="max-w-4xl mx-auto w-full flex items-center justify-between">
-               <button 
-                onClick={handleBack}
-                className="px-6 py-3 border border-gray-200 rounded-full text-[#222222] font-semibold hover:bg-gray-50 transition-colors shadow-sm min-w-[120px]"
-               >
-                 Retour
-               </button>
             </div>
-         </footer>
-      )}
+          )}
+
+          {currentStep === 'phone-number' && (
+            <div className={NARROW}>
+              <StepHeader eyebrow={eyebrow} title="Ajoutez votre numéro de téléphone"
+                description="Nous vous enverrons les réservations, les rappels et d'autres notifications. Ce numéro doit pouvoir recevoir des SMS ou des appels." />
+              <Field label="Téléphone portable" htmlFor="phone-number">
+                <div className="flex rounded-xl border border-[#CFCFCF] bg-white overflow-hidden focus-within:border-[#222222] focus-within:ring-1 focus-within:ring-[#222222]">
+                  <div className="relative border-r border-[#E4E4E4]">
+                    <select value={countryCode} onChange={(e) => setCountryCode(e.target.value)} aria-label="Indicatif du pays"
+                      className="h-12 pl-4 pr-9 appearance-none bg-transparent text-[15px] font-medium cursor-pointer focus:outline-none">
+                      <option value="+1">🇨🇦 +1</option>
+                      <option value="+1US">🇺🇸 +1</option>
+                      <option value="+33">🇫🇷 +33</option>
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6A6A6A] pointer-events-none" />
+                  </div>
+                  <input id="phone-number" type="tel" autoComplete="tel-national" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)}
+                    placeholder="(000) 000-0000" className="flex-1 min-w-0 h-12 px-4 text-[15px] placeholder:text-[#8A8A8A] focus:outline-none" />
+                </div>
+              </Field>
+            </div>
+          )}
+
+          {currentStep === 'verification' && (
+            <div className={WITH_ASIDE}>
+              <div>
+                <StepHeader eyebrow={`Chapitre ${chapterIndex + 1} · Dernière étape`}
+                  title={isEditMode ? 'Relisez vos modifications' : 'Relisez et envoyez votre annonce'}
+                  description={isEditMode ? 'Vos modifications seront enregistrées sur votre annonce.' : 'Notre équipe examinera votre annonce avant sa mise en ligne.'} />
+
+                <div className="rounded-2xl border border-[#E4E4E4] divide-y divide-[#E4E4E4]">
+                  {[
+                    {
+                      title: '1 · Votre logement', target: 'reservation-type' as Step,
+                      lines: [
+                        [spaceLabel, frequencyLabel?.toLowerCase(), locationLabel].filter(Boolean).join(' · '),
+                        `${capacityLine} · ${plural(selectedAmenities.length, 'équipement', 'équipements')}`,
+                      ],
+                    },
+                    {
+                      title: '2 · Votre annonce', target: 'chalet-photos' as Step,
+                      lines: [
+                        `« ${descriptionData.title || 'Sans titre'} » · ${plural(chaletPhotos.length, 'photo', 'photos')}`,
+                        descriptionData.description ? `${descriptionData.description.slice(0, 90)}${descriptionData.description.length > 90 ? '…' : ''}` : 'Pas encore de description',
+                      ],
+                    },
+                    {
+                      title: '3 · Tarifs et réservations', target: 'reservation-mode' as Step,
+                      lines: [
+                        `${basePriceLabel ?? '—'} par nuit · ménage ${formatAmount(fees.cleaning) ?? '0 €'} · dépôt ${formatAmount(fees.security) ?? '0 €'}`,
+                        `Arrivée dès ${arrivalTime}, départ avant ${departureTime} · ${plural(parseInt(minStay) || 1, 'nuit', 'nuits')} minimum · annulation ${CANCELLATION_POLICY_LABELS[cancellationPolicy].toLowerCase()}`,
+                      ],
+                    },
+                    {
+                      title: '4 · Règles et arrivée', target: 'laws-taxes' as Step,
+                      lines: [
+                        [taxRegistration.number ? `${taxRegistration.type === 'CITQ' ? 'CITQ' : 'Enregistrement'} n° ${taxRegistration.number}` : "Pas de numéro d'enregistrement", acceptedLocalLaws ? 'lois locales acceptées' : null].filter(Boolean).join(' · '),
+                        [checkinLabel, guestArrival.hasWifi ? 'wifi' : guestArrival.hasWifi === false ? 'sans wifi' : null, phoneNumber ? `${countryCode.replace('US', '')} ${phoneNumber}` : null].filter(Boolean).join(' · '),
+                      ],
+                    },
+                  ].map(group => (
+                    <div key={group.title} className="px-5 py-4 space-y-2">
+                      <div className="flex items-center justify-between gap-3">
+                        <h2 className="text-base font-semibold">{group.title}</h2>
+                        <button type="button" onClick={() => goToStep(group.target)} aria-label={`Modifier : ${group.title}`} className="inline-flex items-center gap-1.5 min-h-[40px] text-sm font-semibold underline underline-offset-[3px] hover:text-black">
+                          <Pencil className="w-3.5 h-3.5" /> Modifier
+                        </button>
+                      </div>
+                      {group.lines.filter(Boolean).map((line, i) => <p key={i} className="text-sm leading-relaxed text-[#484848]">{line}</p>)}
+                    </div>
+                  ))}
+                </div>
+
+                <section aria-labelledby="signature-title" className="mt-8 rounded-2xl bg-[#F7F7F7] p-6 space-y-5">
+                  <h2 id="signature-title" className="text-[17px] font-semibold">Signature</h2>
+                  <CheckboxRow id="certify" checked={isSigned} onChange={setIsSigned}>
+                    <span className="text-sm text-[#484848]">
+                      Je certifie que ces informations sont exactes et conformes à la réalité. Je comprends qu'une fausse déclaration peut entraîner la suspension de mon annonce, et j'accepte les <a href="/terms" target="_blank" rel="noopener noreferrer" className="font-semibold text-[#222222] underline underline-offset-[3px]">conditions d'utilisation</a> de Séjoura.
+                    </span>
+                  </CheckboxRow>
+                  <Field label="Votre nom complet" htmlFor="signature-name" hint="Fait office de signature électronique.">
+                    <input id="signature-name" type="text" autoComplete="name" value={signatureName} onChange={(e) => setSignatureName(e.target.value)}
+                      placeholder="Prénom Nom" className={`${inputClass} h-14 font-serif italic text-xl`} />
+                  </Field>
+                  {submitError && (
+                    <p role="alert" className="flex items-start gap-2 text-sm text-[#B42318]">
+                      <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" /> {submitError}
+                    </p>
+                  )}
+                </section>
+              </div>
+              <div className={`${ASIDE} space-y-4`}>
+                <ListingPreview label="Ce que verront les voyageurs" photo={coverPhoto} title={descriptionData.title.trim()} location={locationLabel} details={capacitySummary} price={basePriceLabel} />
+                {!isEditMode && (
+                  <div className="flex items-start gap-2.5 rounded-xl bg-[#E6F6F9] p-3.5 text-[13px] leading-relaxed text-[#0A6E85]">
+                    <Info className="w-[18px] h-[18px] flex-shrink-0" />
+                    Après l'envoi, votre annonce reste modifiable depuis votre espace hôte.
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          </div>
+        </main>
+
+        <ActionBar
+          onBack={handleBack}
+          onNext={handleNext}
+          nextLabel={nextLabel}
+          disabled={!!blockingReason}
+          hint={blockingReason}
+          loading={isSubmitting}
+        />
+      </div>
 
       {/* MODAL: SMS Verification Code */}
       {isSmsModalOpen && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsSmsModalOpen(false)} />
-           <div className="bg-white rounded-2xl w-full max-w-lg overflow-hidden relative z-10 animate-in zoom-in-95 duration-200 p-8 shadow-2xl">
-             <div className="flex justify-between items-start mb-6">
-               <h3 className="text-xl font-bold text-[#222222]">Entrez votre code de sécurité</h3>
-               <button onClick={() => setIsSmsModalOpen(false)} className="p-1 hover:bg-gray-100 rounded-full"><X className="w-5 h-5" /></button>
-             </div>
-             
-             <div className="space-y-6">
-               <div className="space-y-2">
-                 <p className="font-medium text-[#222222]">Nous avons envoyé le code par SMS {countryCode.replace('US', '')} {phoneNumber}</p>
-                 <p className="text-sm text-[#717171] leading-relaxed">
-                   Nous vous enverrons des demandes de réservation, des rappels et d'autres notifications. Ce numéro doit pouvoir recevoir des messages texte ou des appels.
-                 </p>
-               </div>
-
-               <div className="flex items-center justify-end gap-2 text-sm">
-                 <span className="text-[#717171]">Vous ne l'avez pas reçu?</span>
-                 <button className="font-bold underline text-[#222222] hover:text-black">Essayez à nouveau</button>
-               </div>
-
-               <div className="pt-2">
-                  <input 
-                    type="text" 
-                    placeholder="Code de vérification (ex: 123456)"
-                    className="w-full p-4 border border-gray-300 rounded-lg text-center text-xl font-bold tracking-widest focus:outline-none focus:border-black"
-                    value={smsCode}
-                    onChange={(e) => setSmsCode(e.target.value)}
-                  />
-               </div>
-
-               <div className="flex items-center justify-between gap-4 pt-4">
-                 <button 
-                   onClick={() => setIsSmsModalOpen(false)}
-                   className="flex-1 py-3 border border-gray-300 rounded-full font-bold text-[#222222] hover:bg-gray-50 transition-colors"
-                 >
-                   Annuler
-                 </button>
-                 <button 
-                   onClick={() => {
-                     // Verify code logic here (mock)
-                     setIsSmsModalOpen(false);
-                     setCurrentStep('verification'); // Manually advance step from modal
-                     window.scrollTo(0,0);
-                   }}
-                   className="flex-1 py-3 bg-[#333] text-white rounded-full font-bold hover:bg-black transition-colors"
-                 >
-                   Confirmer
-                 </button>
-               </div>
-             </div>
-           </div>
-        </div>
-      )}
-
-      {/* MODAL: Import iCal (Existing) */}
-      {isImportModalOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsImportModalOpen(false)} />
-           <div className="bg-white rounded-2xl w-full max-w-2xl overflow-hidden relative z-10 animate-in zoom-in-95 duration-200">
-             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-               <h3 className="font-bold text-lg text-[#222222]">Importer et visualiser vos réservations à partir d'autres plateformes</h3>
-               <button onClick={() => setIsImportModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full"><X className="w-5 h-5" /></button>
-             </div>
-             <div className="p-8 space-y-8">
-               <p className="text-[#222222] font-medium">Quelle plateforme de réservation souhaitez-vous importer dans MonsieurChalets?</p>
-               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {[
-                    { name: 'Booking.com', bg: 'bg-[#003580]', color: 'text-white', icon: 'B.' },
-                    { name: 'Airbnb.com', bg: 'bg-[#FF5A5F]', color: 'text-white', icon: 'A' },
-                    { name: 'Vrbo.com', bg: 'bg-[#2c3e50]', color: 'text-white', icon: 'V' },
-                    { name: 'GlampingHub', bg: 'bg-[#27ae60]', color: 'text-white', icon: 'G' },
-                  ].map((platform) => (
-                    <button key={platform.name} className="flex flex-col items-center gap-3 p-4 border border-gray-200 rounded-xl hover:border-black transition-colors group">
-                       <div className={`w-12 h-12 rounded-lg ${platform.bg} ${platform.color} flex items-center justify-center font-bold text-xl`}>{platform.icon}</div>
-                       <span className="text-xs text-gray-500 group-hover:text-black">Importer de {platform.name}</span>
-                    </button>
-                  ))}
-               </div>
-               <div className="relative">
-                 <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
-                 <div className="relative flex justify-center text-sm"><span className="px-2 bg-white text-gray-500">ou</span></div>
-               </div>
-               <button className="w-full py-3 border border-gray-300 rounded-full text-[#222222] font-medium hover:border-black transition-colors">Importer d'une autre plateforme</button>
-             </div>
-             <div className="px-6 py-4 border-t border-gray-100 flex gap-4 justify-end">
-               <button onClick={() => setIsImportModalOpen(false)} className="px-6 py-3 border border-gray-300 rounded-full text-[#222222] font-medium hover:bg-gray-50">Cancel</button>
-               <button className="px-6 py-3 bg-[#333] text-white rounded-full font-medium hover:bg-black">Importer</button>
-             </div>
-           </div>
-        </div>
-      )}
-
-      {/* MODAL: Add Rate (Updated) */}
-      {isRateModalOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsRateModalOpen(false)} />
-           <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative z-10 animate-in zoom-in-95 duration-200">
-             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white z-10">
-               <h3 className="font-bold text-lg text-[#222222]">Tarif spécifique</h3>
-               <button onClick={() => setIsRateModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full"><X className="w-5 h-5" /></button>
-             </div>
-             <div className="p-8 space-y-6">
-                {/* Existing Rate Fields */}
-                <div className="space-y-2">
-                   <label className="text-sm font-bold text-[#222222]">Période *</label>
-                   <div className="relative">
-                     <input type="text" placeholder="Sélectionner les dates" className="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
-                     <CalendarIcon className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                   </div>
-                </div>
-                
-                <button className="px-4 py-2 border border-gray-300 rounded-full text-sm font-medium hover:border-black transition-colors">
-                  + Ajouter une période à ce tarif
-                </button>
-
-                <div className="space-y-2">
-                   <label className="text-sm font-bold text-[#222222]">Nom de période *</label>
-                   <input type="text" placeholder="Tapez ici" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                   <div className="space-y-2">
-                     <label className="text-sm font-bold text-[#222222]">Tarif de base *</label>
-                     <input type="text" placeholder="EUR (€)" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
-                     <p className="text-[10px] text-gray-400">Ce prix sera le tarif par défaut pour chaque nuit.</p>
-                   </div>
-                   <div className="space-y-2">
-                     <label className="text-sm font-bold text-[#222222]">Tarif d'une nuit de week-end</label>
-                     <input type="text" placeholder="EUR (€)" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
-                     <p className="text-[10px] text-gray-400">Ce prix sera le prix par défaut pour le week-end.</p>
-                   </div>
-                   <div className="space-y-2">
-                     <label className="text-sm font-bold text-[#222222]">Tarif hebdomadaire</label>
-                     <input type="text" placeholder="EUR (€)" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
-                     <p className="text-[10px] text-gray-400">Ce prix sera le tarif par défaut pour une période de 7 jours.</p>
-                   </div>
-                   <div className="space-y-2">
-                     <label className="text-sm font-bold text-[#222222]">Tarif mensuel</label>
-                     <input type="text" placeholder="EUR (€)" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
-                     <p className="text-[10px] text-gray-400">Ce prix sera le tarif appliqué pour des périodes de 28 jours.</p>
-                   </div>
-                </div>
-
-                {/* Updated Durée du séjour Section */}
-                <div className="pt-4 border-t border-gray-100 space-y-4">
-                  <h4 className="font-bold text-[#222222] text-lg">Durée du séjour</h4>
-                  
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-[#222222]">Durée minimum d'un séjour</label>
-                    <div className="relative">
-                      <select 
-                        value={rateModalMinStay} 
-                        onChange={(e) => setRateModalMinStay(e.target.value)} 
-                        className="w-full p-3 border border-gray-300 rounded-lg appearance-none bg-white cursor-pointer focus:outline-none focus:border-black"
-                      >
-                        {[1, 2, 3, 4, 5, 6, 7].map(n => <option key={n} value={n}>{n}</option>)}
-                      </select>
-                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-[#222222]">Durée maximale d'un séjour</label>
-                    <div className="relative">
-                      <select 
-                        value={rateModalMaxStay} 
-                        onChange={(e) => setRateModalMaxStay(e.target.value)} 
-                        className="w-full p-3 border border-gray-300 rounded-lg appearance-none bg-white cursor-pointer focus:outline-none focus:border-black"
-                      >
-                        <option value="Aucun maximum">Aucun maximum</option>
-                        {[7, 14, 28].map(n => <option key={n} value={n}>{n} jours</option>)}
-                      </select>
-                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-[#222222]">Note à vous-même</label>
-                    <textarea 
-                      value={rateModalNote}
-                      onChange={(e) => setRateModalNote(e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black resize-none h-24"
-                    />
-                    <p className="text-right text-xs text-gray-400">{rateModalNote.length}/300</p>
-                  </div>
-                </div>
-             </div>
-             <div className="px-6 py-4 border-t border-gray-100 flex gap-4 justify-end sticky bottom-0 bg-white">
-               <button onClick={() => setIsRateModalOpen(false)} className="px-6 py-3 border border-gray-300 rounded-full text-[#222222] font-medium hover:bg-gray-50">Annuler</button>
-               <button className="px-6 py-3 bg-black text-white rounded-full font-medium hover:bg-gray-800">Sauvegarder</button>
-             </div>
-           </div>
-        </div>
-      )}
-
-      {/* MODAL: Block Period (New) */}
-      {isBlockModalOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsBlockModalOpen(false)} />
-           <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative z-10 animate-in zoom-in-95 duration-200">
-             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white z-10">
-               <h3 className="font-bold text-lg text-[#222222]">Blocages</h3>
-               <button onClick={() => setIsBlockModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full"><X className="w-5 h-5" /></button>
-             </div>
-             <div className="p-8 space-y-6">
-                <div className="space-y-2">
-                   <label className="text-sm font-bold text-[#222222]">Période *</label>
-                   <div className="relative">
-                     <input type="text" placeholder="Sélectionner les dates" className="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
-                     <CalendarIcon className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                   </div>
-                </div>
-
-                <div className="space-y-2">
-                   <label className="text-sm font-bold text-[#222222]">Nom de période *</label>
-                   <input type="text" placeholder="Tapez ici" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
-                </div>
-
-                <div className="flex items-start gap-4">
-                   <button 
-                     onClick={() => setIsBlockEnabled(!isBlockEnabled)}
-                     className={`w-12 h-6 rounded-full relative transition-colors flex-shrink-0 ${isBlockEnabled ? 'bg-green-500' : 'bg-gray-300'}`}
-                   >
-                     <div className={`absolute top-1 bottom-1 w-4 h-4 bg-white rounded-full transition-transform ${isBlockEnabled ? 'left-[calc(100%-1.25rem)]' : 'left-1'}`} />
-                   </button>
-                   <div>
-                     <span className={`block font-bold text-sm mb-1 ${isBlockEnabled ? 'text-blue-600' : 'text-gray-500'}`}>Bloquer la période</span>
-                     <p className="text-xs text-[#717171]">L'activation du blocage signifie qu'aucune demande de réservation ne pourra être fait aux dates indiquées.</p>
-                   </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="block text-sm font-bold text-[#222222]">Note à vous-même</label>
-                  <textarea 
-                    value={blockModalNote}
-                    onChange={(e) => setBlockModalNote(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black resize-none h-24"
-                  />
-                  <p className="text-right text-xs text-gray-400">{blockModalNote.length}/300</p>
-                </div>
-             </div>
-             <div className="px-6 py-4 border-t border-gray-100 flex gap-4 justify-end sticky bottom-0 bg-white">
-               <button onClick={() => setIsBlockModalOpen(false)} className="px-6 py-3 border border-gray-300 rounded-full text-[#222222] font-medium hover:bg-gray-50">Annuler</button>
-               <button className="px-6 py-3 bg-black text-white rounded-full font-medium hover:bg-gray-800">Sauvegarder</button>
-             </div>
-           </div>
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsSmsModalOpen(false)} />
+          <div role="dialog" aria-modal="true" aria-labelledby="sms-title" className="relative z-10 w-full max-w-md rounded-2xl bg-white p-7 shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="flex items-start justify-between gap-4 mb-5">
+              <h3 id="sms-title" className="text-xl font-bold">Confirmez votre numéro</h3>
+              <button type="button" onClick={() => setIsSmsModalOpen(false)} aria-label="Fermer" className="w-9 h-9 -mr-2 -mt-1 rounded-full flex items-center justify-center hover:bg-[#F7F7F7]">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <p className="text-[15px] text-[#484848]">Saisissez le code envoyé par SMS au <strong className="text-[#222222] whitespace-nowrap">{countryCode.replace('US', '')} {phoneNumber}</strong>.</p>
+            <label htmlFor="sms-code" className="sr-only">Code de vérification</label>
+            <input id="sms-code" type="text" inputMode="numeric" autoComplete="one-time-code" placeholder="123456" value={smsCode} onChange={(e) => setSmsCode(e.target.value)}
+              className="mt-5 w-full h-14 rounded-xl border border-[#CFCFCF] text-center text-2xl font-bold tracking-[0.3em] focus:outline-none focus:border-[#222222] focus:ring-1 focus:ring-[#222222]" />
+            <p className="mt-3 text-sm text-[#6A6A6A]">
+              Vous ne l'avez pas reçu ? <button type="button" className="font-semibold text-[#222222] underline underline-offset-[3px]">Renvoyer le code</button>
+            </p>
+            <div className="mt-7 flex gap-3">
+              <button type="button" onClick={() => setIsSmsModalOpen(false)} className="flex-1 min-h-[48px] rounded-xl border border-[#CFCFCF] font-semibold hover:border-[#222222]">
+                Annuler
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  // Verify code logic here (mock)
+                  setIsSmsModalOpen(false);
+                  goToStep(stepsList[currentStepIndex + 1]);
+                }}
+                className="flex-1 min-h-[48px] rounded-xl bg-[#222222] text-white font-semibold hover:bg-black"
+              >
+                Confirmer
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -2498,65 +2031,41 @@ export function HostOnboarding({ onNavigate, initialStep = 'acceptance-condition
       {editingItem && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setEditingItem(null)} />
-          <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col relative z-10 animate-in zoom-in-95 duration-200">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-[#222222]">{editingItem.item.name}</h2>
-              <button onClick={() => setEditingItem(null)} className="p-2 hover:bg-gray-100 rounded-full transition-colors"><X className="w-5 h-5 text-[#222222]" /></button>
+          <div role="dialog" aria-modal="true" aria-labelledby="room-title" className="relative z-10 w-full max-w-lg max-h-[90vh] flex flex-col rounded-2xl bg-white overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between gap-4 px-6 py-4 border-b border-[#EBEBEB]">
+              <h2 id="room-title" className="text-lg font-bold truncate">{editingItem.item.name || 'Espace'}</h2>
+              <button type="button" onClick={() => setEditingItem(null)} aria-label="Fermer" className="w-9 h-9 -mr-2 rounded-full flex items-center justify-center hover:bg-[#F7F7F7]">
+                <X className="w-5 h-5" />
+              </button>
             </div>
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-[#222222]">Nom de l'espace *</label>
-                <input 
-                  type="text" 
-                  value={editingItem.item.name}
+              <Field label="Nom de l'espace" htmlFor="room-name">
+                <input id="room-name" type="text" value={editingItem.item.name}
                   onChange={(e) => setEditingItem({ ...editingItem, item: { ...editingItem.item, name: e.target.value } })}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors"
-                />
-              </div>
-              <div className="space-y-6">
-                {[
-                  { key: 'simple', label: 'Lit simple' },
-                  { key: 'double', label: 'Lit double' },
-                  { key: 'queen', label: 'Lit Queen' },
-                  { key: 'king', label: 'Lit King' },
-                  { key: 'simple_bunk', label: 'Lit simple superposé' },
-                  { key: 'double_bunk', label: 'Lit double superposé' },
-                  { key: 'queen_bunk', label: 'Lit queen superposé' },
-                  { key: 'king_bunk', label: 'Lit king superposé' },
-                  { key: 'sofa_bed', label: "Canapé-lit" },
-                  { key: 'other', label: "Matériel d'appoint" },
-                ].map((bed) => (
-                  <div key={bed.key} className="flex items-center justify-between">
-                    <span className="text-[#222222]">{bed.label}</span>
-                    <div className="flex items-center gap-4">
-                      <button 
-                        onClick={() => handleBedCountChange(bed.key as keyof Bedroom['beds'], -1)}
-                        disabled={editingItem.item.beds[bed.key as keyof Bedroom['beds']] === 0}
-                        className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-black disabled:opacity-30"
-                      >
-                        <Minus className="w-4 h-4 text-[#717171]" />
-                      </button>
-                      <span className="text-base font-medium text-[#222222] w-6 text-center">{editingItem.item.beds[bed.key as keyof Bedroom['beds']]}</span>
-                      <button 
-                        onClick={() => handleBedCountChange(bed.key as keyof Bedroom['beds'], 1)}
-                        className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-black"
-                      >
-                        <Plus className="w-4 h-4 text-[#717171]" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  className={inputClass} />
+              </Field>
+              <div>
+                <p className="text-sm font-semibold mb-2">Lits</p>
+                <div className="rounded-2xl border border-[#E4E4E4] divide-y divide-[#E4E4E4]">
+                  {BED_TYPES.map(bed => (
+                    <StepperRow key={bed.key} dense label={bed.label} value={editingItem.item.beds[bed.key]} min={0} max={10} onChange={(v) => setBedCount(bed.key, v)} />
+                  ))}
+                </div>
               </div>
             </div>
-            <div className="px-6 py-4 border-t border-gray-100">
-              <button 
+            <div className="flex gap-3 px-6 py-4 border-t border-[#EBEBEB]">
+              <button type="button" onClick={() => setEditingItem(null)} className="flex-1 min-h-[48px] rounded-xl border border-[#CFCFCF] font-semibold hover:border-[#222222]">
+                Annuler
+              </button>
+              <button
+                type="button"
                 onClick={() => {
                   updateItem(editingItem.item, editingItem.type);
                   setEditingItem(null);
                 }}
-                className="w-full bg-black text-white py-3 rounded-full font-semibold hover:opacity-90 transition-opacity"
+                className="flex-1 min-h-[48px] rounded-xl bg-[#222222] text-white font-semibold hover:bg-black"
               >
-                Sauvegarder
+                Enregistrer
               </button>
             </div>
           </div>
