@@ -74,14 +74,24 @@ function apiError(message: string, status: number, data: unknown = { message }):
   return error;
 }
 
+type ApiFetchOptions = RequestInit & {
+  /**
+   * false : route publique, la requête part sans attendre la session Supabase.
+   * Avec un jeton expiré, getSession() le rafraîchit d'abord et réessaie ~25 s si le réseau échoue.
+   */
+  auth?: boolean;
+  /** Abandonne la requête après ce délai (ms) au lieu d'attendre indéfiniment une connexion figée */
+  timeoutMs?: number;
+};
+
 /**
  * Base fetch wrapper with authentication and error handling
  */
 async function apiFetch<T>(
   endpoint: string,
-  options: RequestInit = {}
+  { auth = true, timeoutMs, ...options }: ApiFetchOptions = {}
 ): Promise<T> {
-  const token = await getAccessToken();
+  const token = auth ? await getAccessToken() : null;
 
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
@@ -96,6 +106,7 @@ async function apiFetch<T>(
   const response = await fetch(apiUrl(endpoint), {
     ...options,
     headers,
+    signal: options.signal ?? (timeoutMs ? AbortSignal.timeout(timeoutMs) : undefined),
   });
 
   const data = await response.json().catch(() => ({}));
@@ -639,6 +650,24 @@ export const listingsApi = {
 
 // ─── Public Listings API (no auth required) ─────────────────────────────────
 
+const PUBLIC_TIMEOUT_MS = 15_000;
+/** Délais avant de réessayer après une coupure réseau (ex. : ERR_NETWORK_CHANGED), un délai dépassé ou une erreur 5xx */
+const PUBLIC_RETRY_DELAYS_MS = [1_000, 3_000];
+
+/** GET d'une route publique : sans session, limité dans le temps, réessayé sur les erreurs passagères. */
+async function publicFetch<T>(endpoint: string): Promise<T> {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await apiFetch<T>(endpoint, { auth: false, timeoutMs: PUBLIC_TIMEOUT_MS });
+    } catch (error) {
+      const status = (error as { status?: number }).status;
+      const transient = !status || status >= 500;
+      if (!transient || attempt >= PUBLIC_RETRY_DELAYS_MS.length) throw error;
+      await new Promise((resolve) => setTimeout(resolve, PUBLIC_RETRY_DELAYS_MS[attempt]));
+    }
+  }
+}
+
 export const publicListingsApi = {
   getAll: async (filters: PublicListingsFilters = {}): Promise<{ listings: PublicListing[] }> => {
     const query = new URLSearchParams();
@@ -646,11 +675,11 @@ export const publicListingsApi = {
       if (val !== undefined && val !== '') query.append(key, String(val));
     });
     const qs = query.toString();
-    return apiFetch<{ listings: PublicListing[] }>(`/listings/public${qs ? `?${qs}` : ''}`);
+    return publicFetch<{ listings: PublicListing[] }>(`/listings/public${qs ? `?${qs}` : ''}`);
   },
 
   getOne: async (id: number): Promise<{ listing: ListingDetail }> => {
-    return apiFetch<{ listing: ListingDetail }>(`/listings/public/${id}`);
+    return publicFetch<{ listing: ListingDetail }>(`/listings/public/${id}`);
   },
 };
 

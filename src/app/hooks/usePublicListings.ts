@@ -45,6 +45,13 @@ export function usePublicListings(enabled = true) {
 
   const retry = useCallback(() => setAttempt((n) => n + 1), []);
 
+  // Échec : on recharge dès que le navigateur retrouve le réseau, sans attendre un clic
+  useEffect(() => {
+    if (!failed) return;
+    window.addEventListener('online', retry);
+    return () => window.removeEventListener('online', retry);
+  }, [failed, retry]);
+
   return { listings, failed, retry };
 }
 

@@ -1,5 +1,6 @@
 import { Heart, House } from 'lucide-react';
 import { useFavorites } from '../context/FavoritesContext';
+import { RetryingImg } from './RetryingImg';
 
 interface PropertyCardProps {
   id?: string;
@@ -48,9 +49,10 @@ export function PropertyCard({
     <div className="group cursor-pointer flex-shrink-0 w-full" onClick={handleClick}>
       <div className="relative aspect-square rounded-xl overflow-hidden mb-3">
         {image ? (
-          <img
+          <RetryingImg
             src={image}
             alt={title}
+            loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (

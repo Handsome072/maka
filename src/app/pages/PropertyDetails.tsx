@@ -1,6 +1,7 @@
 import { Heart, Share, Star, ChevronRight, ChevronLeft, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { ImageCarouselModal } from '../components/ImageCarouselModal';
+import { RetryingImg } from '../components/RetryingImg';
 import { ListingDetail, reviewsApi, messagesApi, reservationsApi, PriceBreakdown } from '../services/api';
 import { BED_TYPE_LABELS } from '../components/host-onboarding/constants';
 import { useAuth } from '../context/AuthContext';
@@ -667,7 +668,7 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
             {/* Large image */}
             <div className="md:col-span-2 md:row-span-2 relative group overflow-hidden">
               {images[0] && (
-                <img
+                <RetryingImg
                   src={images[0]}
                   alt="Property main"
                   className="w-full h-full object-cover cursor-pointer transition-all"
@@ -684,7 +685,7 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
             {/* Small images */}
             {images.slice(1, 5).map((img, index) => (
               <div key={index} className="hidden md:block relative group overflow-hidden">
-                <img
+                <RetryingImg
                   src={img}
                   alt={`Property ${index + 2}`}
                   className="w-full h-full object-cover cursor-pointer transition-all"
@@ -826,7 +827,7 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
                     {allSleepingAreas.map((area, index) => (
                       <div key={index} className="rounded-xl">
                         {area.image && (
-                          <img src={area.image} alt={area.name || (area.areaType === 'bedroom' ? 'Chambre' : 'Espace commun')} className="w-full h-64 object-cover rounded-lg mb-4" />
+                          <RetryingImg src={area.image} alt={area.name || (area.areaType === 'bedroom' ? 'Chambre' : 'Espace commun')} className="w-full h-64 object-cover rounded-lg mb-4" />
                         )}
                         <h4 className="text-base" style={{ fontWeight: 600 }}>{area.name || (area.areaType === 'bedroom' ? 'Chambre' : 'Espace commun')}</h4>
                         {normalizeBeds(area.beds).map((bed, bi) => (
@@ -844,7 +845,7 @@ export function PropertyDetails({ listing, onBack, onBook, onReviewAdded, onNavi
                     {allSleepingAreas.map((area, index) => (
                       <div key={index} className="flex-shrink-0 w-[280px] rounded-xl">
                         {area.image && (
-                          <img src={area.image} alt={area.name || (area.areaType === 'bedroom' ? 'Chambre' : 'Espace commun')} className="w-full h-64 object-cover rounded-lg mb-4" />
+                          <RetryingImg src={area.image} alt={area.name || (area.areaType === 'bedroom' ? 'Chambre' : 'Espace commun')} className="w-full h-64 object-cover rounded-lg mb-4" />
                         )}
                         <h4 className="text-base" style={{ fontWeight: 600 }}>{area.name || (area.areaType === 'bedroom' ? 'Chambre' : 'Espace commun')}</h4>
                         {normalizeBeds(area.beds).map((bed, bi) => (

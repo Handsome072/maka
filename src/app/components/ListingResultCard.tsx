@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { Heart, Star, ChevronLeft, ChevronRight, House } from 'lucide-react';
 import { useFavorites } from '../context/FavoritesContext';
+import { RetryingImg } from './RetryingImg';
 import type { PublicListing } from '../services/api';
 import { placeLabel } from '@/shared/places';
 
@@ -66,9 +67,10 @@ export function ListingResultCard({ listing, href }: { listing: PublicListing; h
       {/* Image carousel */}
       <div className="relative aspect-square mb-3 rounded-xl overflow-hidden">
         {images.length > 0 ? (
-          <img
+          <RetryingImg
             src={images[currentImageIndex]}
             alt={listing.title || 'Logement'}
+            loading="lazy"
             className="w-full h-full object-cover"
           />
         ) : (
