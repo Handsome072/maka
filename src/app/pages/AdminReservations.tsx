@@ -59,6 +59,17 @@ function formatDay(date: string): string {
   });
 }
 
+/** « 24 déc. → 31 déc. 2026 » : l'année n'est répétée que si le séjour change d'année. */
+function formatStay(checkIn: string, checkOut: string): string {
+  const start = new Date(`${checkIn.slice(0, 10)}T00:00:00Z`).toLocaleDateString('fr-FR', {
+    timeZone: 'UTC',
+    day: 'numeric',
+    month: 'short',
+    ...(checkIn.slice(0, 4) === checkOut.slice(0, 4) ? {} : { year: 'numeric' }),
+  });
+  return `${start} → ${formatDay(checkOut)}`;
+}
+
 function Avatar({ person, size = 'w-8 h-8' }: { person: AdminReservation['guest']; size?: string }) {
   if (person?.profile_photo_url) {
     return <img src={person.profile_photo_url} alt={person.first_name} className={`${size} rounded-full object-cover flex-shrink-0`} />;
@@ -816,13 +827,22 @@ export function AdminReservations() {
           <>
             {/* Tableau (grand écran) */}
             <div className="hidden xl:block overflow-x-auto">
+              {/* Seule la colonne Logement s'étire (w-full max-w-0, 38 % sur grand écran) et tronque ; les autres restent sur une ligne */}
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-gray-100 bg-gray-50/50">
-                    {['N°', 'Logement', 'Voyageur', 'Hôte', 'Séjour', 'Total', 'Statut', 'Créée le', ''].map((label, i) => (
+                    {[
+                      ['Logement', 'pl-4 pr-3 text-left'],
+                      ['Voyageur · Hôte', 'px-3 text-left'],
+                      ['Séjour', 'px-3 text-left'],
+                      ['Total', 'px-3 text-right'],
+                      ['Statut', 'px-3 text-left'],
+                      ['Créée le', 'px-3 text-left hidden 2xl:table-cell'],
+                      ['', 'pl-2 pr-4'],
+                    ].map(([label, align], i) => (
                       <th
                         key={label || i}
-                        className={`py-3 px-4 text-xs text-gray-500 uppercase tracking-wider ${i === 5 ? 'text-right' : 'text-left'}`}
+                        className={`py-3 text-xs text-gray-500 uppercase tracking-wider whitespace-nowrap ${align}`}
                         style={{ fontWeight: 600 }}
                       >
                         {label}
@@ -833,8 +853,7 @@ export function AdminReservations() {
                 <tbody>
                   {paginated.map((r) => (
                     <tr key={r.id} onClick={() => setSelectedId(r.id)} className="border-b border-gray-50 hover:bg-gray-50/50 cursor-pointer">
-                      <td className="py-3 px-4 text-xs font-mono text-gray-600">{r.confirmation_code}</td>
-                      <td className="py-3 px-4">
+                      <td className="py-3 pl-4 pr-3 w-full 2xl:w-[38%] max-w-0">
                         <div className="flex items-center gap-3">
                           {r.listing?.cover_photo_url ? (
                             <img src={r.listing.cover_photo_url} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
@@ -844,35 +863,38 @@ export function AdminReservations() {
                             </div>
                           )}
                           <div className="min-w-0">
-                            <div className="text-sm truncate max-w-[180px]" style={{ fontWeight: 500 }}>{r.listing?.title ?? '—'}</div>
-                            <div className="text-xs text-gray-500">{r.listing?.city}</div>
+                            <div className="text-sm truncate" style={{ fontWeight: 500 }}>{r.listing?.title ?? '—'}</div>
+                            <div className="text-xs text-gray-500 truncate">
+                              <span className="font-mono">{r.confirmation_code}</span>
+                              {r.listing?.city && ` · ${r.listing.city}`}
+                            </div>
                           </div>
                         </div>
                       </td>
-                      <td className="py-3 px-4">
-                        <div className="flex items-center gap-2">
-                          <Avatar person={r.guest} />
-                          <span className="text-sm truncate max-w-[120px]">{fullName(r.guest)}</span>
+                      <td className="py-3 px-3">
+                        <div className="max-w-[210px] space-y-1">
+                          <div className="flex items-center gap-2">
+                            <Avatar person={r.guest} size="w-6 h-6" />
+                            <span className="text-sm truncate" title={fullName(r.guest)}>{fullName(r.guest)}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Avatar person={r.host} size="w-6 h-6" />
+                            <span className="text-xs text-gray-500 truncate" title={fullName(r.host)}>chez {fullName(r.host)}</span>
+                          </div>
                         </div>
                       </td>
-                      <td className="py-3 px-4">
-                        <div className="flex items-center gap-2">
-                          <Avatar person={r.host} />
-                          <span className="text-sm truncate max-w-[120px]">{fullName(r.host)}</span>
-                        </div>
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="text-sm">{formatDay(r.check_in)} → {formatDay(r.check_out)}</div>
+                      <td className="py-3 px-3 whitespace-nowrap">
+                        <div className="text-sm">{formatStay(r.check_in, r.check_out)}</div>
                         <div className="text-xs text-gray-500 flex items-center gap-1">
                           {r.nights_count} nuit{r.nights_count > 1 ? 's' : ''} · <Users className="w-3 h-3" /> {r.guests_count}
                         </div>
                       </td>
-                      <td className="py-3 px-4 text-right text-sm" style={{ fontWeight: 600 }}>{formatMoney(r.total_price, r.currency)}</td>
-                      <td className="py-3 px-4">
+                      <td className="py-3 px-3 text-right text-sm whitespace-nowrap" style={{ fontWeight: 600 }}>{formatMoney(r.total_price, r.currency)}</td>
+                      <td className="py-3 px-3">
                         <ReservationStatusBadge phase={r.phase} />
                       </td>
-                      <td className="py-3 px-4 text-sm text-gray-500">{formatDay(r.created_at)}</td>
-                      <td className="py-3 px-4">
+                      <td className="py-3 px-3 text-sm text-gray-500 whitespace-nowrap hidden 2xl:table-cell">{formatDay(r.created_at)}</td>
+                      <td className="py-3 pl-2 pr-4">
                         <Eye className="w-4 h-4 text-gray-400" />
                       </td>
                     </tr>

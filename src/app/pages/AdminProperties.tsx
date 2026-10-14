@@ -21,9 +21,9 @@ const STATUS_LABELS: Record<StatusKey, string> = {
 };
 
 const SPACE_TYPE_LABELS: Record<string, string> = {
-  entire: 'Entier',
-  private: 'Prive',
-  shared: 'Partage',
+  entire: 'Logement entier',
+  private: 'Chambre privée',
+  shared: 'Chambre partagée',
 };
 
 export function AdminProperties() {
@@ -337,19 +337,17 @@ export function AdminProperties() {
             <>
               {/* Desktop Table View */}
               <div className="hidden xl:block overflow-x-auto">
+                {/* Seule la colonne Logement s'étire (w-full max-w-0, 38 % sur grand écran) et tronque ; les autres restent sur une ligne */}
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-gray-100 bg-gray-50/50">
-                      <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>ID</th>
-                      <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>Logement</th>
-                      <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>Hote</th>
-                      <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>Localisation</th>
-                      <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>Prix/nuit</th>
-                      <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>Type</th>
-                      <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>Capacite</th>
-                      <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>Statut</th>
-                      <th className="text-left py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>Date creation</th>
-                      <th className="text-right py-3 px-4 text-xs text-gray-500 uppercase tracking-wider" style={{ fontWeight: 600 }}>Actions</th>
+                      <th className="text-left py-3 pl-4 pr-3 text-xs text-gray-500 uppercase tracking-wider whitespace-nowrap" style={{ fontWeight: 600 }}>Logement</th>
+                      <th className="text-left py-3 px-3 text-xs text-gray-500 uppercase tracking-wider whitespace-nowrap" style={{ fontWeight: 600 }}>Hôte</th>
+                      <th className="text-left py-3 px-3 text-xs text-gray-500 uppercase tracking-wider whitespace-nowrap" style={{ fontWeight: 600 }}>Localisation</th>
+                      <th className="text-right py-3 px-3 text-xs text-gray-500 uppercase tracking-wider whitespace-nowrap" style={{ fontWeight: 600 }}>Prix / nuit</th>
+                      <th className="text-left py-3 px-3 text-xs text-gray-500 uppercase tracking-wider whitespace-nowrap" style={{ fontWeight: 600 }}>Statut</th>
+                      <th className="text-left py-3 px-3 text-xs text-gray-500 uppercase tracking-wider whitespace-nowrap hidden 2xl:table-cell" style={{ fontWeight: 600 }}>Créé le</th>
+                      <th className="text-right py-3 pl-3 pr-4 text-xs text-gray-500 uppercase tracking-wider whitespace-nowrap" style={{ fontWeight: 600 }}>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -357,11 +355,8 @@ export function AdminProperties() {
                       const statusConfig = getStatusConfig(listing.status);
                       const StatusIcon = statusConfig.icon;
                       return (
-                        <tr key={listing.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group">
-                          <td className="py-3.5 px-4">
-                            <span className="text-xs text-gray-400 font-mono">#{listing.id}</span>
-                          </td>
-                          <td className="py-3.5 px-4">
+                        <tr key={listing.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                          <td className="py-3.5 pl-4 pr-3 w-full 2xl:w-[38%] max-w-0">
                             <div className="flex items-center gap-3">
                               <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-gray-500 flex-shrink-0 overflow-hidden">
                                 {listing.photos.length > 0 ? (
@@ -371,45 +366,44 @@ export function AdminProperties() {
                                 )}
                               </div>
                               <div className="min-w-0">
-                                <Link href={`/admin/properties/${listing.id}`} className="text-sm hover:text-[#111827] hover:underline transition-colors block truncate max-w-[180px]" style={{ fontWeight: 600 }}>
+                                <Link href={`/admin/properties/${listing.id}`} className="text-sm hover:text-[#111827] hover:underline transition-colors block truncate" style={{ fontWeight: 600 }}>
                                   {listing.title || 'Sans titre'}
                                 </Link>
+                                <div className="text-xs text-gray-500 truncate">
+                                  <span className="font-mono text-gray-400">#{listing.id}</span>
+                                  {' · '}
+                                  {listing.space_type ? (SPACE_TYPE_LABELS[listing.space_type] || listing.space_type) : '--'}
+                                  {' · '}
+                                  {listing.capacity} voyageur{listing.capacity > 1 ? 's' : ''}
+                                </div>
                               </div>
                             </div>
                           </td>
-                          <td className="py-3.5 px-4">
-                            <span className="text-sm text-gray-600">
+                          <td className="py-3.5 px-3">
+                            <div className="text-sm text-gray-600 truncate max-w-[170px]" title={listing.host?.name || undefined}>
                               {listing.host?.name || 'N/A'}
-                            </span>
-                          </td>
-                          <td className="py-3.5 px-4">
-                            <div className="flex items-center gap-1.5">
-                              <MapPin className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
-                              <span className="text-sm text-gray-600">{listing.city || 'N/A'}, {listing.province}</span>
                             </div>
                           </td>
-                          <td className="py-3.5 px-4">
+                          <td className="py-3.5 px-3">
+                            <div className="flex items-center gap-1.5 max-w-[190px]">
+                              <MapPin className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+                              <span className="text-sm text-gray-600 truncate">{listing.city || 'N/A'}, {listing.province}</span>
+                            </div>
+                          </td>
+                          <td className="py-3.5 px-3 text-right whitespace-nowrap">
                             <span className="text-sm" style={{ fontWeight: 600 }}>{formatPrice(listing.base_price, listing.currency)}</span>
                           </td>
-                          <td className="py-3.5 px-4">
-                            <span className="text-sm text-gray-600">
-                              {listing.space_type ? (SPACE_TYPE_LABELS[listing.space_type] || listing.space_type) : '--'}
-                            </span>
-                          </td>
-                          <td className="py-3.5 px-4">
-                            <span className="text-sm" style={{ fontWeight: 500 }}>{listing.capacity}</span>
-                          </td>
-                          <td className="py-3.5 px-4">
-                            <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs ${statusConfig.bg} ${statusConfig.text}`} style={{ fontWeight: 600 }}>
+                          <td className="py-3.5 px-3">
+                            <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs whitespace-nowrap ${statusConfig.bg} ${statusConfig.text}`} style={{ fontWeight: 600 }}>
                               <StatusIcon className="w-3 h-3" />
                               {statusConfig.label}
                             </span>
                           </td>
-                          <td className="py-3.5 px-4">
+                          <td className="py-3.5 px-3 whitespace-nowrap hidden 2xl:table-cell">
                             <span className="text-xs text-gray-500">{formatDate(listing.created_at)}</span>
                           </td>
-                          <td className="py-3.5 px-4">
-                            <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <td className="py-3.5 pl-3 pr-4">
+                            <div className="flex items-center justify-end gap-1">
                               <Link href={`/admin/properties/${listing.id}`} className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Voir">
                                 <Eye className="w-4 h-4 text-gray-500" />
                               </Link>
@@ -428,7 +422,7 @@ export function AdminProperties() {
                     })}
                     {paginated.length === 0 && (
                       <tr>
-                        <td colSpan={10} className="py-16 text-center">
+                        <td colSpan={7} className="py-16 text-center">
                           <div className="flex flex-col items-center gap-3">
                             <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
                               <Search className="w-5 h-5 text-gray-400" />
