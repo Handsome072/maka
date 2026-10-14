@@ -4,7 +4,7 @@
  */
 
 import type { RefundBreakdown } from '@/shared/booking';
-import type { Session } from '@supabase/supabase-js';
+import { isAuthRetryableFetchError, type Session } from '@supabase/supabase-js';
 import { getSupabase, UPLOADS_BUCKET } from './supabaseClient';
 
 const API_BASE_URL = '/api';
@@ -62,7 +62,12 @@ function storeSession(session: Session | null): void {
  */
 async function getAccessToken(): Promise<string | null> {
   if (typeof window === 'undefined') return null;
-  const { data } = await getSupabase().auth.getSession();
+  const { data, error } = await getSupabase().auth.getSession();
+  if (!data.session && isAuthRetryableFetchError(error)) {
+    // Jeton expiré et Auth injoignable : la session reste en place, l'appel échoue comme une coupure réseau
+    // (sinon il partirait sans jeton, recevrait un 401 et déconnecterait l'utilisateur)
+    throw apiError('Connexion impossible, vérifiez votre réseau.', 0);
+  }
   storeSession(data.session);
   return data.session?.access_token ?? null;
 }
@@ -375,7 +380,7 @@ export const authApi = {
    * Get current user profile
    */
   getUser: async (): Promise<UserResponse> => {
-    return apiFetch<UserResponse>('/auth/user');
+    return apiFetch<UserResponse>('/auth/user', { timeoutMs: 15_000 });
   },
 
   /**
@@ -2078,7 +2083,7 @@ export interface AdminReservation
 
 export const adminReservationsApi = {
   getAll: async (): Promise<{ reservations: AdminReservation[] }> => {
-    return apiFetch('/admin/reservations');
+    return apiFetch('/admin/reservations', { timeoutMs: 30_000 });
   },
 
   getOne: async (id: number): Promise<{ reservation: AdminReservation }> => {

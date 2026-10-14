@@ -57,27 +57,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Load user from storage and validate token on mount
   useEffect(() => {
     const initAuth = async () => {
+      let storedUser: User | null = null;
       try {
         const token = getAuthToken();
-        const storedUser = localStorage.getItem(USER_STORAGE_KEY);
-
-        if (token && storedUser) {
-          // Try to validate token by fetching user
-          try {
-            const response = await authApi.getUser();
-            const userData = apiUserToUser(response.user);
-            setUser(userData);
-            localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
-          } catch {
-            // Token is invalid, clear storage
-            removeAuthToken();
-            localStorage.removeItem(USER_STORAGE_KEY);
-          }
-        }
+        const stored = localStorage.getItem(USER_STORAGE_KEY);
+        storedUser = token && stored ? (JSON.parse(stored) as User) : null;
       } catch {
-        // Ignore errors during init
-      } finally {
+        // Unreadable storage: treated as signed out
+      }
+
+      if (!storedUser) {
         setIsLoading(false);
+        return;
+      }
+
+      // The stored user is shown right away; the session is checked in the background
+      // (with an expired token or a flaky network, that check can take a while)
+      setUser(storedUser);
+      setIsLoading(false);
+
+      try {
+        const response = await authApi.getUser();
+        const userData = apiUserToUser(response.user);
+        setUser(userData);
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
+      } catch (err: any) {
+        // Only a rejected token signs out; network errors and timeouts keep the stored user
+        if (err?.status === 401) {
+          setUser(null);
+          removeAuthToken();
+          localStorage.removeItem(USER_STORAGE_KEY);
+        }
       }
     };
 
