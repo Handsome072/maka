@@ -2081,6 +2081,57 @@ export interface AdminReservation
   stripe_payment_intent_id: string | null;
 }
 
+export type AdminOverviewPeriod = '7d' | '30d' | '3m' | '12m';
+
+export type AdminOverviewMetric = { current: number[]; previous: number[]; total: number; previous_total: number };
+
+export interface AdminOverview {
+  period: AdminOverviewPeriod;
+  granularity: 'day' | 'week' | 'month';
+  generated_at: string;
+  /** Début de la période actuelle et fin exclue (ISO) */
+  current_from: string;
+  to: string;
+  /** Débuts des tranches : période précédente puis période actuelle (YYYY-MM-DD) */
+  buckets: string[];
+  currency: string;
+  metrics: Record<'volume' | 'revenue' | 'bookings' | 'signups', AdminOverviewMetric>;
+  statuses: { phase: ReservationPhase; count: number }[];
+  top_listings: { id: number; title: string | null; city: string | null; volume: number; bookings: number }[];
+  community: { users: number; hosts: number; verified: number; new_in_period: number };
+  listings: {
+    total: number;
+    by_status: Record<'active' | 'pending' | 'draft' | 'rejected' | 'archived', number>;
+    new_in_period: number;
+    top_cities: { city: string; count: number }[];
+  };
+  todo: {
+    pending_requests: number;
+    arrivals_7d: number;
+    payouts_due: { count: number; amount: number; next_date: string | null };
+    listings_pending: number;
+    host_documents_pending: number;
+    client_reports_open: number;
+    suspect_users: number;
+  };
+  recent: {
+    id: number;
+    confirmation_code: string;
+    guest: string | null;
+    listing: string | null;
+    created_at: string;
+    total_price: number;
+    currency: string;
+    phase: ReservationPhase;
+  }[];
+}
+
+export const adminOverviewApi = {
+  get: async (period: AdminOverviewPeriod): Promise<AdminOverview> => {
+    return apiFetch(`/admin/overview?period=${period}`, { timeoutMs: 30_000 });
+  },
+};
+
 export const adminReservationsApi = {
   getAll: async (): Promise<{ reservations: AdminReservation[] }> => {
     return apiFetch('/admin/reservations', { timeoutMs: 30_000 });
