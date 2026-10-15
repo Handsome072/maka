@@ -117,6 +117,11 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Marque Séjourway : ardoise du logo et turquoise de l'icône */
+  --color-ink: #2B2E35;
+  --color-brand: #06BDE3;
+  --color-brand-deep: #087A94; /* turquoise lisible sur fond clair (texte, icônes) */
 }
 
 @layer base {

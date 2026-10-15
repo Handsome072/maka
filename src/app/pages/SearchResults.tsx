@@ -167,17 +167,17 @@ export function SearchResults({ onBack, onNavigate, onSearch, searchParams }: Se
       {/* Header with search bar - combined for seamless positioning */}
       <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
         {/* Main header row */}
-        <div className="px-4 sm:px-6 lg:px-20 py-4 border-b border-gray-100">
-          <div className="flex items-center justify-between">
+        <div className="h-16 px-4 sm:px-6 lg:px-20 flex items-center bg-[#FCFCFC] border-b border-gray-100">
+          <div className="flex items-center justify-between w-full gap-6">
             {/* Logo */}
             <button
               onClick={onBack}
-              className="flex items-center gap-1 flex-shrink-0 hover:opacity-80 transition-opacity duration-200 border-0"
+              className="flex items-center flex-shrink-0 hover:opacity-80 transition-opacity duration-200 border-0"
             >
               <img
                 src="/sejoura_logo.png"
                 alt="Séjoura Logo"
-                className="w-[187px] h-auto border-0"
+                className="w-[128px] md:w-[160px] h-auto border-0"
               />
             </button>
 

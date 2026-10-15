@@ -27,6 +27,8 @@ export function LoggedInMenuDropdown({ isOpen, onClose, onBecomeHostClick, onLan
     if (!isOpen) return;
 
     const handleClickOutside = (event: MouseEvent) => {
+      // Le bouton qui ouvre le menu le referme lui-même ; le fermer ici le rouvrirait aussitôt
+      if ((event.target as Element).closest?.('[data-menu-trigger]')) return;
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         onClose();
       }

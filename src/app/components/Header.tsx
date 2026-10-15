@@ -1,9 +1,6 @@
-import { useState, forwardRef, useRef, useImperativeHandle } from "react";
+import { useState, forwardRef } from "react";
 import Link from "next/link";
-import { CompactSearchBar } from "./SearchBar";
-import { SearchOverlay } from "./SearchOverlay";
 import { LanguageModal } from "./LanguageModal";
-import { HeaderContent } from "./HeaderContent";
 import { BecomeHostModal } from "./BecomeHostModal";
 import { HeaderRightMenu } from "./HeaderRightMenu";
 import { ROUTES } from "../config/routes";
@@ -14,16 +11,16 @@ interface HeaderProps {
     page: "logements" | "experiences" | "services" | "messages" | "host-onboarding" | "annonces" | "login" | "experience-onboarding",
   ) => void;
   isScrolled: boolean;
-  onSearch: (params: any) => void;
+  /** La barre de recherche placée juste dessous prolonge le header : pas de trait entre les deux. */
+  joinsSearchBand?: boolean;
   onClientSpaceClick?: () => void;
   isHost?: boolean;
   onBecomeHostDirect?: () => void;
 }
 
+/** Header fin du site : logo à gauche, menus et compte à droite ; seul un trait apparaît au défilement. */
 export const Header = forwardRef<HTMLElement, HeaderProps>(
-  ({ currentPage, onNavigate, isScrolled, onSearch, onClientSpaceClick, isHost, onBecomeHostDirect }, ref) => {
-    const [showSearchOverlay, setShowSearchOverlay] =
-      useState(false);
+  ({ currentPage, onNavigate, isScrolled, joinsSearchBand = false, onClientSpaceClick, isHost, onBecomeHostDirect }, ref) => {
     const [showLanguageModal, setShowLanguageModal] =
       useState(false);
     const [showMenuDropdown, setShowMenuDropdown] =
@@ -31,101 +28,42 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
     const [showBecomeHostModal, setShowBecomeHostModal] =
       useState(false);
 
-
-    // Internal ref for the header element
-    const headerRef = useRef<HTMLElement>(null);
-
-    // Forward the ref to parent component
-    useImperativeHandle(ref, () => headerRef.current as HTMLElement);
-
     return (
       <>
         <header
-          ref={headerRef}
-          className="z-50 bg-[#FCFCFC]"
+          ref={ref}
+          className={`z-50 bg-[#FCFCFC] border-b transition-[box-shadow,border-color] duration-200 ${
+            isScrolled
+              ? "border-gray-100 shadow-[0_6px_16px_-12px_rgba(17,24,39,0.25)]"
+              : joinsSearchBand
+                ? "border-transparent"
+                : "border-gray-100"
+          }`}
         >
-          <div className="px-4 sm:px-6 lg:px-12 py-4">
-            <div className="flex items-center justify-between relative">
-              {/* Logo - Responsive: texte masqué pour S < 950 */}
-              <Link
-                href={ROUTES.HOME}
-                className="flex items-center gap-1 flex-shrink-0 relative z-10 border-0"
-              >
-                {/* Logo complet visible pour S >= 950 */}
-                <img
-                  src="/sejoura_logo.png"
-                  alt="Séjoura Logo"
-                  className="hidden min-[950px]:block w-[187px] h-auto border-0"
-                />
-                {/* Icône seule visible pour S < 950 */}
-                <img
-                  src="/sejoura_icon.png"
-                  alt="Séjoura"
-                  className="block min-[950px]:hidden w-[40px] h-auto border-0"
-                />
-              </Link>
-
-              {/* Center Section - Both components always mounted, visibility controlled by CSS */}
-              <div className="flex-1 relative">
-                {/* HeaderContent - Normal mode (visible when NOT scrolled) */}
-                <div
-                  className={`transition-opacity duration-300 ease-in-out ${isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100'
-                    }`}
-                >
-                  <HeaderContent
-                    currentPage={currentPage}
-                    onNavigate={onNavigate}
-                    onGlobeClick={() => setShowLanguageModal(true)}
-                    onMenuClick={() => setShowMenuDropdown(!showMenuDropdown)}
-                    onBecomeHostClick={() => setShowBecomeHostModal(true)}
-                    MenuDropdownComponent={null}
-                  />
-                </div>
-
-                {/* CompactSearchBar - Compact mode (visible when scrolled) */}
-                <div
-                  className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ease-in-out ${isScrolled ? 'opacity-100' : 'opacity-0 pointer-events-none'
-                    }`}
-                >
-                  <div className="flex-1 mx-2 sm:mx-4 md:mx-8">
-                    <CompactSearchBar
-                      currentPage={currentPage}
-                      onOpen={() => setShowSearchOverlay(true)}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Menu - Always rendered, never destroyed */}
-              <HeaderRightMenu
-                showMenuDropdown={showMenuDropdown}
-                setShowMenuDropdown={setShowMenuDropdown}
-                setShowLanguageModal={setShowLanguageModal}
-                setShowBecomeHostModal={setShowBecomeHostModal}
-                onAuthClick={() => onNavigate('login')}
-                onClientSpaceClick={onClientSpaceClick}
-                onMessagesClick={() => onNavigate('messages')}
-                isHost={isHost}
-                onAnnoncesClick={() => onNavigate('annonces')}
-                onBecomeHostDirect={onBecomeHostDirect}
+          <div className="h-16 px-4 sm:px-6 lg:px-12 flex items-center justify-between gap-6">
+            <Link href={ROUTES.HOME} className="flex-shrink-0 border-0">
+              <img
+                src="/sejoura_logo.png"
+                alt="Séjoura"
+                className="w-[160px] h-auto border-0"
               />
-            </div>
+            </Link>
+
+            <HeaderRightMenu
+              showMenuDropdown={showMenuDropdown}
+              setShowMenuDropdown={setShowMenuDropdown}
+              setShowLanguageModal={setShowLanguageModal}
+              setShowBecomeHostModal={setShowBecomeHostModal}
+              onAuthClick={() => onNavigate('login')}
+              onClientSpaceClick={onClientSpaceClick}
+              onMessagesClick={() => onNavigate('messages')}
+              isHost={isHost}
+              onAnnoncesClick={() => onNavigate('annonces')}
+              onBecomeHostDirect={onBecomeHostDirect}
+              currentPage={currentPage}
+            />
           </div>
         </header>
-
-        {/* Search Overlay */}
-        {showSearchOverlay && (
-          <SearchOverlay
-            isOpen={showSearchOverlay}
-            currentPage={currentPage}
-            onNavigate={onNavigate}
-            onClose={() => setShowSearchOverlay(false)}
-            headerRef={headerRef}
-            onSearch={onSearch}
-            onClientSpaceClick={onClientSpaceClick}
-            isHost={isHost}
-          />
-        )}
 
         {/* Language Modal */}
         {showLanguageModal && (

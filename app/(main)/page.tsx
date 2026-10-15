@@ -11,7 +11,7 @@ import { useScroll } from '@/app/hooks/ScrollContext';
  */
 export default function HomePage() {
   const router = useRouter();
-  const { isScrolled, handleNavigateScroll } = useScroll();
+  const { handleNavigateScroll } = useScroll();
 
   // Handle property click
   const handlePropertyClick = (id?: string) => {
@@ -36,7 +36,6 @@ export default function HomePage() {
 
   return (
     <Home
-      isScrolled={isScrolled}
       onPropertyClick={handlePropertyClick}
       onSearch={handleSearch}
     />

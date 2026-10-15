@@ -219,7 +219,7 @@ export function Services({ onServiceClick, onSearch }: ServicesProps) {
   return (
     <div className="min-h-screen bg-white">
       {/* Search bar - hidden on mobile (S < 745) */}
-      <div className="hidden md:block">
+      <div className="hidden md:block bg-[#FCFCFC] border-b border-gray-100">
         <SearchBar type="services" onSearch={onSearch} />
       </div>
 

@@ -8,7 +8,6 @@ import { readRecentlyViewed, usePublicListings } from '../hooks/usePublicListing
 import { placeLabel, provinceName } from '@/shared/places';
 
 interface HomeProps {
-  isScrolled: boolean;
   onPropertyClick: (id?: string) => void;
   onSearch?: (params: any) => void;
 }
@@ -99,7 +98,7 @@ function spaceTypeLabel(spaceType: string | null): string {
   return 'Logement';
 }
 
-export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
+export function Home({ onPropertyClick, onSearch }: HomeProps) {
   const { isAuthenticated } = useAuth();
   const { width: windowWidth, mounted } = useWindowWidth();
   // Use undefined during SSR to avoid inline styles, let CSS handle it
@@ -125,8 +124,8 @@ export function Home({ isScrolled, onPropertyClick, onSearch }: HomeProps) {
 
   return (
     <>
-      {/* Search bar - hidden on mobile and when scrolled */}
-      <div className={`hidden md:block transition-all duration-300 ${isScrolled ? 'max-h-0 overflow-hidden opacity-0' : 'max-h-40 opacity-100'}`}>
+      {/* Search bar - hidden on mobile ; elle défile avec la page */}
+      <div className="hidden md:block bg-[#FCFCFC] border-b border-gray-100">
         <SearchBar onSearch={onSearch} />
       </div>
 

@@ -22,20 +22,6 @@ function HelpCenterLayoutContent({
         router.push(path);
     };
 
-    const handleSearch = (params: any) => {
-        const searchQuery = new URLSearchParams({
-            destination: params.destination || '',
-            checkIn: params.checkInDate?.toISOString() || '',
-            checkOut: params.checkOutDate?.toISOString() || '',
-            adults: params.guestsCount?.adults?.toString() || '0',
-            children: params.guestsCount?.children?.toString() || '0',
-            babies: params.guestsCount?.babies?.toString() || '0',
-            pets: params.guestsCount?.pets?.toString() || '0',
-        });
-        handleNavigateScroll();
-        router.push(`/search?${searchQuery.toString()}`);
-    };
-
     return (
         <div className="min-h-screen bg-white flex flex-col font-sans text-[#222222]">
             {/* Reusing standard Header with help-center variant */}
@@ -43,7 +29,6 @@ function HelpCenterLayoutContent({
                 currentPage="logements"
                 onNavigate={handleNavigate}
                 isScrolled={isScrolled}
-                onSearch={handleSearch}
                 variant="help-center"
             />
 

@@ -193,7 +193,7 @@ export function Messages({ onNavigate, isHost }: { onNavigate?: (page: any) => v
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="border-b border-gray-200">
+      <header className="bg-[#FCFCFC] border-b border-gray-200">
         <div className="px-4 sm:px-6 lg:px-12 py-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-8">

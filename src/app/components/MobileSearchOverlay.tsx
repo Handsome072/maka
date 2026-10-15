@@ -750,7 +750,7 @@ export function MobileSearchOverlay({
                         <button
                             onClick={handlePrimaryAction}
                             className="flex items-center gap-2 px-6 py-3 rounded-lg text-white font-medium transition-colors"
-                            style={{ backgroundColor: isFinalStep ? '#E91E63' : '#222222' }}
+                            style={{ backgroundColor: isFinalStep ? '#087A94' : '#222222' }}
                         >
                             {isFinalStep && <Search className="w-4 h-4" />}
                             <span>{isFinalStep ? 'Rechercher' : 'Suivant'}</span>

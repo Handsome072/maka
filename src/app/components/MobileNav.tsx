@@ -33,7 +33,7 @@ export function MobileNav({
                 <button
                     type="button"
                     onClick={onSearchClick}
-                    className="flex flex-col items-center gap-1 px-1 py-2 text-[#E91E63] transition-colors min-w-[60px]"
+                    className="flex flex-col items-center gap-1 px-1 py-2 text-brand-deep transition-colors min-w-[60px]"
                 >
                     <Search className="w-5 h-5" />
                     <span className="text-[10px] font-medium truncate w-full text-center">Explorer</span>

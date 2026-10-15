@@ -25,9 +25,9 @@ export function LegalHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-white">
-        <div className="px-6 lg:px-20 py-4">
-          <div className="flex items-center justify-between">
+      <header className="sticky top-0 z-50 bg-[#FCFCFC] border-b border-gray-100">
+        <div className="h-16 px-4 sm:px-6 lg:px-20 flex items-center">
+          <div className="flex items-center justify-between w-full gap-6">
             {/* Logo - Help Center icon with ? */}
             <Link
               href="/"
@@ -48,7 +48,7 @@ export function LegalHeader() {
             </Link>
 
             {/* Search bar */}
-            <div className="hidden md:flex items-center flex-1 max-w-md mx-8">
+            <div className="hidden xl:flex items-center flex-1 max-w-sm">
               <div className="relative w-full">
                 <input
                   type="text"
