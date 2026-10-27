@@ -51,7 +51,7 @@ type ClientIndexRow = {
   phone: string | null;
   phone_country_code: string | null;
   address_country: string | null;
-  identity_verified: boolean;
+  email_verified_at: string | null;
   client_status: string | null;
   is_suspect: boolean;
   created_at: string | null;
@@ -61,7 +61,7 @@ type ClientIndexRow = {
 
 const CLIENT_INDEX_SELECT = [
   'id', 'role', 'first_name', 'last_name', 'email', 'phone', 'phone_country_code', 'address_country',
-  'identity_verified', 'client_status', 'is_suspect', 'created_at',
+  'email_verified_at', 'client_status', 'is_suspect', 'created_at',
   'reservations:reservations!reservations_guest_id_fkey(status,total_price)',
   'guest_reviews:guest_reviews!guest_reviews_guest_id_fkey(rating)',
 ].join(',');
@@ -81,7 +81,8 @@ export async function clientsIndexData(query: Record<string, any>) {
     if (ciEquals(user.role, 'admin')) return false;
     if (filled(query.search) && !matchesSearch(user, query.search)) return false;
     if (filled(query.status) && !ciEquals(user.client_status, query.status)) return false;
-    if (filled(query.verified) && user.identity_verified !== (query.verified === 'verified')) return false;
+    // « Vérifié » côté admin clients = email validé (aucun parcours ne vérifie l'identité)
+    if (filled(query.verified) && (user.email_verified_at !== null) !== (query.verified === 'verified')) return false;
     if (filled(query.country) && !ciEquals(user.address_country, query.country)) return false;
     if (filled(query.suspect) && user.is_suspect !== (query.suspect === 'true')) return false;
     return true;
@@ -101,7 +102,7 @@ export async function clientsIndexData(query: Record<string, any>) {
       avatar: initials(user.first_name, user.last_name ?? ''),
       phone: phoneLabel(user.phone, user.phone_country_code, ''),
       country: user.address_country ?? '',
-      verified: Boolean(user.identity_verified),
+      verified: user.email_verified_at !== null,
       totalBookings,
       totalSpent: formatCurrency(totalSpent),
       totalSpentValue: totalSpent,
@@ -305,14 +306,14 @@ export async function clientShowData(id: number) {
       avatar: initials(client.first_name, client.last_name ?? ''),
       phone: phoneLabel(client.phone, client.phone_country_code, ''),
       country: client.address_country ?? '',
-      verified: Boolean(client.identity_verified),
+      verified: client.email_verified_at !== null,
       joinDate: frDate(client.created_at),
       language: languageLabel(client.preferred_language),
       status: client.client_status ?? 'ACTIF',
       isSuspect: Boolean(client.is_suspect),
       averageRating: avgRating,
       totalSpent: formatCurrency(totalSpent),
-      verificationDate: client.verification_date ? frDate(client.verification_date) : null,
+      verificationDate: client.email_verified_at ? frDate(client.email_verified_at) : null,
       documents: documentsData,
       totalBookings,
       cancellations,

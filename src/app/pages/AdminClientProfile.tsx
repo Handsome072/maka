@@ -405,11 +405,11 @@ export function AdminClientProfile() {
 
           {/* Verification */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6">
-            <h2 className="text-base md:text-lg mb-4" style={{ fontWeight: 600 }}>Verification d&apos;identite</h2>
+            <h2 className="text-base md:text-lg mb-4" style={{ fontWeight: 600 }}>Verification de l&apos;email</h2>
             <div className="flex items-center gap-2 mb-4">
               {client.verified ? (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm bg-green-50 text-green-700" style={{ fontWeight: 600 }}>
-                  <ShieldCheck className="w-4 h-4" /> Identite verifiee
+                  <ShieldCheck className="w-4 h-4" /> Email verifie
                 </span>
               ) : (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm bg-gray-100 text-gray-500" style={{ fontWeight: 600 }}>
