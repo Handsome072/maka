@@ -6,8 +6,6 @@ node_modules/
 out/
 
 # Environment files (.env.production is versioned: comments only, no secrets)
-.env
-.env.local
 .env.development.local
 .env.test.local
 .env.production.local
@@ -19,7 +17,6 @@ yarn-error.log*
 
 # IDE
 .idea/
-.vscode/
 *.swp
 *.swo
 
@@ -35,3 +32,4 @@ Thumbs.db
 
 # Markdown (les .md déjà suivis restent versionnés)
 *.md
+config.bat
